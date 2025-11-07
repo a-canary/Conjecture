@@ -1,0 +1,20 @@
+Original File,Consolidated Into,Migration Status,Validation Date,Notes
+docs/system_design/README.md,SystemArchitecture.md,Complete,2024-10-30,Architecture overview fully integrated
+docs/system_design/Overview.md,SystemArchitecture.md,Complete,2024-10-30,System vision and architecture unified
+docs/system_design/Evidence-Structure.md,SystemArchitecture.md,Complete,2024-10-30,Claims architecture fully integrated
+docs/system_design/Skills-Architecture.md,SystemArchitecture.md,Complete,2024-10-30,Capability layer architecture fully integrated
+docs/system_design/Processing-Engine.md,SystemArchitecture.md + ProcessingWorkflows.md,Complete,2024-10-30,Processing engine details fully consolidated
+docs/system_design/Query-Management.md,SystemArchitecture.md + ProcessingWorkflows.md,Complete,2024-10-30,Query handling fully integrated
+docs/system_design/Semantic-Matching.md,ProcessingWorkflows.md,Complete,2024-10-30,Semantic processing logic unified
+docs/system_design/Tool-Execution.md,ProcessingWorkflows.md,Complete,2024-10-30,Tool execution workflows consolidated
+docs/system_design/Skill-Creation.md,SystemArchitecture.md + ProcessingWorkflows.md,Complete,2024-10-30,Skill creation process unified
+docs/system_design/Resolution-Context.md,ProcessingWorkflows.md,Complete,2024-10-30,Resolution context fully integrated
+docs/system_design/Integration-Interface.md,SystemArchitecture.md,Complete,2024-10-30,Integration interfaces consolidated
+docs/system_design/Capability-System.md,SystemArchitecture.md,Complete,2024-10-30,Capability system fully integrated
+ClaimConcept.md,ClaimSchema.md + ClaimExamples.md,Complete,2024-10-30,Structure + examples consolidated
+ClaimSkill.md,ClaimSchema.md + ClaimExamples.md,Complete,2024-10-30,Structure + examples consolidated
+ClaimExample.md,ClaimExamples.md,Complete,2024-10-30,All examples standardized and consolidated
+ClaimThesis.md,ClaimSchema.md + ClaimExamples.md,Complete,2024-10-30,Structure + examples consolidated
+ClaimGoal.md,ClaimSchema.md + ClaimExamples.md,Complete,2024-10-30,Structure + examples consolidated
+ClaimReference.md,ClaimSchema.md + ClaimExamples.md,Complete,2024-10-30,Structure + examples consolidated
+README-Refactored-Docs.md,Documentation-Improvement-Summary.md,Complete,2024-10-30,Refactoring documentation replaced by improvement summary

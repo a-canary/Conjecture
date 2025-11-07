@@ -1,0 +1,365 @@
+---
+archived: 2024-10-30
+reason: Content consolidated into new unified documentation
+consolidated_into: SystemArchitecture.md + ProcessingWorkflows.md
+migration_status: complete
+quality_note: Replaced by higher-quality unified documentation
+---
+
+# Skill Creation - Capability Gap Detection and Expansion
+
+## Executive Summary
+
+Skill Creation transforms Conjecture from a fixed capability system to a self-improving ecosystem that automatically detects capability gaps and generates new skills through user-guided creation. The system maintains control through approval workflows while continuously expanding its capability set to meet evolving user needs.
+
+## Core Philosophy
+
+### Continuous Capability Evolution
+
+Traditional AI systems have static tool sets that require manual updates for new capabilities. Skill Creation implements continuous capability evolution where the system identifies gaps, proposes solutions, and integrates new skills through user-approved workflows.
+
+### User-Controlled Expansion
+
+While the system automatically detects gaps and creates proposals, users retain complete control through explicit approval workflows. This balances autonomous capability growth with security and alignment with user goals.
+
+## Skill Gap Detection
+
+### Gap Detection Algorithm
+
+Skill gaps are identified through systematic analysis of query-to-skill matching confidence:
+
+```
+Gap Detection Process:
+Query Processing → Action Generation → Skills Registry Matching → Confidence Scoring
+├─ Generate semantic action descriptions from query context
+├─ Match actions against all available skills using embedding similarity
+├─ Calculate confidence scores for each match
+└─ Gap Detection: ALL matches < threshold
+```
+
+### Gap Threshold Criteria
+
+Skill gaps are triggered when multiple conditions are met:
+
+```
+Gap Detection Thresholds:
+├─ Highest skill confidence < 30%
+├─ Multiple skills available but none > 40% semantic similarity
+├─ Query hints present but no relevant skills found
+└─ Critical intent keywords with no matching capabilities
+```
+
+### Gap Validation Process
+
+Before triggering skill creation, the system validates genuine gaps:
+
+```
+Gap Validation:
+├─ Retry query processing with expanded search parameters
+├─ Check for alternative skill combinations
+├─ Verify query clarity and proper action generation
+└─ Confirm no existing skills can be adapted or combined
+```
+
+## Child Query Generation
+
+### Skill Brainstorming Query Creation
+
+When skill gaps are confirmed, the system generates a specialized child query:
+
+```
+Parent Query: "Analyze cross-platform mobile app performance metrics"
+
+Gap Analysis:
+├─ Available skills focus on web analytics and desktop applications
+├─ No mobile-specific performance analysis capabilities
+├─ Cross-platform analysis requires specialized tools
+└─ Gap confirmed: Mobile analytics capabilities missing
+
+Child Query Generated:
+<query id="q75.5" intent="Brainstorm mobile analytics skills">
+Brainstorm 4 new generalized skills to help with analyzing cross-platform mobile app performance metrics, including iOS and Android platforms
+</query>
+```
+
+### Query Structuring
+
+Child queries for skill creation follow specific structural requirements:
+
+```
+Skill Creation Query Structure:
+├─ Clear capability gap description
+├─ Specific target domain and context
+├─ Request for 4 generalized skill proposals
+├─ Emphasis on practical applicability
+└─ Integration considerations with existing capabilities
+```
+
+## Skill Proposal Generation
+
+### LLM Skill Brainstorming
+
+The skill brainstorming query generates concrete skill proposals through structured LLM processing:
+
+```
+LLM Generation Process:
+├─ Analyze capability gap in detail
+├─ Review existing skills to avoid duplication
+├─ Consider practical implementation approaches
+├─ Generate 4 skill proposals with complete specifications
+└─ Format proposals for user evaluation
+```
+
+### Skill Proposal Format
+
+Generated skill proposals include complete specifications:
+
+```
+Skill Proposal Format:
+<skill_proposal name="mobile_analytics"
+              description="Unified cross-platform analytics collector for mobile app performance metrics"
+              capabilities="Data collection from iOS/Android apps, performance monitoring, user behavior tracking"
+              execution_path="python"
+              permissions="network_access, user_consent"
+              dependencies="data_processor, visualization_tools"
+              implementation_complexity="medium"
+              potential_uses="App performance optimization, user experience analysis, competitive benchmarking"/>
+```
+
+### Proposal Quality Criteria
+
+Generated proposals must meet quality standards:
+
+```
+Quality Requirements:
+├─ Clear, actionable descriptions with specific capabilities
+├─ Realistic implementation complexity assessment
+├─ Appropriate permission declarations
+├─ Identified dependencies on existing skills
+├─ Practical use cases and applications
+└─ Differentiation from existing capabilities
+```
+
+## User Approval Workflow
+
+### Skill Creation Request Format
+
+The system presents skill creation requests through a structured interface:
+
+```
+<skill_creation_request query_id="q75.5" requires_approval="true"
+                        detected_gap="Mobile app performance analytics"
+                        parent_query="Analyze cross-platform mobile app performance metrics">
+<capability_gap_analysis>
+Current system lacks specialized mobile app analytics capabilities. Existing web analytics and desktop monitoring tools cannot address mobile-specific performance metrics, cross-platform data collection, or mobile user behavior patterns.
+</capability_gap_analysis>
+
+<skill_proposals>
+<skill name="mobile_analytics" description="Unified cross-platform analytics collector for mobile app performance metrics including response times, crash rates, and resource utilization across iOS and Android platforms">
+  <tools>
+    <tool name="collect_metrics" description="Gather performance data from mobile applications"/>
+    <tool name="analyze_crashes" description="Analyze application crash reports and patterns"/>
+    <tool name="monitor_resources" description="Track CPU, memory, and network utilization"/>
+  </tools>
+  <permissions>network_access, user_consent</permissions>
+  <complexity>medium</complexity>
+</skill>
+
+<skill name="performance_monitor" description="Real-time mobile app performance tracking system with alerting and historical trend analysis">
+  <tools>
+    <tool name="real_time_monitoring" description="Continuous performance monitoring with alerting"/>
+    <tool name="historical_analysis" description="Long-term performance trend analysis"/>
+    <tool name="benchmark_comparison" description="Performance benchmarking against industry standards"/>
+  </tools>
+  <permissions>network_access, user_consent</permissions>
+  <complexity>high</complexity>
+</skill>
+
+<skill name="user_behavior" description="Mobile user interaction and behavioral analysis tools with session tracking and engagement metrics">
+  <tools>
+    <tool name="track_sessions" description="Track user session patterns and duration"/>
+    <tool name="analyze_interactions" description="Analyze user interaction patterns and flows"/>
+    <tool name="measure_engagement" description="Calculate engagement metrics and retention indicators"/>
+  </tools>
+  <permissions>user_consent</permissions>
+  <complexity>medium</complexity>
+</skill>
+
+<skill name="compliance_checker" description="Mobile app performance compliance validation framework for platform guidelines and regulatory requirements">
+  <tools>
+    <tool name="check_guidelines" description="Validate against iOS and Android platform guidelines"/>
+    <tool name="assess_regulations" description="Assess compliance with data protection regulations"/>
+    <tool name="generate_reports" description="Generate compliance and performance reports"/>
+  </tools>
+  <permissions>read, user_consent</permissions>
+  <complexity>low</complexity>
+</skill>
+</skill_proposals>
+
+<user_prompt>Which skills should be created to resolve this capability gap? Select multiple options. You can also modify skill descriptions before approval.</user_prompt>
+</skill_creation_request>
+```
+
+### User Interaction Options
+
+Users have multiple interaction options:
+
+```
+User Approval Options:
+├─ Approve Selected Skills → Generate skill.md files
+├─ Modify Proposals → Edit descriptions or parameters
+├─ Request Refinement → Ask for alternative proposals
+├─ Reject All → No skills created, gap remains
+└─ Defer Decision → Mark for later consideration
+```
+
+## Skill Integration Process
+
+### Skill File Generation
+
+Approved proposals are converted into complete skill.md files:
+
+```
+Skill Generation Process:
+├─ Extract approved proposal specifications
+├─ Generate complete skill.md structure
+├─ Create YAML frontmatter with tool definitions
+├─ Add markdown documentation sections
+├─ Validate schema and permissions
+└─ Generate unique skill IDs and metadata
+```
+
+### Generated Skill Example
+
+```markdown
+# Mobile Analytics
+
+## Description
+
+Unified cross-platform analytics collector for mobile app performance metrics including response times, crash rates, and resource utilization across iOS and Android platforms.
+
+## Tools
+
+### Performance Metrics Collection
+
+Collects comprehensive performance data from mobile applications with real-time monitoring and historical tracking.
+
+### Cross-Platform Analysis
+
+Analyzes performance across iOS and Android platforms with unified metrics and comparative analysis.
+
+### Resource Monitoring
+
+Tracks CPU usage, memory consumption, and network utilization patterns with alerting capabilities.
+```
+
+### Registry Integration
+
+New skills are automatically integrated into the Skills Registry:
+
+```
+Integration Workflow:
+├─ skill.md File Creation → Validation and Testing
+├─ Semantic Embedding Generation → Registry Addition
+├─ Tool Definition Cataloging → Capability Indexing
+├─ Permission Review → Security Approval
+└─ Immediate Availability → Runtime Discovery
+```
+
+## Success Metrics and Optimization
+
+### Skill Creation Success Metrics
+
+```
+Performance Indicators:
+├─ Gap Detection Accuracy: % of genuine gaps correctly identified
+├─ Proposal Quality: LLM proposal acceptance rate by users
+├─ User Approval Rate: % of proposed skills approved by users
+├─ Integration Success: % of approved skills successfully integrated
+├─ Capability Utilization: Usage frequency of created skills vs. system defaults
+└─ Resolution Improvement: Query resolution rate after skill integration
+```
+
+### Learning and Optimization
+
+The system learns from skill creation patterns to improve future proposals:
+
+```
+Learning Process:
+├─ Track user approval patterns and preferences
+├─ Analyze successful skill characteristics
+├─ Identify common rejection reasons
+├─ Refine proposal generation algorithms
+└─ Adapt gap detection thresholds
+```
+
+### Quality Improvement
+
+Continuous improvement mechanisms:
+
+```
+Quality Enhancement:
+├─ Proposal Validation Against Existing Skills
+├─ Implementation Feasibility Assessment
+├─ Security and Permission Review
+├─ User Feedback Integration
+└─ Performance Monitoring Post-Deployment
+```
+
+## Security Considerations
+
+### Approval Workflow Security
+
+Skill creation implements comprehensive security controls:
+
+```
+Security Controls:
+├─ User Authentication for Approval Decisions
+├─ Skill Content Validation and Scanning
+├─ Permission Manifest Review
+├─ Dependency Security Assessment
+└─ Audit Trail of All Creation Activities
+```
+
+### Generated Skill Validation
+
+All generated skills undergo security validation:
+
+```
+Validation Checklist:
+├─ Tool Schema Validation
+├─ Permission Appropriateness
+├─ Dependency Security Review
+├─ Implementation Safety Assessment
+└─ Malicious Content Detection
+```
+
+## Future Enhancements
+
+### Advanced Skill Creation
+
+Future capabilities will include:
+
+```
+Enhanced Creation Features:
+├─ Natural Language Skill Creation (plain English to skill.md)
+├─ Automatic Implementation Generation (code generation for tools)
+├─ Skill Composition (combining multiple skills into integrated workflows)
+├─ Adaptation Learning (user preference patterns affecting future proposals)
+└─ Collaborative Creation (shared skill libraries and community proposals)
+```
+
+### Intelligence Expansion
+
+The system will evolve toward more sophisticated capability development:
+
+```
+Evolution Path:
+├─ Predictive Gap Detection (anticipating future capability needs)
+├─ Automatic Skill Optimization (performance tuning of created skills)
+├─ Cross-Domain Skill Transfer (adapting skills for new use cases)
+├─ Skill Versioning and Evolution (automated skill improvement)
+└── Knowledge-Based Creation (leveraging evidence for skill design)
+```
+
+Skill Creation provides the foundation for truly adaptive AI systems that continuously evolve their capabilities based on user needs while maintaining security through user-controlled approval workflows, creating a self-improving ecosystem that grows more capable with each interaction.

@@ -1,0 +1,150 @@
+---
+archived: 2024-10-30
+reason: Content consolidated into new unified documentation
+consolidated_into: ClaimSchema.md + ClaimExamples.md
+migration_status: complete
+quality_note: Replaced by higher-quality unified documentation
+---
+
+# ClaimExample - Action-Result Demonstrations
+
+## Overview
+
+ClaimExample provides concrete demonstrations of actions and their results, showing how skills and concepts work in practice. Unlike skills that provide instructions, examples show the actual execution and outcomes, serving as "show me" demonstrations that bridge theory and real-world application.
+
+## Example Claim Structure
+
+```yaml
+claim:
+  id: c20241028_example_001
+  content: "Used grep -r 'def calculate_total\(' --include='*.py' ./src/ to find function definition, returned 3 matches at lines 45, 89, and 156 with full file paths and line numbers"
+  confidence: 0.95  # Accuracy and completeness of the demonstration
+  parents: [c20241028_skill_001]  # Skill that this example demonstrates
+  children: []  # Examples don't have children
+  tags: [example, grep, search, function-definition, result]
+  created: 2024-10-28T21:50:00Z
+```
+
+## Example Categories
+
+### 1. Command Execution Examples
+**Purpose**: Demonstrate tool usage with actual command outputs
+**Examples**:
+- **grep search**: Found function definitions with exact line numbers and file paths (0.3 seconds execution)
+- **git branching**: Created feature branch, made commits, resolved merge conflicts, completed merge
+- **file management**: Located large files (>100MB), freed 2.1GB by removing old backups
+
+### 2. Code Implementation Examples
+**Purpose**: Show actual code development with testing results
+**Examples**:
+- **Python function**: Implemented discount calculation with type hints, error handling, unit tests passed
+- **API endpoint**: Created Flask POST /api/users with validation, bcrypt hashing, Postman tested
+
+### 3. Data Analysis Examples
+**Purpose**: Demonstrate data processing workflows with measurable outcomes
+**Examples**:
+- **Data cleaning**: Processed 10,000 rows, removed duplicates, filled missing values, final 9,600 clean rows
+- **Statistical test**: t-test comparing groups (n=50 vs n=45), p=0.021, rejected null hypothesis
+
+### 4. Critical Thinking Examples
+**Purpose**: Show analytical reasoning and evaluation processes
+**Examples**:
+- **Fallacy detection**: Identified ad hominem attack in political debate, diverted from policy discussion
+- **Source evaluation**: Assessed health blog as unreliable due to lack of credentials, conflicts of interest
+
+### 5. Communication Examples
+**Purpose**: Demonstrate effective information sharing techniques
+**Examples**:
+- **Technical documentation**: API documentation with parameters, examples, error codes, positive team feedback
+- **Presentation**: 15-minute stakeholder update, 90% understanding survey result
+
+### 6. Troubleshooting Examples
+**Purpose**: Show problem-solving methodologies and resolution processes
+**Examples**:
+- **Python debugging**: Fixed IndexError by adding file existence check, now processes 500 records
+- **Network issues**: Resolved API timeout by configuring Google DNS, 200ms response time achieved
+
+## Example Quality Assessment
+
+### Confidence Indicators
+
+**Complete Demonstration (0.90-0.95)**: Full action sequence, actual results, error handling, verifiable outcomes
+- Examples: Command execution with output, code implementation with test results
+
+**Effective Demonstration (0.80-0.85)**: Clear action and result, good context, practical application
+- Examples: Data analysis workflow, documentation writing process
+
+**Partial Demonstration (0.70-0.75)**: Action shown but incomplete results, limited context
+- Examples: Initial code setup, high-level process overview
+
+**Illustrative Demonstration (0.60-0.65)**: Conceptual example, simplified scenario, educational focus
+- Examples: Basic command usage, simple code snippet
+
+### Effective Example Structure
+
+1. **Context**: Problem situation, environment, tools, initial conditions
+2. **Action**: Specific commands/steps taken, code implemented, decisions made
+3. **Result**: Actual output achieved, performance metrics, success verification
+4. **Insights**: Lessons learned, unexpected results, improvements made
+
+## Integration with Learning Process
+
+### Example-Skill-Concept Learning Chain
+
+Complete learning progression from theory to practice:
+1. **Concept understanding**: "Learn what grep does"
+2. **Skill acquisition**: "Study comprehensive grep usage instructions"
+3. **Example observation**: "See grep used to find function definitions with actual output"
+4. **Practical application**: "Use grep independently to solve real search problems"
+
+### Example Variations
+
+**Success Examples**: Show correct implementation and desired outcomes
+**Troubleshooting Examples**: Demonstrate problem-solving and error resolution
+**Comparison Examples**: Compare different approaches or methods
+**Edge Case Examples**: Handle unusual situations or boundary conditions
+
+## Best Practices
+
+### Example Creation Guidelines
+- **Specificity**: Include exact commands, code, and measurable results
+- **Context**: Provide enough background for understanding the scenario
+- **Authenticity**: Use real-world situations rather than artificial examples
+- **Completeness**: Show the full action sequence from start to finish
+- **Verification**: Include evidence that the example actually works
+
+### Confidence Assignment Criteria
+- **0.90-0.95**: Complete, verifiable demonstrations with actual results and error handling
+- **0.80-0.85**: Clear examples with good context and practical outcomes
+- **0.70-0.75**: Useful demonstrations with some limitations or simplifications
+- **0.60-0.65**: Basic examples suitable for learning but limited real-world application
+
+### Tag Strategy
+**Primary classification**: Always include [example]
+**Domain categorization**: [example, technical, analytical, communication, troubleshooting]
+**Specific technology**: [example, python, git, statistics, writing]
+**Example type**: [example, success-story, troubleshooting, comparison, edge-case]
+
+## Example Examples by Domain
+
+### Technical Examples
+- **Command-line tools**: grep, find, git, awk, sed with actual outputs
+- **Programming**: Function implementation, API development, debugging sessions
+- **System administration**: Server configuration, network troubleshooting, performance tuning
+
+### Analytical Examples
+- **Data science**: Statistical analysis, machine learning, data visualization
+- **Research**: Literature review, experimental design, result interpretation
+- **Business analysis**: Market research, financial modeling, strategic planning
+
+### Communication Examples
+- **Documentation**: API specs, user guides, technical manuals
+- **Presentations**: Stakeholder updates, training sessions, conference talks
+- **Knowledge transfer**: Mentoring, teaching, training development
+
+### Problem-Solving Examples
+- **Debugging**: Code issues, system failures, performance problems
+- **Optimization**: Performance tuning, efficiency improvements, resource management
+- **Decision making**: Risk assessment, option evaluation, outcome prediction
+
+ClaimExample provides the concrete demonstrations that make skills and concepts tangible, showing exactly how actions produce results in real-world scenarios and serving as essential reference points for learning and application.

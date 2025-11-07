@@ -1,0 +1,170 @@
+---
+archived: 2024-10-30
+reason: Content consolidated into new unified documentation
+consolidated_into: SystemArchitecture.md
+migration_status: complete
+quality_note: Replaced by higher-quality unified documentation
+---
+
+# Conjecture Architecture Overview
+
+## Executive Summary
+
+Conjecture reimagines AI agent systems by replacing conversational memory with evidence-based reasoning, enabling reliable intelligence that grows stronger with each interaction rather than fading over time. The architecture transforms how agents understand context, discover capabilities, and execute actions through semantic intelligence rather than conversation history.
+
+## Core Philosophy
+
+### Evidence Over Conversation
+
+Traditional AI systems operate like conversation - maintaining linear dialogue history that becomes fuzzy, fragmented, and eventually lost. Conjecture operates like research - building a cumulative evidence base where every claim remains traceable to sources and confidence scores.
+
+**Before**: "I remember we discussed this last week, but I'm not sure about the details..."
+**After**: "Based on 3 peer-reviewed studies from 2022-2024, with confidence scores of 0.85-0.90..."
+
+### Self-Improving Capabilities
+
+Instead of fixed tool sets, Conjecture continuously expands its capabilities through semantic discovery and user-guided creation. When the system encounters needs beyond current capabilities, it automatically proposes new skills and integrates them into the ecosystem.
+
+### Semantic Intelligence Over Rigid Automation
+
+Rather than predefined workflows and manual configuration, Conjecture leverages semantic understanding to dynamically match needs to capabilities. The system understands intent through conceptual similarity rather than keyword matching.
+
+## Architectural Vision
+
+### Three-Layer Semantic Intelligence
+
+```
+┌─ Evidence Layer (ContextMap)      ← Persistent claims with confidence
+├─ Capability Layer (Skills)         ← Self-describing capabilities
+└─ Processing Layer (SemanticRecall) ← Intelligent semantic orchestration
+```
+
+Each layer operates independently through well-defined interfaces while contributing to a cohesive semantic intelligence engine.
+
+### Stateless Processing with Persistent Evidence
+
+Every request processes independently based on current evidence state, not conversation history. This enables reliable, predictable behavior while maintaining deep contextual understanding through persistent claims and resolution tracking.
+
+## Core Design Principles
+
+### 1. Simplicity Through Single-File Design
+
+Skills exist as single markdown files with YAML frontmatter and semantic descriptions, eliminating complex multi-file packages while maintaining rich functionality.
+
+### 2. Evidence-Based Decisions
+
+All system reasoning traces back to specific claims with confidence scores and source provenance, eliminating hallucination and speculation.
+
+### 3. Permission-Aware Execution
+
+Capabilities declare required permissions upfront, with user consent workflows for sensitive operations like file modifications or skill creation.
+
+### 4. Resource-Constrained Intelligence
+
+Operations operate under strict limits (20 queries per response, 500MB database) with intelligent pruning to maintain efficiency without sacrificing capability.
+
+### 5. Self-Expanding Capabilities
+
+The system automatically detects capability gaps and proposes new skills, continuously improving while maintaining user control.
+
+## Key Innovations
+
+### Claims-Based Knowledge Management
+
+Traditional systems store "facts" or "knowledge" as absolute truths. Conjecture stores "claims" with inherent uncertainty, enabling nuanced reasoning where confidence matters as much as content.
+
+### Resolution Statement Context
+
+Instead of conversation compression with semantic drift, Conjecture uses resolution statements - structured milestones that document progress and provide focused context without losing precision.
+
+### Semantic Skill Discovery
+
+Capabilities are discovered through semantic similarity, not manual registration. The system understands what skills do through natural language descriptions and matches them to needs automatically.
+
+### Streaming Tool Processing
+
+Tool responses process in chunks with note-taking, enabling handling of large responses without context window limits while preserving critical insights like "what NOT to do" warnings.
+
+## Business Value
+
+### Reliability Through Evidence
+
+Every conclusion can be traced to specific sources with confidence scores, eliminating the "AI hallucination" problem that plagues traditional systems.
+
+### Continuous Improvement
+
+The system becomes more capable over time through skill gap detection and user-guided capability expansion, adapting to evolving needs without manual reconfiguration.
+
+### Operational Efficiency
+
+Stateless processing with resource constraints ensures predictable performance and costs, while semantic matching eliminates manual tool routing and configuration overhead.
+
+### User Empowerment
+
+Permission-aware execution with user consent gives users control over sensitive operations while maintaining system autonomy for routine tasks.
+
+## Technical Benefits
+
+### Scalable Architecture
+
+Each layer scales independently: evidence storage through efficient vector operations, capabilities through semantic registries, and processing through intelligent resource management.
+
+### Maintainable Design
+
+Single-file skills, clear layer boundaries, and structured interfaces create a system that's easy to understand, modify, and extend.
+
+### Robust Error Handling
+
+Multiple fallback strategies, permission frameworks, and recovery mechanisms ensure reliable operation even when individual components fail.
+
+### Developer Experience
+
+Natural language skill creation, semantic discovery, and clear documentation make it easy for developers to extend capabilities without deep technical expertise.
+
+## Use Cases Enabled
+
+### Research Assistance
+
+Automatically gather evidence from multiple sources, resolve contradictions through confidence scoring, and maintain traceable research hypotheses.
+
+### Business Intelligence
+
+Continuously improve analytical capabilities by automatically detecting data analysis gaps and creating appropriate skills with user approval.
+
+### System Management
+
+Expand administrative capabilities dynamically as new infrastructure requirements emerge, with permission controls ensuring security.
+
+### Knowledge Management
+
+Build cumulative expertise bases that grow stronger with each interaction, maintaining access to historical insights without conversation drift.
+
+## Future Evolution
+
+The architecture anticipates several evolution paths:
+
+### Advanced Skill Composition
+Future versions will support combining multiple skills into complex workflows, enabling sophisticated multi-step operations.
+
+### Natural Language Skill Creation
+AI-assisted skill generation from plain language descriptions will further democratize capability development.
+
+### Enhanced Semantic Understanding
+Improved semantic models will enable more nuanced capability matching and claim validation.
+
+### Distributed Processing
+The modular architecture supports 分布式部署 for large-scale implementations.
+
+## Success Metrics
+
+Success is measured through:
+
+- **Evidence Accuracy**: Percentage of conclusions traceable to high-confidence sources
+- **Capability Coverage**: Rate of successful skill gap detection and user-approved creations
+- **Operational Efficiency**: Query processing time and resource utilization within constraints
+- **User Satisfaction**: Permission request approval rates and system reliability metrics
+
+Conjecture represents a fundamental shift from conversation-based AI to evidence-based intelligent systems, providing a foundation for reliable, self-improving agent capabilities that scale with user needs while maintaining transparency and control.
+```
+
+Now let me create theEvidence Management document that combines ContextMap functionality:

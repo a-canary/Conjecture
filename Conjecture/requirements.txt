@@ -1,0 +1,5 @@
+chromadb==0.4.15
+pydantic==2.5.2
+faiss-cpu
+sentence-transformers
+numpy

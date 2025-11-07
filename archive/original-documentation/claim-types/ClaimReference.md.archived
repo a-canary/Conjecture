@@ -1,0 +1,135 @@
+---
+archived: 2024-10-30
+reason: Content consolidated into new unified documentation
+consolidated_into: ClaimSchema.md + ClaimExamples.md
+migration_status: complete
+quality_note: Replaced by higher-quality unified documentation
+---
+
+# Reference Claims - Source Provenance and Citations
+
+## Overview
+
+Reference claims provide source provenance and citation information, replacing direct URL linking with structured claim-based referencing. Unlike other claim types, references serve as evidence sources where confidence indicates source quality and methodology reliability.
+Reference claims provide source provenance where confidence directly represents source quality and reliability. Unlike other claim types, references focus on documenting where information comes from rather than what the information is.
+
+## Reference Claim Structure
+
+```yaml
+claim:
+  id: c20241028_ref_001
+  content: "Nature Climate Change, 2024. 'Ocean Warming and Coral Bleaching: Meta-Analysis of Global Data.' Dr. Sarah Chen et al."
+  confidence: 0.95  # Peer-reviewed journal
+  parents: []  # References don't have parent claims - they are sources
+  children: [c20241028_concept_001, c20241028_thesis_001]  # Claims that use this reference
+  tags: [reference, peer-reviewed, journal, climate-science, ocean-studies]
+  created: 2024-10-28T21:50:00Z
+```
+
+## Confidence as Source Quality Assessment
+
+### Primary Sources (0.95) - Gold Standard
+- **Peer-reviewed journals**: Nature, Science, New England Journal of Medicine
+- **International consensus reports**: IPCC assessments, United Nations reports
+- **Large-scale validated studies**: Multi-million patient population studies
+- **Government standards**: Official regulatory guidelines and statistics
+
+### Validated Sources (0.85) - High Quality with External Verification
+- **Official data sources**: World Bank, International Energy Agency data
+- **Reputable consulting research**: McKinsey, Gartner studies with external citations
+- **Government agency reports**: EPA, CDC, NIH official publications
+- **Industry standards bodies**: IEEE, ISO, W3C specifications
+
+### Credible Sources (0.70) - Reputable with Supporting Evidence
+- **Industry publications**: TechCrunch, Wired, The Economist with data sources
+- **Academic preprints**: arXiv, bioRxiv with methodology descriptions
+- **Professional associations**: American Medical Association, IEEE publications
+- **Think tank research**: Brookings, Pew Research with transparent methods
+
+### Unverified Sources (0.30) - Claims Without Supporting Evidence
+- **Personal blogs and social media**: Individual experiences without verification
+- **Anonymous sources**: Unattributed claims or insider information
+- **Forum discussions**: Community posts without expert validation
+- **Opinion pieces**: Editorial content without supporting data
+
+### Assumptions (0.10-0.20) - Common Beliefs for Investigation
+- **Industry folklore**: Frequently repeated but unverified claims
+- **Common misconceptions**: Widely believed but incorrect statements
+- **Hypothetical scenarios**: Assumptions used as research starting points
+- **Cultural beliefs**: Traditional wisdom requiring empirical validation
+
+## Reference Types and Categories
+
+### Academic Sources
+- **Peer-reviewed articles**: Highest confidence (0.95)
+- **Conference proceedings**: High confidence (0.90)
+- **Academic preprints**: Medium confidence (0.75)
+
+### Government and International Organizations
+- **Official government reports**: High confidence (0.90-0.95)
+- **International organization data**: Highest confidence (0.95)
+- **Regulatory standards**: High confidence (0.85-0.90)
+
+### Industry and Commercial Sources
+- **SEC-filed documents**: High confidence (0.85)
+- **Industry analyst research**: Medium-high confidence (0.80)
+- **Company white papers**: Medium confidence (0.70)
+
+### Media and Publications
+- **Investigative journalism**: Medium-high confidence (0.75)
+- **Survey-based reporting**: Medium confidence (0.70)
+- **Opinion and editorial**: Low-medium confidence (0.50-0.60)
+
+## Reference Quality Assessment
+
+### Source Evaluation Criteria
+- **Peer review (30% weight)**: Formal validation process
+- **Methodology (25% weight)**: Clear research methods and data sources
+- **Author credibility (20% weight)**: Expertise and institutional affiliation
+- **Publication reputation (15% weight)**: Publisher/journal impact factor
+- **Recency (10% weight)**: Publication date relevance to field
+
+### Confidence Calculation Examples
+- **High confidence (0.93)**: Nature article + Harvard authors + clinical trial methodology
+- **Medium confidence (0.68)**: Company white paper + clear methods + industry experts
+
+## Reference Integration Patterns
+
+### Multiple Source Support
+Concepts gain higher confidence when supported by multiple independent sources:
+- Single high-quality source: 0.75-0.85 confidence
+- Multiple corroborating sources: 0.85-0.95 confidence
+- Conflicting sources: Moderate confidence with conflict acknowledgment
+
+### Contradictory Sources
+When sources conflict:
+- Document the contradiction clearly
+- Assign moderate confidence (0.60-0.70)
+- Identify research gaps for resolution
+- Use higher confidence sources preferentially
+
+### Source Versioning
+Maintain reference currency through:
+- Superseded relationships for outdated sources
+- Updated references with newer data
+- Clear version tracking and timestamps
+- Migration paths from old to new sources
+
+## Best Practices
+
+### Reference Documentation
+- **Complete citation**: All necessary verification information
+- **Access information**: URLs, DOIs, or access methods
+- **Publication details**: Date, publisher, metadata
+- **Author credentials**: Expertise and affiliations
+
+### Tag Strategy
+**Primary classification**: Always include [reference]
+**Quality level**: [reference, primary/validated/credible/unverified/assumption]
+**Source type**: [reference, academic/government/industry/media]
+**Specific domain**: [reference, peer-reviewed/official/commercial/journalism]
+
+### Quality Assessment Example
+High-quality reference includes: peer-reviewed publication, reputable journal, qualified authors, DOI access, available data, transparent methodology, recent publication.
+
+Reference claims provide the foundation of evidence-based reasoning by maintaining complete source provenance and reliability assessment, enabling Conjecture to trace every conclusion back to verifiable sources with clear confidence indicators.
