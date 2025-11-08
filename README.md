@@ -1,118 +1,30 @@
-# Conjecture
+# Conjecture - Evidence-Based AI Reasoning System
 
-**Evidence-Based AI Reasoning System**
+## Overview
 
-> *"Maximum power through minimum complexity"* - Richard Feynman
+Conjecture is an evidence-based AI reasoning system that enables exploration and validation of knowledge claims through vector similarity search and LLM processing. The project provides a sophisticated yet elegant architecture for managing claims, their relationships, and their validation through semantic search and AI processing.
 
-Conjecture is a sophisticated evidence-based AI reasoning system that validates knowledge claims through iterative research and confidence scoring. Unlike traditional task-completion agents, Conjecture focuses on epistemic rigor and evidence validation.
+## Quick Start
 
-## 🎯 Core Philosophy
-
-Conjecture embodies a fundamentally different paradigm for knowledge-based AI systems:
-
-- **Validation-Centric**: Focus on evidence validation rather than task completion
-- **Evidence-External**: Confidence from external evidence, not internal model certainty
-- **State-Driven**: Processing behavior determined by claim states and confidence thresholds
-- **Relationship-First**: Knowledge graph structure is primary, not secondary
-- **Anti-Complexity**: Actively resists unnecessary complexity
-- **Unified Model**: Everything is a claim - no separate data structures
-
-## 🏗️ Architecture Overview
-
-### Core Components
-
-1. **Claim Management**: Unified claim model with confidence scoring
-2. **Skill-Based Agency**: LLM instruction through `type.skill` and `type.example` claims
-3. **Multi-Session Architecture**: Isolated sessions with shared persistent storage
-4. **Trustworthiness Validation**: Web content author trust assessment system
-5. **Contradiction Detection**: Automated conflict detection and intelligent merging
-
-### Multi-Modal Interfaces
-
-- **TUI**: Rich terminal interface for keyboard-driven interaction
-- **CLI**: Command-line interface for automation and scripting
-- **MCP**: Model Context Protocol for AI assistant integration
-- **WebUI**: Browser-based interface for collaborative features
-
-## 🚀 Key Features
-
-### Evidence-Based Reasoning
-- All claims start "dirty" and must earn confidence through evidence
-- Multi-cycle processing until confidence threshold (≥95%) achieved
-- Structured evidence hierarchies with bidirectional support relationships
-
-### Skill-Based Agency
-- `type.skill` claims instruct LLM how to perform specific actions
-- `type.example` claims show proper tool response formatting
-- Tool call reflection and example claim creation
-- Custom-tailored agent prompts for each evaluation
-
-### Advanced Knowledge Management
-- Confidence propagation through support relationships
-- Dirty flag cascading to related claims
-- Intelligent claim merging and contradiction resolution
-- Persistent trustworthiness validation
-
-## 📁 Project Structure
-
-```
-Conjecture/
-├── specs/                    # Complete specification documents
-│   ├── design.md            # Core architecture and system design
-│   ├── interface_design.md  # Multi-modal interface patterns
-│   ├── phases.md            # Development roadmap
-│   └── requirements.md      # Functional and non-functional requirements
-├── src/                     # Source code implementation
-│   ├── core/                # Core models and embedding methods
-│   ├── config/              # Configuration system
-│   ├── processing/          # LLM processing interfaces
-│   └── ui/                  # Terminal user interface
-├── tests/                   # Comprehensive test suite
-├── docs/                    # Documentation and guides
-└── archive/                 # Archived documentation
-```
-
-## 🛠️ Development Status
-
-### Current Phase: Specification Complete ✅
-- ✅ Complete specification documents with skill-based agency architecture
-- ✅ Multi-modal interface design (TUI, CLI, MCP, WebUI)
-- ✅ Core claim models and processing frameworks
-- ✅ Comprehensive evaluation and testing frameworks
-
-### Next Steps
-1. **Phase 1**: Core Foundation - Unified claim model and database layer
-2. **Phase 2**: Skill-Based Agency - LLM instruction and tool execution
-3. **Phase 3**: Interface Implementation - Multi-modal interface development
-4. **Phase 4**: Trustworthiness System - Source validation and confidence scoring
-
-## 📋 Requirements
-
-### System Requirements
+### Prerequisites
 - Python 3.8+
-- Git for version control
-
-### Dependencies
-See `Conjecture/requirements.txt` for complete dependency list:
-- Pydantic v2.5.2+ for data validation
-- ChromaDB v0.4.15+ for vector database
-- Sentence Transformers for embeddings
-- Google Generative AI for LLM integration
-
-## 🚀 Quick Start
+- Required packages per `requirements.txt`
 
 ### Installation
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd Conjecture
+pip install -r requirements.txt
+```
 
-# Install dependencies
-pip install -r Conjecture/requirements.txt
+### Running Tests
+```bash
+# Run all tests
+python -m pytest tests/
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your API keys and configuration
+# Run specific test files
+python tests/test_models.py
+python tests/test_data_layer.py
+python tests/test_processing_layer.py
+python tests/test_data_layer_complete.py
 ```
 
 ### Basic Usage
@@ -122,65 +34,89 @@ from src.contextflow import Conjecture
 # Initialize with default configuration
 cf = Conjecture()
 
-# Start a new session with root claim
-session = cf.start_session("US policies based on the Books of Acts from the NSRV Bible")
-
-# Let the system evaluate and build evidence
-result = session.run_until_confident(threshold=0.95)
+# Explore claims related to a topic
+result = cf.explore("machine learning", max_claims=5)
 print(result.summary())
+
+# Add a new claim
+claim = cf.add_claim(
+    content="Machine learning algorithms require substantial training data",
+    confidence=0.85,
+    claim_type="concept",
+    tags=["ml", "data"]
+)
 ```
 
-## 📚 Documentation
+## Project Structure
 
-- **[Specifications](Conjecture/specs/)**: Complete technical specifications
-- **[Architecture](docs/SystemArchitecture.md)**: System architecture overview
-- **[Claim Processing](docs/ClaimProcessing.md)**: Claim evaluation workflow
-- **[Research Reports](ContextFlow_Research_Recommendations_2025.md)**: Latest AI research integration
-
-## 🧪 Testing
-
-Run the complete test suite:
-```bash
-# Run all tests
-python -m pytest tests/
-
-# Run specific test files
-python tests/test_models.py
-python tests/test_data_layer.py
-python tests/test_processing_layer.py
+```
+Conjecture/
+├── specs/                 # 📋 Finalized specifications (authoritative)
+│   ├── design.md         # Complete system architecture
+│   ├── requirements.md   # Comprehensive requirements
+│   ├── phases.md         # Development roadmap
+│   └── interface_design.md # Interface specifications
+├── src/                  # 💻 Source code implementation
+│   ├── config/          # Configuration system
+│   ├── core/            # Core models and business logic
+│   ├── data/            # Data handling and storage
+│   ├── processing/      # LLM processing interfaces
+│   ├── ui/              # User interface components
+│   ├── utils/           # Utility functions
+│   └── contextflow.py   # Main API interface
+├── tests/               # 🧪 Test suite
+├── demo/                # 🎯 Example implementations
+├── data/                # 📊 Data storage (git-ignored)
+├── archive/             # 📦 Archived documentation
+├── requirements.txt     # 📦 Dependencies
+└── README.md           # 📖 This file
 ```
 
-## 🤝 Contributing
+## Key Features
 
-Conjecture follows evidence-based development practices:
+- **Claim Management**: Robust Pydantic-based models for representing knowledge claims
+- **Vector Database Integration**: Support for ChromaDB and FAISS for semantic similarity search
+- **LLM Integration**: Flexible interface for AI processing with Gemini API support
+- **Multi-Modal Interface**: TUI, CLI, MCP, and WebUI support planned
+- **Dirty Flag Evaluation**: Automated claim re-evaluation with confidence-based prioritization
 
-1. **All changes start as claims** with confidence scores
-2. **Changes must earn confidence** through testing and validation
-3. **Documentation is evidence** for architectural decisions
-4. **Simplicity is valued** over complexity (Feynman principle)
+## Development Status
 
-### Development Workflow
-1. Create feature branch from main
-2. Implement changes with comprehensive tests
-3. Update documentation and specifications
-4. Submit pull request with evidence-based justification
+**Phase**: Core Foundation (Weeks 1-2)  
+**Status**: Ready for implementation  
+**Specifications**: Complete and finalized in `specs/` folder
 
-## 📄 License
+## Environment Variables
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Configure the system using environment variables:
+- `Conjecture_DB_PATH`: Database file path
+- `Conjecture_DB_TYPE`: Database type (file, chroma, mock)
+- `Conjecture_CONFIDENCE`: Confidence threshold
+- `Conjecture_MAX_CONTEXT`: Maximum context size
+- `Conjecture_BATCH_SIZE`: Exploration batch size
+- `Conjecture_EMBEDDING_MODEL`: Embedding model name
+- `Conjecture_LLM_API_KEY`: LLM API key (enables LLM features)
+- `Conjecture_LLM_MODEL`: LLM model name
+- `Conjecture_DEBUG`: Debug mode
 
-## 🙏 Acknowledgments
+## Documentation
 
-- **Richard Feynman**: For the principle of "maximum power through minimum complexity"
-- **Evidence-Based AI Community**: For research and insights into validation systems
-- **Open Source Contributors**: For tools and frameworks that make this project possible
+### Current Specifications (Authoritative)
+- **[System Design](specs/design.md)** - Complete architecture and component design
+- **[Requirements](specs/requirements.md)** - Comprehensive requirements and use cases
+- **[Development Phases](specs/phases.md)** - Implementation roadmap and milestones
+- **[Interface Design](specs/interface_design.md)** - Multi-modal interface specifications
 
-## 📞 Contact
+### Archived Documentation
+Historical documentation and research materials are available in the `archive/` folder. See `archive/stored-2025-01-07.md` for a detailed inventory of archived content and its potential value.
 
-- **Project Issues**: [GitHub Issues](https://github.com/your-org/conjecture/issues)
-- **Documentation**: [Project Wiki](https://github.com/your-org/conjecture/wiki)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/conjecture/discussions)
+## Contributing
 
----
+1. Review the specifications in `specs/` folder
+2. Follow the development phases outlined in `specs/phases.md`
+3. Ensure all tests pass before submitting changes
+4. Update documentation as needed
 
-**Conjecture**: Where evidence meets intelligence, and simplicity enables sophistication.
+## License
+
+See [LICENSE](LICENSE) file for details.
