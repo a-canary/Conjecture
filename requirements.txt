@@ -3,3 +3,5 @@ pydantic==2.5.2
 faiss-cpu
 sentence-transformers
 numpy
+aiosqlite>=0.19.0
+python-dotenv>=1.0.0
