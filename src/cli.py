@@ -42,7 +42,7 @@ class ConjectureCLI:
         """Initialize the data manager."""
         self.data_manager = get_data_manager(self.config, self.use_mock)
         await self.data_manager.initialize()
-        print(f"✅ Data layer initialized (mock={self.use_mock})")
+        print(f"[OK] Data layer initialized (mock={self.use_mock})")
         print(f"   SQLite: {self.config.sqlite_path}")
         print(f"   ChromaDB: {self.config.chroma_path}")
         print(f"   Embedding model: {self.config.embedding_model}")
@@ -51,7 +51,7 @@ class ConjectureCLI:
         """Clean up resources."""
         if self.data_manager:
             await self.data_manager.close()
-            print("✅ Data layer closed")
+            print("[OK] Data layer closed")
     
     async def create_claim(self, content: str, user: str, confidence: float = 0.5, 
                           tags: List[str] = None, dirty: bool = True) -> Claim:
@@ -71,7 +71,7 @@ class ConjectureCLI:
             print(f"   Dirty: {claim.dirty}")
             return claim
         except Exception as e:
-            print(f"❌ Failed to create claim: {e}")
+            print(f"[ERROR] Failed to create claim: {e}")
             raise
     
     async def get_claim(self, claim_id: str) -> Claim:

@@ -225,9 +225,9 @@ def test_gemini_integration():
     print(f"Testing Gemini API {version}...")
 
     try:
-        # Check for API key from project context
+        # Check for API key from environment variables
         api_keys = {
-            "gemini": "[REDACTED_API_KEY]",
+            "gemini": os.getenv("GEMINI_API_KEY"),
         }
 
         if api_keys["gemini"]:

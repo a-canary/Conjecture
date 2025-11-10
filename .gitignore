@@ -181,6 +181,16 @@ data/
 .env.production
 config/secrets.yaml
 api_keys.txt
+*.key
+*.pem
+*.p12
+*.pfx
+
+# API key patterns (additional protection)
+*api_key*
+*secret*
+*credential*
+*token*
 
 # Model files and embeddings
 *.pkl
