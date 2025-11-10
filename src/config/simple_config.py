@@ -7,6 +7,14 @@ import os
 from pathlib import Path
 from typing import Any, Dict
 
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # dotenv not available, use system environment only
+    pass
+
 
 class Config:
     """
@@ -26,15 +34,19 @@ class Config:
         self.max_context_size = int(os.getenv("Conjecture_MAX_CONTEXT", "10"))
         self.exploration_batch_size = int(os.getenv("Conjecture_BATCH_SIZE", "10"))
 
-        # === Optional Advanced Settings (4 items) ===
+        # === Optional Advanced Settings (6 items) ===
         self.embedding_model = os.getenv(
             "Conjecture_EMBEDDING_MODEL", "all-MiniLM-L6-v2"
         )
+        
+        # LLM Provider Configuration
+        self.llm_provider = os.getenv("Conjecture_LLM_PROVIDER", "chutes")
+        self.llm_api_url = os.getenv("Conjecture_LLM_API_URL", "https://llm.chutes.ai/v1")
         self.llm_enabled = bool(
             os.getenv("Conjecture_LLM_API_KEY")
         )  # Auto-detect if API key exists
         self.llm_model = os.getenv(
-            "Conjecture_LLM_MODEL", "gpt-3.5-turbo" if self.llm_enabled else None
+            "Conjecture_LLM_MODEL", "zai-org/GLM-4.6-turbo" if self.llm_enabled else None
         )
 
         # === Development Settings (1 item) ===
@@ -142,7 +154,7 @@ def validate_config() -> bool:
 
 def print_config_summary():
     """Print a summary of current configuration"""
-    print("📋 Conjecture Configuration Summary")
+    print("[CONFIG] Conjecture Configuration Summary")
     print("=" * 40)
     print(f"Database Type: {config.database_type}")
     print(f"Database Path: {config.database_path}")
@@ -152,7 +164,9 @@ def print_config_summary():
     print(f"Embedding Model: {config.embedding_model}")
     print(f"LLM Enabled: {'Yes' if config.llm_enabled else 'No'}")
     if config.llm_enabled:
+        print(f"LLM Provider: {config.llm_provider}")
         print(f"LLM Model: {config.llm_model}")
+        print(f"LLM API URL: {config.llm_api_url}")
     print(f"Debug Mode: {'On' if config.debug else 'Off'}")
     print(f"Data Directory: {config.data_dir}")
     print()
