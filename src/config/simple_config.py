@@ -145,10 +145,10 @@ def validate_config() -> bool:
         if config.llm_enabled:
             assert config.llm_model is not None
 
-        print("✅ Configuration validation: PASS")
+        print("[OK] Configuration validation: PASS")
         return True
     except Exception as e:
-        print(f"❌ Configuration validation failed: {e}")
+        print(f"[ERROR] Configuration validation failed: {e}")
         return False
 
 
@@ -173,11 +173,11 @@ def print_config_summary():
 
 
 if __name__ == "__main__":
-    print("🧪 Testing Simplified Configuration")
+    print("[TEST] Testing Simplified Configuration")
     print("=" * 40)
 
     if validate_config():
         print_config_summary()
-        print("🎉 Configuration validation passed!")
+        print("[SUCCESS] Configuration validation passed!")
     else:
-        print("❌ Configuration validation failed")
+        print("[ERROR] Configuration validation failed")

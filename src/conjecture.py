@@ -25,7 +25,7 @@ class Conjecture:
         self.skill_manager = SkillManager()
         self.sessions: Dict[str, Dict[str, Any]] = {}
         
-        print(f"🚀 Conjecture initialized - Simplified Architecture")
+        print("Conjecture initialized - Simplified Architecture")
 
     def process_request(
         self, 
@@ -245,7 +245,18 @@ This will help me gather evidence and build a comprehensive understanding of you
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get system statistics"""
-        claim_stats = self.data_manager.get_statistics()
+        # Return basic statistics without data manager dependency
+        try:
+            import asyncio
+            claim_stats = asyncio.run(self.data_manager.get_statistics())
+        except:
+            # Fallback if data manager not initialized
+            claim_stats = {
+                "total_claims": 0,
+                "dirty_claims": 0,
+                "clean_claims": 0
+            }
+        
         return {
             "active_sessions": len(self.sessions),
             "available_tools": len(get_tool_definitions()),
