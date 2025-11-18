@@ -1,412 +1,622 @@
 """
-Tool System for the Conjecture skill-based agency system.
-Manages dynamic Python function tools with security and resource limitations.
+Dynamic Tool Creation System
+Allows LLM to discover, create, and validate tools dynamically
 """
-import os
-import sys
-import importlib.util
-import inspect
+
+import asyncio
 import ast
+import os
 import tempfile
-import shutil
-from typing import Dict, List, Any, Optional, Callable, Tuple
+from typing import Dict, List, Any, Optional, Tuple
+from datetime import datetime
 from pathlib import Path
 import logging
 import hashlib
 
-from .tool_executor import ExecutionLimits, SecurityValidator
+from core.unified_models import Claim, ClaimType, ClaimState
+from processing.llm_bridge import LLMBridge, LLMRequest
+
+# Try to import tools, but handle gracefully if not available
+try:
+    from tools.webSearch import WebSearch
+    from tools.readFiles import ReadFiles
+except ImportError:
+    WebSearch = None
+    ReadFiles = None
 
 
-logger = logging.getLogger(__name__)
+class ToolValidator:
+    """Validates tool security and functionality"""
 
-
-class Tool:
-    """Represents a dynamically loaded Python tool."""
-    
-    def __init__(self, name: str, file_path: str, function: Callable, 
-                 description: str = "", version: str = "1.0.0"):
-        self.name = name
-        self.file_path = file_path
-        self.function = function
-        self.description = description
-        self.version = version
-        self.signature = inspect.signature(function)
-        self.parameters = self._extract_parameters()
-        self.return_type = self._extract_return_type()
-        self.created_at = Path(file_path).stat().st_mtime if os.path.exists(file_path) else None
-        self.execution_count = 0
-        self.success_count = 0
-    
-    def _extract_parameters(self) -> Dict[str, Dict[str, Any]]:
-        """Extract parameter information from function signature."""
-        parameters = {}
-        
-        for param_name, param in self.signature.parameters.items():
-            param_info = {
-                'name': param_name,
-                'required': param.default == inspect.Parameter.empty,
-                'default': param.default if param.default != inspect.Parameter.empty else None,
-                'type_hint': str(param.annotation) if param.annotation != inspect.Parameter.empty else 'any'
-            }
-            parameters[param_name] = param_info
-        
-        return parameters
-    
-    def _extract_return_type(self) -> str:
-        """Extract return type from function signature."""
-        if self.signature.return_annotation == inspect.Signature.empty:
-            return 'any'
-        return str(self.signature.return_annotation)
-    
-    def validate_parameters(self, params: Dict[str, Any]) -> Tuple[bool, List[str]]:
-        """Validate parameters against function signature."""
-        errors = []
-        
-        # Check required parameters
-        required_params = {name for name, info in self.parameters.items() if info['required']}
-        provided_params = set(params.keys())
-        
-        missing = required_params - provided_params
-        for param in missing:
-            errors.append(f"Missing required parameter: {param}")
-        
-        # Check unknown parameters
-        unknown = provided_params - set(self.parameters.keys())
-        for param in unknown:
-            errors.append(f"Unknown parameter: {param}")
-        
-        # Type validation (basic)
-        for param_name, param_value in params.items():
-            if param_name in self.parameters:
-                param_info = self.parameters[param_name]
-                # Basic type checking could be enhanced here
-                if param_info['type_hint'] != 'any':
-                    # For now, just ensure the value exists
-                    if param_value is None and param_info['required']:
-                        errors.append(f"Parameter {param_name} cannot be None")
-        
-        return len(errors) == 0, errors
-    
-    async def execute(self, parameters: Dict[str, Any]) -> Any:
-        """Execute the tool with given parameters."""
-        try:
-            # Validate parameters
-            is_valid, errors = self.validate_parameters(parameters)
-            if not is_valid:
-                raise ValueError(f"Parameter validation failed: {'; '.join(errors)}")
-            
-            # Execute the function
-            if inspect.iscoroutinefunction(self.function):
-                result = await self.function(**parameters)
-            else:
-                result = self.function(**parameters)
-            
-            # Update statistics
-            self.execution_count += 1
-            self.success_count += 1
-            
-            return result
-            
-        except Exception as e:
-            self.execution_count += 1
-            logger.error(f"Tool {self.name} execution failed: {e}")
-            raise
-    
-    def get_success_rate(self) -> float:
-        """Calculate success rate."""
-        if self.execution_count == 0:
-            return 0.0
-        return self.success_count / self.execution_count
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert tool to dictionary representation."""
-        return {
-            'name': self.name,
-            'file_path': self.file_path,
-            'description': self.description,
-            'version': self.version,
-            'parameters': self.parameters,
-            'return_type': self.return_type,
-            'execution_count': self.execution_count,
-            'success_count': self.success_count,
-            'success_rate': self.get_success_rate(),
-            'created_at': self.created_at
+    def __init__(self):
+        self.dangerous_imports = {
+            "os",
+            "sys",
+            "subprocess",
+            "eval",
+            "exec",
+            "compile",
+            "open",
+            "file",
+            "input",
+            "raw_input",
+            "__import__",
+            "reload",
+            "vars",
+            "globals",
+            "locals",
+            "dir",
+            "getattr",
+            "setattr",
+            "delattr",
+            "hasattr",
         }
 
+        self.dangerous_functions = {
+            "exec",
+            "eval",
+            "compile",
+            "__import__",
+            "reload",
+            "open",
+            "file",
+            "input",
+            "raw_input",
+        }
 
-class ToolManager:
-    """Manages dynamic loading and execution of Python tools."""
-    
-    def __init__(self, tools_directory: str = "tools", 
-                 execution_limits: Optional[ExecutionLimits] = None):
-        self.tools_directory = Path(tools_directory)
-        self.tools_directory.mkdir(exist_ok=True)
-        self.execution_limits = execution_limits or ExecutionLimits()
-        self.security_validator = SecurityValidator(self.execution_limits)
-        self.loaded_tools: Dict[str, Tool] = {}
-        self._ensure_tools_directory()
-    
-    def _ensure_tools_directory(self) -> None:
-        """Ensure tools directory exists with proper structure."""
-        # Create __init__.py to make it a package
-        init_file = self.tools_directory / "__init__.py"
-        if not init_file.exists():
-            init_file.write_text('"""Conjecture Tools Package"""\n')
-        
-        # Add tools directory to Python path if not already there
-        tools_path_str = str(self.tools_directory.parent)
-        if tools_path_str not in sys.path:
-            sys.path.insert(0, tools_path_str)
-    
-    async def load_tool_from_file(self, file_path: str) -> Optional[Tool]:
-        """Load a tool from a Python file."""
+        self.allowed_modules = {
+            "math",
+            "datetime",
+            "json",
+            "re",
+            "string",
+            "random",
+            "collections",
+            "itertools",
+            "functools",
+            "operator",
+            "typing",
+            "dataclasses",
+            "enum",
+            "pathlib",
+            "urllib.parse",
+        }
+
+    def validate_tool_code(self, code: str) -> Tuple[bool, List[str]]:
+        """
+        Validate tool code for security and functionality
+
+        Returns:
+            Tuple of (is_valid, list_of_issues)
+        """
+        issues = []
+
         try:
-            file_path = Path(file_path)
-            if not file_path.exists():
-                logger.error(f"Tool file not found: {file_path}")
-                return None
-            
-            # Read and validate the file content
-            with open(file_path, 'r', encoding='utf-8') as f:
-                code = f.read()
-            
-            # Security validation
-            is_safe, errors = self.security_validator.validate_code(code)
-            if not is_safe:
-                logger.error(f"Tool security validation failed: {'; '.join(errors)}")
-                return None
-            
-            # Parse the file to find functions
+            # Parse AST to check for dangerous operations
             tree = ast.parse(code)
-            functions = []
-            
+
+            for node in ast.walk(tree):
+                # Check for dangerous imports
+                if isinstance(node, ast.Import):
+                    for alias in node.names:
+                        if alias.name in self.dangerous_imports:
+                            issues.append(f"Dangerous import: {alias.name}")
+
+                elif isinstance(node, ast.ImportFrom):
+                    if node.module in self.dangerous_imports:
+                        issues.append(f"Dangerous import from: {node.module}")
+
+                # Check for dangerous function calls
+                elif isinstance(node, ast.Call):
+                    if isinstance(node.func, ast.Name):
+                        if node.func.id in self.dangerous_functions:
+                            issues.append(f"Dangerous function call: {node.func.id}")
+
+                # Check for file operations
+                elif isinstance(node, ast.Name):
+                    if node.id in {"open", "file"}:
+                        issues.append(f"File operation detected: {node.id}")
+
+            # Check for required function structure
+            required_functions = ["execute"]
+            found_functions = []
+
             for node in ast.walk(tree):
                 if isinstance(node, ast.FunctionDef):
-                    # Skip private functions
-                    if not node.name.startswith('_'):
-                        functions.append(node.name)
-            
-            if not functions:
-                logger.warning(f"No public functions found in {file_path}")
-                return None
-            
-            # Load the module
-            spec = importlib.util.spec_from_file_location(
-                file_path.stem, file_path
-            )
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            
-            # Create tool objects for each function
-            tools = []
-            for func_name in functions:
-                if hasattr(module, func_name):
-                    func = getattr(module, func_name)
-                    if callable(func):
-                        tool = Tool(
-                            name=func_name,
-                            file_path=str(file_path),
-                            function=func,
-                            description=inspect.getdoc(func) or "",
-                            version="1.0.0"
-                        )
-                        tools.append(tool)
-            
-            # Register tools
-            for tool in tools:
-                self.loaded_tools[tool.name] = tool
-                logger.info(f"Loaded tool: {tool.name} from {file_path}")
-            
-            return tools[0] if tools else None
-            
+                    found_functions.append(node.name)
+
+            for func in required_functions:
+                if func not in found_functions:
+                    issues.append(f"Missing required function: {func}")
+
+            # Check for proper docstring
+            # Skip docstring check for now to focus on security validation
+            pass
+
+        except SyntaxError as e:
+            issues.append(f"Syntax error: {e}")
         except Exception as e:
-            logger.error(f"Failed to load tool from {file_path}: {e}")
-            return None
-    
-    async def load_all_tools(self) -> int:
-        """Load all tools from the tools directory."""
-        loaded_count = 0
-        
-        for file_path in self.tools_directory.glob("*.py"):
-            if file_path.name != "__init__.py":
-                tool = await self.load_tool_from_file(file_path)
-                if tool:
-                    loaded_count += 1
-        
-        logger.info(f"Loaded {loaded_count} tools from {self.tools_directory}")
-        return loaded_count
-    
-    def get_tool(self, name: str) -> Optional[Tool]:
-        """Get a loaded tool by name."""
-        return self.loaded_tools.get(name)
-    
-    def list_tools(self) -> List[Tool]:
-        """List all loaded tools."""
-        return list(self.loaded_tools.values())
-    
-    def search_tools(self, query: str) -> List[Tool]:
-        """Search tools by name or description."""
-        query_lower = query.lower()
-        results = []
-        
-        for tool in self.loaded_tools.values():
-            if (query_lower in tool.name.lower() or 
-                query_lower in tool.description.lower()):
-                results.append(tool)
-        
-        return results
-    
-    async def create_tool_file(self, name: str, code: str, 
-                             description: str = "") -> Optional[str]:
+            issues.append(f"Parse error: {e}")
+
+        return len(issues) == 0, issues
+
+    def validate_tool_security(self, tool_path: str) -> Tuple[bool, List[str]]:
         """
-        Create a new tool file with the given code.
-        
-        Args:
-            name: Tool name (will become filename)
-            code: Python code for the tool
-            description: Optional description
-            
+        Additional security validation for created tool files
+
         Returns:
-            Path to created file or None if failed
+            Tuple of (is_secure, list_of_security_issues)
+        """
+        issues = []
+
+        try:
+            # Check file permissions
+            if os.path.exists(tool_path):
+                stat_info = os.stat(tool_path)
+                mode = oct(stat_info.st_mode)[-3:]
+                if mode != "644":
+                    issues.append(f"Insecure file permissions: {mode}")
+
+            # Check file size (prevent extremely large files)
+            if os.path.exists(tool_path):
+                size = os.path.getsize(tool_path)
+                if size > 10240:  # 10KB limit
+                    issues.append(f"File too large: {size} bytes")
+
+        except Exception as e:
+            issues.append(f"Security check error: {e}")
+
+        return len(issues) == 0, issues
+
+
+class DynamicToolCreator:
+    """
+    Dynamic Tool Creation System
+    Enables LLM to discover needs and create tools dynamically
+    """
+
+    def __init__(
+        self,
+        llm_bridge: LLMBridge,
+        tools_dir: str = "tools",
+        validator: Optional[ToolValidator] = None,
+    ):
+        self.llm_bridge = llm_bridge
+        self.tools_dir = Path(tools_dir)
+        self.validator = validator or ToolValidator()
+
+        # Ensure tools directory exists
+        self.tools_dir.mkdir(exist_ok=True)
+
+        # Track created tools
+        self.created_tools: Dict[str, Dict[str, Any]] = {}
+
+        self.logger = logging.getLogger(__name__)
+
+    async def discover_tool_need(self, claim: Claim) -> Optional[str]:
+        """
+        Analyze a claim to discover if a new tool is needed
+
+        Returns:
+            Tool need description or None if no tool needed
         """
         try:
-            # Validate the code
-            is_safe, errors = self.security_validator.validate_code(code)
-            if not is_safe:
-                logger.error(f"Cannot create tool {name}: {'; '.join(errors)}")
+            prompt = f"""Analyze this claim to determine if a new tool is needed:
+
+CLAIM: {claim.content}
+TYPE: {claim.type[0].value if claim.type else "unknown"}
+TAGS: {", ".join(claim.tags)}
+
+Available tools: WebSearch, ReadFiles, WriteCodeFile, CreateClaim, ClaimSupport
+
+Determine if:
+1. Existing tools can handle this need
+2. A new specialized tool would be beneficial
+3. What the new tool should do
+
+If a new tool is needed, describe:
+- Tool purpose and functionality
+- Input parameters needed
+- Expected output format
+- Why existing tools are insufficient
+
+If no new tool is needed, respond: NO_TOOL_NEEDED"""
+
+            llm_request = LLMRequest(
+                prompt=prompt,
+                max_tokens=1000,
+                temperature=0.3,
+                task_type="tool_discovery",
+            )
+
+            response = self.llm_bridge.process(llm_request)
+
+            if response.success and response.content:
+                if "NO_TOOL_NEEDED" in response.content.upper():
+                    return None
+
+                return response.content.strip()
+
+        except Exception as e:
+            self.logger.error(f"Error discovering tool need: {e}")
+
+        return None
+
+    async def websearch_tool_methods(self, tool_need: str) -> List[str]:
+        """Search for existing tool implementation methods
+
+        Returns:
+            List of implementation approaches found
+        """
+        try:
+            search_query = f"python implementation {tool_need} function example"
+
+            # Use WebSearch tool to find implementation methods
+            if WebSearch is None:
+                self.logger.warning(
+                    "WebSearch tool not available, returning mock methods"
+                )
+                return [
+                    f"Mock implementation method for {tool_need}",
+                    f"Alternative approach for {tool_need}",
+                ]
+
+            web_search = WebSearch()
+            search_results = await web_search.search(search_query, max_results=5)
+
+            methods = []
+            for result in search_results:
+                if result.get("content"):
+                    methods.append(result["content"])
+
+            self.logger.info(
+                f"Found {len(methods)} implementation methods for {tool_need}"
+            )
+            return methods
+
+        except Exception as e:
+            self.logger.error(f"Error searching tool methods: {e}")
+            return []
+
+    async def create_tool_file(
+        self, tool_name: str, tool_description: str, implementation_methods: List[str]
+    ) -> Optional[str]:
+        """
+        Create a new tool file based on need and research
+
+        Returns:
+            Path to created tool file or None if creation failed
+        """
+        try:
+            # Generate tool code
+            tool_code = await self._generate_tool_code(
+                tool_name, tool_description, implementation_methods
+            )
+
+            if not tool_code:
                 return None
-            
-            # Create file path
-            file_path = self.tools_directory / f"{name}.py"
-            
-            # Prepare file content with header
-            file_content = f'''"""
-{description or f"Tool: {name}"}
-Auto-generated by Conjecture Tool Creator
+
+            # Validate the generated code
+            is_valid, issues = self.validator.validate_tool_code(tool_code)
+            if not is_valid:
+                self.logger.error(f"Generated tool code validation failed: {issues}")
+                return None
+
+            # Create tool file
+            tool_path = self.tools_dir / f"{tool_name.lower()}.py"
+
+            # Write tool file
+            with open(tool_path, "w", encoding="utf-8") as f:
+                f.write(tool_code)
+
+            # Validate security
+            is_secure, security_issues = self.validator.validate_tool_security(
+                str(tool_path)
+            )
+            if not is_secure:
+                self.logger.error(f"Tool security validation failed: {security_issues}")
+                # Remove insecure file
+                tool_path.unlink(missing_ok=True)
+                return None
+
+            # Track created tool
+            self.created_tools[tool_name] = {
+                "path": str(tool_path),
+                "description": tool_description,
+                "created_at": datetime.utcnow().isoformat(),
+                "methods_used": len(implementation_methods),
+            }
+
+            self.logger.info(f"Created tool file: {tool_path}")
+            return str(tool_path)
+
+        except Exception as e:
+            self.logger.error(f"Error creating tool file: {e}")
+            return None
+
+    async def _generate_tool_code(
+        self, tool_name: str, tool_description: str, implementation_methods: List[str]
+    ) -> Optional[str]:
+        """Generate tool code using LLM"""
+        try:
+            methods_text = "\n\n".join(
+                [
+                    f"Method {i + 1}:\n{method}"
+                    for i, method in enumerate(implementation_methods)
+                ]
+            )
+
+            template_code = f'''
+"""
+{tool_description}
 """
 
-{code}
+from typing import Dict, Any, Optional
+import json
+import re
+from datetime import datetime
+
+def execute(parameter1: str, parameter2: Optional[str] = None) -> Dict[str, Any]:
+    """
+    Execute the {tool_name} tool.
+    
+    Args:
+        parameter1: Description of parameter1
+        parameter2: Description of parameter2 (optional)
+    
+    Returns:
+        Dictionary with success status and result or error message
+    """
+    try:
+        # Implementation goes here
+        result = "Tool execution result"
+        
+        return {{
+            "success": True,
+            "result": result,
+            "timestamp": datetime.utcnow().isoformat()
+        }}
+    except Exception as e:
+        return {{
+            "success": False,
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }}
 '''
-            
-            # Write the file
-            with open(file_path, 'w', encoding='utf-8') as f:
-                f.write(file_content)
-            
-            logger.info(f"Created tool file: {file_path}")
-            return str(file_path)
-            
+
+            prompt = f"""Create a Python tool file for: {tool_name}
+
+DESCRIPTION:
+{tool_description}
+
+IMPLEMENTATION METHODS FOUND:
+{methods_text}
+
+REQUIREMENTS:
+1. Create a function called 'execute' that takes parameters as needed
+2. Include proper error handling
+3. Add comprehensive docstring
+4. Use only safe modules (math, datetime, json, re, string, random, etc.)
+5. No file I/O, network calls, or system operations
+6. Return structured results as dictionaries
+7. Include type hints where appropriate
+
+TOOL TEMPLATE:
+{template_code}
+
+Generate the complete tool code following this template and requirements."""
+
+            llm_request = LLMRequest(
+                prompt=prompt,
+                max_tokens=2000,
+                temperature=0.3,
+                task_type="code_generation",
+            )
+
+            response = self.llm_bridge.process(llm_request)
+
+            if response.success and response.content:
+                # Extract code from response
+                code = self._extract_code_from_response(response.content)
+                if code:
+                    return code
+
         except Exception as e:
-            logger.error(f"Failed to create tool {name}: {e}")
-            return None
-    
-    async def update_tool_file(self, name: str, code: str, 
-                             description: str = "") -> bool:
-        """Update an existing tool file."""
-        file_path = self.tools_directory / f"{name}.py"
-        
-        if not file_path.exists():
-            logger.error(f"Tool {name} does not exist")
-            return False
-        
-        # Create new version
-        new_file_path = await self.create_tool_file(name, code, description)
-        if new_file_path:
-            # Reload the tool
-            await self.load_tool_from_file(new_file_path)
-            return True
-        
-        return False
-    
-    def delete_tool(self, name: str) -> bool:
-        """Delete a tool."""
+            self.logger.error(f"Error generating tool code: {e}")
+
+        return None
+
+    def _extract_code_from_response(self, response: str) -> Optional[str]:
+        """Extract Python code from LLM response"""
+        # Look for code blocks
+        import re
+
+        # Pattern for ```python code blocks
+        pattern = r"```python\n(.*?)\n```"
+        matches = re.findall(pattern, response, re.DOTALL)
+
+        if matches:
+            return matches[0].strip()
+
+        # Pattern for ``` code blocks
+        pattern = r"```\n(.*?)\n```"
+        matches = re.findall(pattern, response, re.DOTALL)
+
+        if matches:
+            return matches[0].strip()
+
+        # If no code blocks, return the whole response
+        return response.strip()
+
+    async def create_skill_claim(
+        self, tool_name: str, tool_description: str, tool_path: str
+    ) -> Claim:
+        """Create a skill claim describing how to use the tool"""
         try:
-            # Remove from loaded tools
-            if name in self.loaded_tools:
-                del self.loaded_tools[name]
-            
-            # Remove file
-            file_path = self.tools_directory / f"{name}.py"
-            if file_path.exists():
-                file_path.unlink()
-                logger.info(f"Deleted tool: {name}")
-                return True
-            
-            return False
-            
+            # Read the tool file to understand its interface
+            with open(tool_path, "r", encoding="utf-8") as f:
+                tool_code = f.read()
+
+            # Extract function signature
+            function_info = self._extract_function_info(tool_code)
+
+            prompt = f"""Create a skill claim for using this tool:
+
+TOOL: {tool_name}
+DESCRIPTION: {tool_description}
+FUNCTION: {function_info}
+
+Create a procedural skill claim that explains:
+1. When to use this tool
+2. How to prepare inputs
+3. How to call the execute function
+4. How to interpret results
+5. Common usage patterns
+
+Format as a clear, step-by-step procedure for LLM to follow."""
+
+            llm_request = LLMRequest(
+                prompt=prompt,
+                max_tokens=1000,
+                temperature=0.3,
+                task_type="skill_creation",
+            )
+
+            response = self.llm_bridge.process(llm_request)
+
+            if response.success and response.content:
+                skill_claim = Claim(
+                    id=f"skill_{tool_name}_{int(datetime.utcnow().timestamp())}",
+                    content=response.content.strip(),
+                    confidence=0.85,
+                    type=[ClaimType.CONCEPT],
+                    tags=["skill", "tool", tool_name],
+                    state=ClaimState.VALIDATED,
+                )
+
+                return skill_claim
+
         except Exception as e:
-            logger.error(f"Failed to delete tool {name}: {e}")
-            return False
-    
-    async def execute_tool(self, name: str, parameters: Dict[str, Any]) -> Any:
-        """Execute a tool by name."""
-        tool = self.get_tool(name)
-        if not tool:
-            raise ValueError(f"Tool '{name}' not found")
-        
-        return await tool.execute(parameters)
-    
-    def get_tool_stats(self) -> Dict[str, Any]:
-        """Get statistics about loaded tools."""
-        total_tools = len(self.loaded_tools)
-        total_executions = sum(tool.execution_count for tool in self.loaded_tools.values())
-        total_successes = sum(tool.success_count for tool in self.loaded_tools.values())
-        
-        avg_success_rate = (total_successes / total_executions 
-                           if total_executions > 0 else 0.0)
-        
-        # Most used tools
-        most_used = sorted(
-            self.loaded_tools.values(),
-            key=lambda t: t.execution_count,
-            reverse=True
-        )[:5]
-        
-        return {
-            'total_tools': total_tools,
-            'total_executions': total_executions,
-            'total_successes': total_successes,
-            'average_success_rate': avg_success_rate,
-            'most_used_tools': [tool.name for tool in most_used],
-            'tools_directory': str(self.tools_directory)
-        }
-    
-    def validate_tool_file(self, file_path: str) -> Tuple[bool, List[str]]:
-        """Validate a tool file without loading it."""
+            self.logger.error(f"Error creating skill claim: {e}")
+
+        # Fallback skill claim
+        return Claim(
+            id=f"skill_{tool_name}_{int(datetime.utcnow().timestamp())}",
+            content=f"To use {tool_name}: 1) Prepare required parameters, 2) Call execute() function, 3) Handle response appropriately",
+            confidence=0.7,
+            type=[ClaimType.CONCEPT],
+            tags=["skill", "tool", tool_name],
+            state=ClaimState.EXPLORE,
+        )
+
+    def _extract_function_info(self, tool_code: str) -> str:
+        """Extract function signature and docstring from tool code"""
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            tree = ast.parse(tool_code)
+
+            for node in ast.walk(tree):
+                if isinstance(node, ast.FunctionDef) and node.name == "execute":
+                    # Get function signature
+                    args = []
+                    for arg in node.args.args:
+                        args.append(arg.arg)
+
+                    signature = f"execute({', '.join(args)})"
+
+                    # Get docstring
+                    if (
+                        node.body
+                        and isinstance(node.body[0], ast.Expr)
+                        and isinstance(node.body[0].value, ast.Constant)
+                        and isinstance(node.body[0].value.value, str)
+                    ):
+                        docstring = node.body[0].value.value
+                        return f"{signature}\n\n{docstring}"
+
+                    return signature
+
+        except Exception as e:
+            self.logger.error(f"Error extracting function info: {e}")
+
+        return "execute(parameters)"
+
+    async def create_sample_claim(self, tool_name: str, tool_path: str) -> Claim:
+        """Create a sample claim showing exact tool usage"""
+        try:
+            # Generate a sample usage
+            prompt = f"""Create a sample claim showing exact usage of this tool:
+
+TOOL: {tool_name}
+
+Create a realistic example showing:
+1. The exact function call with parameters
+2. The expected response format
+3. How to handle the response
+
+Format as a concrete example that can be used as a reference."""
+
+            llm_request = LLMRequest(
+                prompt=prompt,
+                max_tokens=500,
+                temperature=0.2,
+                task_type="sample_creation",
+            )
+
+            response = self.llm_bridge.process(llm_request)
+
+            if response.success and response.content:
+                sample_claim = Claim(
+                    id=f"sample_{tool_name}_{int(datetime.utcnow().timestamp())}",
+                    content=response.content.strip(),
+                    confidence=0.9,
+                    type=[ClaimType.EXAMPLE],
+                    tags=["sample", "tool", tool_name],
+                    state=ClaimState.VALIDATED,
+                )
+
+                return sample_claim
+
+        except Exception as e:
+            self.logger.error(f"Error creating sample claim: {e}")
+
+        # Fallback sample claim
+        return Claim(
+            id=f"sample_{tool_name}_{int(datetime.utcnow().timestamp())}",
+            content=f"Example: result = execute(parameter1='value', parameter2='optional')",
+            confidence=0.8,
+            type=[ClaimType.EXAMPLE],
+            tags=["sample", "tool", tool_name],
+            state=ClaimState.EXPLORE,
+        )
+
+    def get_created_tools(self) -> Dict[str, Dict[str, Any]]:
+        """Get information about all created tools"""
+        return self.created_tools.copy()
+
+    def tool_exists(self, tool_name: str) -> bool:
+        """Check if a tool already exists"""
+        tool_path = self.tools_dir / f"{tool_name.lower()}.py"
+        return tool_path.exists()
+
+    async def validate_created_tool(self, tool_name: str) -> Tuple[bool, List[str]]:
+        """Validate a created tool"""
+        tool_path = self.tools_dir / f"{tool_name.lower()}.py"
+
+        if not tool_path.exists():
+            return False, [f"Tool file not found: {tool_path}"]
+
+        # Read and validate code
+        try:
+            with open(tool_path, "r", encoding="utf-8") as f:
                 code = f.read()
-            
-            return self.security_validator.validate_code(code)
-            
+
+            is_valid, issues = self.validator.validate_tool_code(code)
+            is_secure, security_issues = self.validator.validate_tool_security(
+                str(tool_path)
+            )
+
+            all_issues = issues + security_issues
+            return is_valid and is_secure, all_issues
+
         except Exception as e:
-            return False, [f"File validation error: {e}"]
-    
-    def get_tool_file_hash(self, file_path: str) -> str:
-        """Get hash of tool file for change detection."""
-        try:
-            with open(file_path, 'rb') as f:
-                return hashlib.md5(f.read()).hexdigest()
-        except Exception:
-            return ""
-    
-    async def reload_changed_tools(self) -> int:
-        """Reload tools that have been modified."""
-        reloaded_count = 0
-        
-        for file_path in self.tools_directory.glob("*.py"):
-            if file_path.name == "__init__.py":
-                continue
-            
-            # Check if any loaded tools are from this file
-            file_tools = [
-                tool for tool in self.loaded_tools.values()
-                if Path(tool.file_path) == file_path
-            ]
-            
-            if file_tools:
-                # Reload the file
-                tool = await self.load_tool_from_file(file_path)
-                if tool:
-                    reloaded_count += 1
-        
-        return reloaded_count
+            return False, [f"Validation error: {e}"]
