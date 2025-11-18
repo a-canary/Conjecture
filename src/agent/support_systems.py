@@ -7,8 +7,8 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime
 import logging
 
-from data.data_manager import DataManager
-from core.refined_skill_models import Claim
+from ..data.data_manager import DataManager
+from ..core.unified_models import Claim
 
 
 logger = logging.getLogger(__name__)

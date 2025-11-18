@@ -15,7 +15,7 @@ import hashlib
 from .tool_manager import ToolManager
 from .response_parser import ResponseParser
 from .tool_executor import ToolExecutor, ExecutionLimits
-from ..core.refined_skill_models import ToolCreationClaim, SkillClaim, SampleClaim
+from ..core.unified_models import Claim
 from ..data.data_manager import DataManager
 
 
@@ -403,7 +403,7 @@ class ToolCreator:
         self.response_parser = ResponseParser()
     
     async def create_tool_for_claim(self, claim_content: str, 
-                                  context: Dict[str, Any]) -> Optional[ToolCreationClaim]:
+                                  context: Dict[str, Any]) -> Optional[Claim]:
         """
         Complete workflow to create a tool for a specific claim need.
         
@@ -412,7 +412,7 @@ class ToolCreator:
             context: Additional context for tool creation
             
         Returns:
-            ToolCreationClaim if successful, None otherwise
+            Claim if successful, None otherwise
         """
         try:
             # Step 1: Discover tool need
@@ -459,7 +459,7 @@ class ToolCreator:
                 return None
             
             # Step 8: Create tool creation claim
-            creation_claim = ToolCreationClaim(
+            creation_claim = Claim(
                 content=f"Created tool '{tool_name}' to handle: {tool_need}",
                 tool_name=tool_name,
                 creation_method="llm_discovered",
@@ -551,11 +551,11 @@ class ToolCreator:
     
     async def _create_skill_claim_for_tool(self, tool, tool_need: str) -> None:
         """Create a skill claim that describes how to use the tool."""
-        skill_claim = SkillClaim(
+        skill_claim = Claim(
             content=f"To handle {tool_need}, use the {tool.name} tool with proper parameters and error handling.",
             tool_name=tool.name,
             confidence=0.8,
-            tags=['type.skill', 'auto_generated'],
+            tags=['type.concept', 'auto_generated'],
             created_by='tool_creator'
         )
         
@@ -621,7 +621,7 @@ class ToolCreator:
                 error_message = str(e)
             
             # Create sample claim
-            sample_claim = SampleClaim(
+            sample_claim = Claim(
                 content=f"Sample call to {tool.name} tool with parameters: {sample_params}",
                 tool_name=tool.name,
                 llm_call_xml=llm_call_xml,

@@ -2,20 +2,46 @@
 
 ## Project Overview
 
-Conjecture is an evidence-based AI reasoning system that enables exploration and validation of knowledge claims through vector similarity search and LLM processing. The project provides a sophisticated yet elegant architecture for managing claims, their relationships, and their validation through semantic search and AI processing.
+Conjecture is an evidence-based AI reasoning system that enables exploration and validation of knowledge claims through a simple, elegant unified API. The project provides maximum power through minimum complexity using a single `Conjecture` class that serves all interfaces (CLI, TUI, GUI).
 
 ### Key Features:
-- **Claim Management**: Robust Pydantic-based models for representing knowledge claims with confidence scores, types, states, and relationships
+- **Unified API**: Single `Conjecture` class provides all functionality across all interfaces
+- **Simple Architecture**: Clean separation of data models, processing, and interfaces with no over-engineering
+- **Easy Interface Swapping**: CLI, TUI, and GUI all use the same `Conjecture` API
+- **Direct Data Access**: When needed, direct access to underlying models and data
+- **Claim Management**: Pydantic-based models with confidence scores, types, states, and relationships
 - **Vector Database Integration**: Support for ChromaDB and FAISS for semantic similarity search
-- **LLM Integration**: Flexible interface for AI processing with Gemini API support
-- **Terminal User Interface**: Rich TUI for interactive claim exploration (in development)
+- **LLM Integration**: Flexible interface for AI processing with multiple provider support
 - **Configurable Architecture**: Environment variable-based configuration system
 
-### Core Components:
-1. **Claim Model**: Central data structure with validation, state management, and relationship tracking
-2. **Vector Search**: Semantic similarity matching using embeddings
-3. **Processing Layer**: LLM integration for claim validation and generation
-4. **Configuration System**: Simplified, smart-default configuration with essential settings
+### Core Architecture:
+1. **Data Models** (`src/core/unified_models.py`): Clean, unified Pydantic models
+2. **Processing** (`src/contextflow.py`): Single `Conjecture` class providing unified API
+3. **Interfaces** (`src/cli/`, `src/tui/`, `src/gui/`): CLI, TUI, GUI - all using the same `Conjecture` class
+4. **Configuration** (`src/config/simple_config.py`): Smart defaults with minimal setup
+
+### Simple Interface Pattern
+All interfaces follow the same simple pattern:
+
+```python
+# CLI Interface
+from contextflow import Conjecture
+cf = Conjecture()
+result = cf.explore("machine learning", max_claims=5)
+claim = cf.add_claim("content", 0.85, "concept")
+
+# TUI Interface  
+from contextflow import Conjecture
+cf = Conjecture()
+# Same API usage
+
+# GUI Interface
+from contextflow import Conjecture
+cf = Conjecture()
+# Same API usage
+```
+
+**No over-engineering**: Direct API usage across all interfaces with clean separation of concerns.
 
 ## Project Structure
 
@@ -23,16 +49,13 @@ Conjecture is an evidence-based AI reasoning system that enables exploration and
 Conjecture/
 ├── src/
 │   ├── config/           # Configuration system
-│   ├── core/             # Core models and embedding methods
-│   ├── data/             # Data handling
-│   ├── processing/       # LLM processing interfaces
-│   ├── ui/               # Terminal user interface
-│   ├── utils/            # Utility functions
-│   └── contextflow.py    # Main API interface
+│   ├── core/             # Core models (unified_models.py)
+│   ├── contextflow.py    # Main unified API - single Conjecture class
+│   ├── ui/               # Interface implementations (CLI, TUI, GUI)
+│   └── utils/            # Utility functions
 ├── tests/                # Test suite
 ├── demo/                 # Example implementations
 ├── specs/                # Specification documents
-├── EmbeddingMethods.py   # Standalone embedding implementation
 ├── requirements.txt      # Dependencies
 └── documentation files
 ```
@@ -78,6 +101,48 @@ claim = cf.add_claim(
     claim_type="concept",
     tags=["ml", "data"]
 )
+
+# Same API works in CLI, TUI, and GUI applications
+# No service layers or complex abstractions needed
+```
+
+### Interface Implementation Pattern
+All interfaces (CLI, TUI, GUI) use the same simple pattern:
+
+```python
+# CLI Interface Example
+from contextflow import Conjecture
+
+def main():
+    cf = Conjecture()
+    result = cf.explore("machine learning", max_claims=5)
+    claim = cf.add_claim("content", 0.85, "concept")
+    print(result.summary())
+
+# TUI Interface Example  
+from contextflow import Conjecture
+
+class TUIApp:
+    def __init__(self):
+        self.cf = Conjecture()  # Single API instance
+    
+    def search_screen(self):
+        results = self.cf.explore(self.get_query())
+        self.display_results(results)
+
+# GUI Interface Example
+from contextflow import Conjecture
+
+class GUIApp:
+    def __init__(self):
+        self.cf = Conjecture()  # Same API
+    
+    def on_search_button(self):
+        results = self.cf.explore(self.search_input.get())
+        self.populate_results_list(results)
+```
+
+**Key Principle**: One `Conjecture` class, unified API, multiple interfaces.
 ```
 
 ### Environment Variables
@@ -100,6 +165,13 @@ The system uses environment variables for configuration:
 - Write comprehensive docstrings using Google-style format
 - Include type hints for all public functions and methods
 
+### Simple Architecture Principles
+- **Single API**: All interfaces use the same `Conjecture` class
+- **No Over-Engineering**: Avoid unnecessary abstraction layers
+- **Direct Usage**: Interfaces call `Conjecture` methods directly
+- **Clean Separation**: Data models, processing, and interfaces are separate layers
+- **Easy Testing**: Each layer can be tested independently
+
 ### Testing
 - All core functionality must have 100% test coverage
 - Use pytest for test execution
@@ -115,9 +187,12 @@ The system uses environment variables for configuration:
 - Implement proper timestamp management (created, updated)
 
 ### Architecture Principles
-- Maximum power through minimum complexity
-- Clean interfaces between components
-- Mock implementations for parallel development
+- **Maximum power through minimum complexity**
+- **Single unified API** - `Conjecture` class serves all interfaces
+- **No over-engineering** - Direct API usage across all interfaces
+- **Clean separation** - Data models + Processing + Interfaces
+- **Easy interface swapping** - All use same `Conjecture` API
+- **Direct data access** - Available when needed
 - Smart defaults with minimal configuration
 - Comprehensive error handling and validation
 
@@ -136,9 +211,17 @@ The system uses environment variables for configuration:
 - Includes validation rules and data transformation methods
 
 ### Main API (`src/contextflow.py`)
-- Provides the `Conjecture` class as the main interface
+- **Single `Conjecture` class** provides unified API for all interfaces
 - Implements `explore()` and `add_claim()` methods
 - Handles configuration and backend initialization
+- **Same API used by CLI, TUI, and GUI** - no duplication needed
+- Direct, simple interface with no service layer complexity
+
+### Interface Implementation
+- **CLI**: Uses `Conjecture` class directly in `src/cli/`
+- **TUI**: Uses `Conjecture` class directly in `src/tui/` (planned)
+- **GUI**: Uses `Conjecture` class directly in `src/gui/` (planned)
+- **Pattern**: All interfaces follow `cf = Conjecture(); cf.method()` pattern
 
 ### Configuration (`src/config/simple_config.py`)
 - Single `Config` class with smart defaults
@@ -146,82 +229,105 @@ The system uses environment variables for configuration:
 - Property methods for specific settings (LLM, ChromaDB, etc.)
 
 ## Current Status
-- Phase 1 (Core Foundation): In progress - Basic claim models and configuration system implemented
-- Phase 2 (Claim Relationships): Planning stage - Relationship system design complete, implementation pending
-- Phase 3 (Vector Similarity Integration): Planning stage - Vector database integration planned
-- Phase 4 (Enhanced TUI Experience): Planning stage - TUI design specifications complete
-- Phase 5 (CLI Interface Development): Planning stage - CLI command structure designed
-- Phase 6 (Model Context Protocol): Planning stage - MCP protocol specifications defined
-- Phase 7 (Web Interface Development): Planning stage - WebUI architecture planned
-- Phase 8 (Claim-Based Goal Management): Planning stage - Goal management system designed
-- Phase 9 (Dirty Flag Optimization): Planning stage - Dirty flag evaluation system designed
-- Phase 10 (Production Deployment and Evaluation): Planning stage - Deployment strategy outlined
-- Project is in early development/planning phase, with core models and basic infrastructure implemented
 
-## Complete Project Vision
+### ✅ Completed Features
+- **Simple Unified Architecture**: Single `Conjecture` class provides unified API for all interfaces
+- **Core Models**: Clean Pydantic models with validation (`Claim`, `ClaimBatch`, `ProcessingResult`)
+- **Configuration System**: Smart defaults with environment variable support
+- **Interface Examples**: Working examples for CLI, TUI, and GUI using unified API
+- **Documentation**: Complete architecture specifications and implementation guides
 
-Based on the specification documents, Conjecture is a comprehensive evidence-based AI reasoning system with the following key components:
+### 🔄 In Progress
+- **CLI Refactoring**: Migrating existing CLI to use unified API pattern
+- **TUI Implementation**: Basic terminal interface using unified API
+- **GUI Implementation**: Simple tkinter interface using unified API
 
-### Core Concepts
-- **Knowledge Claims**: Assertions about the world with unique IDs in format "c#######" that can be validated, connected, and reasoned about
-- **Claim Relationships**: Parent-child connections between claims stored in a junction table representing support relationships
-- **Vector-Based Similarity**: Numerical representations enabling semantic searching and clustering
-- **Multi-Modal Interaction**: TUI, CLI, MCP, and WebUI interfaces providing different interaction methods
-- **Dirty Flag Evaluation**: Claims marked for re-evaluation when new information becomes available, with prioritized processing based on confidence and relevance
+### 📋 Planned Features
+- **Vector Database Integration**: ChromaDB and FAISS support for semantic search
+- **LLM Integration**: Multiple provider support for claim processing
+- **Advanced Relationships**: Claim relationship management
+- **Performance Optimization**: Caching and batch operations
+
+### 🎯 Architecture Status
+- **Phase 1 (Simple Architecture)**: ✅ COMPLETE - Unified API implemented
+- **Phase 2 (Interface Examples)**: ✅ COMPLETE - CLI/TUI/GUI examples created
+- **Phase 3 (Documentation)**: ✅ COMPLETE - Architecture specs and guides written
+- **Phase 4 (Production Readiness)**: 🔄 IN PROGRESS - Testing and optimization
+
+**Key Achievement**: Successfully implemented simple, elegant architecture with no over-engineering. All interfaces use the same `Conjecture` API directly.
+
+## Simple Unified Architecture
+
+Conjecture follows a simple, elegant architecture based on a unified API design:
+
+### Core Concept: Single `Conjecture` Class
+- **One API to rule them all**: The `Conjecture` class in `src/contextflow.py` provides all functionality
+- **No service layers**: Direct API usage across all interfaces
+- **Easy interface swapping**: CLI, TUI, and GUI all use the same `Conjecture` class
+- **Clean separation**: Data models + Processing + Interfaces
 
 ### Architecture Overview
-The system follows a multi-layer architecture:
-1. **Interface Layer**: TUI, CLI, MCP, and WebUI with shared business logic
-2. **Application Layer**: Claim Processor, Evidence Manager, Goal Tracker
-3. **Domain Layer**: Claim Management, Evidence Management, Vector Similarity, Query Engine
-4. **Infrastructure Layer**: Database Manager, Storage Manager, Embedding Service, Auth Manager
-5. **External Services**: Vector DB, LLM Service, External Sources, File System
+The system follows a simple 3-layer architecture:
+
+1. **Interface Layer**: CLI, TUI, GUI applications
+   - All interfaces **directly instantiate and use** the `Conjecture` class
+   - **No abstractions** or service layers needed
+   - **Simple pattern**: `cf = Conjecture()` -> `cf.explore()` / `cf.add_claim()`
+
+2. **Processing Layer**: The `Conjecture` class
+   - **Single unified API** for all functionality
+   - Handles configuration, backend initialization, and all operations
+   - **Direct, simple interface** with no complexity
+
+3. **Data Layer**: Core models and backends
+   - **Clean Pydantic models** in `src/core/unified_models.py`
+   - Vector databases (ChromaDB, FAISS) for similarity search
+   - File-based or mock backends for different use cases
+
+### Key Simplicity Advantages
+- **No over-engineering**: Direct API usage maximizes simplicity
+- **Fast development**: New features added to one place
+- **Easy maintenance**: Single source of truth for all logic
+- **Consistent behavior**: All interfaces work identically
+- **Flexible interfaces**: Switch between CLI/TUI/GUI effortlessly
 
 ### Key Features
-- **Claim Management**: Create, edit, delete claims with confidence scoring and metadata
-- **Relationship Management**: Support relationships between claims with junction table implementation
-- **Knowledge Exploration**: Navigate knowledge graph through parent-child relationships
-- **Goal Management**: Goals implemented as specialized claims with "goal" tags and evidence-based confidence tracking
-- **Dirty Flag System**: Automated evaluation of claims needing re-assessment with confidence-based prioritization
-- **Multi-Modal Interface**: Consistent experience across terminal, command-line, AI assistant protocols, and web interfaces
-- **Vector Similarity**: Semantic search capabilities using embedding-based similarity matching
-- **Structured Tagging System**: Standardized tags that convey how the LLM should interpret claims for inference
+- **Unified API**: Single `Conjecture` class serves all interfaces (CLI, TUI, GUI)
+- **Simple Integration**: Direct API usage with no service layer complexity
+- **Claim Management**: Create, explore, and manage claims with confidence scoring
+- **Vector Similarity**: Semantic search capabilities using embedding-based similarity
+- **Multiple Backends**: Support for ChromaDB, FAISS, or mock implementations
+- **Flexible Interfaces**: Easy switching between CLI, TUI, and GUI applications
+- **Smart Configuration**: Environment-based configuration with sensible defaults
+- **Extensible Design**: Easy to add new features to the unified API
 
 ### Implementation Approach
-The project follows a 10-phase development approach:
-1. Core Foundation (Weeks 1-2)
-2. Claim Relationships (Weeks 3-4)
-3. Vector Similarity Integration (Weeks 5-6)
-4. Enhanced TUI Experience (Weeks 7-8)
-5. CLI Interface Development (Weeks 9-10)
-6. Model Context Protocol (Weeks 11-12)
-7. Web Interface Development (Weeks 13-14)
-8. Claim-Based Goal Management (Weeks 15-16)
-9. Dirty Flag Optimization (Weeks 17-18)
-10. Production Deployment and Evaluation (Weeks 19-20)
+The project follows a **simple, pragmatic development approach**:
 
-### Dirty Flag Evaluation System
-A sophisticated system that:
-- Marks claims as dirty when new information becomes available
-- Selects dirty claims for evaluation based on relevance and confidence
-- Prioritizes claims with confidence < 0.90 for evaluation with confidence boost
-- Processes dirty claims in parallel batches
-- Cascades dirty status to supported claims
-- Processes LLM responses with two-pass system (claims first, then relationships)
+1. **Core Foundation**: Unified models and `Conjecture` API
+2. **Interface Development**: CLI, TUI, GUI using the same API
+3. **Backend Integration**: Vector databases and LLM providers
+4. **Enhancement**: Add features to the unified API as needed
 
-### Goal Management
-Goals are implemented as specialized claims with the "goal" tag:
-- Progress tracked through evidence-based confidence (not completion percentage)
-- Status maintained through additional tags (active, paused, completed)
-- No special handling - just regular claims evaluated by LLM based on evidence
-- Child tasks connected through supports relationships
+**Key Principle**: Add features to the `Conjecture` class once, and all interfaces automatically benefit.
 
 ### Interface Design
-All interfaces share common components:
-- **Claim Manager**: Centralized claim operations and state management
-- **Confidence Manager**: Confidence evaluation and tracking
-- **Relationship Manager**: Relationship management across claims
-- **Real-Time Updates**: Event-driven architecture for immediate response to changes
+All interfaces use the **exact same simple pattern**:
+
+```python
+# CLI, TUI, and GUI all follow this pattern
+from src.contextflow import Conjecture
+
+cf = Conjecture()
+result = cf.explore("query")
+claim = cf.add_claim(content, confidence, claim_type)
+```
+
+**No shared components needed** - the `Conjecture` class provides everything:
+- **Unified API**: `explore()`, `add_claim()`, `get_statistics()`
+- **Direct Access**: When needed, direct access to data models
+- **Same Behavior**: Identical functionality across all interfaces
+- **Simple Integration**: Two lines of code to get full functionality
 
 ### Recommended Claim Tag Definitions
 The following tag definitions provide structured semantics that guide how the LLM interprets claims for inference:

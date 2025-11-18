@@ -192,6 +192,12 @@ api_keys.txt
 *credential*
 *token*
 
+# Provider discovery additional protection
+CONJECTURE_LLM_*
+CHUTES_API_KEY
+OPENROUTER_API_KEY
+GEMINI_API_KEY
+
 # Model files and embeddings
 *.pkl
 *.joblib

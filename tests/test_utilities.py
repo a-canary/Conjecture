@@ -91,7 +91,7 @@ class TestDataGenerators:
             outcome=random.choice(outcomes),
             percentage=random.randint(5, 95),
             journal=random.choice(journals),
-            phenomenon=random.choice phenomena,
+            phenomenon=random.choice(phenomena),
             confidence_level=random.choice(["moderate", "high", "very high"]),
             hypothesis=f"the {random.choice(['first', 'second', 'third'])} hypothesis",
             discovery=random.choice(["correlation", "causation", "interaction"]),

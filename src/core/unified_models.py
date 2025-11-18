@@ -25,7 +25,6 @@ class ClaimType(str, Enum):
     CONCEPT = "concept"
     REFERENCE = "reference"
     THESIS = "thesis"
-    SKILL = "skill"
     EXAMPLE = "example"
     GOAL = "goal"
 
@@ -199,6 +198,28 @@ class ProcessingResult(BaseModel):
         None, description="Execution time in seconds"
     )
     message: str = Field(default="", description="Processing message")
+
+
+# Simplified tool execution models (moved from skill_models)
+class ToolCall(BaseModel):
+    """Represents a tool invocation."""
+    name: str = Field(..., description="Name of the tool to invoke")
+    parameters: Dict[str, Any] = Field(default_factory=dict, description="Tool parameters")
+
+
+class ExecutionResult(BaseModel):
+    """Result of tool execution."""
+    success: bool = Field(..., description="Execution success status")
+    outcome: str = Field(..., description="Execution outcome or error message")
+    duration: float = Field(..., description="Execution duration in seconds")
+    tool_name: str = Field(..., description="Name of the tool that was executed")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
+
+
+class ParsedResponse(BaseModel):
+    """Represents a parsed response from LLM"""
+    tool_calls: List[ToolCall] = Field(default_factory=list, description="Extracted tool calls")
+    errors: List[str] = Field(default_factory=list, description="Parsing errors")
 
 
 def validate_unified_models() -> bool:

@@ -29,6 +29,18 @@ class ClaimType(str, Enum):
     GOAL = "goal"
 
 
+class DirtyReason(str, Enum):
+    """Dirty flag reason enumeration"""
+
+    NEW_CLAIM_ADDED = "new_claim_added"
+    CONFIDENCE_THRESHOLD = "confidence_threshold"
+    SUPPORTING_CLAIM_CHANGED = "supporting_claim_changed"
+    RELATIONSHIP_CHANGED = "relationship_changed"
+    MANUAL_MARK = "manual_mark"
+    BATCH_EVALUATION = "batch_evaluation"
+    SYSTEM_TRIGGER = "system_trigger"
+
+
 class Claim(BaseModel):
     """Core claim model with validation"""
 
@@ -59,6 +71,19 @@ class Claim(BaseModel):
     embedding: Optional[List[float]] = Field(
         default=None, description="Vector embedding"
     )
+    # Dirty flag fields
+    is_dirty: bool = Field(
+        default=False, description="Whether claim needs re-evaluation"
+    )
+    dirty_reason: Optional[DirtyReason] = Field(
+        default=None, description="Reason why claim was marked dirty"
+    )
+    dirty_timestamp: Optional[datetime] = Field(
+        default=None, description="When claim was marked dirty"
+    )
+    dirty_priority: int = Field(
+        default=0, description="Priority for dirty evaluation (higher = more urgent)"
+    )
 
     @validator("tags")
     def validate_tags(cls, v):
@@ -87,6 +112,10 @@ class Claim(BaseModel):
             "tags": self.tags,
             "created": self.created.isoformat(),
             "updated": self.updated.isoformat(),
+            "is_dirty": self.is_dirty,
+            "dirty_reason": self.dirty_reason.value if self.dirty_reason else None,
+            "dirty_timestamp": self.dirty_timestamp.isoformat() if self.dirty_timestamp else None,
+            "dirty_priority": self.dirty_priority,
         }
 
     @classmethod
@@ -105,6 +134,10 @@ class Claim(BaseModel):
             tags=metadata.get("tags", []),
             created=datetime.fromisoformat(metadata["created"]),
             updated=datetime.fromisoformat(metadata["updated"]),
+            is_dirty=metadata.get("is_dirty", False),
+            dirty_reason=DirtyReason(metadata["dirty_reason"]) if metadata.get("dirty_reason") else None,
+            dirty_timestamp=datetime.fromisoformat(metadata["dirty_timestamp"]) if metadata.get("dirty_timestamp") else None,
+            dirty_priority=metadata.get("dirty_priority", 0),
         )
 
     def format_for_context(self) -> str:
@@ -112,27 +145,10 @@ class Claim(BaseModel):
         type_str = ",".join([t.value for t in self.type])
         return f"- [{self.id},{self.confidence},{type_str},{self.state.value}]{self.content}"
 
-    def update_confidence(self, new_confidence: float) -> None:
-        """Update confidence and timestamp"""
-        if not 0.0 <= new_confidence <= 1.0:
-            raise ValueError("Confidence must be between 0.0 and 1.0")
-        self.confidence = new_confidence
-        self.updated = datetime.utcnow()
-
-    def add_support(self, supporting_claim_id: str) -> None:
-        """Add a supporting claim ID"""
-        if supporting_claim_id not in self.supported_by:
-            self.supported_by.append(supporting_claim_id)
-            self.updated = datetime.utcnow()
-
-    def add_supports(self, supported_claim_id: str) -> None:
-        """Add a claim this claim supports"""
-        if supported_claim_id not in self.supports:
-            self.supports.append(supported_claim_id)
-            self.updated = datetime.utcnow()
+    
 
     def __repr__(self) -> str:
-        return f"Claim(id={self.id}, confidence={self.confidence}, state={self.state.value}, type={[t.value for t in self.type]})"
+        return f"Claim(id={self.id}, confidence={self.confidence}, state={self.state.value}, type={[t.value for t in self.type]}, dirty={self.is_dirty})"
 
 
 class ClaimBatch(BaseModel):

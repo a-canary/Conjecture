@@ -1,122 +1,195 @@
-# Conjecture - Evidence-Based AI Reasoning System
+# Simple Architecture Summary
 
-## Overview
+## 🎯 The Core Idea
 
-Conjecture is an evidence-based AI reasoning system that enables exploration and validation of knowledge claims through vector similarity search and LLM processing. The project provides a sophisticated yet elegant architecture for managing claims, their relationships, and their validation through semantic search and AI processing.
+Conjecture uses a **simple, elegant architecture** based on a **single unified API**. No over-engineering, no complex service layers - just clean, direct functionality.
 
-## Quick Start
+## 📐 Architecture Diagram
 
-### Prerequisites
-- Python 3.8+
-- Required packages per `requirements.txt`
-
-### Installation
-```bash
-pip install -r requirements.txt
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Interfaces Layer                        │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐      │
+│  │   CLI   │  │   TUI   │  │   GUI   │  │  Future │      │
+│  └─────────┘  └─────────┘  └─────────┘  └─────────┘      │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 Processing Layer                            │
+│              Single Conjecture Class                        │
+│         ┌─────────────────────────────────────┐           │
+│         │  explore() │ add_claim() │ stats()   │           │
+│         └─────────────────────────────────────┘           │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Data Layer                                │
+│        ┌─────────────────────────────────────┐           │
+│        │    Claim Model │ Validation │ Storage │        │
+│        └─────────────────────────────────────┘           │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-### Running Tests
-```bash
-# Run all tests
-python -m pytest tests/
+## 🔑 Key Principles
 
-# Run specific test files
-python tests/test_models.py
-python tests/test_data_layer.py
-python tests/test_processing_layer.py
-python tests/test_data_layer_complete.py
-```
-
-### Basic Usage
+### 1. Single Unified API
 ```python
-from src.contextflow import Conjecture
+from contextflow import Conjecture
 
-# Initialize with default configuration
+# One class for all functionality
 cf = Conjecture()
-
-# Explore claims related to a topic
-result = cf.explore("machine learning", max_claims=5)
-print(result.summary())
-
-# Add a new claim
-claim = cf.add_claim(
-    content="Machine learning algorithms require substantial training data",
-    confidence=0.85,
-    claim_type="concept",
-    tags=["ml", "data"]
-)
+result = cf.explore("machine learning")
+claim = cf.add_claim("content", 0.85, "concept")
+stats = cf.get_statistics()
 ```
 
-## Project Structure
+### 2. No Over-Engineering
+- ❌ No service layers
+- ❌ No dependency injection frameworks
+- ❌ No complex abstractions
+- ✅ Direct API usage
+- ✅ Simple, maintainable code
 
-```
-Conjecture/
-├── specs/                 # 📋 Finalized specifications (authoritative)
-│   ├── design.md         # Complete system architecture
-│   ├── requirements.md   # Comprehensive requirements
-│   ├── phases.md         # Development roadmap
-│   └── interface_design.md # Interface specifications
-├── src/                  # 💻 Source code implementation
-│   ├── config/          # Configuration system
-│   ├── core/            # Core models and business logic
-│   ├── data/            # Data handling and storage
-│   ├── processing/      # LLM processing interfaces
-│   ├── ui/              # User interface components
-│   ├── utils/           # Utility functions
-│   └── contextflow.py   # Main API interface
-├── tests/               # 🧪 Test suite
-├── demo/                # 🎯 Example implementations
-├── data/                # 📊 Data storage (git-ignored)
-├── archive/             # 📦 Archived documentation
-├── requirements.txt     # 📦 Dependencies
-└── README.md           # 📖 This file
+### 3. All Interfaces Follow Same Pattern
+```python
+# CLI, TUI, GUI - all the same pattern
+class YourInterface:
+    def __init__(self):
+        self.cf = Conjecture()  # Single API instance
+    
+    def your_method(self):
+        results = self.cf.explore("query")
+        claim = self.cf.add_claim("content", 0.8, "concept")
+        return results, claim
 ```
 
-## Key Features
+## 📁 File Structure
 
-- **Claim Management**: Robust Pydantic-based models for representing knowledge claims
-- **Vector Database Integration**: Support for ChromaDB and FAISS for semantic similarity search
-- **LLM Integration**: Flexible interface for AI processing with Gemini API support
-- **Multi-Modal Interface**: TUI, CLI, MCP, and WebUI support planned
-- **Dirty Flag Evaluation**: Automated claim re-evaluation with confidence-based prioritization
+```
+src/
+├── core/
+│   └── unified_models.py     # Data models only
+├── contextflow.py            # Single Conjecture class
+├── cli/
+│   ├── simple_cli.py         # CLI example
+│   └── base_cli.py           # Base CLI functionality
+├── tui/
+│   └── simple_tui.py         # TUI example
+├── gui/
+│   └── simple_gui.py         # GUI example
+└── config/
+    └── simple_config.py      # Configuration only
 
-## Development Status
+specs/
+├── simple_architecture.md           # Architecture specification
+└── interface_implementation_guide.md # Implementation guide
 
-**Phase**: Core Foundation (Weeks 1-2)  
-**Status**: Ready for implementation  
-**Specifications**: Complete and finalized in `specs/` folder
+demo/
+└── unified_api_demo.py              # Live demonstration
+```
 
-## Environment Variables
+## 🚀 Benefits
 
-Configure the system using environment variables:
-- `Conjecture_DB_PATH`: Database file path
-- `Conjecture_DB_TYPE`: Database type (file, chroma, mock)
-- `Conjecture_CONFIDENCE`: Confidence threshold
-- `Conjecture_MAX_CONTEXT`: Maximum context size
-- `Conjecture_BATCH_SIZE`: Exploration batch size
-- `Conjecture_EMBEDDING_MODEL`: Embedding model name
-- `Conjecture_LLM_API_KEY`: LLM API key (enables LLM features)
-- `Conjecture_LLM_MODEL`: LLM model name
-- `Conjecture_DEBUG`: Debug mode
+### Simplicity
+- Easy to understand and maintain
+- No complex abstractions to learn
+- Clear responsibility boundaries
 
-## Documentation
+### Consistency
+- All interfaces work the same way
+- Single source of truth for functionality
+- No duplication of business logic
 
-### Current Specifications (Authoritative)
-- **[System Design](specs/design.md)** - Complete architecture and component design
-- **[Requirements](specs/requirements.md)** - Comprehensive requirements and use cases
-- **[Development Phases](specs/phases.md)** - Implementation roadmap and milestones
-- **[Interface Design](specs/interface_design.md)** - Multi-modal interface specifications
+### Flexibility
+- Easy to add new interfaces
+- Direct data access when needed
+- Minimal coupling between layers
 
-### Archived Documentation
-Historical documentation and research materials are available in the `archive/` folder. See `archive/stored-2025-01-07.md` for a detailed inventory of archived content and its potential value.
+### LLM Provider Support
+- Multiple LLM providers supported: Chutes.ai, LM Studio, OpenAI, Anthropic, and more
+- Local model support through LM Studio with models like ibm/granite-4-h-tiny
+- Easy configuration switching between providers
+- Robust fallback mechanisms
 
-## Contributing
+### Performance
+- No unnecessary abstraction overhead
+- Direct API calls
+- Efficient resource usage
 
-1. Review the specifications in `specs/` folder
-2. Follow the development phases outlined in `specs/phases.md`
-3. Ensure all tests pass before submitting changes
-4. Update documentation as needed
+## 🎭 Interface Examples
 
-## License
+### CLI Example
+```python
+from contextflow import Conjecture
+from rich.console import Console
 
-See [LICENSE](LICENSE) file for details.
+class CLI:
+    def __init__(self):
+        self.cf = Conjecture()
+        self.console = Console()
+    
+    def search(self, query):
+        result = self.cf.explore(query)
+        self.console.print(f"Found {len(result.claims)} claims")
+```
+
+### TUI Example
+```python
+import curses
+from contextflow import Conjecture
+
+class TUI:
+    def __init__(self):
+        self.cf = Conjecture()
+    
+    def search_screen(self, stdscr):
+        query = self.get_input(stdscr, "Search: ")
+        result = self.cf.explore(query)
+        self.display_results(stdscr, result)
+```
+
+### GUI Example
+```python
+import tkinter as tk
+from contextflow import Conjecture
+
+class GUI:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.cf = Conjecture()
+    
+    def on_search(self):
+        results = self.cf.explore(self.search_entry.get())
+        self.populate_results(results)
+```
+
+## 🧪 Testing Strategy
+
+### Unit Tests
+- Test `Conjecture` class independently
+- Mock data layer for business logic tests
+- Test each interface with mocked `Conjecture`
+
+### Integration Tests
+- Test full flow from interface to data
+- Validate API contracts
+- Ensure consistent behavior across interfaces
+
+## 📖 Available Documentation
+
+1. **[Simple Architecture Specification](specs/simple_architecture.md)** - Complete architecture details
+2. **[Interface Implementation Guide](specs/interface_implementation_guide.md)** - How to implement interfaces
+3. **[Live Demo](demo/unified_api_demo.py)** - Working demonstration
+4. **[QWEN Context](QWEN.md)** - Project overview and status
+
+## 🎯 Key Takeaway
+
+**One `Conjecture` class, unified API, multiple interfaces.**
+
+This simple architecture provides maximum power with minimum complexity. It's easy to understand, maintain, and extend while avoiding the pitfalls of over-engineering.
+
+---
+
+*Last updated: November 12, 2025*

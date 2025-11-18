@@ -10,8 +10,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 import logging
 
-from data.data_manager import DataManager
-from core.refined_skill_models import Claim
+from ..data.data_manager import DataManager
+from ..core.unified_models import Claim
 from .support_systems import ContextBuilder, DataManager as SupportDataManager
 from .prompt_system import PromptBuilder, ResponseParser
 

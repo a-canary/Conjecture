@@ -8,7 +8,7 @@ from typing import Dict, List, Any, Optional, Tuple
 import json
 import logging
 
-from ..core.skill_models import ToolCall, ParsedResponse
+from ..core.unified_models import ToolCall, ParsedResponse
 
 
 logger = logging.getLogger(__name__)

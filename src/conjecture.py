@@ -9,7 +9,7 @@ from typing import Dict, List, Optional, Any
 
 from .data.data_manager import get_data_manager
 from .tools import ToolManager, get_tool_definitions
-from .skills import SkillManager, get_matching_skills
+
 
 
 class Conjecture:
@@ -22,7 +22,7 @@ class Conjecture:
         """Initialize Conjecture with simple configuration"""
         self.data_manager = get_data_manager(use_mock_embeddings=True)
         self.tool_manager = ToolManager()
-        self.skill_manager = SkillManager()
+        
         self.sessions: Dict[str, Dict[str, Any]] = {}
         
         print("Conjecture initialized - Simplified Architecture")
@@ -47,13 +47,8 @@ class Conjecture:
         # Build context
         context = self._build_context(request, max_claims)
         
-        # Get matching skill
-        matching_skills = self.skill_manager.get_matching_skills(request)
-        primary_skill = matching_skills[0] if matching_skills else "research"
-        skill_prompt = self.skill_manager.format_skill_prompt(primary_skill)
-
         # Execute (mock LLM call)
-        response = self._call_llm(request, context, skill_prompt)
+        response = self._call_llm(request, context)
         
         # Process tool results
         tool_results = self._execute_tools_from_response(response)
@@ -65,7 +60,7 @@ class Conjecture:
             "session_id": session_id,
             "context_claims": context,
             "tool_results": tool_results,
-            "skill_used": primary_skill,
+            
             "timestamp": datetime.utcnow().isoformat()
         }
 
@@ -105,7 +100,7 @@ class Conjecture:
         
         return [claim.dict() for claim in relevant_claims]
 
-    def _call_llm(self, request: str, context: List[Dict], skill_prompt: str) -> str:
+    def _call_llm(self, request: str, context: List[Dict]) -> str:
         """Mock LLM interaction (in real implementation, call actual LLM)"""
         
         # Simple mock response generation
@@ -113,11 +108,11 @@ class Conjecture:
         if context:
             context_info = f"Found {len(context)} relevant claims. "
         
-        skill_info = f"Using {skill_prompt.split()[1]} skill. "
+        
         
         tool_list = ", ".join(get_tool_definitions().keys())
         
-        response = f"""I'll help you {skill_info.lower()}
+        response = f"""I'll help you with your request.
 
 {context_info}Based on the available context, I need to gather more information.
 
@@ -260,7 +255,7 @@ This will help me gather evidence and build a comprehensive understanding of you
         return {
             "active_sessions": len(self.sessions),
             "available_tools": len(get_tool_definitions()),
-            "available_skills": len(self.skill_manager.get_all_skills()),
+            
             **claim_stats
         }
 
@@ -288,7 +283,7 @@ if __name__ == "__main__":
     print("🔍 Testing request processing...")
     result = cf.process_request("Research machine learning algorithms")
     print(f"✅ Request processed: {result['success']}")
-    print(f"   Skill used: {result['skill_used']}")
+    
     print(f"   Context claims: {len(result['context_claims'])}")
     print(f"   Tool results: {len(result['tool_results'])}")
     

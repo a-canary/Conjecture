@@ -804,7 +804,7 @@ class TestRecoveryAndResilience:
                 if isinstance(result, Exception):
                     assert isinstance(result, DataLayerError)
                     
-        Exception as e:
+        except Exception as e:
             # Should fail gracefully, not crash
             assert isinstance(e, DataLayerError)
 

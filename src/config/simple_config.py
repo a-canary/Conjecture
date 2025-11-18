@@ -41,13 +41,21 @@ class Config:
         
         # LLM Provider Configuration
         self.llm_provider = os.getenv("Conjecture_LLM_PROVIDER", "chutes")
-        self.llm_api_url = os.getenv("Conjecture_LLM_API_URL", "https://llm.chutes.ai/v1")
-        self.llm_enabled = bool(
-            os.getenv("Conjecture_LLM_API_KEY")
-        )  # Auto-detect if API key exists
-        self.llm_model = os.getenv(
-            "Conjecture_LLM_MODEL", "zai-org/GLM-4.6-turbo" if self.llm_enabled else None
-        )
+        llm_provider_lower = self.llm_provider.lower()
+        
+        # Set appropriate defaults based on provider
+        if llm_provider_lower == "lm_studio":
+            self.llm_api_url = os.getenv("Conjecture_LLM_API_URL", "http://localhost:1234")
+            self.llm_enabled = True  # LM Studio doesn't require API key
+            self.llm_model = os.getenv("Conjecture_LLM_MODEL", "ibm/granite-4-h-tiny")
+        else:
+            self.llm_api_url = os.getenv("Conjecture_LLM_API_URL", "https://llm.chutes.ai/v1")
+            self.llm_enabled = bool(
+                os.getenv("Conjecture_LLM_API_KEY")
+            )  # Auto-detect if API key exists for cloud providers
+            self.llm_model = os.getenv(
+                "Conjecture_LLM_MODEL", "zai-org/GLM-4.6-turbo" if self.llm_enabled else None
+            )
 
         # === Development Settings (1 item) ===
         self.debug = os.getenv("Conjecture_DEBUG", "false").lower() == "true"

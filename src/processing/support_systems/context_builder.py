@@ -235,7 +235,6 @@ class ContextBuilder:
             
             else:  # default
                 prefix = {
-                    ContextItemType.SKILL: "SKILL",
                     ContextItemType.EXAMPLE: "EXAMPLE",
                     ContextItemType.CLAIM: "CLAIM",
                     ContextItemType.TOOL: "TOOL",
@@ -478,8 +477,8 @@ class ContextBuilder:
         """Determine context item type from data item"""
         metadata = data_item.metadata
         
-        if metadata.get('is_skill'):
-            return ContextItemType.SKILL
+        if metadata.get('is_claim'):
+            return ContextItemType.CLAIM
         elif metadata.get('is_example'):
             return ContextItemType.EXAMPLE
         elif metadata.get('is_claim'):
@@ -570,13 +569,10 @@ class ContextBuilder:
                                  context_type: str) -> float:
         """Get context type modifier for item type"""
         modifiers = {
-            ('skill', 'research'): 1.2,
             ('example', 'research'): 1.1,
             ('claim', 'research'): 1.3,
-            ('skill', 'coding'): 1.3,
             ('example', 'coding'): 1.2,
             ('tool', 'coding'): 1.1,
-            ('skill', 'testing'): 1.4,
             ('example', 'testing'): 1.3,
             ('claim', 'evaluation'): 1.4,
             ('example', 'evaluation'): 1.2

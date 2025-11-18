@@ -59,7 +59,6 @@ class ProcessedData(BaseModel):
 
 class ContextItemType(str, Enum):
     """Context item types"""
-    SKILL = "skill"
     EXAMPLE = "example"
     CLAIM = "claim"
     TOOL = "tool"

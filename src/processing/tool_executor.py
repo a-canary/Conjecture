@@ -6,8 +6,12 @@ import asyncio
 import time
 import sys
 import traceback
-import resource
 import signal
+import platform
+
+# Resource module is Unix-only
+if platform.system() != 'Windows':
+    import resource
 import os
 import tempfile
 import shutil
@@ -18,7 +22,7 @@ import logging
 import ast
 import inspect
 
-from ..core.skill_models import ExecutionResult, ToolCall
+from ..core.unified_models import ExecutionResult, ToolCall
 
 
 logger = logging.getLogger(__name__)
@@ -304,12 +308,13 @@ import resource
 import traceback
 import json
 
-# Set resource limits
-try:
-    resource.setrlimit(resource.RLIMIT_AS, ({self.limits.max_memory_mb * 1024 * 1024}, {self.limits.max_memory_mb * 1024 * 1024}))
-    resource.setrlimit(resource.RLIMIT_CPU, (int({self.limits.max_cpu_time}), int({self.limits.max_cpu_time})))
-except (ValueError, OSError):
-    pass  # Limits not supported on this system
+# Set resource limits (Unix only)
+if platform.system() != 'Windows':
+    try:
+        resource.setrlimit(resource.RLIMIT_AS, ({self.limits.max_memory_mb * 1024 * 1024}, {self.limits.max_memory_mb * 1024 * 1024}))
+        resource.setrlimit(resource.RLIMIT_CPU, (int({self.limits.max_cpu_time}), int({self.limits.max_cpu_time})))
+    except (ValueError, OSError):
+        pass  # Limits not supported on this system
 
 # Load context
 context = {json.dumps(context)}

@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import logging
 import re
 
-from ..core.skill_models import ExampleClaim, ExecutionResult, SkillClaim
+from ..core.unified_models import Claim, ExecutionResult
 from ..data.data_manager import DataManager
 from ..data.models import ClaimNotFoundError
 
@@ -31,7 +31,7 @@ class ExampleQualityAssessor:
         }
     
     def assess_example_quality(self, execution_result: ExecutionResult,
-                             existing_examples: List[ExampleClaim]) -> float:
+                             existing_examples: List[Claim]) -> float:
         """
         Assess the quality of a potential example.
         
@@ -124,7 +124,7 @@ class ExampleQualityAssessor:
             return 0.5  # Unknown type
     
     def _assess_parameter_diversity(self, parameters: Dict[str, Any],
-                                  existing_examples: List[ExampleClaim]) -> float:
+                                  existing_examples: List[Claim]) -> float:
         """Assess how diverse the parameters are compared to existing examples."""
         if not existing_examples:
             return 1.0  # First example is always diverse
@@ -150,7 +150,7 @@ class ExampleQualityAssessor:
             return 0.2
     
     def _assess_result_uniqueness(self, result: Any, 
-                                existing_examples: List[ExampleClaim]) -> float:
+                                existing_examples: List[Claim]) -> float:
         """Assess how unique the result is compared to existing examples."""
         if not existing_examples:
             return 1.0
@@ -234,7 +234,7 @@ class ExampleGenerator:
         self.max_examples_per_skill = 50
         self.generation_cooldown_minutes = 5
     
-    async def generate_example_from_execution(self, execution_result: ExecutionResult) -> Optional[ExampleClaim]:
+    async def generate_example_from_execution(self, execution_result: ExecutionResult) -> Optional[Claim]:
         """
         Generate an example claim from a successful execution.
         
@@ -242,7 +242,7 @@ class ExampleGenerator:
             execution_result: Result from skill execution
             
         Returns:
-            Generated ExampleClaim or None if quality too low
+            Generated Claim or None if quality too low
         """
         if not execution_result.success:
             return None
@@ -278,7 +278,7 @@ class ExampleGenerator:
             logger.error(f"Error generating example: {e}")
             return None
     
-    async def get_examples_for_skill(self, skill_id: str, limit: int = 100) -> List[ExampleClaim]:
+    async def get_examples_for_skill(self, skill_id: str, limit: int = 100) -> List[Claim]:
         """Get existing examples for a skill."""
         try:
             # Filter for example claims with this skill_id
@@ -291,7 +291,7 @@ class ExampleGenerator:
                 if ('type.example' in claim_dict.get('tags', []) and 
                     claim_dict.get('skill_id') == skill_id):
                     try:
-                        example = ExampleClaim(**claim_dict)
+                        example = Claim(**claim_dict)
                         examples.append(example)
                     except Exception as e:
                         logger.warning(f"Failed to load example claim {claim_dict.get('id', 'unknown')}: {e}")
@@ -303,7 +303,7 @@ class ExampleGenerator:
             return []
     
     def _should_generate_example(self, execution_result: ExecutionResult,
-                               existing_examples: List[ExampleClaim]) -> bool:
+                               existing_examples: List[Claim]) -> bool:
         """Determine if we should generate an example from this execution."""
         # Check if we have too many examples already
         if len(existing_examples) >= self.max_examples_per_skill:
@@ -331,14 +331,14 @@ class ExampleGenerator:
         return True
     
     async def _create_example_claim(self, execution_result: ExecutionResult,
-                                  quality: float) -> Optional[ExampleClaim]:
+                                  quality: float) -> Optional[Claim]:
         """Create an example claim from execution result."""
         try:
             # Generate example content
             content = self._generate_example_content(execution_result)
             
             # Create example claim
-            example_claim = ExampleClaim(
+            example_claim = Claim(
                 skill_id=execution_result.skill_id,
                 input_parameters=execution_result.parameters_used,
                 output_result=execution_result.result,
@@ -418,7 +418,7 @@ class ExampleGenerator:
             return str(result)
     
     def _record_generation(self, execution_result: ExecutionResult,
-                          example_claim: ExampleClaim, quality: float) -> None:
+                          example_claim: Claim, quality: float) -> None:
         """Record example generation for tracking."""
         record = {
             'timestamp': datetime.utcnow().isoformat(),
@@ -436,7 +436,7 @@ class ExampleGenerator:
         if len(self.generation_history) > self.max_history_size:
             self.generation_history = self.generation_history[-self.max_history_size:]
     
-    async def batch_generate_examples(self, execution_results: List[ExecutionResult]) -> List[ExampleClaim]:
+    async def batch_generate_examples(self, execution_results: List[ExecutionResult]) -> List[Claim]:
         """
         Generate examples from multiple execution results.
         
@@ -514,7 +514,7 @@ class ExampleGenerator:
             for claim_dict in example_claims:
                 if 'type.example' in claim_dict.get('tags', []):
                     try:
-                        example = ExampleClaim(**claim_dict)
+                        example = Claim(**claim_dict)
                         if example.example_quality < min_quality:
                             # Delete low-quality example
                             await self.data_manager.delete_claim(example.id)

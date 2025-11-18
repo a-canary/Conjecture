@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
-from ...core.basic_models import BasicClaim, ClaimState, ClaimType
+from core.basic_models import BasicClaim, ClaimState, ClaimType
 from .error_handling import with_error_handling, LLMErrorHandler, RetryConfig
 
 

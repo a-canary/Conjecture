@@ -130,7 +130,7 @@ class LLMEvaluator:
                 id="ctx_4",
                 content="Neural networks learn through backpropagation gradient descent",
                 confidence=0.87,
-                type=[ClaimType.SKILL],
+                type=[ClaimType.CONCEPT],
                 tags=["ai", "deep-learning"],
                 state=ClaimState.VALIDATED,
                 created=datetime.now(),
