@@ -25,7 +25,7 @@ class YourInterface:
 
 ### 1. CLI Implementation
 ```python
-# src/cli/your_cli.py
+# src/cli/modular_cli.py
 from contextflow import Conjecture
 from rich.console import Console
 
@@ -53,9 +53,11 @@ class YourCLI:
             self.console.print(f"Error: {e}")
 ```
 
+Note: The Conjecture class integrates with agent/, processing/, llm/, and local/ components internally, but interfaces only interact with the unified API.
+
 ### 2. TUI Implementation
 ```python
-# src/tui/your_tui.py
+# src/interfaces/simple_tui.py
 import curses
 from contextflow import Conjecture
 
@@ -86,7 +88,7 @@ class YourTUI:
 
 ### 3. GUI Implementation
 ```python
-# src/gui/your_gui.py
+# src/interfaces/simple_gui.py
 import tkinter as tk
 from tkinter import messagebox
 from contextflow import Conjecture

@@ -6,17 +6,19 @@ Combines both local and cloud services for optimal performance
 
 import os
 import sys
-from typing import List, Optional, Dict, Any, Union
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from typing import Any, Dict, List, Optional, Union
+
 from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
 # Add parent to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from .local_backend import LocalBackend
-from .cloud_backend import CloudBackend
-from ..base_cli import BaseCLI, BackendNotAvailableError
-from config.unified_validator import validate_config, get_primary_provider
+from config.config import get_primary_provider, validate_config
+
+from ..base_cli import BackendNotAvailableError, BaseCLI
+from .cloud import CloudBackend
+from .local import LocalBackend
 
 
 class HybridBackend(BaseCLI):
@@ -32,7 +34,7 @@ class HybridBackend(BaseCLI):
         """Detect which backends are available."""
         return {
             "local": self.local_backend.is_available(),
-            "cloud": self.cloud_backend.is_available()
+            "cloud": self.cloud_backend.is_available(),
         }
 
     def is_available(self) -> bool:
@@ -43,7 +45,7 @@ class HybridBackend(BaseCLI):
     def _select_best_backend(self, operation: str = "create") -> BaseCLI:
         """Select the best backend for the given operation."""
         available = self._detect_available_backends()
-        
+
         # Specific logic for different operations
         if self.preferred_mode == "local" and available["local"]:
             return self.local_backend
@@ -63,13 +65,13 @@ class HybridBackend(BaseCLI):
                     return self.local_backend
                 elif available["cloud"]:
                     return self.cloud_backend
-            
+
         # Fallback to whatever is available
         if available["local"]:
             return self.local_backend
         elif available["cloud"]:
             return self.cloud_backend
-        
+
         raise BackendNotAvailableError("No backends are available")
 
     def set_preferred_mode(self, mode: str):
@@ -78,37 +80,52 @@ class HybridBackend(BaseCLI):
             raise ValueError("Mode must be 'local', 'cloud', or 'auto'")
         self.preferred_mode = mode
 
-    def create_claim(self, content: str, confidence: float, user: str, analyze: bool = False, **kwargs) -> str:
+    def create_claim(
+        self,
+        content: str,
+        confidence: float,
+        user: str,
+        analyze: bool = False,
+        **kwargs,
+    ) -> str:
         """Create a new claim using the best available backend."""
         if not self.is_available():
             raise BackendNotAvailableError("Hybrid backend is not properly configured")
 
         backend = self._select_best_backend("create")
         backend_name = backend._get_backend_type()
-        
-        self.console.print(f"[blue]🔄 Using {backend_name} backend for claim creation...[/blue]")
-        
+
+        self.console.print(
+            f"[blue]🔄 Using {backend_name} backend for claim creation...[/blue]"
+        )
+
         try:
-            claim_id = backend.create_claim(content, confidence, user, analyze, **kwargs)
-            
+            claim_id = backend.create_claim(
+                content, confidence, user, analyze, **kwargs
+            )
+
             # Store which backend was used
-            if hasattr(backend, '_init_database'):  # Ensure database is initialized
+            if hasattr(backend, "_init_database"):  # Ensure database is initialized
                 backend._init_database()
-            
+
             return claim_id
         except Exception as e:
             # Try fallback backend if preferred one fails
             available = self._detect_available_backends()
             fallback = None
-            
+
             if isinstance(backend, LocalBackend) and available["cloud"]:
                 fallback = self.cloud_backend
             elif isinstance(backend, CloudBackend) and available["local"]:
                 fallback = self.local_backend
-            
+
             if fallback:
-                self.console.print(f"[yellow]⚠️ {backend_name} backend failed, trying {fallback._get_backend_type()}...[/yellow]")
-                return fallback.create_claim(content, confidence, user, analyze, **kwargs)
+                self.console.print(
+                    f"[yellow]⚠️ {backend_name} backend failed, trying {fallback._get_backend_type()}...[/yellow]"
+                )
+                return fallback.create_claim(
+                    content, confidence, user, analyze, **kwargs
+                )
             else:
                 raise
 
@@ -127,9 +144,11 @@ class HybridBackend(BaseCLI):
 
         backend = self._select_best_backend("search")
         backend_name = backend._get_backend_type()
-        
-        self.console.print(f"[blue]🔍 Using {backend_name} backend for search...[/blue]")
-        
+
+        self.console.print(
+            f"[blue]🔍 Using {backend_name} backend for search...[/blue]"
+        )
+
         return backend.search_claims(query, limit, **kwargs)
 
     def analyze_claim(self, claim_id: str, **kwargs) -> Dict[str, Any]:
@@ -138,10 +157,12 @@ class HybridBackend(BaseCLI):
             raise BackendNotAvailableError("Hybrid backend is not properly configured")
 
         available = self._detect_available_backends()
-        
+
         # For analysis, prefer cloud for more powerful models
         if available["cloud"]:
-            self.console.print("[blue]🧠 Using cloud services for enhanced analysis...[/blue]")
+            self.console.print(
+                "[blue]🧠 Using cloud services for enhanced analysis...[/blue]"
+            )
             analysis = self.cloud_backend.analyze_claim(claim_id, **kwargs)
             analysis["hybrid_mode"] = "cloud_preferred"
         elif available["local"]:
@@ -163,23 +184,27 @@ class HybridBackend(BaseCLI):
             "backend_type": "hybrid",
             "available": self.is_available(),
             "preferred_mode": self.preferred_mode,
-            "backends": {
-                "local": local_status,
-                "cloud": cloud_status
-            },
-            "active_backends": [name for name, is_available in available.items() if is_available],
-            "fallback_enabled": True
+            "backends": {"local": local_status, "cloud": cloud_status},
+            "active_backends": [
+                name for name, is_available in available.items() if is_available
+            ],
+            "fallback_enabled": True,
         }
 
         return status
 
     def create_cross_backend_analysis(self, claim_id: str) -> Dict[str, Any]:
         """Create analysis using both backends for comparison."""
-        if not self._detect_available_backends()["local"] or not self._detect_available_backends()["cloud"]:
-            raise BackendNotAvailableError("Both local and cloud backends required for cross-backend analysis")
+        if (
+            not self._detect_available_backends()["local"]
+            or not self._detect_available_backends()["cloud"]
+        ):
+            raise BackendNotAvailableError(
+                "Both local and cloud backends required for cross-backend analysis"
+            )
 
         self.console.print("[blue]🔄 Running cross-backend analysis...[/blue]")
-        
+
         # Get claim
         claim = self.get_claim(claim_id)
         if not claim:
@@ -198,12 +223,17 @@ class HybridBackend(BaseCLI):
             "comparison": {
                 "local_sentiment": local_analysis.get("sentiment"),
                 "cloud_sentiment": cloud_analysis.get("sentiment"),
-                "sentiment_match": local_analysis.get("sentiment") == cloud_analysis.get("sentiment"),
+                "sentiment_match": local_analysis.get("sentiment")
+                == cloud_analysis.get("sentiment"),
                 "local_topics": local_analysis.get("topics", []),
                 "cloud_topics": cloud_analysis.get("topics", []),
-                "topic_overlap": set(local_analysis.get("topics", [])).intersection(set(cloud_analysis.get("topics", [])))
+                "topic_overlap": set(local_analysis.get("topics", [])).intersection(
+                    set(cloud_analysis.get("topics", []))
+                ),
             },
-            "recommendation": "cloud" if cloud_analysis.get("verification_status") == "verified" else "local"
+            "recommendation": "cloud"
+            if cloud_analysis.get("verification_status") == "verified"
+            else "local",
         }
 
         self.console.print("[green]✅ Cross-backend analysis complete[/green]")
@@ -215,7 +245,7 @@ class HybridBackend(BaseCLI):
         optimization = {
             "optimization_applied": True,
             "current_mode": self.preferred_mode,
-            "recommendations": {}
+            "recommendations": {},
         }
 
         if available["local"] and available["cloud"]:
@@ -223,23 +253,23 @@ class HybridBackend(BaseCLI):
                 "create": "local" if self.preferred_mode == "local" else "cloud",
                 "search": "local",  # Local is faster for search
                 "analyze": "cloud",  # Cloud is better for analysis
-                "get": "local"  # Use local database
+                "get": "local",  # Use local database
             }
             optimization["optimization_type"] = "auto"
         elif available["local"]:
             optimization["recommendations"] = {
                 "create": "local",
-                "search": "local", 
+                "search": "local",
                 "analyze": "local",
-                "get": "local"
+                "get": "local",
             }
             optimization["optimization_type"] = "local_only"
         elif available["cloud"]:
             optimization["recommendations"] = {
                 "create": "cloud",
                 "search": "cloud",
-                "analyze": "cloud", 
-                "get": "cloud"
+                "analyze": "cloud",
+                "get": "cloud",
             }
             optimization["optimization_type"] = "cloud_only"
 

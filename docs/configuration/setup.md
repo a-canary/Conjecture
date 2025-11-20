@@ -111,21 +111,24 @@ Edit `.env` file directly:
 
 ```bash
 # For Ollama
-Conjecture_LLM_PROVIDER=ollama
-Conjecture_LLM_API_URL=http://localhost:11434
-Conjecture_LLM_MODEL=llama2
+PROVIDER_API_URL=http://localhost:11434
+PROVIDER_API_KEY=
+PROVIDER_MODEL=llama2
 
 # For OpenAI
-Conjecture_LLM_PROVIDER=openai
-Conjecture_LLM_API_URL=https://api.openai.com/v1
-Conjecture_LLM_MODEL=gpt-3.5-turbo
-OPENAI_API_KEY=your-openai-key
+PROVIDER_API_URL=https://api.openai.com/v1
+PROVIDER_API_KEY=sk-your-api-key-here
+PROVIDER_MODEL=gpt-3.5-turbo
 
 # For Anthropic
-Conjecture_LLM_PROVIDER=anthropic
-Conjecture_LLM_API_URL=https://api.anthropic.com
-Conjecture_LLM_MODEL=claude-3-haiku-20240307
-ANTHROPIC_API_KEY=your-anthropic-key
+PROVIDER_API_URL=https://api.anthropic.com
+PROVIDER_API_KEY=sk-ant-api03-your-anthropic-key-here
+PROVIDER_MODEL=claude-3-haiku-20240307
+
+# For Chutes.ai
+PROVIDER_API_URL=https://llm.chutes.ai/v1
+PROVIDER_API_KEY=cpk_your-api-key-here
+PROVIDER_MODEL=zai-org/GLM-4.6-FP8
 ```
 
 ## Common Workflows
@@ -220,9 +223,9 @@ for key, value in status.items():
 ## Environment Variables
 
 ### Required
-- `Conjecture_LLM_PROVIDER` - Provider name (ollama, openai, anthropic, etc.)
-- `Conjecture_LLM_API_URL` - API endpoint
-- `Conjecture_LLM_MODEL` - Model name
+- `PROVIDER_API_URL` - API endpoint
+- `PROVIDER_API_KEY` - API key (for cloud services)
+- `PROVIDER_MODEL` - Model name
 
 ### Optional (for cloud providers)
 - `OPENAI_API_KEY` - OpenAI API key
@@ -231,10 +234,11 @@ for key, value in status.items():
 - `CHUTES_API_KEY` - Chutes API key
 
 ### Defaults (auto-added)
-- `Conjecture_EMBEDDING_MODEL=all-MiniLM-L6-v2`
-- `Conjecture_DB_PATH=data/conjecture.db`
-- `Conjecture_CONFIDENCE=0.7`
-- `Conjecture_DEBUG=false`
+- `DB_PATH=data/conjecture.db`
+- `CONFIDENCE_THRESHOLD=0.95`
+- `MAX_CONTEXT_SIZE=10`
+- `BATCH_SIZE=10`
+- `DEBUG=false`
 
 ## Best Practices
 

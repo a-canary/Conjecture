@@ -6,10 +6,12 @@ Covers basic workflows and functionality
 import os
 import tempfile
 import unittest
-from src.conjecture import Conjecture
-from src.data import DataManager
-from src.tools import ToolManager
+
 from src.skills import SkillManager
+
+from src.data import DataManager
+from src.engine import Conjecture
+from src.tools import ToolManager
 
 
 class TestSimplifiedConjecture(unittest.TestCase):
@@ -34,9 +36,9 @@ class TestSimplifiedConjecture(unittest.TestCase):
             content="Test claim for unit testing",
             confidence=0.85,
             claim_type="concept",
-            tags=["test", "unit"]
+            tags=["test", "unit"],
         )
-        
+
         self.assertTrue(result["success"])
         self.assertIn("claim", result)
         self.assertEqual(result["claim"]["content"], "Test claim for unit testing")
@@ -44,7 +46,7 @@ class TestSimplifiedConjecture(unittest.TestCase):
     def test_request_processing(self):
         """Test basic request processing"""
         result = self.conjecture.process_request("Research machine learning basics")
-        
+
         self.assertTrue(result["success"])
         self.assertIn("response", result)
         self.assertIn("session_id", result)
@@ -56,16 +58,18 @@ class TestSimplifiedConjecture(unittest.TestCase):
         # Process first request
         result1 = self.conjecture.process_request("Test request 1")
         session_id = result1["session_id"]
-        
+
         # Check session exists
         session = self.conjecture.get_session(session_id)
         self.assertIsNotNone(session)
         self.assertEqual(len(session["messages"]), 1)
-        
+
         # Process second request in same session
-        result2 = self.conjecture.process_request("Test request 2", session_id=session_id)
+        result2 = self.conjecture.process_request(
+            "Test request 2", session_id=session_id
+        )
         self.assertEqual(result2["session_id"], session_id)
-        
+
         # Check session updated
         session = self.conjecture.get_session(session_id)
         self.assertEqual(len(session["messages"]), 2)
@@ -77,16 +81,16 @@ class TestSimplifiedConjecture(unittest.TestCase):
             content="Python is a programming language",
             confidence=0.95,
             claim_type="concept",
-            tags=["python", "programming"]
+            tags=["python", "programming"],
         )
-        
+
         self.conjecture.create_claim(
             content="JavaScript runs in web browsers",
             confidence=0.90,
             claim_type="concept",
-            tags=["javascript", "web"]
+            tags=["javascript", "web"],
         )
-        
+
         # Test search
         results = self.conjecture.search_claims("python")
         self.assertGreater(len(results), 0)
@@ -97,28 +101,28 @@ class TestSimplifiedConjecture(unittest.TestCase):
         # Create test claims
         for i in range(5):
             self.conjecture.create_claim(
-                content=f"Test claim {i+1}",
+                content=f"Test claim {i + 1}",
                 confidence=0.8 + i * 0.02,
                 claim_type="concept",
-                tags=[f"tag{i+1}"]
+                tags=[f"tag{i + 1}"],
             )
-        
+
         # Get recent claims
         recent = self.conjecture.get_recent_claims(limit=3)
         self.assertEqual(len(recent), 3)
-        
+
         # Check ordering (newest first)
         for i in range(len(recent) - 1):
-            self.assertTrue(recent[i]["created"] >= recent[i+1]["created"])
+            self.assertTrue(recent[i]["created"] >= recent[i + 1]["created"])
 
     def test_statistics(self):
         """Test statistics generation"""
         # Create test claims
         self.conjecture.create_claim("Test claim 1", 0.8, "concept")
         self.conjecture.create_claim("Test claim 2", 0.9, "reference")
-        
+
         stats = self.conjecture.get_statistics()
-        
+
         self.assertIn("active_sessions", stats)
         self.assertIn("available_tools", stats)
         self.assertIn("available_skills", stats)
@@ -129,10 +133,10 @@ class TestSimplifiedConjecture(unittest.TestCase):
         """Test session cleanup functionality"""
         # Create sessions by processing requests
         for i in range(3):
-            self.conjecture.process_request(f"Test request {i+1}")
-        
+            self.conjecture.process_request(f"Test request {i + 1}")
+
         self.assertEqual(len(self.conjecture.sessions), 3)
-        
+
         # Clean up old sessions (using 0 days to clean all)
         cleaned = self.conjecture.cleanup_sessions(days_old=0)
         self.assertEqual(cleaned, 3)
@@ -149,8 +153,14 @@ class TestToolManager(unittest.TestCase):
     def test_tool_definition_retrieval(self):
         """Test getting tool definitions"""
         tools = self.tool_manager.get_tool_definitions()
-        
-        expected_tools = ["WebSearch", "ReadFiles", "WriteCodeFile", "CreateClaim", "ClaimSupport"]
+
+        expected_tools = [
+            "WebSearch",
+            "ReadFiles",
+            "WriteCodeFile",
+            "CreateClaim",
+            "ClaimSupport",
+        ]
         for tool in expected_tools:
             self.assertIn(tool, tools)
             self.assertIn("description", tools[tool])
@@ -158,11 +168,10 @@ class TestToolManager(unittest.TestCase):
 
     def test_web_search_tool(self):
         """Test WebSearch tool"""
-        result = self.tool_manager.call_tool("WebSearch", {
-            "query": "machine learning",
-            "max_results": 3
-        })
-        
+        result = self.tool_manager.call_tool(
+            "WebSearch", {"query": "machine learning", "max_results": 3}
+        )
+
         self.assertTrue(result["success"])
         self.assertIn("results", result)
         self.assertLessEqual(len(result["results"]), 3)
@@ -171,30 +180,32 @@ class TestToolManager(unittest.TestCase):
         """Test WriteCodeFile tool"""
         test_content = "print('Hello, World!')"
         test_file = os.path.join(tempfile.gettempdir(), "test_output.py")
-        
-        result = self.tool_manager.call_tool("WriteCodeFile", {
-            "file_path": test_file,
-            "content": test_content
-        })
-        
+
+        result = self.tool_manager.call_tool(
+            "WriteCodeFile", {"file_path": test_file, "content": test_content}
+        )
+
         self.assertTrue(result["success"])
-        
+
         # Verify file was created
         self.assertTrue(os.path.exists(test_file))
-        
+
         # Cleanup
         if os.path.exists(test_file):
             os.remove(test_file)
 
     def test_create_claim_tool(self):
         """Test CreateClaim tool"""
-        result = self.tool_manager.call_tool("CreateClaim", {
-            "content": "Test claim from tool",
-            "confidence": 0.85,
-            "claim_type": "concept",
-            "tags": ["test", "tool"]
-        })
-        
+        result = self.tool_manager.call_tool(
+            "CreateClaim",
+            {
+                "content": "Test claim from tool",
+                "confidence": 0.85,
+                "claim_type": "concept",
+                "tags": ["test", "tool"],
+            },
+        )
+
         self.assertTrue(result["success"])
         self.assertIn("claim_id", result)
         self.assertIn("claim", result)
@@ -202,9 +213,9 @@ class TestToolManager(unittest.TestCase):
     def test_tool_call_parsing(self):
         """Test tool call parsing from text"""
         text = "WebSearch(query='AI research'), CreateClaim(content='Test claim', confidence=0.8, claim_type='concept')"
-        
+
         calls = self.tool_manager.parse_tool_calls(text)
-        
+
         self.assertEqual(len(calls), 2)
         self.assertEqual(calls[0]["tool"], "WebSearch")
         self.assertEqual(calls[0]["parameters"]["query"], "AI research")
@@ -225,9 +236,9 @@ class TestSkillManager(unittest.TestCase):
             ("Research machine learning", ["research"]),
             ("Write Python code", ["code"]),
             ("Test the application", ["test"]),
-            ("Evaluate performance", ["evaluate"])
+            ("Evaluate performance", ["evaluate"]),
         ]
-        
+
         for query, expected_skills in queries:
             matching_skills = self.skill_manager.get_matching_skills(query)
             self.assertTrue(any(skill in matching_skills for skill in expected_skills))
@@ -235,7 +246,7 @@ class TestSkillManager(unittest.TestCase):
     def test_skill_template_formatting(self):
         """Test skill template formatting"""
         skill_prompt = self.skill_manager.format_skill_prompt("research")
-        
+
         self.assertIn("Skill: Research", skill_prompt)
         self.assertIn("Description:", skill_prompt)
         self.assertIn("Steps to follow:", skill_prompt)
@@ -244,7 +255,7 @@ class TestSkillManager(unittest.TestCase):
     def test_all_skills_available(self):
         """Test that all expected skills are available"""
         skills = self.skill_manager.get_all_skills()
-        
+
         expected_skills = ["research", "code", "test", "evaluate"]
         for skill in expected_skills:
             self.assertIn(skill, skills)
@@ -268,9 +279,9 @@ class TestDataManager(unittest.TestCase):
             content="Test claim for data manager",
             confidence=0.85,
             claim_type="concept",
-            tags=["test", "data"]
+            tags=["test", "data"],
         )
-        
+
         # Test retrieval
         retrieved = self.data_manager.get_claim(claim.id)
         self.assertIsNotNone(retrieved)
@@ -281,14 +292,12 @@ class TestDataManager(unittest.TestCase):
         """Test claim search"""
         # Create test claims
         self.data_manager.create_claim(
-            "Python programming language",
-            0.9, "concept", ["python"]
+            "Python programming language", 0.9, "concept", ["python"]
         )
         self.data_manager.create_claim(
-            "JavaScript web development",
-            0.85, "concept", ["javascript", "web"]
+            "JavaScript web development", 0.85, "concept", ["javascript", "web"]
         )
-        
+
         # Test search
         results = self.data_manager.search_claims("python")
         self.assertEqual(len(results), 1)
@@ -299,9 +308,9 @@ class TestDataManager(unittest.TestCase):
         # Create test claims
         self.data_manager.create_claim("Claim 1", 0.8, "concept")
         self.data_manager.create_claim("Claim 2", 0.9, "reference")
-        
+
         stats = self.data_manager.get_statistics()
-        
+
         self.assertEqual(stats["total_claims"], 2)
         self.assertGreater(stats["avg_confidence"], 0)
         self.assertIn("claim_types", stats)
@@ -317,13 +326,13 @@ def run_integration_tests():
     """Run integration tests for basic workflows"""
     print("🧪 Running Integration Tests for Simplified Conjecture")
     print("=" * 60)
-    
+
     # Test all workflows
     test_workflow_research()
-    test_workflow_code() 
+    test_workflow_code()
     test_workflow_test()
     test_workflow_evaluate()
-    
+
     print("🎉 All integration tests completed!")
 
 
@@ -331,16 +340,16 @@ def test_workflow_research():
     """Test research workflow"""
     print("\n🔍 Testing Research Workflow")
     print("-" * 30)
-    
+
     cf = Conjecture()
-    
+
     # Research request
     result = cf.process_request("Research artificial intelligence basics")
-    
+
     assert result["success"], "Research request should succeed"
     assert result["skill_used"] == "research", "Should use research skill"
     assert len(result["tool_results"]) > 0, "Should execute tools"
-    
+
     print("✅ Research workflow: PASSED")
 
 
@@ -348,33 +357,33 @@ def test_workflow_code():
     """Test code development workflow"""
     print("\n💻 Testing Code Development Workflow")
     print("-" * 30)
-    
+
     cf = Conjecture()
-    
+
     # Code development request
     result = cf.process_request("Write a simple Python function")
-    
+
     assert result["success"], "Code request should succeed"
     assert result["skill_used"] == "code", "Should use code skill"
     assert len(result["tool_results"]) > 0, "Should execute tools"
-    
+
     print("✅ Code development workflow: PASSED")
 
 
 def test_workflow_test():
     """Test testing workflow"""
-    print("\n🧪 Testing Validation Workflow") 
+    print("\n🧪 Testing Validation Workflow")
     print("-" * 30)
-    
+
     cf = Conjecture()
-    
+
     # Testing request
     result = cf.process_request("Test the application functionality")
-    
+
     assert result["success"], "Testing request should succeed"
     assert result["skill_used"] == "test", "Should use test skill"
     assert len(result["tool_results"]) > 0, "Should execute tools"
-    
+
     print("✅ Testing workflow: PASSED")
 
 
@@ -382,22 +391,22 @@ def test_workflow_evaluate():
     """Test evaluation workflow"""
     print("\n📊 Testing Evaluation Workflow")
     print("-" * 30)
-    
+
     cf = Conjecture()
-    
+
     # Evaluation request
     result = cf.process_request("Evaluate the system performance")
-    
+
     assert result["success"], "Evaluation request should succeed"
     assert result["skill_used"] == "evaluate", "Should use evaluate skill"
     assert len(result["tool_results"]) > 0, "Should execute tools"
-    
+
     print("✅ Evaluation workflow: PASSED")
 
 
 if __name__ == "__main__":
     # Run unit tests
-    unittest.main(argv=[''], exit=False, verbosity=2)
-    
+    unittest.main(argv=[""], exit=False, verbosity=2)
+
     # Run integration tests
     run_integration_tests()

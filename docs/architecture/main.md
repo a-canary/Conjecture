@@ -10,24 +10,23 @@ Conjecture uses a simple, elegant architecture based on a single unified API. No
 ┌─────────────────────────────────────────────────────────────┐
 │                    Interfaces Layer                        │
 │  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐      │
-│  │   CLI   │  │   TUI   │  │   GUI   │  │  Future │      │
+│  │   CLI   │  │  Agent  │  │  LLM    │  │ Local   │      │
 │  └─────────┘  └─────────┘  └─────────┘  └─────────┘      │
 └─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
+                            │
+                            ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                 Processing Layer                            │
-│              Single Conjecture Class                        │
 │         ┌─────────────────────────────────────┐           │
-│         │  explore() │ add_claim() │ stats()   │           │
+│         │  processing/ (core logic)           │           │
 │         └─────────────────────────────────────┘           │
 └─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
+                            │
+                            ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                   Data Layer                                │
 │        ┌─────────────────────────────────────┐           │
-│        │    Claim Model │ Validation │ Storage │        │
+│        │    core/ │ config/ │ agent/ │ llm/ │        │
 │        └─────────────────────────────────────┘           │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -47,7 +46,7 @@ Conjecture uses a simple, elegant architecture based on a single unified API. No
 ### 3. Clean Separation
 - Data models: `src/core/unified_models.py`
 - Processing: `src/contextflow.py` (single class)
-- Interfaces: `src/cli/`, `src/tui/`, `src/gui/`
+- Interfaces: `src/cli/`, `src/interfaces/`
 
 ## Implementation Pattern
 
@@ -68,7 +67,7 @@ class YourInterface:
 
 ### CLI Example:
 ```python
-# src/cli/main.py
+# src/cli/modular_cli.py
 from contextflow import Conjecture
 
 def main():
@@ -79,7 +78,7 @@ def main():
 
 ### TUI Example:
 ```python
-# src/tui/app.py
+# src/interfaces/simple_tui.py
 from contextflow import Conjecture
 
 class TUIApp:
@@ -94,7 +93,7 @@ class TUIApp:
 
 ### GUI Example:
 ```python
-# src/gui/app.py
+# src/interfaces/simple_gui.py
 from contextflow import Conjecture
 
 class GUIApp:
@@ -173,11 +172,18 @@ src/
 │   └── unified_models.py     # Data models only
 ├── contextflow.py            # Single Conjecture class
 ├── cli/
-│   └── main.py               # CLI implementation
-├── tui/
-│   └── app.py                # TUI implementation
-├── gui/
-│   └── app.py                # GUI implementation
+│   └── modular_cli.py        # CLI implementation
+├── agent/
+│   └── ...                   # Agent components
+├── processing/
+│   └── ...                   # Processing logic
+├── llm/
+│   └── ...                   # LLM integration
+├── local/
+│   └── ...                   # Local service integrations
+├── interfaces/
+│   ├── simple_gui.py         # GUI implementation
+│   └── simple_tui.py         # TUI implementation
 └── config/
     └── simple_config.py      # Configuration only
 ```

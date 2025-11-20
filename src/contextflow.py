@@ -13,8 +13,8 @@ import glob
 from pathlib import Path
 
 from config.simple_config import Config
-from core.unified_models import Claim, ClaimState, ClaimType
-from processing.llm_bridge import LLMBridge, LLMRequest
+from core.models import Claim, ClaimState, ClaimType
+from processing.bridge import LLMBridge, LLMRequest
 from processing.chutes_adapter import create_chutes_adapter_from_config
 from processing.llm.lm_studio_adapter import create_lm_studio_adapter_from_config
 
@@ -31,7 +31,7 @@ class Conjecture:
 
         # Initialize backend (will be implemented based on database_type)
         self._initialize_backend()
-        
+
         # Initialize LLM bridge with Chutes.ai
         self._initialize_llm_bridge()
 
@@ -48,17 +48,21 @@ class Conjecture:
         else:
             print("Using mock backend")
             # TODO: Initialize mock backend
-    
+
     def _initialize_llm_bridge(self):
         """Initialize LLM bridge with appropriate provider based on configuration"""
         try:
             # Determine which provider to use based on configuration
-            llm_provider = self.config.llm_provider.lower() if self.config.llm_provider else 'chutes'
-            
+            llm_provider = (
+                self.config.llm_provider.lower()
+                if self.config.llm_provider
+                else "chutes"
+            )
+
             primary_adapter = None
             fallback_adapter = None
-            
-            if llm_provider == 'lm_studio':
+
+            if llm_provider == "lm_studio":
                 # Use LM Studio as primary provider
                 primary_adapter = create_lm_studio_adapter_from_config()
                 # Use Chutes as fallback if available
@@ -74,17 +78,17 @@ class Conjecture:
                     fallback_adapter = create_lm_studio_adapter_from_config()
                 except:
                     fallback_adapter = None
-    
+
             # Initialize bridge
             self.llm_bridge = LLMBridge(provider=primary_adapter)
             if fallback_adapter:
                 self.llm_bridge.set_fallback(fallback_adapter)
-    
+
             if self.llm_bridge.is_available():
                 print(f"LLM Bridge: {llm_provider} connected (primary)")
             else:
                 print(f"LLM Bridge: {llm_provider} not available, using fallback")
-    
+
         except Exception as e:
             print(f"LLM Bridge initialization failed: {e}")
             self.llm_bridge = LLMBridge()  # Empty bridge for graceful degradation
@@ -120,18 +124,27 @@ class Conjecture:
         # Try LLM-powered exploration first
         if self.llm_bridge and self.llm_bridge.is_available():
             try:
-                return self._explore_with_llm(query, max_claims, claim_types, confidence_threshold)
+                return self._explore_with_llm(
+                    query, max_claims, claim_types, confidence_threshold
+                )
             except Exception as e:
                 print(f"⚠️  LLM exploration failed: {e}, falling back to mock")
-        
+
         # Fallback to mock results
         return self._explore_mock(query, max_claims, claim_types, confidence_threshold)
-    
-    def _explore_with_llm(self, query: str, max_claims: int, claim_types: Optional[List[str]], confidence_threshold: float) -> "ExplorationResult":
+
+    def _explore_with_llm(
+        self,
+        query: str,
+        max_claims: int,
+        claim_types: Optional[List[str]],
+        confidence_threshold: float,
+    ) -> "ExplorationResult":
         """Explore using LLM bridge"""
         import time
+
         start_time = time.time()
-        
+
         # Build exploration prompt
         prompt = f"""You are an expert knowledge explorer. Analyze the topic "{query}" and generate relevant claims.
 
@@ -150,29 +163,28 @@ Generate up to {max_claims} claims with confidence ≥ {confidence_threshold}.""
 
         # Create LLM request
         llm_request = LLMRequest(
-            prompt=prompt,
-            max_tokens=2048,
-            temperature=0.7,
-            task_type="explore"
+            prompt=prompt, max_tokens=2048, temperature=0.7, task_type="explore"
         )
-        
+
         # Process with LLM
         response = self.llm_bridge.process(llm_request)
-        
+
         # Filter and format results
         processing_time = time.time() - start_time
-        
+
         if response.success:
             # Filter by confidence threshold and claim types
             filtered_claims = []
             for claim in response.generated_claims:
                 if claim.confidence >= confidence_threshold:
-                    if claim_types is None or any(t.value in claim_types for t in claim.type):
+                    if claim_types is None or any(
+                        t.value in claim_types for t in claim.type
+                    ):
                         filtered_claims.append(claim)
-            
+
             # Limit to max_claims
             final_claims = filtered_claims[:max_claims]
-            
+
             result = ExplorationResult(
                 query=query,
                 claims=final_claims,
@@ -181,13 +193,21 @@ Generate up to {max_claims} claims with confidence ≥ {confidence_threshold}.""
                 confidence_threshold=confidence_threshold,
                 max_claims=max_claims,
             )
-            
-            print(f"Found {len(result.claims)} claims via LLM in {result.search_time:.2f}s")
+
+            print(
+                f"Found {len(result.claims)} claims via LLM in {result.search_time:.2f}s"
+            )
             return result
         else:
             raise Exception(f"LLM processing failed: {response.errors}")
-    
-    def _explore_mock(self, query: str, max_claims: int, claim_types: Optional[List[str]], confidence_threshold: float) -> "ExplorationResult":
+
+    def _explore_mock(
+        self,
+        query: str,
+        max_claims: int,
+        claim_types: Optional[List[str]],
+        confidence_threshold: float,
+    ) -> "ExplorationResult":
         """Fallback mock exploration"""
         mock_claims = self._generate_mock_claims(query, max_claims, claim_types)
         filtered_claims = [
@@ -261,19 +281,19 @@ Generate up to {max_claims} claims with confidence ≥ {confidence_threshold}.""
                 return validated_claim
             except Exception as e:
                 print(f"⚠️  LLM validation failed: {e}, using original claim")
-        
+
         print(f"Created claim: {claim}")
 
         # TODO: Store claim in backend
         return claim
-    
+
     def _validate_claim_with_llm(self, claim: Claim) -> Claim:
         """Validate claim using LLM bridge"""
         prompt = f"""You are an expert fact-checker. Evaluate this claim for accuracy and provide an appropriate confidence score.
 
 Claim: "{claim.content}"
 Original confidence: {claim.confidence}
-Claim type: {claim.type[0].value if claim.type else 'unknown'}
+Claim type: {claim.type[0].value if claim.type else "unknown"}
 
 Please analyze:
 1. Factual accuracy
@@ -293,54 +313,58 @@ Respond with:
             context_claims=[claim],
             max_tokens=500,
             temperature=0.3,
-            task_type="validate"
+            task_type="validate",
         )
-        
+
         # Process with LLM
         response = self.llm_bridge.process(llm_request)
-        
+
         if response.success and response.content:
             # Parse validation response
             validated_claim = self._parse_validation_response(claim, response.content)
             return validated_claim
         else:
             raise Exception(f"LLM validation failed: {response.errors}")
-    
-    def _parse_validation_response(self, original_claim: Claim, validation_text: str) -> Claim:
+
+    def _parse_validation_response(
+        self, original_claim: Claim, validation_text: str
+    ) -> Claim:
         """Parse LLM validation response and update claim"""
         try:
             # Simple parsing of validation response
-            lines = validation_text.strip().split('\n')
+            lines = validation_text.strip().split("\n")
             updates = {}
-            
+
             for line in lines:
-                if line.startswith('VALIDATED:'):
-                    updates['validated'] = 'True' in line
-                elif line.startswith('CONFIDENCE:'):
+                if line.startswith("VALIDATED:"):
+                    updates["validated"] = "True" in line
+                elif line.startswith("CONFIDENCE:"):
                     try:
-                        updates['confidence'] = float(line.split(':')[1].strip())
+                        updates["confidence"] = float(line.split(":")[1].strip())
                     except:
                         pass
-                elif line.startswith('SUGGESTED_EDIT:'):
-                    edit = line.split(':', 1)[1].strip()
-                    if edit != 'NO_CHANGE':
-                        updates['content'] = edit
-            
+                elif line.startswith("SUGGESTED_EDIT:"):
+                    edit = line.split(":", 1)[1].strip()
+                    if edit != "NO_CHANGE":
+                        updates["content"] = edit
+
             # Create updated claim
             updated_claim = Claim(
                 id=original_claim.id,
-                content=updates.get('content', original_claim.content),
-                confidence=updates.get('confidence', original_claim.confidence),
+                content=updates.get("content", original_claim.content),
+                confidence=updates.get("confidence", original_claim.confidence),
                 type=original_claim.type,
-                state=ClaimState.VALIDATED if updates.get('validated', False) else ClaimState.EXPLORE,
+                state=ClaimState.VALIDATED
+                if updates.get("validated", False)
+                else ClaimState.EXPLORE,
                 tags=original_claim.tags,
                 created_by=original_claim.created_by,
                 created_at=original_claim.created_at,
-                updated_at=datetime.utcnow()
+                updated_at=datetime.utcnow(),
             )
-            
+
             return updated_claim
-            
+
         except Exception as e:
             print(f"Error parsing validation response: {e}")
             return original_claim
@@ -426,30 +450,28 @@ Respond with:
         if not tools_dir.exists():
             print("Tools directory not found")
             return
-        
+
         # Find all Python files in tools directory
         tool_files = list(tools_dir.glob("*.py"))
-        
+
         for tool_file in tool_files:
             if tool_file.name == "__init__.py":
                 continue
-                
+
             try:
                 # Load the module
-                spec = importlib.util.spec_from_file_location(
-                    tool_file.stem, tool_file
-                )
+                spec = importlib.util.spec_from_file_location(tool_file.stem, tool_file)
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
-                
+
                 # Find all functions in the module
                 for attr_name in dir(module):
                     attr = getattr(module, attr_name)
-                    if callable(attr) and not attr_name.startswith('_'):
+                    if callable(attr) and not attr_name.startswith("_"):
                         self.tools[attr_name] = attr
-                
+
                 print(f"✅ Loaded tool: {tool_file.name}")
-                
+
             except Exception as e:
                 print(f"❌ Failed to load tool {tool_file.name}: {e}")
 
@@ -459,14 +481,14 @@ Respond with:
         if not skills_dir.exists():
             print("Skills directory not found")
             return
-        
+
         # Find all Python files in skills directory
         skill_files = list(skills_dir.glob("*.py"))
-        
+
         for skill_file in skill_files:
             if skill_file.name == "__init__.py":
                 continue
-                
+
             try:
                 # Load the module
                 spec = importlib.util.spec_from_file_location(
@@ -474,17 +496,21 @@ Respond with:
                 )
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
-                
+
                 # Look for create_*_skills functions
                 for attr_name in dir(module):
-                    if attr_name.startswith('create_') and attr_name.endswith('_skills'):
+                    if attr_name.startswith("create_") and attr_name.endswith(
+                        "_skills"
+                    ):
                         create_func = getattr(module, attr_name)
                         if callable(create_func):
                             skills = create_func()
                             self.skills.extend(skills)
-                            print(f"✅ Loaded {len(skills)} skills from {skill_file.name}")
+                            print(
+                                f"✅ Loaded {len(skills)} skills from {skill_file.name}"
+                            )
                             break
-                
+
             except Exception as e:
                 print(f"❌ Failed to load skills from {skill_file.name}: {e}")
 
@@ -492,14 +518,14 @@ Respond with:
         """Get examples from all loaded tools"""
         examples = []
         for tool_name, tool_func in self.tools.items():
-            if tool_name == 'examples':
+            if tool_name == "examples":
                 continue  # Skip the examples function itself
             try:
                 # Look for examples function in the tool's module
                 module_name = tool_func.__module__
                 if module_name:
                     module = sys.modules.get(module_name)
-                    if module and hasattr(module, 'examples'):
+                    if module and hasattr(module, "examples"):
                         tool_examples = module.examples()
                         examples.extend(tool_examples)
             except:
@@ -509,14 +535,15 @@ Respond with:
     def get_relevant_context(self, query: str) -> List[Claim]:
         """Get relevant skills and tool examples for a query"""
         relevant_claims = []
-        
+
         # Add skills that match query tags or content
         query_lower = query.lower()
         for skill in self.skills:
-            if (any(tag.lower() in query_lower for tag in skill.tags) or
-                any(keyword in skill.content.lower() for keyword in query_lower.split())):
+            if any(tag.lower() in query_lower for tag in skill.tags) or any(
+                keyword in skill.content.lower() for keyword in query_lower.split()
+            ):
                 relevant_claims.append(skill)
-        
+
         # Add tool examples as claims
         examples = self.get_tool_examples()
         for example in examples:
@@ -526,10 +553,10 @@ Respond with:
                     content=example,
                     confidence=0.8,
                     type=[ClaimType.EXAMPLE],
-                    tags=["tool", "example"]
+                    tags=["tool", "example"],
                 )
                 relevant_claims.append(claim)
-        
+
         return relevant_claims
 
 
@@ -631,113 +658,3 @@ if __name__ == "__main__":
     print(f"System stats: {stats}")
 
     print("\n🎉 Conjecture API test completed!")
-        """Load all tools from the tools/ directory"""
-        tools_dir = Path("tools")
-        if not tools_dir.exists():
-            print("Tools directory not found")
-            return
-        
-        # Find all Python files in tools directory
-        tool_files = list(tools_dir.glob("*.py"))
-        
-        for tool_file in tool_files:
-            if tool_file.name == "__init__.py":
-                continue
-                
-            try:
-                # Load the module
-                spec = importlib.util.spec_from_file_location(
-                    tool_file.stem, tool_file
-                )
-                module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(module)
-                
-                # Find all functions in the module
-                for attr_name in dir(module):
-                    attr = getattr(module, attr_name)
-                    if callable(attr) and not attr_name.startswith('_'):
-                        self.tools[attr_name] = attr
-                
-                print(f"✅ Loaded tool: {tool_file.name}")
-                
-            except Exception as e:
-                print(f"❌ Failed to load tool {tool_file.name}: {e}")
-
-    def _load_skills(self):
-        """Load all skill claims from the skills/ directory"""
-        skills_dir = Path("skills")
-        if not skills_dir.exists():
-            print("Skills directory not found")
-            return
-        
-        # Find all Python files in skills directory
-        skill_files = list(skills_dir.glob("*.py"))
-        
-        for skill_file in skill_files:
-            if skill_file.name == "__init__.py":
-                continue
-                
-            try:
-                # Load the module
-                spec = importlib.util.spec_from_file_location(
-                    skill_file.stem, skill_file
-                )
-                module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(module)
-                
-                # Look for create_*_skills functions
-                for attr_name in dir(module):
-                    if attr_name.startswith('create_') and attr_name.endswith('_skills'):
-                        create_func = getattr(module, attr_name)
-                        if callable(create_func):
-                            skills = create_func()
-                            self.skills.extend(skills)
-                            print(f"✅ Loaded {len(skills)} skills from {skill_file.name}")
-                            break
-                
-            except Exception as e:
-                print(f"❌ Failed to load skills from {skill_file.name}: {e}")
-
-    def get_tool_examples(self) -> List[str]:
-        """Get examples from all loaded tools"""
-        examples = []
-        for tool_name, tool_func in self.tools.items():
-            if tool_name == 'examples':
-                continue  # Skip the examples function itself
-            try:
-                # Look for examples function in the tool's module
-                module_name = tool_func.__module__
-                if module_name:
-                    module = sys.modules.get(module_name)
-                    if module and hasattr(module, 'examples'):
-                        tool_examples = module.examples()
-                        examples.extend(tool_examples)
-            except:
-                pass
-        return examples
-
-    def get_relevant_context(self, query: str) -> List[Claim]:
-        """Get relevant skills and tool examples for a query"""
-        relevant_claims = []
-        
-        # Add skills that match query tags or content
-        query_lower = query.lower()
-        for skill in self.skills:
-            if (any(tag.lower() in query_lower for tag in skill.tags) or
-                any(keyword in skill.content.lower() for keyword in query_lower.split())):
-                relevant_claims.append(skill)
-        
-        # Add tool examples as claims
-        examples = self.get_tool_examples()
-        for example in examples:
-            if any(keyword in example.lower() for keyword in query_lower.split()):
-                claim = Claim(
-                    id=f"tool_example_{len(relevant_claims)}",
-                    content=example,
-                    confidence=0.8,
-                    type=[ClaimType.EXAMPLE],
-                    tags=["tool", "example"]
-                )
-                relevant_claims.append(claim)
-        
-        return relevant_claims

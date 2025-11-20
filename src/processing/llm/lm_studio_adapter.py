@@ -8,9 +8,9 @@ import time
 import os
 from typing import Any, Dict, List, Optional
 
-from processing.llm_bridge import LLMProvider, LLMRequest, LLMResponse
+from processing.bridge import LLMProvider, LLMRequest, LLMResponse
 from processing.llm.local_providers_adapter import LocalProviderProcessor
-from core.unified_models import Claim, ClaimType, ClaimState
+from core.models import Claim, ClaimType, ClaimState
 from config.simple_config import Config
 
 
@@ -27,7 +27,7 @@ class LMStudioAdapter(LLMProvider):
             "requests_processed": 0,
             "successful_requests": 0,
             "total_tokens": 0,
-            "total_time": 0.0
+            "total_time": 0.0,
         }
 
         # Initialize the LocalProviderProcessor for LM Studio
@@ -45,12 +45,12 @@ class LMStudioAdapter(LLMProvider):
 
             # Initialize LM Studio processor
             self.processor = LocalProviderProcessor(
-                provider_type="lm_studio",
-                base_url=base_url,
-                model_name=model_name
+                provider_type="lm_studio", base_url=base_url, model_name=model_name
             )
 
-            print(f"LM Studio adapter initialized with model: {model_name} at {base_url}")
+            print(
+                f"LM Studio adapter initialized with model: {model_name} at {base_url}"
+            )
 
         except Exception as e:
             print(f"Failed to initialize LM Studio adapter: {e}")
@@ -66,7 +66,7 @@ class LMStudioAdapter(LLMProvider):
                 metadata={},
                 errors=["LM Studio not available"],
                 processing_time=0.0,
-                tokens_used=0
+                tokens_used=0,
             )
 
         start_time = time.time()
@@ -97,14 +97,16 @@ Focus on:
 Generate up to 5 claims with confidence ≥ 0.5."""
 
                 # Create generation config
-                from ..local.ollama_client import GenerationConfig as LocalGenerationConfig
+                from ..local.ollama_client import (
+                    GenerationConfig as LocalGenerationConfig,
+                )
+
                 config = LocalGenerationConfig(
-                    temperature=request.temperature,
-                    max_tokens=request.max_tokens
+                    temperature=request.temperature, max_tokens=request.max_tokens
                 )
 
                 result = self.processor.generate_response(prompt, config=config)
-                
+
                 # Create a LLMProcessingResult-like object
                 processing_result = LLMProcessingResult(
                     success=True,
@@ -112,27 +114,33 @@ Generate up to 5 claims with confidence ≥ 0.5."""
                     errors=[],
                     processing_time=time.time() - start_time,
                     tokens_used=0,  # Local providers don't provide detailed token usage
-                    model_used=self.processor.model_name if hasattr(self.processor, 'model_name') else "unknown"
+                    model_used=self.processor.model_name
+                    if hasattr(self.processor, "model_name")
+                    else "unknown",
                 )
 
             else:  # For validation, analysis, etc.
                 # Create a simple prompt for other tasks
                 prompt = f"Analyze and respond to: {request.prompt}"
-                from ..local.ollama_client import GenerationConfig as LocalGenerationConfig
-                config = LocalGenerationConfig(
-                    temperature=request.temperature,
-                    max_tokens=request.max_tokens
+                from ..local.ollama_client import (
+                    GenerationConfig as LocalGenerationConfig,
                 )
-                
+
+                config = LocalGenerationConfig(
+                    temperature=request.temperature, max_tokens=request.max_tokens
+                )
+
                 result = self.processor.generate_response(prompt, config=config)
-                
+
                 processing_result = LLMProcessingResult(
                     success=True,
                     processed_claims=[],  # We'll parse claims from content
                     errors=[],
                     processing_time=time.time() - start_time,
                     tokens_used=0,
-                    model_used=self.processor.model_name if hasattr(self.processor, 'model_name') else "unknown"
+                    model_used=self.processor.model_name
+                    if hasattr(self.processor, "model_name")
+                    else "unknown",
                 )
 
             # Convert response to standardized format
@@ -141,11 +149,13 @@ Generate up to 5 claims with confidence ≥ 0.5."""
 
             if processing_result.success:
                 self._stats["successful_requests"] += 1
-                
+
                 # Parse claims from the response content
-                generated_claims = self._parse_claims_from_content(processing_result.processed_claims, 
-                                                                 result if isinstance(result, str) else "")
-                
+                generated_claims = self._parse_claims_from_content(
+                    processing_result.processed_claims,
+                    result if isinstance(result, str) else "",
+                )
+
                 return LLMResponse(
                     success=True,
                     content=result if isinstance(result, str) else result,
@@ -153,11 +163,11 @@ Generate up to 5 claims with confidence ≥ 0.5."""
                     metadata={
                         "model": processing_result.model_used,
                         "provider": "lm_studio",
-                        "task_type": request.task_type
+                        "task_type": request.task_type,
                     },
                     errors=processing_result.errors,
                     processing_time=processing_time,
-                    tokens_used=processing_result.tokens_used
+                    tokens_used=processing_result.tokens_used,
                 )
             else:
                 return LLMResponse(
@@ -167,7 +177,7 @@ Generate up to 5 claims with confidence ≥ 0.5."""
                     metadata={"provider": "lm_studio"},
                     errors=processing_result.errors,
                     processing_time=processing_time,
-                    tokens_used=0
+                    tokens_used=0,
                 )
 
         except Exception as e:
@@ -181,7 +191,7 @@ Generate up to 5 claims with confidence ≥ 0.5."""
                 metadata={"provider": "lm_studio"},
                 errors=[f"LM Studio processing error: {e}"],
                 processing_time=processing_time,
-                tokens_used=0
+                tokens_used=0,
             )
 
     def _convert_request(self, request: LLMRequest) -> Dict[str, Any]:
@@ -192,16 +202,15 @@ Generate up to 5 claims with confidence ≥ 0.5."""
             context_parts.append("# Context Claims:")
             for claim in request.context_claims:
                 type_str = ", ".join([t.value for t in claim.type])
-                context_parts.append(f"- [{claim.confidence:.2f}, {type_str}] {claim.content}")
+                context_parts.append(
+                    f"- [{claim.confidence:.2f}, {type_str}] {claim.content}"
+                )
             context_parts.append("")
 
         # Build full prompt
         full_prompt = "\n".join(context_parts + [request.prompt])
 
-        return {
-            "prompt": full_prompt,
-            "context_claims": request.context_claims
-        }
+        return {"prompt": full_prompt, "context_claims": request.context_claims}
 
     def _parse_claims_from_content(self, processed_claims, content: str) -> List[Claim]:
         """Parse claims from LM Studio response content"""
@@ -218,11 +227,11 @@ Generate up to 5 claims with confidence ≥ 0.5."""
                         confidence=basic_claim.confidence,
                         type=basic_claim.type,
                         state=basic_claim.state,
-                        tags=getattr(basic_claim, 'tags', []),
-                        supported_by=getattr(basic_claim, 'supported_by', []),
-                        supports=getattr(basic_claim, 'supports', []),
+                        tags=getattr(basic_claim, "tags", []),
+                        supported_by=getattr(basic_claim, "supported_by", []),
+                        supports=getattr(basic_claim, "supports", []),
                         created=basic_claim.created,
-                        updated=basic_claim.updated
+                        updated=basic_claim.updated,
                     )
                     unified_claims.append(unified_claim)
                 except Exception as e:
@@ -232,21 +241,22 @@ Generate up to 5 claims with confidence ≥ 0.5."""
             # If no processed claims, try to parse from raw content
             # Look for claim patterns in the response
             import re
+
             # Pattern for <claim type="..." confidence="...">...</claim> format
             pattern = r'<claim\s+type="([^"]+)"\s+confidence="([^"]+)">([^<]+)</claim>'
             matches = re.findall(pattern, content, re.DOTALL)
-            
+
             for claim_type_str, confidence_str, claim_content in matches:
                 try:
                     claim_type = ClaimType(claim_type_str.lower())
                     confidence = float(confidence_str)
-                    
+
                     unified_claim = Claim(
                         id=f"lm_studio_{int(time.time() * 1000)}_{len(unified_claims)}",
                         content=claim_content.strip(),
                         confidence=confidence,
                         type=[claim_type],
-                        state=ClaimState.EXPLORE
+                        state=ClaimState.EXPLORE,
                     )
                     unified_claims.append(unified_claim)
                 except Exception as e:
@@ -276,14 +286,15 @@ Generate up to 5 claims with confidence ≥ 0.5."""
         except Exception:
             pass  # Continue to generation test
 
-        # As a final test, try a simple generation request 
+        # As a final test, try a simple generation request
         try:
             from ..local.ollama_client import GenerationConfig as LocalGenerationConfig
+
             config = LocalGenerationConfig(
                 temperature=0.1,
-                max_tokens=10  # Very small response to test connectivity
+                max_tokens=10,  # Very small response to test connectivity
             )
-            
+
             # Test with a simple prompt
             test_result = self.processor.generate_response("Hello", config=config)
             # If no exception was raised, consider it functional
@@ -296,23 +307,27 @@ Generate up to 5 claims with confidence ≥ 0.5."""
         base_stats = super().get_stats()
 
         if self._stats["requests_processed"] > 0:
-            success_rate = self._stats["successful_requests"] / self._stats["requests_processed"]
+            success_rate = (
+                self._stats["successful_requests"] / self._stats["requests_processed"]
+            )
             avg_time = self._stats["total_time"] / self._stats["requests_processed"]
         else:
             success_rate = 0.0
             avg_time = 0.0
 
-        base_stats.update({
-            "requests_processed": self._stats["requests_processed"],
-            "successful_requests": self._stats["successful_requests"],
-            "success_rate": success_rate,
-            "total_tokens": self._stats["total_tokens"],
-            "average_processing_time": avg_time,
-            "total_processing_time": self._stats["total_time"]
-        })
+        base_stats.update(
+            {
+                "requests_processed": self._stats["requests_processed"],
+                "successful_requests": self._stats["successful_requests"],
+                "success_rate": success_rate,
+                "total_tokens": self._stats["total_tokens"],
+                "average_processing_time": avg_time,
+                "total_processing_time": self._stats["total_time"],
+            }
+        )
 
         # Add processor stats if available
-        if self.processor and hasattr(self.processor, 'get_stats'):
+        if self.processor and hasattr(self.processor, "get_stats"):
             processor_stats = self.processor.get_stats()
             base_stats["processor_stats"] = processor_stats
 
@@ -327,15 +342,27 @@ def create_lm_studio_adapter_from_config() -> LMStudioAdapter:
     config = Config()
 
     # Check if LM Studio is configured
-    if config.llm_provider.lower() != 'lm_studio' and not config.llm_api_url.lower().startswith('http://localhost:1234'):
+    if (
+        config.llm_provider.lower() != "lm_studio"
+        and not config.llm_api_url.lower().startswith("http://localhost:1234")
+    ):
         # Check if using LM Studio through unified provider config
         provider_url = os.getenv("PROVIDER_API_URL", "")
-        if "lmstudio" not in provider_url.lower() and "localhost:1234" not in provider_url:
+        if (
+            "lmstudio" not in provider_url.lower()
+            and "localhost:1234" not in provider_url
+        ):
             return LMStudioAdapter({"enabled": False})  # Return disabled adapter
 
     lm_studio_config = {
-        "base_url": getattr(config, 'llm_api_url', os.getenv('PROVIDER_API_URL', 'http://localhost:1234/v1')),
-        "model": getattr(config, 'llm_model', os.getenv('PROVIDER_MODEL', 'ibm/granite-4-h-tiny'))
+        "base_url": getattr(
+            config,
+            "llm_api_url",
+            os.getenv("PROVIDER_API_URL", "http://localhost:1234/v1"),
+        ),
+        "model": getattr(
+            config, "llm_model", os.getenv("PROVIDER_MODEL", "ibm/granite-4-h-tiny")
+        ),
     }
 
     return LMStudioAdapter(lm_studio_config)

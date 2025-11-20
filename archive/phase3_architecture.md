@@ -1,3 +1,6 @@
+> [!WARNING]
+> This document is outdated and has been superseded by the architecture described in `specs/project.md`. It is retained for historical context only.
+
 # Phase 3: Agent Harness Architecture Design
 
 ## Overview

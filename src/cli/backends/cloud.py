@@ -6,14 +6,16 @@ Handles cloud services like OpenAI, Anthropic, Google, etc.
 
 import os
 import sys
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
+
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
 # Add parent to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from ..base_cli import BaseCLI, BackendNotAvailableError
-from config.unified_validator import validate_config, get_primary_provider
+from config.config import get_primary_provider, validate_config
+
+from ..base_cli import BackendNotAvailableError, BaseCLI
 
 
 class CloudBackend(BaseCLI):
@@ -21,7 +23,7 @@ class CloudBackend(BaseCLI):
 
     def __init__(self):
         super().__init__("conjecture-cloud", "Conjecture CLI with Cloud Services")
-        self.supported_providers = ['openai', 'anthropic', 'google', 'cohere', 'azure']
+        self.supported_providers = ["openai", "anthropic", "google", "cohere", "azure"]
 
     def _validate_cloud_config(self) -> bool:
         """Validate that a cloud provider is configured."""
@@ -42,7 +44,14 @@ class CloudBackend(BaseCLI):
         """Check if cloud backend is available."""
         return self._validate_cloud_config()
 
-    def create_claim(self, content: str, confidence: float, user: str, analyze: bool = False, **kwargs) -> str:
+    def create_claim(
+        self,
+        content: str,
+        confidence: float,
+        user: str,
+        analyze: bool = False,
+        **kwargs,
+    ) -> str:
         """Create a new claim using cloud backend."""
         if not self.is_available():
             raise BackendNotAvailableError("Cloud backend is not properly configured")
@@ -54,37 +63,47 @@ class CloudBackend(BaseCLI):
             with Progress(
                 SpinnerColumn(),
                 TextColumn("[progress.description]{task.description}"),
-                console=self.console
+                console=self.console,
             ) as progress:
-                task = progress.add_task("Creating claim with cloud services...", total=None)
+                task = progress.add_task(
+                    "Creating claim with cloud services...", total=None
+                )
 
                 # Validate input
                 if not 0.0 <= confidence <= 1.0:
                     raise ValueError("Confidence must be between 0.0 and 1.0")
-                
+
                 if len(content) < 10:
                     raise ValueError("Content must be at least 10 characters")
 
                 # Save claim with cloud metadata
                 metadata = {
                     "analyzed": analyze,
-                    "provider": self.current_provider_config.get('name') if self.current_provider_config else None,
+                    "provider": self.current_provider_config.get("name")
+                    if self.current_provider_config
+                    else None,
                     "backend": "cloud",
                     "cloud_processing": True,
-                    "requires_internet": True
+                    "requires_internet": True,
                 }
-                
+
                 claim_id = self._save_claim(content, confidence, user, metadata)
                 progress.update(task, description="Claim created successfully!")
 
                 # Display result
-                panel = self._create_claim_panel(claim_id, content, confidence, user, metadata)
+                panel = self._create_claim_panel(
+                    claim_id, content, confidence, user, metadata
+                )
                 self.console.print(panel)
 
                 # Analyze if requested and provider is available
                 if analyze and self.current_provider_config:
-                    progress.update(task, description="Analyzing claim with cloud services...")
-                    self.console.print(f"[yellow]Analyzing with {self.current_provider_config['name']}...[/yellow]")
+                    progress.update(
+                        task, description="Analyzing claim with cloud services..."
+                    )
+                    self.console.print(
+                        f"[yellow]Analyzing with {self.current_provider_config['name']}...[/yellow]"
+                    )
                     # TODO: Implement cloud LLM analysis
                     self.console.print("[green]Analysis complete (cloud model)[/green]")
 
@@ -113,9 +132,11 @@ class CloudBackend(BaseCLI):
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=self.console
+            console=self.console,
         ) as progress:
-            task = progress.add_task("Searching claims with cloud enhancement...", total=None)
+            task = progress.add_task(
+                "Searching claims with cloud enhancement...", total=None
+            )
 
             try:
                 results = self._search_claims(query, limit)
@@ -135,21 +156,27 @@ class CloudBackend(BaseCLI):
         if not claim:
             raise ValueError(f"Claim {claim_id} not found")
 
-        self.console.print(f"[blue]🔍 Analyzing claim {claim_id} with cloud services...[/blue]")
-        
+        self.console.print(
+            f"[blue]🔍 Analyzing claim {claim_id} with cloud services...[/blue]"
+        )
+
         # Mock analysis for now - would integrate with cloud LLM APIs
         analysis = {
             "claim_id": claim_id,
             "backend": "cloud",
-            "provider": self.current_provider_config.get('name') if self.current_provider_config else None,
+            "provider": self.current_provider_config.get("name")
+            if self.current_provider_config
+            else None,
             "analysis_type": "cloud_semantic",
-            "confidence_score": claim.get('confidence', 0.0),
+            "confidence_score": claim.get("confidence", 0.0),
             "sentiment": "neutral",
             "topics": ["general", "fact_checking"],
             "verification_status": "pending",
             "cloud_processing": True,
             "requires_internet": True,
-            "model_used": self.current_provider_config.get('model', 'unknown') if self.current_provider_config else None
+            "model_used": self.current_provider_config.get("model", "unknown")
+            if self.current_provider_config
+            else None,
         }
 
         self.console.print("[green]✅ Cloud analysis complete[/green]")
@@ -163,24 +190,26 @@ class CloudBackend(BaseCLI):
             "supported_providers": self.supported_providers,
             "current_provider": None,
             "endpoints": {},
-            "requires_internet": True
+            "requires_internet": True,
         }
 
         if self.current_provider_config:
-            provider_name = self.current_provider_config.get('name', '')
+            provider_name = self.current_provider_config.get("name", "")
             status["current_provider"] = provider_name
-            status["current_type"] = self.current_provider_config.get('type', '')
-            status["model"] = self.current_provider_config.get('model', '')
-            status["base_url"] = self.current_provider_config.get('base_url', '')
+            status["current_type"] = self.current_provider_config.get("type", "")
+            status["model"] = self.current_provider_config.get("model", "")
+            status["base_url"] = self.current_provider_config.get("base_url", "")
 
             # Check specific provider endpoints
-            if 'openai' in provider_name.lower():
+            if "openai" in provider_name.lower():
                 status["endpoints"]["openai"] = "https://api.openai.com/v1"
-            elif 'anthropic' in provider_name.lower():
+            elif "anthropic" in provider_name.lower():
                 status["endpoints"]["anthropic"] = "https://api.anthropic.com"
-            elif 'google' in provider_name.lower():
-                status["endpoints"]["google"] = "https://generativelanguage.googleapis.com"
-            elif 'cohere' in provider_name.lower():
+            elif "google" in provider_name.lower():
+                status["endpoints"]["google"] = (
+                    "https://generativelanguage.googleapis.com"
+                )
+            elif "cohere" in provider_name.lower():
                 status["endpoints"]["cohere"] = "https://api.cohere.ai"
 
         return status
@@ -189,16 +218,16 @@ class CloudBackend(BaseCLI):
         """List available cloud models."""
         # Mock list - would integrate with actual provider APIs
         if self.current_provider_config:
-            provider_name = self.current_provider_config.get('name', '').lower()
-            if 'openai' in provider_name:
-                return ['gpt-4', 'gpt-4-turbo', 'gpt-3.5-turbo']
-            elif 'anthropic' in provider_name:
-                return ['claude-3-opus', 'claude-3-sonnet', 'claude-3-haiku']
-            elif 'google' in provider_name:
-                return ['gemini-pro', 'gemini-pro-vision']
-            elif 'cohere' in provider_name:
-                return ['command', 'command-light', 'command-nightly']
-        
+            provider_name = self.current_provider_config.get("name", "").lower()
+            if "openai" in provider_name:
+                return ["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo"]
+            elif "anthropic" in provider_name:
+                return ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku"]
+            elif "google" in provider_name:
+                return ["gemini-pro", "gemini-pro-vision"]
+            elif "cohere" in provider_name:
+                return ["command", "command-light", "command-nightly"]
+
         return []
 
     def check_api_quota(self) -> Dict[str, Any]:
@@ -208,13 +237,15 @@ class CloudBackend(BaseCLI):
 
         # Mock quota check - would integrate with actual provider APIs
         quota_info = {
-            "provider": self.current_provider_config.get('name', 'unknown') if self.current_provider_config else None,
+            "provider": self.current_provider_config.get("name", "unknown")
+            if self.current_provider_config
+            else None,
             "status": "active",
             "requests_used": 0,
             "requests_limit": 1000,
             "tokens_used": 0,
             "tokens_limit": 100000,
-            "reset_date": "2025-12-01"
+            "reset_date": "2025-12-01",
         }
 
         return quota_info
@@ -224,8 +255,10 @@ class CloudBackend(BaseCLI):
         if not self.is_available():
             raise BackendNotAvailableError("Cloud backend is not properly configured")
 
-        self.console.print(f"[blue]🔗 Testing connection to {self.current_provider_config.get('name')}...[/blue]")
-        
+        self.console.print(
+            f"[blue]🔗 Testing connection to {self.current_provider_config.get('name')}...[/blue]"
+        )
+
         # Mock connection test - would integrate with actual API
         self.console.print("[green]✅ API connection successful[/green]")
         return True

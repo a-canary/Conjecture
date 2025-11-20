@@ -35,6 +35,8 @@ class DataManager:
     async def get_claim(self, claim_id: str) -> Optional[Claim]
     async def update_claim(self, claim_id: str, **updates) -> bool
     async def delete_claim(self, claim_id: str) -> bool
+    async def merge_similar_claims(self, new_claim: Claim, similarity_threshold: float = 0.8) -> Optional[Claim] # Returns retained claim or None if no merge
+    async def purge_claims(self, db_size_limit_mb: int = 500, purge_percentage: float = 0.1) -> int # Returns count of purged claims
     
     # Search and Discovery
     async def search_similar(self, content: str, limit: int = 10) -> List[Claim]
@@ -238,6 +240,34 @@ class ChromaManager:
         self.collection.delete(ids=[claim_id])
 ```
 
+#### Claim Merging Implementation
+
+The `merge_similar_claims` method within the `DataManager` orchestrates the process of identifying and merging redundant claims based on semantic similarity.
+
+**Process Overview:**
+1.  **Incoming Claim Embedding**: When `merge_similar_claims` is called with a `new_claim`, its embedding is generated using the `EmbeddingService`.
+2.  **Similarity Search**: `ChromaManager.search_similar` is invoked to find existing claims that are semantically close to the `new_claim`.
+3.  **Threshold Check & Scope Validation**:
+    *   If a sufficiently similar existing claim is found (above `similarity_threshold`), the system verifies that both claims belong to the same session.
+    *   If claims are from different sessions, the merge is aborted, and a signal for potential elevation is generated instead.
+4.  **Confidence-Based Retention**: The claim with the higher confidence score is designated as the 'retained' claim, and the other as the 'discarded' claim.
+5.  **Reference Transfer**: All relationships and supporting evidence associated with the 'discarded' claim are re-assigned to the 'retained' claim in the SQLite database.
+6.  **Deletion**: The 'discarded' claim and its embedding are removed from both SQLite and ChromaDB.
+7.  **Return Retained Claim**: The 'retained' claim (potentially updated with new references) is returned.
+
+#### Claim Purging Implementation
+
+The `purge_claims` method within the `DataManager` is responsible for automatically managing database size by removing low-priority claims.
+
+**Process Overview:**
+1.  **Size Check**: The method first determines the current size of the claims database (e.g., by querying SQLite for claim count or estimating total storage). If it's below the `db_size_limit_mb`, no action is taken.
+2.  **Candidate Identification**: If the limit is exceeded, claims are identified for purging. This involves:
+    *   Querying SQLite for claims, ordered by a calculated score that prioritizes **low confidence** and **old age** (claims with older `updated_at` timestamps, or if not updated, `created_at`).
+    *   A weighted formula (e.g., `(1 - confidence) * age_factor`) is used to rank claims for deletion.
+3.  **Selection**: The top `purge_percentage` (e.g., 10%) of claims based on this ranking are selected as candidates for deletion.
+4.  **Batch Deletion**: The selected claims are removed from both the SQLite database and their corresponding embeddings are deleted from ChromaDB using batch operations for efficiency.
+5.  **Return Purge Count**: The number of claims successfully purged is returned.
+
 ### 5. Data Models
 
 ```python
@@ -328,36 +358,6 @@ def validate_confidence(confidence: float) -> bool:
 
 ### 8. Performance Optimizations
 
-#### Caching Layer
-```python
-class CacheManager:
-    """Simple in-memory cache for frequently accessed claims"""
-    
-    def __init__(self, max_size: int = 1000, ttl: int = 300):
-        self.cache = {}
-        self.max_size = max_size
-        self.ttl = ttl
-    
-    async def get_claim(self, claim_id: str) -> Optional[Claim]:
-        """Get claim from cache if available and not expired"""
-        if claim_id in self.cache:
-            claim, timestamp = self.cache[claim_id]
-            if time.time() - timestamp < self.ttl:
-                return claim
-            else:
-                del self.cache[claim_id]
-        return None
-    
-    async def set_claim(self, claim: Claim):
-        """Cache claim with timestamp"""
-        if len(self.cache) >= self.max_size:
-            # Remove oldest entry
-            oldest_key = min(self.cache.keys(), 
-                           key=lambda k: self.cache[k][1])
-            del self.cache[oldest_key]
-        
-        self.cache[claim.id] = (claim, time.time())
-```
 
 #### Batch Operations
 ```python
@@ -415,10 +415,9 @@ class BatchProcessor:
 4. Create batch operations
 
 ### Phase 3: Performance and Reliability
-1. Add caching layer
-2. Implement error handling
-3. Add performance monitoring
-4. Create backup/restore functionality
+1. Implement error handling
+2. Add performance monitoring
+3. Create backup/restore functionality
 
 ### Phase 4: Testing and Documentation
 1. Comprehensive unit tests

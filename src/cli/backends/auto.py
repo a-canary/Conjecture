@@ -6,18 +6,20 @@ Intelligently selects the best backend based on configuration and context
 
 import os
 import sys
-from typing import List, Optional, Dict, Any
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from typing import Any, Dict, List, Optional
+
 from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
 # Add parent to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from .local_backend import LocalBackend
-from .cloud_backend import CloudBackend
-from .hybrid_backend import HybridBackend
-from ..base_cli import BaseCLI, BackendNotAvailableError
-from config.unified_validator import validate_config, get_primary_provider
+from config.config import get_primary_provider, validate_config
+
+from ..base_cli import BackendNotAvailableError, BaseCLI
+from .cloud import CloudBackend
+from .hybrid import HybridBackend
+from .local import LocalBackend
 
 
 class AutoBackend(BaseCLI):
@@ -28,7 +30,7 @@ class AutoBackend(BaseCLI):
         self.backends = {
             "local": LocalBackend(),
             "cloud": CloudBackend(),
-            "hybrid": HybridBackend()
+            "hybrid": HybridBackend(),
         }
         self.selected_backend = None
         self.detection_result = None
@@ -44,14 +46,14 @@ class AutoBackend(BaseCLI):
             "provider_info": None,
             "network_status": "auto",
             "performance_metrics": {},
-            "recommendations": {}
+            "recommendations": {},
         }
 
         # Check each backend
         for name, backend in self.backends.items():
             is_available = backend.is_available()
             detection["available_backends"][name] = is_available
-            
+
             if is_available:
                 backend_info = backend.get_backend_info()
                 detection["provider_info"] = backend_info
@@ -60,21 +62,36 @@ class AutoBackend(BaseCLI):
                     "cost": "free" if name == "local" else "pay_per_use",
                     "features": self._get_backend_features(name),
                     "privacy": "high" if name == "local" else "medium",
-                    "offline_capable": name == "local"
+                    "offline_capable": name == "local",
                 }
 
         # Generate recommendations
         detection["recommendations"] = self._generate_recommendations(detection)
-        
+
         self.detection_result = detection
         return detection
 
     def _get_backend_features(self, backend_name: str) -> List[str]:
         """Get feature list for a backend."""
         features = {
-            "local": ["semantic_search", "local_analysis", "offline_capability", "high_privacy"],
-            "cloud": ["advanced_analysis", "fact_checking", "web_search", "multiple_models"],
-            "hybrid": ["auto_fallback", "cross_platform", "optimized_performance", "flexible_modes"]
+            "local": [
+                "semantic_search",
+                "local_analysis",
+                "offline_capability",
+                "high_privacy",
+            ],
+            "cloud": [
+                "advanced_analysis",
+                "fact_checking",
+                "web_search",
+                "multiple_models",
+            ],
+            "hybrid": [
+                "auto_fallback",
+                "cross_platform",
+                "optimized_performance",
+                "flexible_modes",
+            ],
         }
         return features.get(backend_name, [])
 
@@ -86,7 +103,9 @@ class AutoBackend(BaseCLI):
         # Primary recommendation
         if available["hybrid"]:
             recommendations["primary"] = "hybrid"
-            recommendations["reason"] = "Best of both worlds with automatic optimization"
+            recommendations["reason"] = (
+                "Best of both worlds with automatic optimization"
+            )
         elif available["local"]:
             recommendations["primary"] = "local"
             recommendations["reason"] = "Fast, private, and offline capable"
@@ -102,7 +121,7 @@ class AutoBackend(BaseCLI):
             "privacy_focused": available["local"],
             "power_analysis": available["cloud"],
             "balanced_performance": available["hybrid"],
-            "offline_first": available["local"]
+            "offline_first": available["local"],
         }
 
         return recommendations
@@ -113,7 +132,9 @@ class AutoBackend(BaseCLI):
         primary = detection["recommendations"]["primary"]
 
         if not primary:
-            raise BackendNotAvailableError("No backends are available. Please configure at least one provider.")
+            raise BackendNotAvailableError(
+                "No backends are available. Please configure at least one provider."
+            )
 
         # Use hybrid if available and operation-sensitive
         if primary == "hybrid" and isinstance(self.backends["hybrid"], HybridBackend):
@@ -122,7 +143,7 @@ class AutoBackend(BaseCLI):
                 self.backends["hybrid"].set_preferred_mode("cloud")
             elif operation == "search":
                 self.backends["hybrid"].set_preferred_mode("local")
-            
+
             self.selected_backend = self.backends["hybrid"]
         else:
             self.selected_backend = self.backends[primary]
@@ -137,21 +158,32 @@ class AutoBackend(BaseCLI):
     def get_detection_report(self) -> Dict[str, Any]:
         """Get comprehensive backend detection report."""
         detection = self._run_detection()
-        
+
         # Add current selection info
         detection["current_selection"] = {
-            "backend": self.selected_backend._get_backend_type() if self.selected_backend else None,
-            "reason": detection["recommendations"].get("reason", "Not selected")
+            "backend": self.selected_backend._get_backend_type()
+            if self.selected_backend
+            else None,
+            "reason": detection["recommendations"].get("reason", "Not selected"),
         }
 
         return detection
 
-    def create_claim(self, content: str, confidence: float, user: str, analyze: bool = False, **kwargs) -> str:
+    def create_claim(
+        self,
+        content: str,
+        confidence: float,
+        user: str,
+        analyze: bool = False,
+        **kwargs,
+    ) -> str:
         """Create a claim using the auto-selected backend."""
         backend = self._select_and_initialize_backend("create")
-        
-        self.console.print(f"[blue]🤖 Auto-detected {backend._get_backend_type()} backend for claim creation[/blue]")
-        
+
+        self.console.print(
+            f"[blue]🤖 Auto-detected {backend._get_backend_type()} backend for claim creation[/blue]"
+        )
+
         return backend.create_claim(content, confidence, user, analyze, **kwargs)
 
     def get_claim(self, claim_id: str) -> Optional[dict]:
@@ -162,65 +194,77 @@ class AutoBackend(BaseCLI):
     def search_claims(self, query: str, limit: int = 10, **kwargs) -> List[dict]:
         """Search claims using the auto-selected backend."""
         backend = self._select_and_initialize_backend("search")
-        
-        self.console.print(f"[blue]🔍 Auto-detected {backend._get_backend_type()} backend for search[/blue]")
-        
+
+        self.console.print(
+            f"[blue]🔍 Auto-detected {backend._get_backend_type()} backend for search[/blue]"
+        )
+
         return backend.search_claims(query, limit, **kwargs)
 
     def analyze_claim(self, claim_id: str, **kwargs) -> Dict[str, Any]:
         """Analyze a claim using the auto-selected backend."""
         backend = self._select_and_initialize_backend("analyze")
-        
-        self.console.print(f"[blue]🧠 Auto-detected {backend._get_backend_type()} backend for analysis[/blue]")
-        
+
+        self.console.print(
+            f"[blue]🧠 Auto-detected {backend._get_backend_type()} backend for analysis[/blue]"
+        )
+
         analysis = backend.analyze_claim(claim_id, **kwargs)
         analysis["auto_detected"] = True
         analysis["backend_selection"] = backend._get_backend_type()
-        
+
         return analysis
 
     def get_backend_info(self) -> Dict[str, Any]:
         """Get information about the auto-detected backend."""
         if not self.selected_backend:
             self._select_and_initialize_backend()
-        
+
         base_info = super().get_backend_info()
         detection = self._run_detection()
-        
-        base_info.update({
-            "auto_detection": {
-                "available_backends": detection["available_backends"],
-                "recommendation": detection["recommendations"]["primary"],
-                "reason": detection["recommendations"].get("reason", ""),
-                "detection_timestamp": detection["timestamp"]
+
+        base_info.update(
+            {
+                "auto_detection": {
+                    "available_backends": detection["available_backends"],
+                    "recommendation": detection["recommendations"]["primary"],
+                    "reason": detection["recommendations"].get("reason", ""),
+                    "detection_timestamp": detection["timestamp"],
+                }
             }
-        })
+        )
 
         return base_info
 
-    def reconfigure_detection(self, force_network_check: bool = False) -> Dict[str, Any]:
+    def reconfigure_detection(
+        self, force_network_check: bool = False
+    ) -> Dict[str, Any]:
         """Re-run backend detection with optional force check."""
         self.detection_result = None  # Reset detection
         self.selected_backend = None  # Reset selection
-        
+
         if force_network_check:
-            self.console.print("[blue]🌐 Running forced network and provider detection...[/blue]")
-        
+            self.console.print(
+                "[blue]🌐 Running forced network and provider detection...[/blue]"
+            )
+
         detection = self._run_detection()
-        
+
         # Display detection results
         self.console.print("[bold]🔍 Backend Detection Results[/bold]")
         for name, available in detection["available_backends"].items():
             status = "✅" if available else "❌"
             self.console.print(f"  {status} {name.title()} Backend")
-        
+
         recommended = detection["recommendations"]["primary"]
         if recommended:
             self.console.print(f"[green]🎯 Recommended: {recommended.upper()}[/green]")
             self.console.print(f"   Reason: {detection['recommendations']['reason']}")
         else:
-            self.console.print("[red]❌ No backends available - please configure a provider[/red]")
-        
+            self.console.print(
+                "[red]❌ No backends available - please configure a provider[/red]"
+            )
+
         return detection
 
     def get_optimization_tips(self) -> List[str]:
@@ -229,24 +273,34 @@ class AutoBackend(BaseCLI):
         tips = []
 
         available = detection["available_backends"]
-        
+
         if not any(available.values()):
             tips.append("🔧 Configure at least one provider to get started")
             tips.append("📖 Run 'conjecture setup' for configuration help")
             return tips
 
         if available["local"] and not available["cloud"]:
-            tips.append("☁️ Consider adding a cloud provider for advanced analysis features")
-            tips.append("🌐 Cloud providers offer more powerful models for fact-checking")
-        
+            tips.append(
+                "☁️ Consider adding a cloud provider for advanced analysis features"
+            )
+            tips.append(
+                "🌐 Cloud providers offer more powerful models for fact-checking"
+            )
+
         if available["cloud"] and not available["local"]:
-            tips.append("🏠 Consider setting up a local provider (Ollama) for privacy and offline use")
+            tips.append(
+                "🏠 Consider setting up a local provider (Ollama) for privacy and offline use"
+            )
             tips.append("📴 Local providers work even without internet connection")
-        
+
         if available["local"] and available["cloud"]:
-            tips.append("🔄 Hybrid backend is available and recommended for optimal performance")
-            tips.append("⚡ Use 'conjecture --backend hybrid' for automatic optimization")
-        
+            tips.append(
+                "🔄 Hybrid backend is available and recommended for optimal performance"
+            )
+            tips.append(
+                "⚡ Use 'conjecture --backend hybrid' for automatic optimization"
+            )
+
         return tips
 
     def simulate_scenarios(self) -> Dict[str, Any]:
@@ -256,24 +310,46 @@ class AutoBackend(BaseCLI):
             "scenarios": {
                 "privacy_first": {
                     "scenario": "User prioritizes data privacy and offline capability",
-                    "recommended_backend": "local" if detection["available_backends"]["local"] else "none",
-                    "benefits": ["Complete data privacy", "No internet required", "Fast local processing"]
+                    "recommended_backend": "local"
+                    if detection["available_backends"]["local"]
+                    else "none",
+                    "benefits": [
+                        "Complete data privacy",
+                        "No internet required",
+                        "Fast local processing",
+                    ],
                 },
                 "power_analysis": {
                     "scenario": "User needs advanced analysis and fact-checking",
-                    "recommended_backend": "cloud" if detection["available_backends"]["cloud"] else "hybrid",
-                    "benefits": ["Advanced models", "Web search integration", "Fact-checking capabilities"]
+                    "recommended_backend": "cloud"
+                    if detection["available_backends"]["cloud"]
+                    else "hybrid",
+                    "benefits": [
+                        "Advanced models",
+                        "Web search integration",
+                        "Fact-checking capabilities",
+                    ],
                 },
                 "balanced": {
                     "scenario": "User wants optimal performance with flexibility",
-                    "recommended_backend": "hybrid" if detection["available_backends"]["hybrid"] else "auto",
-                    "benefits": ["Automatic optimization", "Fallback support", "Best of both worlds"]
-                }
+                    "recommended_backend": "hybrid"
+                    if detection["available_backends"]["hybrid"]
+                    else "auto",
+                    "benefits": [
+                        "Automatic optimization",
+                        "Fallback support",
+                        "Best of both worlds",
+                    ],
+                },
             },
             "current_setup": {
-                "available_backends": [name for name, available in detection["available_backends"].items() if available],
-                "optimal_for_current": detection["recommendations"]["primary"]
-            }
+                "available_backends": [
+                    name
+                    for name, available in detection["available_backends"].items()
+                    if available
+                ],
+                "optimal_for_current": detection["recommendations"]["primary"],
+            },
         }
 
         return scenarios

@@ -13,7 +13,7 @@ import logging
 from collections import defaultdict
 import heapq
 
-from core.unified_models import Claim, ClaimState, ClaimType
+from core.models import Claim, ClaimState, ClaimType
 from processing.llm_bridge import LLMBridge, LLMRequest
 from processing.context_collector import ContextCollector
 

@@ -84,7 +84,7 @@ PROVIDER_MODEL=ibm/granite-4-h-tiny
 Once configured, you can use Conjecture normally and it will route LLM requests to your local LM Studio instance:
 
 ```python
-from src.contextflow import Conjecture
+from contextflow import Conjecture
 
 # Initialize with LM Studio configuration
 cf = Conjecture()
@@ -118,7 +118,7 @@ The system is configured with fallback behavior:
 To verify your LM Studio configuration is working:
 
 ```python
-from src.contextflow import Conjecture
+from contextflow import Conjecture
 
 cf = Conjecture()
 status = cf.llm_bridge.get_status()

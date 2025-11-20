@@ -278,3 +278,15 @@
 13.4.2 Implement Web User Interface (WebUI) with claim visualization
 13.4.3 Implement advanced CLI features for evaluation monitoring
 13.4.4 Implement Model Context Protocol (MCP) Interface for external integrations
+
+## 14. User Interface Requirements
+
+### 14.1 General Principles
+14.1.1 The system should provide clean, intuitive, and responsive user interfaces (CLI, TUI, GUI).
+14.1.2 Process layer events shall trigger UI updates with smooth animations to provide continuous and clear feedback.
+14.1.3 Interfaces should provide clear and constant feedback on asynchronous operations, ensuring the user understands the state of the system.
+14.1.4 The UI should organize and present data effectively, explicitly showing:
+    *   Claim dependencies and relations.
+    *   Active evaluations.
+    *   Confidence levels for claims.
+14.1.5 The design should prioritize clarity and ease of use, making complex system interactions manageable for the user.

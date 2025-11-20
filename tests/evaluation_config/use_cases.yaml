@@ -1,0 +1,67 @@
+use_cases:
+  - id: UC_001_MINESWEEPER
+    title: "Minesweeper in Rust"
+    prompt: "Build a simple Minesweeper game in Rust that runs in the terminal. Provide the complete source code for a single main.rs file."
+    rubric_type: "code_generation"
+    focus: "Functional correctness, compilation, game logic"
+    expectations:
+      - "Output is Rust code"
+      - "Contains main function"
+      - "Implements grid/board"
+      - "Handles user input"
+      - "Compiles without major errors"
+
+  - id: UC_002_MOVIE_TRACKER
+    title: "Movie Tracker App"
+    prompt: "Build a Movie tracker app in Python that fetches live data (use a placeholder or public API like OMDB or TMDB if possible, or mock it). It should allow searching for a movie and printing its details."
+    rubric_type: "code_generation_api"
+    focus: "API integration, data handling, user interaction"
+    expectations:
+      - "Python script"
+      - "Includes HTTP requests (requests library)"
+      - "Parses JSON response"
+      - "Handles API errors gracefully"
+
+  - id: UC_003_TRADE_SIGNALS
+    title: "Trade Signal Generator"
+    prompt: "Build a simple Python script to generate trade signals for $GLD and $QQQ. Use a mock data generator for price history. Calculate a Simple Moving Average (SMA) and generate a 'BUY' signal if price > SMA and 'SELL' if price < SMA."
+    rubric_type: "code_generation_financial"
+    focus: "Math logic, financial concepts, data representation"
+    expectations:
+      - "Python script"
+      - "Correct SMA calculation logic"
+      - "Handles multiple tickers ($GLD, $QQQ)"
+      - "Clear signal output"
+
+  - id: UC_004_ML_BREAKTHROUGHS
+    title: "ML Breakthroughs for Kids"
+    prompt: "Compile a list of the 5 latest breakthroughs in the field of Machine Learning (from 2023-2024). Explain each breakthrough to a 5th grader using simple analogies."
+    rubric_type: "research_simplification"
+    focus: "Recency of info, tone/style adherence, accuracy"
+    expectations:
+      - "5 distinct items"
+      - "Recent timeframe (2023-2025)"
+      - "Simple language (ELI5)"
+      - "Accurate technical basis"
+
+  - id: UC_005_LEASE_CONTRACT
+    title: "Vehicle Lease Contract"
+    prompt: "Write a legal contract to lease a vehicle between a Lessor and Lessee. Include standard terms: Term (36 months), Monthly Payment ($500), Mileage Limit (12k/year), and Liability clause."
+    rubric_type: "content_generation_legal"
+    focus: "Structure, completeness of clauses, formal tone"
+    expectations:
+      - "Formal legal structure"
+      - "Includes specified terms (36mo, $500, 12k miles)"
+      - "Clear Liability section"
+      - "Signature blocks"
+
+  - id: UC_006_META_ANALYSIS
+    title: "META Financial Analysis"
+    prompt: "Analyze stock symbol $META (Meta Platforms). Find their latest financial summaries (Revenue, Net Income) from recent quarterly reports. specific issues or advantages mentioned in recent news. Rate the stock 0-100 based on this analysis."
+    rubric_type: "complex_analysis"
+    focus: "Multi-source retrieval, synthesis, rating logic justification"
+    expectations:
+      - "Identifies META/Facebook correct entity"
+      - "Cites recent financial figures"
+      - "Lists Pros/Cons or Advantages/Issues"
+      - "Provides 0-100 Score"

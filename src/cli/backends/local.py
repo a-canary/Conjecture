@@ -6,14 +6,16 @@ Handles local services like Ollama and LM Studio
 
 import os
 import sys
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
+
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
 # Add parent to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from ..base_cli import BaseCLI, BackendNotAvailableError
-from config.unified_validator import validate_config, get_primary_provider
+from config.config import get_primary_provider, validate_config
+
+from ..base_cli import BackendNotAvailableError, BaseCLI
 
 
 class LocalBackend(BaseCLI):
@@ -21,7 +23,7 @@ class LocalBackend(BaseCLI):
 
     def __init__(self):
         super().__init__("conjecture-local", "Conjecture CLI with Local Services")
-        self.supported_providers = ['ollama', 'lm_studio', 'localai']
+        self.supported_providers = ["ollama", "lm_studio", "localai"]
 
     def _validate_local_config(self) -> bool:
         """Validate that a local provider is configured."""
@@ -42,7 +44,14 @@ class LocalBackend(BaseCLI):
         """Check if local backend is available."""
         return self._validate_local_config()
 
-    def create_claim(self, content: str, confidence: float, user: str, analyze: bool = False, **kwargs) -> str:
+    def create_claim(
+        self,
+        content: str,
+        confidence: float,
+        user: str,
+        analyze: bool = False,
+        **kwargs,
+    ) -> str:
         """Create a new claim using local backend."""
         if not self.is_available():
             raise BackendNotAvailableError("Local backend is not properly configured")
@@ -54,38 +63,46 @@ class LocalBackend(BaseCLI):
             with Progress(
                 SpinnerColumn(),
                 TextColumn("[progress.description]{task.description}"),
-                console=self.console
+                console=self.console,
             ) as progress:
                 task = progress.add_task("Creating claim locally...", total=None)
 
                 # Validate input
                 if not 0.0 <= confidence <= 1.0:
                     raise ValueError("Confidence must be between 0.0 and 1.0")
-                
+
                 if len(content) < 10:
                     raise ValueError("Content must be at least 10 characters")
 
                 # Save claim with local metadata
                 metadata = {
                     "analyzed": analyze,
-                    "provider": self.current_provider_config.get('name') if self.current_provider_config else None,
+                    "provider": self.current_provider_config.get("name")
+                    if self.current_provider_config
+                    else None,
                     "backend": "local",
-                    "offline_capable": True
+                    "offline_capable": True,
                 }
-                
+
                 claim_id = self._save_claim(content, confidence, user, metadata)
                 progress.update(task, description="Claim created successfully!")
 
                 # Display result
-                panel = self._create_claim_panel(claim_id, content, confidence, user, metadata)
+                panel = self._create_claim_panel(
+                    claim_id, content, confidence, user, metadata
+                )
                 self.console.print(panel)
 
                 # Analyze if requested and provider is available
                 if analyze and self.current_provider_config:
                     progress.update(task, description="Analyzing claim locally...")
-                    self.console.print(f"[yellow]Analyzing with {self.current_provider_config['name']}...[/yellow]")
+                    self.console.print(
+                        f"[yellow]Analyzing with {self.current_provider_config['name']}...[/yellow]"
+                    )
                     # TODO: Implement local LLM analysis
-                    self.console.print("[green]Analysis complete (mock implementation)[/green]")
+                    self.console.print(
+                        "[green]Analysis complete (mock implementation)[/green]"
+                    )
 
                 return claim_id
 
@@ -112,7 +129,7 @@ class LocalBackend(BaseCLI):
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=self.console
+            console=self.console,
         ) as progress:
             task = progress.add_task("Searching local claims...", total=None)
 
@@ -134,20 +151,24 @@ class LocalBackend(BaseCLI):
         if not claim:
             raise ValueError(f"Claim {claim_id} not found")
 
-        self.console.print(f"[blue]🔍 Analyzing claim {claim_id} with local services...[/blue]")
-        
+        self.console.print(
+            f"[blue]🔍 Analyzing claim {claim_id} with local services...[/blue]"
+        )
+
         # Mock analysis for now - would integrate with local LLM
         analysis = {
             "claim_id": claim_id,
             "backend": "local",
-            "provider": self.current_provider_config.get('name') if self.current_provider_config else None,
+            "provider": self.current_provider_config.get("name")
+            if self.current_provider_config
+            else None,
             "analysis_type": "local_semantic",
-            "confidence_score": claim.get('confidence', 0.0),
+            "confidence_score": claim.get("confidence", 0.0),
             "sentiment": "neutral",
             "topics": ["general"],
             "verification_status": "pending",
             "local_processing": True,
-            "offline_capable": True
+            "offline_capable": True,
         }
 
         self.console.print("[green]✅ Local analysis complete[/green]")
@@ -161,20 +182,24 @@ class LocalBackend(BaseCLI):
             "supported_providers": self.supported_providers,
             "current_provider": None,
             "endpoints": {},
-            "offline_capable": True
+            "offline_capable": True,
         }
 
         if self.current_provider_config:
-            provider_name = self.current_provider_config.get('name', '')
+            provider_name = self.current_provider_config.get("name", "")
             status["current_provider"] = provider_name
-            status["current_type"] = self.current_provider_config.get('type', '')
-            status["base_url"] = self.current_provider_config.get('base_url', '')
+            status["current_type"] = self.current_provider_config.get("type", "")
+            status["base_url"] = self.current_provider_config.get("base_url", "")
 
             # Check specific provider endpoints
-            if 'ollama' in provider_name.lower():
-                status["endpoints"]["ollama"] = self.current_provider_config.get('base_url', 'http://localhost:11434')
-            elif 'lm_studio' in provider_name.lower():
-                status["endpoints"]["lm_studio"] = self.current_provider_config.get('base_url', 'http://localhost:1234')
+            if "ollama" in provider_name.lower():
+                status["endpoints"]["ollama"] = self.current_provider_config.get(
+                    "base_url", "http://localhost:11434"
+                )
+            elif "lm_studio" in provider_name.lower():
+                status["endpoints"]["lm_studio"] = self.current_provider_config.get(
+                    "base_url", "http://localhost:1234"
+                )
 
         return status
 
@@ -182,12 +207,12 @@ class LocalBackend(BaseCLI):
         """List available local models."""
         # Mock list - would integrate with actual provider APIs
         if self.current_provider_config:
-            provider_name = self.current_provider_config.get('name', '').lower()
-            if 'ollama' in provider_name:
-                return ['llama2', 'mistral', 'codellama', 'vicuna']
-            elif 'lm_studio' in provider_name:
-                return ['custom-model', 'llama-2-7b', 'mistral-7b']
-        
+            provider_name = self.current_provider_config.get("name", "").lower()
+            if "ollama" in provider_name:
+                return ["llama2", "mistral", "codellama", "vicuna"]
+            elif "lm_studio" in provider_name:
+                return ["custom-model", "llama-2-7b", "mistral-7b"]
+
         return []
 
     def pull_model(self, model_name: str) -> bool:

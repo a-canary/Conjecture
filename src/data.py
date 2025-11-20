@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from .core.unified_models import Claim, ClaimType
+from .core.models import Claim, ClaimType
 
 
 class DataManager:
@@ -26,7 +26,7 @@ class DataManager:
         """Load claims from file or start with empty data"""
         try:
             if os.path.exists(self.data_path):
-                with open(self.data_path, 'r', encoding='utf-8') as f:
+                with open(self.data_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     for claim_data in data:
                         claim = Claim(**claim_data)
@@ -42,7 +42,7 @@ class DataManager:
         """Save claims to file"""
         try:
             data = [claim.dict() for claim in self.claims.values()]
-            with open(self.data_path, 'w', encoding='utf-8') as f:
+            with open(self.data_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, default=str)
         except Exception as e:
             print(f"❌ Error saving data: {e}")
@@ -53,12 +53,12 @@ class DataManager:
         confidence: float,
         claim_type: str,
         tags: Optional[List[str]] = None,
-        **kwargs
+        **kwargs,
     ) -> Claim:
         """Create and store a new claim"""
         if len(content.strip()) < 10:
             raise ValueError("Content must be at least 10 characters long")
-        
+
         if not (0.0 <= confidence <= 1.0):
             raise ValueError("Confidence must be between 0.0 and 1.0")
 
@@ -66,7 +66,9 @@ class DataManager:
             claim_type_enum = ClaimType(claim_type.lower())
         except ValueError:
             valid_types = [t.value for t in ClaimType]
-            raise ValueError(f"Invalid claim type: {claim_type}. Valid types: {valid_types}")
+            raise ValueError(
+                f"Invalid claim type: {claim_type}. Valid types: {valid_types}"
+            )
 
         claim_id = f"claim_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{len(content)}"
         claim = Claim(
@@ -75,7 +77,7 @@ class DataManager:
             confidence=confidence,
             type=[claim_type_enum],
             tags=tags or [],
-            **kwargs
+            **kwargs,
         )
 
         self.claims[claim_id] = claim
@@ -89,9 +91,7 @@ class DataManager:
     def get_recent_claims(self, limit: int = 10) -> List[Claim]:
         """Get most recent claims"""
         recent_claims = sorted(
-            self.claims.values(),
-            key=lambda c: c.created,
-            reverse=True
+            self.claims.values(), key=lambda c: c.created, reverse=True
         )
         return recent_claims[:limit]
 
@@ -100,12 +100,12 @@ class DataManager:
         query: str,
         confidence_threshold: Optional[float] = None,
         claim_types: Optional[List[str]] = None,
-        limit: int = 10
+        limit: int = 10,
     ) -> List[Claim]:
         """Simple text search for claims"""
         query_lower = query.lower()
         matching_claims = []
-        
+
         for claim in self.claims.values():
             # Check confidence threshold
             if confidence_threshold and claim.confidence < confidence_threshold:
@@ -118,8 +118,9 @@ class DataManager:
                     continue
 
             # Simple text matching
-            if (query_lower in claim.content.lower() or
-                any(query_lower in tag.lower() for tag in claim.tags)):
+            if query_lower in claim.content.lower() or any(
+                query_lower in tag.lower() for tag in claim.tags
+            ):
                 matching_claims.append(claim)
 
         return matching_claims[:limit]
@@ -130,9 +131,9 @@ class DataManager:
             return None
 
         claim = self.claims[claim_id]
-        
+
         # Update allowed fields
-        allowed_fields = ['content', 'confidence', 'tags', 'supported_by', 'supports']
+        allowed_fields = ["content", "confidence", "tags", "supported_by", "supports"]
         for field, value in updates.items():
             if field in allowed_fields and hasattr(claim, field):
                 setattr(claim, field, value)
@@ -157,12 +158,12 @@ class DataManager:
                 "avg_confidence": 0.0,
                 "claim_types": {},
                 "oldest_claim": None,
-                "newest_claim": None
+                "newest_claim": None,
             }
 
         total_claims = len(self.claims)
         avg_confidence = sum(c.confidence for c in self.claims.values()) / total_claims
-        
+
         # Count claim types
         type_counts = {}
         for claim in self.claims.values():
@@ -171,20 +172,21 @@ class DataManager:
 
         # Find oldest and newest
         sorted_claims = sorted(self.claims.values(), key=lambda c: c.created)
-        
+
         return {
             "total_claims": total_claims,
             "avg_confidence": avg_confidence,
             "claim_types": type_counts,
             "oldest_claim": sorted_claims[0].created.isoformat(),
-            "newest_claim": sorted_claims[-1].created.isoformat()
+            "newest_claim": sorted_claims[-1].created.isoformat(),
         }
 
     def cleanup_old_sessions(self, days_old: int = 30) -> int:
         """Remove claims older than specified days"""
         cutoff_date = datetime.now().timestamp() - (days_old * 24 * 60 * 60)
         old_claims = [
-            claim_id for claim_id, claim in self.claims.items()
+            claim_id
+            for claim_id, claim in self.claims.items()
             if claim.created.timestamp() < cutoff_date
         ]
 
@@ -230,36 +232,36 @@ def search_claims(query: str, **kwargs) -> List[Claim]:
 if __name__ == "__main__":
     print("🧪 Testing Data Manager")
     print("=" * 30)
-    
+
     dm = DataManager("test_claims.json")
-    
+
     # Test claim creation
     claim1 = dm.create_claim(
         content="Machine learning requires large datasets for training",
         confidence=0.85,
         claim_type="concept",
-        tags=["ml", "data"]
+        tags=["ml", "data"],
     )
     print(f"✅ Created: {claim1}")
-    
+
     claim2 = dm.create_claim(
         content="Python is the most popular language for machine learning",
         confidence=0.90,
         claim_type="reference",
-        tags=["python", "ml"]
+        tags=["python", "ml"],
     )
     print(f"✅ Created: {claim2}")
-    
+
     # Test search
     results = dm.search_claims("machine learning")
     print(f"✅ Search results: {len(results)} claims")
-    
+
     # Test recent claims
     recent = dm.get_recent_claims(5)
     print(f"✅ Recent claims: {len(recent)} claims")
-    
+
     # Test statistics
     stats = dm.get_statistics()
     print(f"✅ Statistics: {stats}")
-    
+
     print("🎉 Data Manager tests passed!")

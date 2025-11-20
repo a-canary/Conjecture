@@ -5,11 +5,11 @@ This document provides practical examples of how to use Conjecture for various t
 ## 1. Basic Exploration and Claim Creation
 
 ```python
-from src.enhanced_conjecture import EnhancedConjecture, ExplorationResult
+from contextflow import Conjecture
 from core.unified_models import Claim, ClaimType
 
 # Initialize Conjecture
-cf = EnhancedConjecture()
+cf = Conjecture()
 
 # Explore a topic
 print("🔍 Exploring machine learning...")
@@ -79,7 +79,7 @@ import asyncio
 
 async def research_workflow():
     """Complete research workflow example"""
-    async with EnhancedConjecture() as cf:
+    async with Conjecture() as cf:
         # Step 1: Initial exploration
         print("📚 Step 1: Exploring renewable energy sources...")
         exploration = await cf.explore("renewable energy sources", max_claims=10)
@@ -279,7 +279,7 @@ class ResearchAssistant:
     """Practical research assistant using Conjecture"""
     
     def __init__(self):
-        self.cf = EnhancedConjecture()
+        self.cf = Conjecture()
         self.research_topics = []
     
     async def research_topic(self, topic: str, max_claims: int = 10):

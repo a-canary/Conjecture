@@ -10,18 +10,18 @@ from typing import Dict, List, Optional, Any, Union
 from pathlib import Path
 import logging
 
-from core.unified_models import Claim, ClaimState, ClaimType
+from core.models import Claim, ClaimState, ClaimType
 from config.simple_config import Config
 from processing.llm_bridge import LLMBridge, LLMRequest
 from processing.chutes_adapter import create_chutes_adapter_from_config
 from processing.llm.lm_studio_adapter import create_lm_studio_adapter_from_config
-from processing.async_claim_evaluation import AsyncClaimEvaluationService
-from processing.context_collector import ContextCollector
-from processing.dynamic_tool_creator import DynamicToolCreator
+from processing.async_eval import AsyncClaimEvaluationService
+from processing.context import ContextCollector
+from processing.tool_manager import DynamicToolCreator
 from data.data_manager import get_data_manager
 
 
-class EnhancedConjecture:
+class Conjecture:
     """
     Enhanced Conjecture with Async Claim Evaluation and Dynamic Tool Creation
     Implements the full architecture described in the specifications
@@ -556,17 +556,17 @@ class ExplorationResult:
 
 
 # Convenience functions
-async def explore_enhanced(query: str, **kwargs) -> ExplorationResult:
-    """Quick enhanced exploration function"""
-    async with EnhancedConjecture() as cf:
+async def explore(query: str, **kwargs) -> ExplorationResult:
+    """Quick exploration function"""
+    async with Conjecture() as cf:
         return await cf.explore(query, **kwargs)
 
 
-async def add_claim_enhanced(
+async def add_claim(
     content: str, confidence: float, claim_type: str, **kwargs
 ) -> Claim:
-    """Quick enhanced claim creation function"""
-    async with EnhancedConjecture() as cf:
+    """Quick claim creation function"""
+    async with Conjecture() as cf:
         return await cf.add_claim(content, confidence, claim_type, **kwargs)
 
 

@@ -59,10 +59,10 @@ pip install -r requirements.txt
 
 ### Quick Start
 ```python
-from src.enhanced_conjecture import EnhancedConjecture
+from contextflow import Conjecture
 
 # Initialize Conjecture
-cf = EnhancedConjecture()
+cf = Conjecture()
 
 # Explore a topic
 result = cf.explore("machine learning applications")
@@ -184,7 +184,7 @@ Conjecture is highly optimized for performance:
 ### Research Assistant
 ```python
 # Research a complex topic
-cf = EnhancedConjecture()
+cf = Conjecture()
 result = cf.explore("climate change mitigation strategies", max_claims=20)
 
 # Review findings
@@ -217,7 +217,7 @@ cf.add_claim(
 ### Knowledge Base Builder
 ```python
 # Build a personal knowledge base
-knowledge_base = EnhancedConjecture()
+knowledge_base = Conjecture()
 
 # Add your learning
 knowledge_base.add_claim(

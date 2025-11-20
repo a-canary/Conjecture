@@ -55,7 +55,7 @@ pip install -r requirements.txt
 
 ### Basic Usage
 ```python
-from src.data import DataManager, DataConfig
+from data import DataManager, DataConfig
 
 async with DataManager() as dm:
     # Create a claim

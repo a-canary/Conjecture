@@ -7,24 +7,20 @@ __version__ = "1.0.0"
 
 # Core components
 from .core import (
-    UnifiedClaim,
-    SupportRelationshipManager,
-    RelationshipMetrics,
-    TraversalResult,
+    Conjecture,
+    ExplorationResult,
 )
-
-# Context building
-from .context import CompleteContextBuilder
-
-# LLM integration
-from .llm import InstructionSupportProcessor
+from .core.models import (
+    Claim,
+    ClaimType,
+    ClaimState,
+)
 
 # High-level API
 __all__ = [
-    "UnifiedClaim",
-    "SupportRelationshipManager", 
-    "CompleteContextBuilder",
-    "InstructionSupportProcessor",
-    "RelationshipMetrics",
-    "TraversalResult",
+    "Conjecture",
+    "ExplorationResult",
+    "Claim",
+    "ClaimType",
+    "ClaimState",
 ]

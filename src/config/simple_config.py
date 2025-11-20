@@ -1,6 +1,6 @@
 """
-Simplified Configuration System for Conjecture
-Provides elegant defaults with minimal configuration complexity
+Unified Configuration System for Conjecture
+Single source of truth using .env file
 """
 
 import os
@@ -10,6 +10,7 @@ from typing import Any, Dict
 # Load environment variables from .env file
 try:
     from dotenv import load_dotenv
+
     load_dotenv()
 except ImportError:
     # dotenv not available, use system environment only
@@ -18,59 +19,44 @@ except ImportError:
 
 class Config:
     """
-    Unified Configuration with smart defaults
-    Reduces complexity from 83+ constants to essential settings
+    Unified Configuration using .env file
+    Simplified from 83+ constants to essential settings
     """
 
     def __init__(self):
-        # === Essential Database Settings (3 items) ===
-        self.database_path = os.getenv("Conjecture_DB_PATH", "data/claims.json")
-        self.database_type = os.getenv(
-            "Conjecture_DB_TYPE", "file"
-        )  # file, chroma, mock
-
-        # === Essential Processing Settings (3 items) ===
-        self.confidence_threshold = float(os.getenv("Conjecture_CONFIDENCE", "0.95"))
-        self.max_context_size = int(os.getenv("Conjecture_MAX_CONTEXT", "10"))
-        self.exploration_batch_size = int(os.getenv("Conjecture_BATCH_SIZE", "10"))
-
-        # === Optional Advanced Settings (6 items) ===
-        self.embedding_model = os.getenv(
-            "Conjecture_EMBEDDING_MODEL", "all-MiniLM-L6-v2"
+        # === Provider Configuration (from .env) ===
+        self.provider_api_url = os.getenv(
+            "PROVIDER_API_URL", "https://llm.chutes.ai/v1"
         )
-        
-        # LLM Provider Configuration
-        self.llm_provider = os.getenv("Conjecture_LLM_PROVIDER", "chutes")
-        llm_provider_lower = self.llm_provider.lower()
-        
-        # Set appropriate defaults based on provider
-        if llm_provider_lower == "lm_studio":
-            self.llm_api_url = os.getenv("Conjecture_LLM_API_URL", "http://localhost:1234")
-            self.llm_enabled = True  # LM Studio doesn't require API key
-            self.llm_model = os.getenv("Conjecture_LLM_MODEL", "ibm/granite-4-h-tiny")
-        else:
-            self.llm_api_url = os.getenv("Conjecture_LLM_API_URL", "https://llm.chutes.ai/v1")
-            self.llm_enabled = bool(
-                os.getenv("Conjecture_LLM_API_KEY")
-            )  # Auto-detect if API key exists for cloud providers
-            self.llm_model = os.getenv(
-                "Conjecture_LLM_MODEL", "zai-org/GLM-4.6-turbo" if self.llm_enabled else None
-            )
+        self.provider_api_key = os.getenv("PROVIDER_API_KEY", "")
+        self.provider_model = os.getenv("PROVIDER_MODEL", "zai-org/GLM-4.6-FP8")
+        self.llm_provider = os.getenv("LLM_PROVIDER", "chutes")  # Add missing attribute
 
-        # === Development Settings (1 item) ===
-        self.debug = os.getenv("Conjecture_DEBUG", "false").lower() == "true"
+        # === Application Settings ===
+        self.database_path = os.getenv("DB_PATH", "data/conjecture.db")
+        self.database_type = os.getenv(
+            "DATABASE_TYPE", "sqlite"
+        )  # Add missing attribute
+        self.confidence_threshold = float(os.getenv("CONFIDENCE_THRESHOLD", "0.95"))
+        self.max_context_size = int(os.getenv("MAX_CONTEXT_SIZE", "10"))
+        self.batch_size = int(os.getenv("BATCH_SIZE", "10"))
+        self.debug = os.getenv("DEBUG", "false").lower() == "true"
 
-        # === Derived settings (auto-computed) ===
+        # === Derived Settings ===
+        self.llm_enabled = (
+            bool(self.provider_api_key) or "localhost" in self.provider_api_url
+        )
         self.data_dir = Path(self.database_path).parent
         self.data_dir.mkdir(exist_ok=True)
 
     def __str__(self) -> str:
         """String representation for debugging"""
-        return f"Config(db={self.database_type}, confidence={self.confidence_threshold}, llm={'enabled' if self.llm_enabled else 'disabled'})"
+        return f"Config(db={self.database_type}, path={self.database_path}, confidence={self.confidence_threshold}, llm={'enabled' if self.llm_enabled else 'disabled'})"
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert configuration to dictionary"""
         return {
+            "database_type": self.database_type,
             "database_path": self.database_path,
             "database_type": self.database_type,
             "confidence_threshold": self.confidence_threshold,

@@ -28,6 +28,16 @@ class ClaimType(str, Enum):
     GOAL = "goal"
 
 
+class ClaimScope(str, Enum):
+    """Claim scope enumeration (Req 1.2.4)"""
+
+    SESSION = "Session"
+    USER = "User"
+    PROJECT = "Project"
+    TEAM = "Team"
+    GLOBAL = "Global"
+
+
 class BasicClaim:
     """Simple claim class with basic validation"""
 
@@ -38,6 +48,7 @@ class BasicClaim:
         confidence: float,
         type: List[ClaimType],
         state: ClaimState = ClaimState.EXPLORE,
+        scope: ClaimScope = ClaimScope.SESSION,
         tags: List[str] = None,
         supported_by: List[str] = None,
         supports: List[str] = None,
@@ -59,6 +70,7 @@ class BasicClaim:
         self.confidence = float(confidence)
         self.type = type
         self.state = state
+        self.scope = scope
         self.tags = tags or []
         self.supported_by = supported_by or []
         self.supports = supports or []
@@ -71,6 +83,26 @@ class BasicClaim:
             raise ValueError("Confidence must be between 0.0 and 1.0")
         self.confidence = float(new_confidence)
         self.updated = datetime.utcnow()
+
+    def promote_scope(self, new_scope: ClaimScope) -> None:
+        """Promote claim scope (Req 3.3)"""
+        # Define promotion hierarchy order
+        scope_order = {
+            ClaimScope.SESSION: 0,
+            ClaimScope.USER: 1,
+            ClaimScope.PROJECT: 2,
+            ClaimScope.TEAM: 3,
+            ClaimScope.GLOBAL: 4,
+        }
+
+        current_level = scope_order.get(self.scope, 0)
+        new_level = scope_order.get(new_scope, 0)
+
+        if new_level > current_level:
+            self.scope = new_scope
+            self.updated = datetime.utcnow()
+        else:
+            raise ValueError(f"Cannot promote from {self.scope} to {new_scope}")
 
     def add_support(self, supporting_claim_id: str) -> None:
         """Add a supporting claim ID"""
@@ -92,7 +124,10 @@ class BasicClaim:
         state_value = (
             self.state.value if hasattr(self.state, "value") else str(self.state)
         )
-        return f"- [{self.id},{self.confidence},{type_str},{state_value}]{self.content}"
+        scope_value = (
+            self.scope.value if hasattr(self.scope, "value") else str(self.scope)
+        )
+        return f"- [{self.id},{self.confidence},{type_str},{state_value},{scope_value}]{self.content}"
 
     def to_chroma_metadata(self) -> Dict[str, Any]:
         """Convert claim to ChromaDB metadata format"""
@@ -101,6 +136,9 @@ class BasicClaim:
             "state": self.state.value
             if hasattr(self.state, "value")
             else str(self.state),
+            "scope": self.scope.value
+            if hasattr(self.scope, "value")
+            else str(self.scope),
             "supported_by": ",".join(self.supported_by) if self.supported_by else "",
             "supports": ",".join(self.supports) if self.supports else "",
             "type": ",".join(
@@ -138,6 +176,7 @@ class BasicClaim:
             confidence=metadata["confidence"],
             type=types,
             state=ClaimState(metadata["state"]),
+            scope=ClaimScope(metadata.get("scope", "Session")),
             tags=tags,
             supported_by=supported_by,
             supports=supports,
@@ -152,7 +191,7 @@ class BasicClaim:
         state_value = (
             self.state.value if hasattr(self.state, "value") else str(self.state)
         )
-        return f"BasicClaim(id={self.id}, confidence={self.confidence}, state={state_value}, type={type_str})"
+        return f"BasicClaim(id={self.id}, confidence={self.confidence}, state={state_value}, scope={self.scope}, type={type_str})"
 
 
 def validate_basic_models() -> bool:
@@ -193,6 +232,17 @@ def validate_basic_models() -> bool:
         assert claim.confidence == 0.95
         print("✅ Confidence update: PASS")
 
+        # Test scope promotion
+        assert claim.scope == ClaimScope.SESSION
+        claim.promote_scope(ClaimScope.PROJECT)
+        assert claim.scope == ClaimScope.PROJECT
+        try:
+            claim.promote_scope(ClaimScope.SESSION)
+            print("❌ Should have failed demotion")
+            return False
+        except ValueError:
+            print("✅ Scope promotion rules: PASS")
+
         # Test metadata conversion
         metadata = claim.to_chroma_metadata()
         restored = BasicClaim.from_chroma_result(
@@ -201,11 +251,15 @@ def validate_basic_models() -> bool:
             metadata=metadata,
         )
         assert restored.confidence == 0.95
+        assert restored.scope == ClaimScope.PROJECT
         print("✅ Metadata conversion: PASS")
 
         return True
     except Exception as e:
         print(f"❌ Validation failed: {e}")
+        import traceback
+
+        traceback.print_exc()
         return False
 
 

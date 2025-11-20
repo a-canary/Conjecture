@@ -31,9 +31,25 @@ Conjecture is a simple, practical framework for LLM agents that helps developers
 - Concurrency Controls (file locking, provider throttling, retry logic)
 
 **Presentation Layer = How users interact**
-- Command Line Interface (CLI)
-- Terminal User Interface (TUI)
-- Graphical User Interface (GUI)
+
+The Presentation Layer provides multiple ways for users and other agents to interact with the Conjecture system.
+
+- **Command Line Interface (CLI)**: For direct, scriptable access to Conjecture's core functions.
+- **Terminal User Interface (TUI)**: An interactive terminal application that provides rich visualizations of the claim network, active evaluations, and confidence levels, as specified in the UI requirements.
+- **Graphical User Interface (GUI)**: A full graphical application for complex workflows, offering the most detailed "inspection panels" to see inside the evaluation process.
+
+### The Conjecture App
+
+The primary user-facing application, the `ConjectureApp`, presents a standard conversational interface. Questions and final, high-confidence responses are communicated to the user in a familiar chat format. However, it is augmented with special **inspection panels**, allowing the user to view the underlying claim network, see the status of active evaluations, and understand the evidence supporting any given conclusion.
+
+### The Conjecture Model Context Protocol (MCP)
+
+For integration with existing conversational agents (e.g., Gemini-CLI, Copilot, RooCode), the system exposes a `ConjectureMCP`. This interface allows the host agent to use Conjecture's capabilities as a set of tools.
+
+- **Example Tools**:
+    - `queryClaims`: Allows the host agent to search the existing knowledge graph.
+    - `explorePrompt`: A powerful tool that initiates an in-depth investigation on a given topic using the full asynchronous evaluation process. The host agent can start the exploration and then check back later for a high-confidence summary, without having to manage the intermediate steps.
+- **Benefit**: This keeps the user's primary conversation simple and focused, offloading complex research and preventing the main conversational context from being bloated with intermediate findings.
 
 ## Problem Statement
 
@@ -153,6 +169,7 @@ Claims are the core knowledge representation in Conjecture, capturing what we kn
   "statement": "Clear, testable statement",
   "confidence": 85,
   "dirty": false,  // Indicates if claim needs re-evaluation
+  "evaluation_count": 0, // Times evaluated in this session
   "evidence": [
     {
       "source": "tool_name",
@@ -164,7 +181,7 @@ Claims are the core knowledge representation in Conjecture, capturing what we kn
   "elevation_history": [
     {
       "from_scope": "session",
-      "to_scope": "user",
+    "to_scope": "user",
       "elevated_by": "llm",
       "reasoning": "This claim represents user preference that will be useful across sessions",
       "timestamp": "2025-11-14T10:45:00Z"
@@ -219,6 +236,41 @@ All knowledge in Conjecture is represented as claims, with specialized types for
 5. **Connect**: Claims are linked to related claims (support, conflict, dependency)
 6. **Scope Inheritance**: Claims inherit accessibility based on scope hierarchy
 7. **Scope Elevation**: LLM can automatically elevate valuable claims to User/Project scope
+
+### Claim Merging Process
+
+To prevent knowledge duplication and maintain a clean knowledge graph, the data layer automatically checks for and merges similar claims within the same scope.
+
+**Trigger**: This process is triggered whenever a new claim is added or an existing claim's content is edited.
+
+**Process**:
+1.  **Similarity Check**: The system performs a similarity search (e.g., using vector embeddings) against all existing claims.
+2.  **Threshold Condition**: If the similarity score of the most similar existing claim is above a configurable `similarity_threshold`, the system proceeds to the next step.
+3.  **Scope and Elevation Check**:
+    *   The system checks the scopes of the two claims.
+    *   If both claims are from the **same session**, the merge process continues.
+    *   If the claims are from **different sessions**, the merge is **aborted**. This scenario serves as a strong indicator that one of the claims is a candidate for elevation. The system may flag the claim for the "End-of-Session Elevation Workflow" or other elevation mechanisms.
+4.  **Merge Execution** (for same-session claims):
+    *   The system compares the confidence scores of the new/edited claim and the existing similar claim.
+    *   The claim with the **lower confidence score is discarded**.
+    *   The claim with the **higher confidence score is retained**.
+    *   All supporting evidence and claim references from the discarded claim are appended to the retained claim.
+    *   Any external references pointing to the discarded claim are updated to point to the retained claim ("reference fixup").
+    *   The discarded claim is then deleted.
+
+### Claim Purging Process
+
+To manage storage and maintain performance, the system includes an automated purging mechanism for the claim database.
+
+**Trigger**: The purge process is triggered when the total database size exceeds a configurable limit (e.g., 500MB).
+
+**Process**:
+1.  **Purge Calculation**: When the size limit is exceeded, the system flags 10% of the total claims for purging.
+2.  **Candidate Selection**: Claims are selected for purging based on a weighted score that considers both:
+    *   **Low Confidence**: Claims with lower confidence scores are prioritized.
+    *   **Old Age**: Claims that have not been recently accessed or updated are prioritized.
+    *   The combination of these two factors ensures that the least valuable and least relevant knowledge is removed first.
+3.  **Execution**: The selected claims are deleted from the database.
 
 ### Claim Relationships
 
@@ -712,10 +764,27 @@ The system is organized into three distinct but interconnected components:
 
 #### Process Layer: Context Building & LLM Interaction
 **Context Building**: Assembling relevant knowledge for claim evaluation
-- Retrieval of pertinent existing claims (not conversation history)
-- Integration of relevant skill claims (methodologies and strategies)
-- Composition of evaluation-specific context for each claim
-- Note: Claim scope doesn't affect context selection - all accessible claims are considered
+
+The context for evaluating a claim is constructed in a multi-step process designed to provide the LLM with relevant, diverse, and actionable information.
+
+1.  **Core Relevance Search**:
+    - A primary set of claims is retrieved based on vector similarity to the current user's core claim or prompt.
+    - Among these, claims with higher confidence scores are prioritized.
+
+2.  **Graph Traversal**:
+    - The context is expanded by including claims directly related to the claim being evaluated. This includes:
+        - All claims that `support` the evaluation claim.
+        - All claims that are `supported_by` the evaluation claim.
+
+3.  **Context Diversity via Tagging**:
+    - To ensure the context is well-rounded, the system uses claim tags (or types) to guarantee a minimum count of specific kinds of information. For example, the context might be structured to include:
+        - A minimum of 5 `skill` claims.
+        - A minimum of 5 `knowledge` claims.
+        - A minimum of 2 `goal` claims.
+    - This prevents the context from being composed of only one type of information.
+
+4.  **Final Composition**:
+    - The claims gathered from these steps are composed into the final context sent to the LLM. All accessible claims are considered for inclusion regardless of their scope.
 
 **Async Claim Evaluation Service**: Confidence-driven claim processing engine
 - Maintains priority queue of dirty claims to evaluate
@@ -728,6 +797,19 @@ The system is organized into three distinct but interconnected components:
 - Emits scope-decorated events for UI updates during evaluation process
 - Operates independently but prioritizes claims based on scope hierarchy and dirtiness
 - Enables claim sharing and reuse across sessions at appropriate scope levels
+
+**Evaluation Priority and Cycle Prevention**
+
+To ensure the most relevant claims are evaluated and to prevent infinite evaluation cycles, the priority queue for dirty claims is ordered by a dynamically calculated score.
+
+The priority score for a claim is determined by several factors, listed in order of precedence:
+
+1.  **Dirty Flag**: Claims with `dirty=true` are always prioritized for evaluation. This is a fundamental requirement.
+2.  **Vector Similarity to User Claim**: Claims that are semantically most similar (e.g., based on vector embeddings) to the current user's core claim or prompt will receive a significant priority boost. This ensures user-focused relevance.
+3.  **Evaluation Count Penalty**: To prevent cycles and ensure progress, a penalty is applied based on the `evaluation_count` (the number of times a claim has already been evaluated in the current session). This discourages the evaluator from repeatedly picking the same claims in a loop.
+    - The claim model will include an `evaluation_count` field, which is incremented each time the claim is selected for evaluation.
+
+If the evaluator detects a potential cycle (e.g., a set of claims repeatedly making each other dirty), it will de-prioritize those claims and select a supporting claim that, if validated, could resolve the uncertainty and break the loop.
 
 **Response Parsing**: Extracting structured insights from LLM outputs
 - Identification of new claims and confidence levels
@@ -817,28 +899,92 @@ The solution strategy follows a phased implementation approach:
 
 ## Session Management and User Interaction
 
-### Session Lifecycle
+### User Interaction Cycle
 
-The system manages user sessions that interface with the Async Claim Evaluation Service:
+The interaction with a user follows a specific cycle that leverages both session history and the async claim evaluation service.
 
-1. **Session Creation**: When a user initiates a new session
-2. **Prompt Processing**: User prompts are decomposed into initial claims
-3. **Claim Queuing**: Initial claims are added to the evaluation queue with high priority
-4. **Evaluation Monitoring**: Session tracks the progress of relevant claim evaluations
-5. **Event Streaming**: Session receives evaluation events for UI updates
-6. **Session Completion**: When all relevant claims reach sufficient confidence or user ends session
+1.  **User Prompt**: The user sends a message in the conversational interface. This message is added to a lightweight `session_history`.
+
+2.  **Prompt Evaluation**: The system evaluates the new user prompt in the context of the `session_history`.
+    *   **Goal**: To deconstruct the user's request into a set of core, testable "user claims".
+    *   **Output**: A list of new claims representing the user's intent (e.g., a claim "The user wants to know the primary key of the 'claims' table").
+
+3.  **Asynchronous Claim Evaluation**:
+    *   The newly generated "user claims" are marked as `dirty` and added to the `Async Claim Evaluation Service`'s priority queue.
+    *   The service then processes these claims (and any subsequent claims they generate) asynchronously in the background, as described in the "Async Claim Evaluation Service" section. The user can be notified of this background progress via the UI.
+
+4.  **Response Synthesis**:
+    *   **Trigger**: The system waits until the initial "user claims" have been resolved (i.e., they reach a high confidence state or are stalled).
+    *   **Action**: Once the core claims are resolved, the agent synthesizes a final, natural language response for the user.
+    *   **Context for Response**: The synthesis uses the `session_history` (to maintain conversational tone), the now-validated `user claims`, and the `supported_by` claims that provide evidence and detail.
+
+5.  **Deliver Response**: The synthesized response is delivered to the user in the chat interface, completing the cycle.
+
+**`session_history` Management**: The `session_history` is kept short and is frequently compressed or summarized to manage context window size for the conversational parts of the workflow. It is distinct from the claim graph, which serves as the long-term, persistent context.
 
 ### Session-Claim Interaction
 
+
+
 ```python
+
 class SessionManager:
+
     async def create_session(self, user_id: str, team_id: Optional[str], project_id: Optional[str]) -> Session
+
     async def process_prompt(self, session_id: str, prompt: str) -> List[str]
+
     async def track_claim_progress(self, session_id: str, claim_ids: List[str]) -> None
+
     async def stream_evaluation_events(self, session_id: str) -> AsyncIterator[EvaluationEvent]
+
     async def promote_claim_scope(self, session_id: str, claim_id: str, target_scope: ClaimScope) -> bool
+
     async def get_session_summary(self, session_id: str) -> SessionSummary
+
 ```
+
+
+
+### End-of-Session Elevation Workflow
+
+
+
+To facilitate the retention of valuable knowledge, the application prompts the user at the end of each session to review and elevate important claims.
+
+
+
+**Trigger**: This workflow is initiated when the user ends a session.
+
+
+
+**Process**:
+
+1.  **Prompt User**: The system asks the user if they would like to review claims from the session for elevation.
+
+2.  **Candidate Selection**: If the user agrees, the system prepares a list of candidate claims based on the following criteria:
+
+    *   **Filtering**: Only claims created or modified within the current `session` are considered.
+
+    *   **Ranking**: Claims are sorted by a calculated score: `(number of supporting claims * confidence) + bonus`.
+
+    *   A `bonus` is added to the score for claims tagged as `primary` or `external`.
+
+3.  **User Review Loop**:
+
+    *   The system displays the top 10 claims from the ranked list.
+
+    *   For each claim, the user can choose to:
+
+        *   Elevate it to a broader scope (`user`, `project`, `team`, `global`).
+
+        *   Skip it.
+
+        *   Quit the elevation process.
+
+    *   This loop continues, showing the next 10 claims, until the list is exhausted or the user quits.
+
+
 
 ### Priority Management for User Claims
 
@@ -1150,10 +1296,8 @@ The Async Claim Evaluation Service is designed with specific performance targets
 
 #### Context Optimization
 
-- **Claim Relevance Scoring**: Advanced algorithms to identify only the most relevant claims
-- **Context Compression**: Intelligent summarization of claim clusters for dense knowledge areas
-- **Fragmented Loading**: Load context in chunks as needed during evaluation
-- **Context Caching**: Maintain most-frequently-used claim contexts in memory
+- **Claim Relevance Scoring**: This is achieved through the multi-step process described in the **Context Building** section, which combines vector similarity, confidence scores, graph traversal, and tag-based diversity requirements.
+- **Fragmented Loading**: Load context in chunks as needed during evaluation.
 
 #### Evaluation Optimization
 

@@ -12,17 +12,9 @@ from .simple_config import (
     validate_config as simple_validate_config,
 )
 
-# New unified configuration validator
-from .unified_validator import (
-    UnifiedConfigValidator,
-    ConfigFormat,
-    UnifiedValidationResult,
-    ProviderConfig,
-    get_unified_validator,
-    validate_config as unified_validate_config,
-    get_primary_provider,
-    show_configuration_status,
-)
+# Simplified configuration - only use what actually exists
+# Note: Unified validator components are not fully implemented yet
+# Using simple config for now
 
 # Backward compatibility layer
 from .backward_compatibility import (
@@ -41,22 +33,27 @@ from .backward_compatibility import (
 #     execute_migration,
 # )
 
-# Default validate_config function now uses unified validator
+
+# Default validate_config function uses simple validator
 def validate_config(env_file: str = ".env"):
-    """Validate configuration using unified validator"""
-    validator = get_unified_validator(env_file)
-    return validator.validate_configuration()
+    """Validate configuration using simple validator"""
+    return simple_validate_config(env_file)
+
 
 __all__ = [
     # Legacy
-    "Config", "config", "get_config", "print_config_summary",
-    # Unified validation
-    "UnifiedConfigValidator", "ConfigFormat", "UnifiedValidationResult", "ProviderConfig",
-    "get_unified_validator", "unified_validate_config", "get_primary_provider",
-    "show_configuration_status", "validate_config",
+    "Config",
+    "config",
+    "get_config",
+    "print_config_summary",
+    "simple_validate_config",
+    # Simple validation
+    "validate_config",
     # Backward compatibility
-    "SimpleProviderValidator", "IndividualEnvValidator", "UnifiedProviderValidator",
-    "SimpleValidator", "show_migration_suggestions", "check_api_usage",
-    # Migration utilities commented out to avoid circular imports
-    # "ConfigMigrator", "analyze_migration", "execute_migration"
+    "SimpleProviderValidator",
+    "IndividualEnvValidator",
+    "UnifiedProviderValidator",
+    "SimpleValidator",
+    "show_migration_suggestions",
+    "check_api_usage",
 ]

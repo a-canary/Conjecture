@@ -173,7 +173,7 @@ LLM Manager (central orchestration)
 
 ### **Basic Usage**
 ```python
-from src.processing.llm import LLMManager
+from processing.llm import LLMManager
 
 # Auto-detect and initialize all available providers
 manager = LLMManager()

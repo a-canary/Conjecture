@@ -13,7 +13,7 @@ from pathlib import Path
 import logging
 import hashlib
 
-from core.unified_models import Claim, ClaimType, ClaimState
+from core.models import Claim, ClaimType, ClaimState
 from processing.llm_bridge import LLMBridge, LLMRequest
 
 # Try to import tools, but handle gracefully if not available

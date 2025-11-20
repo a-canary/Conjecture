@@ -1,21 +1,19 @@
 """
 Conjecture: Core package for Simplified Universal Claim Architecture
-Provides simplified claim models and relationship management
+Provides unified claim models and relationship management
 """
 
-# Legacy models (for existing compatibility)
-from .unified_models import (
+# Core models - single source of truth
+from .models import (
     Claim,
     ClaimBatch,
     ClaimState,
     ClaimType,
+    DirtyReason,
     ProcessingResult,
-    validate_unified_models,
-)
-
-# New simplified architecture components
-from .unified_claim import (
-    UnifiedClaim,
+    ToolCall,
+    ExecutionResult,
+    ParsedResponse,
     create_claim_index,
     get_orphaned_claims,
     get_root_claims,
@@ -33,21 +31,23 @@ from .support_relationship_manager import (
     TraversalResult,
 )
 
-# Export both legacy and new components
+# Export core components
 __all__ = [
-    # Legacy components
+    # Core claim models
     "Claim",
     "ClaimType",
     "ClaimState",
     "ClaimBatch",
+    "DirtyReason",
     "ProcessingResult",
-    "validate_unified_models",
-    
-    # New simplified architecture
-    "UnifiedClaim",
+    "ToolCall",
+    "ExecutionResult",
+    "ParsedResponse",
+    # Relationship management
     "SupportRelationshipManager",
     "RelationshipMetrics",
     "TraversalResult",
+    # Helper functions
     "create_claim_index",
     "get_orphaned_claims",
     "get_root_claims",
