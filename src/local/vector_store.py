@@ -35,20 +35,20 @@ class LocalVectorStore:
 
     def __init__(self, db_path: str = "data/local_vector_store.db", 
                  index_type: str = "ivf_flat",
-                 use_faiss: bool = True):
+                 use_faiss: bool = True,
+                 nlist: int = 100):
         self.db_path = db_path
         self.index_type = index_type
         self.use_faiss = use_faiss and FAISS_AVAILABLE
+        self.nlist = nlist
         
-        # Ensure data directory exists
         Path(db_path).parent.mkdir(parents=True, exist_ok=True)
         
-        # Storage components
         self.conn: Optional[sqlite3.Connection] = None
         self.faiss_index = None
-        self.dimension = 384  # Default dimension
-        self._id_to_idx = {}  # Maps claim IDs to FAISS index positions
-        self._idx_to_id = []   # Maps FAISS index positions to claim IDs
+        self.dimension = 384
+        self._id_to_idx = {}
+        self._idx_to_id = []
         
         self._initialized = False
 
@@ -59,16 +59,11 @@ class LocalVectorStore:
 
         try:
             self.dimension = dimension
-            
-            # Initialize SQLite database
             await self._init_sqlite_db()
-            
-            # Initialize FAISS index if available
             if self.use_faiss:
                 await self._init_faiss_index()
             else:
                 logger.info("FAISS not available, using SQLite-only vector search")
-            
             self._initialized = True
             logger.info(f"Local vector store initialized with dimension {dimension}")
             
@@ -109,25 +104,15 @@ class LocalVectorStore:
             raise ImportError("FAISS is not installed. Install with: pip install faiss-cpu")
         
         try:
-            # Load existing data to determine index size
             existing_count = await self._get_vector_count()
             
             if existing_count == 0:
-                # Create new index
                 if self.index_type == "ivf_flat":
-                    # IVF index for faster search on larger datasets
-                    nlist = min(100, max(1, existing_count // 10))
                     quantizer = faiss.IndexFlatL2(self.dimension)
-                    self.faiss_index = faiss.IndexIVFFlat(quantizer, self.dimension, nlist)
-                elif self.index_type == "flat":
-                    # Simple flat L2 index
-                    self.faiss_index = faiss.IndexFlatL2(self.dimension)
+                    self.faiss_index = faiss.IndexIVFFlat(quantizer, self.dimension, self.nlist)
                 else:
-                    # Default to flat index
                     self.faiss_index = faiss.IndexFlatL2(self.dimension)
-            
             else:
-                # Load existing embeddings and rebuild index
                 await self._rebuild_faiss_index()
             
             logger.info(f"FAISS index initialized with type: {self.index_type}")
@@ -143,6 +128,25 @@ class LocalVectorStore:
                 result = await cursor.fetchone()
                 return result[0] if result else 0
 
+    async def _create_and_populate_faiss_index(self, embeddings: List[np.ndarray]) -> None:
+        """Create and populate FAISS index from a list of embeddings."""
+        if not self.use_faiss:
+            return
+
+        embeddings_array = np.array(embeddings, dtype=np.float32)
+        n_vectors = len(embeddings_array)
+
+        if self.index_type == "ivf_flat" and n_vectors > 1000:
+            nlist = min(100, max(1, n_vectors // 10))
+            quantizer = faiss.IndexFlatL2(self.dimension)
+            self.faiss_index = faiss.IndexIVFFlat(quantizer, self.dimension, nlist)
+            self.faiss_index.train(embeddings_array)
+        else:
+            self.faiss_index = faiss.IndexFlatL2(self.dimension)
+
+        self.faiss_index.add(embeddings_array)
+        logger.info(f"Created and populated FAISS index with {n_vectors} vectors")
+
     async def _rebuild_faiss_index(self) -> None:
         """Rebuild FAISS index from existing embeddings in database."""
         async with aiosqlite.connect(self.db_path) as conn:
@@ -153,7 +157,6 @@ class LocalVectorStore:
                 rows = await cursor.fetchall()
         
         if not rows:
-            # No existing embeddings, create new index
             if self.index_type == "ivf_flat":
                 nlist = 1
                 quantizer = faiss.IndexFlatL2(self.dimension)
@@ -162,7 +165,6 @@ class LocalVectorStore:
                 self.faiss_index = faiss.IndexFlatL2(self.dimension)
             return
         
-        # Collect embeddings and rebuild mappings
         embeddings = []
         self._id_to_idx = {}
         self._idx_to_id = []
@@ -173,28 +175,8 @@ class LocalVectorStore:
             self._id_to_idx[claim_id] = idx
             self._idx_to_id.append(claim_id)
         
-        # Convert to numpy array
-        embeddings_array = np.array(embeddings, dtype=np.float32)
-        
-        # Create and populate FAISS index
-        n_vectors = len(embeddings)
-        nlist = min(100, max(1, n_vectors // 10))
-        
-        if self.index_type == "ivf_flat" and n_vectors > 1000:
-            quantizer = faiss.IndexFlatL2(self.dimension)
-            self.faiss_index = faiss.IndexIVFFlat(quantizer, self.dimension, nlist)
-            
-            # Train the index
-            self.faiss_index.train(embeddings_array)
-            
-            # Add vectors
-            self.faiss_index.add(embeddings_array)
-        else:
-            # Use flat index
-            self.faiss_index = faiss.IndexFlatL2(self.dimension)
-            self.faiss_index.add(embeddings_array)
-        
-        logger.info(f"Rebuilt FAISS index with {n_vectors} vectors")
+        await self._create_and_populate_faiss_index(embeddings)
+        logger.info(f"Rebuilt FAISS index with {len(embeddings)} vectors")
 
     async def add_vector(self, 
                         claim_id: str, 
@@ -259,7 +241,6 @@ class LocalVectorStore:
         success_count = 0
         
         try:
-            # Prepare batch data for SQLite
             batch_data = []
             embeddings_for_faiss = []
             new_ids = []
@@ -277,12 +258,10 @@ class LocalVectorStore:
                     datetime.utcnow().isoformat()
                 ))
                 
-                # Prepare for FAISS
                 if self.use_faiss and claim_id not in self._id_to_idx:
                     embeddings_for_faiss.append(embedding_array)
                     new_ids.append(claim_id)
             
-            # Insert batch into SQLite
             async with aiosqlite.connect(self.db_path) as conn:
                 await conn.executemany('''
                     INSERT OR REPLACE INTO vector_metadata 
@@ -291,23 +270,9 @@ class LocalVectorStore:
                 ''', batch_data)
                 await conn.commit()
             
-            # Add to FAISS index if available
             if self.use_faiss and self.faiss_index and embeddings_for_faiss:
-                embeddings_array = np.array(embeddings_for_faiss, dtype=np.float32)
-                
-                # Update mappings
-                for claim_id in new_ids:
-                    idx = len(self._idx_to_id)
-                    self._id_to_idx[claim_id] = idx
-                    self._idx_to_id.append(claim_id)
-                
-                # Add to index
-                if self.index_type == "ivf_flat" and hasattr(self.faiss_index, 'is_trained'):
-                    if not self.faiss_index.is_trained and len(embeddings_array) >= 2:
-                        self.faiss_index.train(embeddings_array)
-                
-                self.faiss_index.add(embeddings_array)
-            
+                await self._create_and_populate_faiss_index(embeddings_for_faiss)
+
             success_count = len(vectors_data)
             logger.info(f"Added {success_count} vectors in batch")
             
@@ -332,7 +297,6 @@ class LocalVectorStore:
             else:
                 results = await self._search_with_sqlite(query_embedding, limit, threshold)
             
-            # Log search stats
             execution_time = (datetime.utcnow() - start_time).total_seconds() * 1000
             await self._log_search_stats(query_embedding, len(results), execution_time)
             
@@ -349,19 +313,15 @@ class LocalVectorStore:
         """Search using FAISS index."""
         query_array = np.array(query_embedding, dtype=np.float32).reshape(1, -1)
         
-        # Get more results than needed to filter by threshold
         search_k = min(limit * 3, self.faiss_index.ntotal)
         
-        # Perform FAISS search
         distances, indices = self.faiss_index.search(query_array, search_k)
         
-        # Convert distance to similarity (1 - normalized L2 distance)
         results = []
         for distance, idx in zip(distances[0], indices[0]):
-            if idx == -1:  # FAISS returns -1 for empty slots
+            if idx == -1:
                 continue
             
-            # Convert L2 distance to similarity
             similarity = 1 / (1 + distance)
             
             if similarity >= threshold:
@@ -369,14 +329,13 @@ class LocalVectorStore:
                 metadata = await self._get_metadata(claim_id)
                 
                 if metadata:
-                    result = {
+                    results.append({
                         'id': claim_id,
                         'content': metadata.get('content', ''),
                         'metadata': json.loads(metadata.get('metadata', '{}')),
                         'similarity': similarity,
                         'distance': float(distance)
-                    }
-                    results.append(result)
+                    })
             
             if len(results) >= limit:
                 break
@@ -388,7 +347,6 @@ class LocalVectorStore:
                                  limit: int,
                                  threshold: float) -> List[Dict[str, Any]]:
         """Search using SQLite (fallback when FAISS not available)."""
-        # Get all embeddings from database
         async with aiosqlite.connect(self.db_path) as conn:
             async with conn.execute('''
                 SELECT id, content, metadata, embedding 
@@ -397,7 +355,6 @@ class LocalVectorStore:
             ''') as cursor:
                 rows = await cursor.fetchall()
         
-        # Calculate similarities
         results = []
         query_array = np.array(query_embedding, dtype=np.float32)
         
@@ -405,21 +362,18 @@ class LocalVectorStore:
             stored_embedding = pickle.loads(embedding_blob)
             stored_array = np.array(stored_embedding, dtype=np.float32)
             
-            # Calculate cosine similarity
             similarity = self._cosine_similarity(query_array, stored_array)
             
             if similarity >= threshold:
                 metadata = json.loads(metadata_json or '{}')
-                result = {
+                results.append({
                     'id': claim_id,
                     'content': content,
                     'metadata': metadata,
                     'similarity': similarity,
-                    'distance': 1 - similarity  # For consistency
-                }
-                results.append(result)
+                    'distance': 1 - similarity
+                })
         
-        # Sort by similarity and limit
         results.sort(key=lambda x: x['similarity'], reverse=True)
         return results[:limit]
 
