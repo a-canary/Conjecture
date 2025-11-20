@@ -5,6 +5,7 @@ Handles multiple LLM providers with automatic fallback and response format adapt
 
 import os
 import re
+import json
 from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime
 
@@ -30,24 +31,30 @@ class LLMManager:
         self.provider_priorities = {}
         self.primary_provider = None
         self.failed_providers = set()
+        self._provider_config = self._load_provider_config()
         self._initialize_processors()
+
+    def _load_provider_config(self) -> Dict[str, Any]:
+        """Load provider configuration from JSON file."""
+        try:
+            config_path = os.path.join(os.path.dirname(__file__), '..', '..', 'config', 'providers.json')
+            with open(config_path, 'r') as f:
+                return json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"[LLM] Warning: Could not load provider config: {e}")
+            return {}
 
     def _initialize_processors(self):
         """Initialize all available LLM processors with priority-based ordering"""
         print("[LLM] Initializing all available LLM providers...")
         
-        # Get unified provider configuration
-        provider_config = self._get_unified_provider_config()
-        
-        if provider_config:
-            # Initialize the configured provider
-            self._initialize_provider(
-                provider_config["name"].lower(),
-                provider_config["api_url"],
-                provider_config["api_key"],
-                provider_config["model"],
-                provider_config["priority"]
-            )
+        if self._provider_config:
+            provider_configs = [
+                (name, info.get("api_url", ""), os.getenv(info.get("api_key_env", "")), info.get("default_model", ""), info.get("priority", 99))
+                for name, info in self._provider_config.items()
+            ]
+            for provider_name, api_url, api_key, default_model, priority in provider_configs:
+                self._initialize_provider(provider_name, api_url, api_key, default_model, priority)
         else:
             # Fallback to environment variable method and auto-detection
             self._initialize_from_environment()
@@ -59,101 +66,6 @@ class LLMManager:
             print("[LLM] Warning: No LLM processors available")
         else:
             print(f"[LLM] Initialized {len(self.processors)} providers: {list(self.processors.keys())}")
-
-    def _get_unified_provider_config(self) -> Optional[Dict[str, Any]]:
-        """Get unified provider configuration from environment variables"""
-        api_url = os.getenv("PROVIDER_API_URL", "").strip()
-        api_key = os.getenv("PROVIDER_API_KEY", "").strip()
-        model = os.getenv("PROVIDER_MODEL", "").strip()
-
-        if not api_url:
-            return None
-
-        # Detect provider type and priority from URL
-        provider_info = self._detect_provider_from_url(api_url)
-        
-        return {
-            "name": provider_info["name"],
-            "api_url": api_url,
-            "api_key": api_key,
-            "model": model,
-            "priority": provider_info["priority"],
-            "is_local": provider_info["is_local"]
-        }
-
-    def _detect_provider_from_url(self, api_url: str) -> Dict[str, Any]:
-        """Detect provider type, priority, and local status from URL"""
-        url_lower = api_url.lower()
-
-        # Provider detection patterns with priorities
-        providers = {
-            "ollama": {
-                "pattern": r"localhost:11434|ollama",
-                "name": "Ollama",
-                "priority": 1,
-                "is_local": True
-            },
-            "lm_studio": {
-                "pattern": r"localhost:1234|lmstudio",
-                "name": "LM Studio", 
-                "priority": 2,
-                "is_local": True
-            },
-            "chutes": {
-                "pattern": r"chutes\.ai|llm\.chutes\.ai",
-                "name": "Chutes.ai",
-                "priority": 3,
-                "is_local": False
-            },
-            "openrouter": {
-                "pattern": r"openrouter\.ai",
-                "name": "OpenRouter",
-                "priority": 4,
-                "is_local": False
-            },
-            "groq": {
-                "pattern": r"api\.groq\.com|groq",
-                "name": "Groq",
-                "priority": 5,
-                "is_local": False
-            },
-            "openai": {
-                "pattern": r"api\.openai\.com|openai",
-                "name": "OpenAI",
-                "priority": 6,
-                "is_local": False
-            },
-            "anthropic": {
-                "pattern": r"api\.anthropic\.com|anthropic",
-                "name": "Anthropic",
-                "priority": 7,
-                "is_local": False
-            },
-            "google": {
-                "pattern": r"generativelanguage\.googleapis\.com|google",
-                "name": "Google",
-                "priority": 8,
-                "is_local": False
-            },
-            "cohere": {
-                "pattern": r"api\.cohere\.ai|cohere",
-                "name": "Cohere",
-                "priority": 9,
-                "is_local": False
-            }
-        }
-
-        # Find matching provider
-        for provider_key, info in providers.items():
-            if re.search(info["pattern"], url_lower):
-                return info
-
-        # Default fallback
-        return {
-            "name": "Unknown",
-            "priority": 99,
-            "is_local": False
-        }
 
     def _initialize_from_environment(self):
         """Initialize providers from traditional environment variables"""
@@ -176,87 +88,45 @@ class LLMManager:
     def _initialize_provider(self, provider_name: str, api_url: str, api_key: str, model: str, priority: int):
         """Initialize a specific provider"""
         if provider_name in self.failed_providers:
-            return  # Skip previously failed providers
+            return
+
+        provider_info = self._provider_config.get(provider_name)
+        if not provider_info:
+            return
 
         try:
-            processor = None
+            processor_class_name = provider_info.get("processor")
+            processor_class = globals().get(processor_class_name)
+            if not processor_class:
+                return
+            
+            if provider_info.get("available") is False:
+                return
 
-            # Cloud providers (require API keys)
-            if provider_name == "chutes":
-                if api_key:
-                    processor = ChutesProcessor(
-                        api_key=api_key,
-                        api_url=api_url,
-                        model_name=model or "zai-org/GLM-4.6"
-                    )
-            elif provider_name == "openrouter":
-                if api_key:
-                    processor = OpenRouterProcessor(
-                        api_key=api_key,
-                        api_url=api_url,
-                        model_name=model or "openai/gpt-3.5-turbo"
-                    )
-            elif provider_name == "groq":
-                if api_key:
-                    processor = GroqProcessor(
-                        api_key=api_key,
-                        api_url=api_url,
-                        model_name=model or "llama3-8b-8192"
-                    )
-            elif provider_name == "openai":
-                if api_key:
-                    processor = OpenAIProcessor(
-                        api_key=api_key,
-                        api_url=api_url,
-                        model_name=model or "gpt-3.5-turbo"
-                    )
-            elif provider_name == "anthropic":
-                if api_key:
-                    processor = AnthropicProcessor(
-                        api_key=api_key,
-                        api_url=api_url,
-                        model_name=model or "claude-3-haiku-20240307"
-                    )
-            elif provider_name == "google":
-                if api_key and GOOGLE_AVAILABLE:
-                    processor = GoogleProcessor(
-                        api_key=api_key,
-                        api_url=api_url,
-                        model_name=model or "gemini-pro"
-                    )
-            elif provider_name == "cohere":
-                if api_key:
-                    processor = CohereProcessor(
-                        api_key=api_key,
-                        api_url=api_url,
-                        model_name=model or "command"
-                    )
-            elif provider_name == "gemini":  # Legacy Google support
-                if api_key and GEMINI_AVAILABLE:
-                    processor = GeminiProcessor(
-                        api_key=api_key,
-                        model_name="gemini-1.5-flash"
-                    )
-
-            # Local providers (don't require API keys)
-            elif provider_name == "ollama":
+            if "provider_type" in provider_info:  # Local provider
                 try:
-                    processor = LocalProviderProcessor(
-                        provider_type="ollama",
+                    processor = processor_class(
+                        provider_type=provider_info["provider_type"],
                         base_url=api_url,
                         model_name=model
                     )
                 except Exception as e:
-                    print(f"[LLM] Ollama not available: {e}")
-            elif provider_name == "lm_studio":
-                try:
-                    processor = LocalProviderProcessor(
-                        provider_type="lm_studio",
-                        base_url=api_url,
-                        model_name=model
+                    print(f"[LLM] {provider_name.capitalize()} not available: {e}")
+                    return
+            elif api_key:  # Cloud provider
+                if provider_name == "gemini":
+                    processor = processor_class(
+                        api_key=api_key,
+                        model_name=provider_info["model_name"]
                     )
-                except Exception as e:
-                    print(f"[LLM] LM Studio not available: {e}")
+                else:
+                    processor = processor_class(
+                        api_key=api_key,
+                        api_url=api_url,
+                        model_name=model or provider_info["default_model"]
+                    )
+            else:
+                return
 
             if processor:
                 self.processors[provider_name] = processor
