@@ -306,6 +306,27 @@ class LLMManager:
             'message': 'Stats not available for this provider'
         }
 
+    def _get_provider_health(self, name: str, processor: Any) -> Dict[str, Any]:
+        """Get health status for a single provider."""
+        try:
+            if hasattr(processor, 'health_check'):
+                return processor.health_check()
+            else:
+                result = processor.generate_response("Hello", config=getattr(processor, 'GenerationConfig', type('Config', (), {'max_tokens': 10}))())
+                return {
+                    "status": "healthy" if result.success else "unhealthy",
+                    "last_check": datetime.now().isoformat(),
+                    "model": getattr(processor, 'model_name', 'Unknown'),
+                    "error": None if result.success else "Generation failed"
+                }
+        except Exception as e:
+            return {
+                "status": "unhealthy",
+                "last_check": datetime.now().isoformat(),
+                "model": getattr(processor, 'model_name', 'Unknown'),
+                "error": str(e)
+            }
+
     def health_check(self) -> Dict[str, Any]:
         """Perform comprehensive health check on all LLM providers"""
         health_status = {
@@ -318,44 +339,11 @@ class LLMManager:
         }
 
         for name, processor in self.processors.items():
-            try:
-                # Simple health check - try to generate a short response
-                if hasattr(processor, 'health_check'):
-                    provider_health = processor.health_check()
-                else:
-                    # Fallback health check
-                    try:
-                        result = processor.generate_response("Hello", 
-                            config=getattr(processor, 'GenerationConfig', type('Config', (), {'max_tokens': 10}))())
-                        provider_health = {
-                            "status": "healthy" if result.success else "unhealthy",
-                            "last_check": datetime.now().isoformat(),
-                            "model": getattr(processor, 'model_name', 'Unknown'),
-                            "error": None if result.success else "Generation failed"
-                        }
-                    except Exception as e:
-                        provider_health = {
-                            "status": "unhealthy",
-                            "last_check": datetime.now().isoformat(),
-                            "model": getattr(processor, 'model_name', 'Unknown'),
-                            "error": str(e)
-                        }
+            provider_health = self._get_provider_health(name, processor)
+            health_status["providers"][name] = provider_health
+            if provider_health["status"] == "unhealthy" and name in self.get_available_providers():
+                self.failed_providers.add(name)
 
-                health_status["providers"][name] = provider_health
-
-                # Update overall status
-                if provider_health["status"] == "unhealthy" and name in self.get_available_providers():
-                    self.failed_providers.add(name)
-
-            except Exception as e:
-                health_status["providers"][name] = {
-                    "status": "unhealthy",
-                    "last_check": datetime.now().isoformat(),
-                    "model": getattr(processor, 'model_name', 'Unknown'),
-                    "error": str(e)
-                }
-
-        # Re-evaluate overall status
         available_count = len(self.get_available_providers())
         if available_count == 0:
             health_status["overall_status"] = "unavailable"
@@ -377,6 +365,12 @@ class LLMManager:
                 if hasattr(processor, 'reset_stats'):
                     processor.reset_stats()
 
+    def _get_provider_stats(self, name: str, processor: Any) -> Dict[str, Any]:
+        """Get statistics for a single provider."""
+        if hasattr(processor, 'get_stats'):
+            return processor.get_stats()
+        return {"message": "Stats not available"}
+
     def get_combined_stats(self) -> Dict[str, Any]:
         """Get combined statistics from all providers"""
         combined_stats = {
@@ -393,15 +387,12 @@ class LLMManager:
         total_time = 0.0
 
         for name, processor in self.processors.items():
-            if hasattr(processor, 'get_stats'):
-                stats = processor.get_stats()
-                combined_stats["providers"][name] = stats
-                total_requests += stats.get("total_requests", 0)
-                total_successful += stats.get("successful_requests", 0)
-                total_tokens += stats.get("total_tokens", 0)
-                total_time += stats.get("total_processing_time", 0.0)
-            else:
-                combined_stats["providers"][name] = {"message": "Stats not available"}
+            stats = self._get_provider_stats(name, processor)
+            combined_stats["providers"][name] = stats
+            total_requests += stats.get("total_requests", 0)
+            total_successful += stats.get("successful_requests", 0)
+            total_tokens += stats.get("total_tokens", 0)
+            total_time += stats.get("total_processing_time", 0.0)
 
         combined_stats["total_requests"] = total_requests
         combined_stats["total_successful"] = total_successful
@@ -436,6 +427,33 @@ class LLMManager:
         print("[LLM] Reset failed providers list")
         self._set_primary_provider()
 
+    def _get_single_provider_info(self, name: str, processor: Any) -> Dict[str, Any]:
+        """Get detailed information for a single provider."""
+        provider_info = {
+            "priority": self.provider_priorities.get(name, 999),
+            "status": "failed" if name in self.failed_providers else "available",
+            "is_primary": name == self.primary_provider
+        }
+
+        if hasattr(processor, 'model_name'):
+            provider_info["model"] = processor.model_name
+        elif hasattr(processor, '_get_model_name'):
+            try:
+                provider_info["model"] = processor._get_model_name()
+            except:
+                provider_info["model"] = "Unknown"
+
+        if hasattr(processor, 'get_stats'):
+            provider_info["stats"] = processor.get_stats()
+
+        if hasattr(processor, 'health_check'):
+            try:
+                provider_info["health"] = processor.health_check()
+            except:
+                provider_info["health"] = {"status": "unknown"}
+
+        return provider_info
+
     def get_provider_info(self) -> Dict[str, Any]:
         """Get detailed information about all providers"""
         info = {
@@ -447,33 +465,6 @@ class LLMManager:
         }
 
         for name, processor in self.processors.items():
-            provider_info = {
-                "priority": self.provider_priorities.get(name, 999),
-                "status": "failed" if name in self.failed_providers else "available",
-                "is_primary": name == self.primary_provider
-            }
-
-            # Add model information
-            if hasattr(processor, 'model_name'):
-                provider_info["model"] = processor.model_name
-            elif hasattr(processor, '_get_model_name'):
-                try:
-                    provider_info["model"] = processor._get_model_name()
-                except:
-                    provider_info["model"] = "Unknown"
-
-            # Add stats if available
-            if hasattr(processor, 'get_stats'):
-                provider_info["stats"] = processor.get_stats()
-
-            # Add health status if available
-            if hasattr(processor, 'health_check'):
-                try:
-                    health = processor.health_check()
-                    provider_info["health"] = health
-                except:
-                    provider_info["health"] = {"status": "unknown"}
-
-            info["configured_providers"][name] = provider_info
+            info["configured_providers"][name] = self._get_single_provider_info(name, processor)
 
         return info
