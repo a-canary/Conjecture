@@ -31,7 +31,6 @@ def sample_claim_data() -> Dict[str, Any]:
         "confidence": 0.95,
         "dirty": True,
         "tags": ["astronomy", "science", "physics"],
-        "created_by": "test_user",
         "created_at": datetime.utcnow()
     }
 
@@ -45,8 +44,7 @@ def sample_claims_data() -> List[Dict[str, Any]]:
             "content": "Water boils at 100 degrees Celsius at sea level.",
             "confidence": 0.98,
             "dirty": False,
-            "tags": ["chemistry", "physics"],
-            "created_by": "test_user"
+            "tags": ["chemistry", "physics"]
         },
         {
             "id": "c0000002", 

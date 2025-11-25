@@ -5,12 +5,19 @@ Provides secure file writing capabilities with input validation
 
 import os
 import shutil
-from typing import Dict, Any
+from typing import Dict, Any, List
 from pathlib import Path
 from datetime import datetime
 
+# Import the registry system
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+from src.tools.registry import register_tool
 
-def writeFile(file_path: str, content: str, create_dirs: bool = True, 
+
+@register_tool(name="WriteFile", is_core=True)
+def writeFile(file_path: str, content: str, create_dirs: bool = True,
               backup: bool = False, encoding: str = 'utf-8') -> Dict[str, Any]:
     """
     Write content to a file
@@ -115,6 +122,7 @@ def writeFile(file_path: str, content: str, create_dirs: bool = True,
         }
 
 
+@register_tool(name="AppendFile", is_core=False)
 def appendFile(file_path: str, content: str, create_dirs: bool = True,
                encoding: str = 'utf-8') -> Dict[str, Any]:
     """
@@ -229,6 +237,7 @@ def appendFile(file_path: str, content: str, create_dirs: bool = True,
         }
 
 
+@register_tool(name="CreateDirectory", is_core=False)
 def createDirectory(dir_path: str, parents: bool = True) -> Dict[str, Any]:
     """
     Create a directory

@@ -16,7 +16,7 @@ import hashlib
 from .tool_manager import ToolManager
 from .response_parser import ResponseParser
 from .tool_executor import ToolExecutor, ExecutionLimits
-from ..core.models import Claim
+from ..data.models import Claim
 from ..data.data_manager import DataManager
 
 
@@ -466,27 +466,10 @@ class ToolCreator:
                 return None
 
             # Step 8: Create tool creation claim
-            creation_claim = Claim(
+            await self.data_manager.create_claim(
                 content=f"Created tool '{tool_name}' to handle: {tool_need}",
-                tool_name=tool_name,
-                creation_method="llm_discovered",
-                websearch_query=search_queries[0] if search_queries else None,
-                discovery_source=best_method.get("url", ""),
-                tool_code=tool_code,
-                tool_file_path=tool_file_path,
-                creation_reason=tool_need,
-                validation_status="created",
                 confidence=0.8,
                 tags=["type.tool_creation", "auto_generated"],
-                created_by="tool_creator",
-            )
-
-            # Save creation claim
-            await self.data_manager.create_claim(
-                content=creation_claim.content,
-                confidence=creation_claim.confidence,
-                tags=creation_claim.tags,
-                created_by=creation_claim.created_by,
             )
 
             # Step 9: Create skill claim
@@ -564,35 +547,27 @@ class ToolCreator:
 
     async def _create_skill_claim_for_tool(self, tool, tool_need: str) -> None:
         """Create a skill claim that describes how to use the tool."""
-        skill_claim = Claim(
-            content=f"To handle {tool_need}, use the {tool.name} tool with proper parameters and error handling.",
-            tool_name=tool.name,
+
+        # Build detailed content about tool usage
+        content = f"To handle {tool_need}, use the {tool.name} tool with proper parameters and error handling."
+
+        # Add parameter information
+        if tool.parameters:
+            content += " Parameters: "
+            param_details = []
+            for param_name, param_info in tool.parameters.items():
+                if param_info.get("type_hint") == "str":
+                    param_details.append(f"{param_name} (string)")
+                elif param_info.get("type_hint") == "int":
+                    param_details.append(f"{param_name} (integer)")
+                else:
+                    param_details.append(f"{param_name}")
+            content += ", ".join(param_details)
+
+        await self.data_manager.create_claim(
+            content=content,
             confidence=0.8,
             tags=["type.concept", "auto_generated"],
-            created_by="tool_creator",
-        )
-
-        # Add procedure steps based on tool parameters
-        if tool.parameters:
-            for param_name, param_info in tool.parameters.items():
-                instruction = f"Provide {param_name} parameter"
-                if param_info.get("type_hint") == "str":
-                    instruction += " as a string"
-                elif param_info.get("type_hint") == "int":
-                    instruction += " as an integer"
-
-                skill_claim.add_procedure_step(
-                    instruction=instruction,
-                    tool_name=tool.name,
-                    parameters={param_name: f"<{param_name}>"},
-                )
-
-        # Save skill claim
-        await self.data_manager.create_claim(
-            content=skill_claim.content,
-            confidence=skill_claim.confidence,
-            tags=skill_claim.tags,
-            created_by=skill_claim.created_by,
         )
 
     async def _create_sample_claims_for_tool(self, tool) -> None:
@@ -635,26 +610,18 @@ class ToolCreator:
                 is_success = False
                 error_message = str(e)
 
-            # Create sample claim
-            sample_claim = Claim(
-                content=f"Sample call to {tool.name} tool with parameters: {sample_params}",
-                tool_name=tool.name,
-                llm_call_xml=llm_call_xml,
-                tool_response=tool_response,
-                is_success=is_success,
-                error_message=error_message,
-                sample_quality=0.8 if is_success else 0.3,
-                confidence=0.8,
-                tags=["type.sample", "auto_generated"],
-                created_by="tool_creator",
-            )
+            # Create content for sample claim
+            content = f"Sample call to {tool.name} tool with parameters: {sample_params}"
+            if tool_response:
+                content += f". Response: {tool_response}"
+            elif error_message:
+                content += f". Error: {error_message}"
 
             # Save sample claim
             await self.data_manager.create_claim(
-                content=sample_claim.content,
-                confidence=sample_claim.confidence,
-                tags=sample_claim.tags,
-                created_by=sample_claim.created_by,
+                content=content,
+                confidence=0.8 if is_success else 0.3,
+                tags=["type.sample", "auto_generated"],
             )
 
     async def get_tool_creation_stats(self) -> Dict[str, Any]:

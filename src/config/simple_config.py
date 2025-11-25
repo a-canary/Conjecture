@@ -24,6 +24,10 @@ class Config:
     """
 
     def __init__(self):
+        # === Confidence Threshold Configuration ===
+        self.confident_threshold = float(os.getenv("CONFIDENT_THRESHOLD", "0.8"))
+        self.session_confident_threshold = None  # Can be overridden per session
+
         # === Provider Configuration (from .env) ===
         self.provider_api_url = os.getenv(
             "PROVIDER_API_URL", "https://llm.chutes.ai/v1"
@@ -58,13 +62,13 @@ class Config:
         return {
             "database_type": self.database_type,
             "database_path": self.database_path,
-            "database_type": self.database_type,
             "confidence_threshold": self.confidence_threshold,
             "max_context_size": self.max_context_size,
-            "exploration_batch_size": self.exploration_batch_size,
-            "embedding_model": self.embedding_model,
+            "batch_size": self.batch_size,
             "llm_enabled": self.llm_enabled,
-            "llm_model": self.llm_model,
+            "llm_provider": self.llm_provider,
+            "provider_model": self.provider_model,
+            "provider_api_url": self.provider_api_url,
             "debug": self.debug,
         }
 
@@ -123,6 +127,31 @@ def get_config() -> Config:
     return config
 
 
+# Add confidence threshold methods to Config class
+def set_confident_threshold(self, threshold: float):
+    """Set session-level confident threshold override"""
+    if 0.0 <= threshold <= 1.0:
+        self.session_confident_threshold = threshold
+    else:
+        raise ValueError("Confident threshold must be between 0.0 and 1.0")
+
+
+def get_effective_confident_threshold(self) -> float:
+    """Get effective confident threshold (session override or global default)"""
+    return self.session_confident_threshold or self.confident_threshold
+
+
+def reset_confident_threshold(self):
+    """Reset to global default confident threshold"""
+    self.session_confident_threshold = None
+
+
+# Monkey patch the methods onto the Config class
+Config.set_confident_threshold = set_confident_threshold
+Config.get_effective_confident_threshold = get_effective_confident_threshold
+Config.reset_confident_threshold = reset_confident_threshold
+
+
 def validate_config() -> bool:
     """Validate the configuration settings"""
     try:
@@ -130,14 +159,14 @@ def validate_config() -> bool:
         assert config.confidence_threshold >= 0.0
         assert config.confidence_threshold <= 1.0
         assert config.max_context_size > 0
-        assert config.exploration_batch_size > 0
+        assert config.batch_size > 0
 
         # Test file paths
         assert config.data_dir.exists() or config.data_dir.parent.exists()
 
         # Test LLM consistency
         if config.llm_enabled:
-            assert config.llm_model is not None
+            assert config.provider_model is not None
 
         print("[OK] Configuration validation: PASS")
         return True
@@ -154,15 +183,15 @@ def print_config_summary():
     print(f"Database Path: {config.database_path}")
     print(f"Confidence Threshold: {config.confidence_threshold}")
     print(f"Max Context Size: {config.max_context_size}")
-    print(f"Batch Size: {config.exploration_batch_size}")
-    print(f"Embedding Model: {config.embedding_model}")
+    print(f"Batch Size: {config.batch_size}")
     print(f"LLM Enabled: {'Yes' if config.llm_enabled else 'No'}")
     if config.llm_enabled:
         print(f"LLM Provider: {config.llm_provider}")
-        print(f"LLM Model: {config.llm_model}")
-        print(f"LLM API URL: {config.llm_api_url}")
+        print(f"Provider Model: {config.provider_model}")
+        print(f"Provider API URL: {config.provider_api_url}")
     print(f"Debug Mode: {'On' if config.debug else 'Off'}")
     print(f"Data Directory: {config.data_dir}")
+    print(f"Confident Threshold: {config.confident_threshold}")
     print()
 
 

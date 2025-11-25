@@ -3,13 +3,14 @@ Complete Context Builder for Simplified Universal Claim Architecture
 Builds comprehensive contexts with complete relationship coverage and optimized token management
 """
 
-from typing import List, Dict, Set, Tuple, Optional
+from typing import List, Dict, Set, Tuple, Optional, Any
 from dataclasses import dataclass
 from datetime import datetime
 import re
 
 from ..core.models import Claim, create_claim_index
 from ..core.support_relationship_manager import SupportRelationshipManager
+from ..tools.registry import ToolRegistry
 
 
 @dataclass
@@ -56,15 +57,26 @@ class CompleteContextBuilder:
     and fills remaining with semantically similar claims (30% allocation).
     """
 
-    def __init__(self, claims: List[UnifiedClaim]):
+    def __init__(self, claims: List[Claim], include_core_tools: bool = True):
         """Initialize context builder with claim collection"""
         self.claims = claims
         self.claim_index = create_claim_index(claims)
         self.relationship_manager = SupportRelationshipManager(claims)
+        self.include_core_tools = include_core_tools
+
+        # Ensure tools are loaded
+        if include_core_tools:
+            self.tool_registry = ToolRegistry()
+        else:
+            self.tool_registry = None
 
         # Token estimation settings
         self.estimated_tokens_per_claim = 100  # Rough estimate
         self.overhead_tokens = 500  # For headers, separators, etc.
+
+        # Additional overhead for core tools section
+        if include_core_tools:
+            self.overhead_tokens += 1000  # Extra space for tools section
 
     def build_complete_context(
         self,
@@ -88,8 +100,14 @@ class CompleteContextBuilder:
         if target_claim_id not in self.claim_index:
             raise ValueError(f"Target claim {target_claim_id} not found")
 
-        # Calculate token allocation
-        usable_tokens = max_tokens - self.overhead_tokens
+        # Calculate token allocation (account for tools section)
+        actual_overhead = self.overhead_tokens
+        if self.include_core_tools:
+            # Estimate tools section size
+            tools_context = self.tool_registry.get_core_tools_context()
+            actual_overhead += len(tools_context) // 4  # Rough token estimate
+
+        usable_tokens = max_tokens - actual_overhead
         allocation = ContextAllocation(
             upward_chain_tokens=int(usable_tokens * 0.4),
             downward_chain_tokens=int(usable_tokens * 0.3),
@@ -156,7 +174,7 @@ class CompleteContextBuilder:
 
     def _build_upward_chain(
         self, target_claim_id: str, max_tokens: int
-    ) -> Tuple[List[UnifiedClaim], int]:
+    ) -> Tuple[List[Claim], int]:
         """
         Build upward chain - ALL supporting claims to root.
         This is the highest priority and gets 40% of tokens.
@@ -186,23 +204,13 @@ class CompleteContextBuilder:
 
     def _build_downward_chain(
         self, target_claim_id: str, max_tokens: int
-    ) -> Tuple[List[UnifiedClaim], int]:
+    ) -> Tuple[List[Claim], int]:
         """
-        Build downward chain - ALL supported claims (descendants).
+        Build downward chain - DIRECT supported claims only (not recursive).
         Gets 30% of tokens.
         """
-        # Get all supported descendants (complete downward traversal)
-        descendants_result = self.relationship_manager.get_all_supported_descendants(
-            target_claim_id
-        )
-        descendant_ids = descendants_result.visited_claims
-
-        # Convert to claim objects
-        descendant_claims = []
-        for claim_id in descendant_ids:
-            claim = self.claim_index.get(claim_id)
-            if claim:
-                descendant_claims.append(claim)
+        # Get only direct supported claims (single level, not all descendants)
+        descendant_claims = self.relationship_manager.get_supported_claims(target_claim_id)
 
         # Sort by confidence (higher confidence first)
         descendant_claims.sort(key=lambda c: c.confidence, reverse=True)
@@ -215,8 +223,8 @@ class CompleteContextBuilder:
         return included_claims, tokens_used
 
     def _build_semantic_claims(
-        self, target_claim_id: str, excluded_claims: List[UnifiedClaim], max_tokens: int
-    ) -> Tuple[List[UnifiedClaim], int]:
+        self, target_claim_id: str, excluded_claims: List[Claim], max_tokens: int
+    ) -> Tuple[List[Claim], int]:
         """
         Build semantic similar claims to fill remaining tokens.
         Fills 30% of tokens with claims not in relationship chains.
@@ -261,8 +269,8 @@ class CompleteContextBuilder:
 
     def _calculate_semantic_similarity(
         self,
-        target_claim: UnifiedClaim,
-        candidate_claim: UnifiedClaim,
+        target_claim: Claim,
+        candidate_claim: Claim,
         target_tags: Set[str],
         target_words: Set[str],
     ) -> float:
@@ -293,8 +301,8 @@ class CompleteContextBuilder:
         return overall_similarity
 
     def _apply_token_limit(
-        self, claims: List[UnifiedClaim], max_tokens: int
-    ) -> Tuple[List[UnifiedClaim], int]:
+        self, claims: List[Claim], max_tokens: int
+    ) -> Tuple[List[Claim], int]:
         """Apply token limit to a list of claims"""
         included_claims = []
         tokens_used = 0
@@ -309,7 +317,7 @@ class CompleteContextBuilder:
 
         return included_claims, tokens_used
 
-    def _estimate_claim_tokens(self, claim: UnifiedClaim) -> int:
+    def _estimate_claim_tokens(self, claim: Claim) -> int:
         """Estimate token count for a single claim"""
         # Rough estimation: ~4 characters per token + metadata
         content_tokens = len(claim.content) // 4
@@ -326,86 +334,55 @@ class CompleteContextBuilder:
     def _format_context(
         self,
         target_claim_id: str,
-        upward_claims: List[UnifiedClaim],
-        downward_claims: List[UnifiedClaim],
-        semantic_claims: List[UnifiedClaim],
+        upward_claims: List[Claim],
+        downward_claims: List[Claim],
+        semantic_claims: List[Claim],
         include_metadata: bool,
     ) -> str:
-        """Format the complete context for LLM consumption"""
+        """Format the complete context using the approved LLM template with Core Tools"""
         target_claim = self.claim_index[target_claim_id]
 
         context_parts = []
 
-        # Header
-        context_parts.append("=== COMPLETE CLAIM CONTEXT ===")
-        context_parts.append(f"Target Claim: {target_claim.id}")
-        context_parts.append(f"Build Time: {datetime.utcnow().isoformat()}")
-        context_parts.append("")
-
-        # Target claim
-        context_parts.append("=== TARGET CLAIM ===")
-        if include_metadata:
-            context_parts.append(target_claim.format_for_llm_analysis())
-        else:
-            context_parts.append(target_claim.format_for_context())
-        context_parts.append("")
-
-        # Upward chain (supporting claims)
-        if upward_claims:
-            context_parts.append("=== SUPPORTING CLAIMS (TO ROOT) ===")
-            context_parts.append(
-                f"Claims that support the target claim ({len(upward_claims)} claims):"
-            )
+        # Core Tools section (added at the top as requested)
+        if self.include_core_tools:
+            tools_context = self.tool_registry.get_core_tools_context()
+            context_parts.append(tools_context)
             context_parts.append("")
-            for claim in upward_claims:
-                if include_metadata:
-                    context_parts.append(claim.format_for_llm_analysis())
-                else:
-                    context_parts.append(claim.format_for_context())
-                context_parts.append("")
-
-        # Downward chain (supported claims)
-        if downward_claims:
-            context_parts.append("=== SUPPORTED CLAIMS (DESCENDANTS) ===")
-            context_parts.append(
-                f"Claims supported by the target claim ({len(downward_claims)} claims):"
-            )
+            context_parts.append("---")
             context_parts.append("")
-            for claim in downward_claims:
-                if include_metadata:
-                    context_parts.append(claim.format_for_llm_analysis())
-                else:
-                    context_parts.append(claim.format_for_context())
-                context_parts.append("")
 
-        # Semantic similar claims
+        # Relevant Claims section (semantic claims first for LLM attention)
         if semantic_claims:
-            context_parts.append("=== SEMANTICALLY SIMILAR CLAIMS ===")
-            context_parts.append(
-                f"Claims with similar content/tags ({len(semantic_claims)} claims):"
-            )
-            context_parts.append("")
+            context_parts.append("# Relevant Claims")
             for claim in semantic_claims:
-                if include_metadata:
-                    context_parts.append(claim.format_for_llm_analysis())
-                else:
-                    context_parts.append(claim.format_for_context())
-                context_parts.append("")
+                context_parts.append(claim.format_for_context())
+            context_parts.append("")
 
-        # Footer with summary
-        context_parts.append("=== CONTEXT SUMMARY ===")
-        context_parts.append(
-            f"Total claims in context: {len(upward_claims) + len(downward_claims) + len(semantic_claims) + 1}"
-        )
-        context_parts.append(f"Supporting claims: {len(upward_claims)}")
-        context_parts.append(f"Supported claims: {len(downward_claims)}")
-        context_parts.append(f"Semantic claims: {len(semantic_claims)}")
-        context_parts.append("=== END CONTEXT ===")
+        # Chain From User Claim section (supporting claims)
+        if upward_claims:
+            context_parts.append("# Chain From User Claim")
+            for claim in upward_claims:
+                context_parts.append(claim.format_for_context())
+            context_parts.append("")
+
+        # Supported_by Claims section (direct supported claims)
+        if downward_claims:
+            context_parts.append("# Supported_by Claims")
+            for claim in downward_claims:
+                context_parts.append(claim.format_for_context())
+            context_parts.append("")
+
+        # Target Claim (last for LLM attention, confidence redacted)
+        context_parts.append("# Target Claim")
+        # Redact confidence for target claim as required
+        target_formatted = f"[c{target_claim.id} | {target_claim.content} | / confidence_redacted]"
+        context_parts.append(target_formatted)
 
         return "\n".join(context_parts)
 
     def _calculate_coverage_completeness(
-        self, target_claim_id: str, included_claims: List[UnifiedClaim]
+        self, target_claim_id: str, included_claims: List[Claim]
     ) -> float:
         """Calculate how completely the context covers all relationships"""
         target_claim = self.claim_index[target_claim_id]
@@ -463,8 +440,80 @@ class CompleteContextBuilder:
             * self.estimated_tokens_per_claim,
         }
 
-    def refresh(self, new_claims: List[UnifiedClaim]) -> None:
+    def refresh(self, new_claims: List[Claim]) -> None:
         """Refresh the context builder with new claim data"""
         self.claims = new_claims
         self.claim_index = create_claim_index(new_claims)
         self.relationship_manager.refresh(new_claims)
+
+    def build_simple_context(
+        self,
+        max_tokens: int = 8000,
+        include_core_tools: bool = True,
+        additional_sections: Optional[List[str]] = None
+    ) -> str:
+        """
+        Build a simple context with just Core Tools and optional additional sections.
+        This is useful when you don't need the full claim relationship system.
+
+        Args:
+            max_tokens: Maximum tokens to use (default: 8000)
+            include_core_tools: Whether to include Core Tools section
+            additional_sections: Additional context sections to include
+
+        Returns:
+            Formatted context string
+        """
+        context_parts = []
+
+        # Core Tools section
+        if include_core_tools:
+            if self.tool_registry:
+                tools_context = self.tool_registry.get_core_tools_context()
+            else:
+                tools_context = "# Core Tools\n\nNo core tools available."
+            context_parts.append(tools_context)
+            context_parts.append("")
+            context_parts.append("---")
+            context_parts.append("")
+
+        # Additional sections
+        if additional_sections:
+            for section in additional_sections:
+                context_parts.append(section)
+                context_parts.append("")
+
+        # Add instructions for LLM response format
+        context_parts.append("# Instructions")
+        context_parts.append("Please respond with only JSON tool calls in this format:")
+        context_parts.append('```json')
+        context_parts.append('{"tool_calls": [{"name": "ToolName", "arguments": {...}}]}')
+        context_parts.append('```')
+        context_parts.append("")
+
+        return "\n".join(context_parts)
+
+    def get_tools_summary(self) -> Dict[str, Any]:
+        """
+        Get a summary of available tools for context building.
+
+        Returns:
+            Dictionary with tools information
+        """
+        if self.tool_registry:
+            core_tools = self.tool_registry.core_tools
+            optional_tools = self.tool_registry.optional_tools
+            tools_context_length = len(self.tool_registry.get_core_tools_context())
+        else:
+            core_tools = {}
+            optional_tools = {}
+            tools_context_length =  0
+
+        return {
+            'core_tools_count': len(core_tools),
+            'optional_tools_count': len(optional_tools),
+            'total_tools': len(core_tools) + len(optional_tools),
+            'core_tools_list': list(core_tools.keys()),
+            'optional_tools_list': list(optional_tools.keys()),
+            'tools_context_length': tools_context_length
+        }

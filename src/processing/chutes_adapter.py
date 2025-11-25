@@ -10,8 +10,8 @@ from typing import Any, Dict, List
 
 from .bridge import LLMProvider, LLMRequest, LLMResponse
 from .llm.chutes_integration import ChutesProcessor, GenerationConfig
-from core.models import Claim, ClaimType, ClaimState
-from config.simple_config import Config
+from ..core.models import Claim, ClaimType, ClaimState
+from ..config.simple_config import Config
 
 
 class ChutesAdapter(LLMProvider):
@@ -166,9 +166,6 @@ class ChutesAdapter(LLMProvider):
                     type=chutes_claim.type,
                     state=chutes_claim.state,
                     tags=getattr(chutes_claim, "tags", []),
-                    created_by=getattr(chutes_claim, "created_by", "chutes_ai"),
-                    created_at=getattr(chutes_claim, "created_at", None),
-                    updated_at=getattr(chutes_claim, "updated_at", None),
                 )
                 unified_claims.append(unified_claim)
             except Exception as e:

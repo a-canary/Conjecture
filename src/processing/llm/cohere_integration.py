@@ -171,7 +171,7 @@ class CohereProcessor:
     def _extract_usage_stats(self, response: Dict[str, Any]) -> Tuple[int, int]:
         """Extract token usage statistics from response"""
         # Cohere doesn't always provide detailed usage stats in all endpoints
-            meta = response.get("meta", {})
+        meta = response.get("meta", {})
         if meta:
             tokens = meta.get("billed_units", {})
             prompt_tokens = tokens.get("input_tokens", 0)

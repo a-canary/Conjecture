@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
 
-from core.models import Claim
+from ..core.models import Claim
 
 
 @dataclass

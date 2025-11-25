@@ -363,34 +363,20 @@ class ExampleGenerator:
 
     async def _create_example_claim(
         self, execution_result: ExecutionResult, quality: float
-    ) -> Optional[Claim]:
+    ) -> Optional[Any]:
         """Create an example claim from execution result."""
         try:
             # Generate example content
             content = self._generate_example_content(execution_result)
 
-            # Create example claim
-            example_claim = Claim(
-                skill_id=execution_result.skill_id,
-                input_parameters=execution_result.parameters_used,
-                output_result=execution_result.result,
-                execution_time_ms=execution_result.execution_time_ms,
-                example_quality=quality,
+            # Save to database
+            created_claim = await self.data_manager.create_claim(
                 content=content,
                 confidence=0.8,  # High confidence for successful executions
                 tags=["type.example", "auto_generated"],
-                created_by="example_generator",
             )
 
-            # Save to database
-            await self.data_manager.create_claim(
-                content=example_claim.content,
-                confidence=example_claim.confidence,
-                tags=example_claim.tags,
-                created_by=example_claim.created_by,
-            )
-
-            return example_claim
+            return created_claim
 
         except Exception as e:
             logger.error(f"Error creating example claim: {e}")

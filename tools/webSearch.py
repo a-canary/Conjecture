@@ -6,7 +6,14 @@ Provides simple DuckDuckGo search capabilities with basic validation
 from typing import List, Dict, Any
 from ddgs import DDGS
 
+# Import the registry system
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+from src.tools.registry import register_tool
 
+
+@register_tool(name="WebSearch", is_core=True)
 def webSearch(query: str, max_results: int = 10) -> List[Dict[str, Any]]:
     """
     Search the web using DuckDuckGo for information

@@ -6,8 +6,8 @@ Demonstrates complete workflow: context building, LLM instruction identification
 import time
 from datetime import datetime
 
-from src.core.unified_claim import (
-    UnifiedClaim, create_instruction_claim, create_concept_claim, create_evidence_claim
+from src.core.models import (
+    Claim, create_claim, ClaimType, ClaimState
 )
 from src.core.support_relationship_manager import SupportRelationshipManager
 from src.context.complete_context_builder import CompleteContextBuilder
@@ -25,80 +25,88 @@ def demo_simplified_architecture():
     
     claims = [
         # Main goal
-        UnifiedClaim(
+        Claim(
             id="learn-programming",
             content="I want to learn programming effectively",
             confidence=0.8,
-            tags=["goal", "programming"],
-            created_by="user"
+            state=ClaimState.EXPLORE,
+            type=[ClaimType.GOAL],
+            tags=["goal", "programming"]
         ),
         
         # Prerequisites
-        UnifiedClaim(
+        Claim(
             id="choose-language", 
             content="Choose a programming language to start with",
             confidence=0.9,
             tags=["decision", "prerequisite"],
             supports=["learn-programming"],
-            created_by="mentor"
+            state=ClaimState.VALIDATED,
+            type=[ClaimType.CONCEPT],
         ),
         
-        UnifiedClaim(
+        Claim(
             id="setup-environment",
             content="Set up development environment and tools",
             confidence=0.85,
             tags=["setup", "prerequisite"], 
             supports=["learn-programming"],
-            created_by="mentor"
+            state=ClaimState.VALIDATED,
+            type=[ClaimType.CONCEPT],
         ),
         
         # Learning methods
-        UnifiedClaim(
+        Claim(
             id="practice-projects",
             content="Practice by building real projects",
             confidence=0.9,
             tags=["method", "practice"],
             supports=["learn-programming"],
-            created_by="mentor"
+            state=ClaimState.VALIDATED,
+            type=[ClaimType.CONCEPT],
         ),
         
-        UnifiedClaim(
+        Claim(
             id="learn-basics",
             content="Master fundamental programming concepts",
             confidence=0.95,
             tags=["concept", "fundamentals"],
             supported_by=["choose-language", "setup-environment"],
             supports=["learn-programming", "practice-projects"],
-            created_by="curriculum"
+            state=ClaimState.VALIDATED,
+            type=[ClaimType.CONCEPT],
         ),
         
         # Evidence
-        UnifiedClaim(
+        Claim(
             id="research-evidence",
             content="Research shows project-based learning improves retention",
             confidence=0.95,
             tags=["evidence", "research"],
             supports=["practice-projects"],
-            created_by="study"
+            state=ClaimState.VALIDATED,
+            type=[ClaimType.REFERENCE],
         ),
         
         # Resource recommendations
-        UnifiedClaim(
+        Claim(
             id="online-courses",
             content="Use online courses for structured learning",
             confidence=0.8,
             tags=["resource", "learning"],
             supports=["learn-basics"],
-            created_by="resource"
+            state=ClaimState.VALIDATED,
+            type=[ClaimType.REFERENCE],
         ),
         
-        UnifiedClaim(
+        Claim(
             id="documentation",
             content="Read official documentation for deep understanding",
             confidence=0.85,
             tags=["resource", "reference"],
             supports=["learn-basics"],
-            created_by="resource"
+            state=ClaimState.VALIDATED,
+            type=[ClaimType.REFERENCE],
         )
     ]
     
@@ -186,7 +194,7 @@ def demo_simplified_architecture():
     # Test large network scalability
     large_claims = claims.copy()
     for i in range(50):
-        claim = UnifiedClaim(
+        claim = Claim(
             id=f"resource-{i}",
             content=f"Additional programming resource {i} for comprehensive learning",
             confidence=0.7 + (i % 4) * 0.075,

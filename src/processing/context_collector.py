@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import logging
 import re
 
-from core.models import Claim
+from ..core.models import Claim
 from data.data_manager import DataManager
 
 

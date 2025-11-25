@@ -429,21 +429,13 @@ I've created test cases and will run them to validate the code."""
     async def _create_claim(self, claim_data: Dict[str, Any]) -> None:
         """Create a claim from parsed response."""
         try:
-            claim = Claim(
+            await self.data_manager.create_claim(
                 content=claim_data.get("content", ""),
                 confidence=claim_data.get("confidence", 0.5),
                 tags=claim_data.get("tags", []),
-                created_by="llm",
             )
 
-            await self.data_manager.create_claim(
-                content=claim.content,
-                confidence=claim.confidence,
-                tags=claim.tags,
-                created_by=claim.created_by,
-            )
-
-            logger.info(f"Created claim: {claim.id}")
+            logger.info(f"Created claim from LLM response")
 
         except Exception as e:
             logger.error(f"Error creating claim: {e}")

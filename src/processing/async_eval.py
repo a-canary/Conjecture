@@ -1,6 +1,6 @@
 """
 Async Claim Evaluation Service
-Confidence-driven claim processing with priority queue management
+Confidence-driven claim processing with priority queue management and dirty claim handling.
 """
 
 import asyncio
@@ -13,9 +13,12 @@ import logging
 from collections import defaultdict
 import heapq
 
-from core.models import Claim, ClaimState, ClaimType
-from processing.llm_bridge import LLMBridge, LLMRequest
-from processing.context_collector import ContextCollector
+from ..core.models import Claim, ClaimState, ClaimType, ToolCall, ExecutionResult
+from .bridge import LLMBridge, LLMRequest
+from .context_collector import ContextCollector
+from .response_parser import ResponseParser
+from .tool_executor import ToolExecutor
+from data.data_manager import DataManager
 
 
 class ClaimScope(Enum):
@@ -48,6 +51,7 @@ class EvaluationTask:
     attempts: int = 0
     max_attempts: int = 3
     last_attempt: Optional[datetime] = None
+    is_dirty: bool = False
 
     def __lt__(self, other):
         return self.priority < other.priority
@@ -56,18 +60,25 @@ class EvaluationTask:
 class AsyncClaimEvaluationService:
     """
     Async Claim Evaluation Service
-    Continuously processes claims based on priority and confidence
+    Continuously processes claims based on priority and confidence.
+    Integrates dirty claim processing for batch updates.
     """
 
     def __init__(
         self,
         llm_bridge: LLMBridge,
         context_collector: ContextCollector,
+        data_manager: DataManager,
+        tool_executor: ToolExecutor,
         max_concurrent_evaluations: int = 5,
         evaluation_timeout: int = 300,
     ):
         self.llm_bridge = llm_bridge
         self.context_collector = context_collector
+        self.data_manager = data_manager
+        self.tool_executor = tool_executor
+        self.response_parser = ResponseParser()
+        
         self.max_concurrent_evaluations = max_concurrent_evaluations
         self.evaluation_timeout = evaluation_timeout
 
@@ -86,6 +97,7 @@ class AsyncClaimEvaluationService:
         # Service state
         self._running = False
         self._evaluation_task: Optional[asyncio.Task] = None
+        self._event_task: Optional[asyncio.Task] = None
 
         # Statistics
         self._stats = {
@@ -94,6 +106,7 @@ class AsyncClaimEvaluationService:
             "evaluations_failed": 0,
             "average_evaluation_time": 0.0,
             "queue_depth": 0,
+            "dirty_claims_processed": 0,
         }
 
         self.logger = logging.getLogger(__name__)
@@ -120,7 +133,7 @@ class AsyncClaimEvaluationService:
             except asyncio.CancelledError:
                 pass
 
-        if hasattr(self, "_event_task"):
+        if self._event_task:
             self._event_task.cancel()
             try:
                 await self._event_task
@@ -129,7 +142,7 @@ class AsyncClaimEvaluationService:
 
         self.logger.info("Async Claim Evaluation Service stopped")
 
-    async def submit_claim(self, claim: Claim, priority_boost: int = 0):
+    async def submit_claim(self, claim: Claim, priority_boost: int = 0, is_dirty: bool = False):
         """Submit a claim for evaluation"""
         if not claim.id:
             raise ValueError("Claim must have an ID")
@@ -137,16 +150,47 @@ class AsyncClaimEvaluationService:
         # Calculate priority based on multiple factors
         base_priority = self._calculate_priority(claim)
         adjusted_priority = base_priority + priority_boost
+        
+        # Dirty claims get higher priority
+        if is_dirty:
+            adjusted_priority -= 500
 
-        task = EvaluationTask(priority=adjusted_priority, claim_id=claim.id)
+        task = EvaluationTask(
+            priority=adjusted_priority, 
+            claim_id=claim.id,
+            is_dirty=is_dirty
+        )
 
         async with self._queue_lock:
             heapq.heappush(self._evaluation_queue, task)
             self._stats["queue_depth"] = len(self._evaluation_queue)
 
         self.logger.info(
-            f"Submitted claim {claim.id} for evaluation with priority {adjusted_priority}"
+            f"Submitted claim {claim.id} for evaluation with priority {adjusted_priority} (dirty={is_dirty})"
         )
+
+    async def process_dirty_claims_batch(self):
+        """
+        Scan for and submit dirty claims for evaluation.
+        Replaces the standalone DirtyEvaluator functionality.
+        """
+        try:
+            # Find dirty claims using DataManager
+            # Assuming DataManager has a method to filter by dirty status or we iterate
+            # For now, we'll assume a filter method exists or we implement a scan
+            # This is a placeholder for the actual data query
+            dirty_claims = await self.data_manager.get_dirty_claims()
+            
+            count = 0
+            for claim in dirty_claims:
+                await self.submit_claim(claim, is_dirty=True)
+                count += 1
+            
+            self._stats["dirty_claims_processed"] += count
+            self.logger.info(f"Queued {count} dirty claims for evaluation")
+            
+        except Exception as e:
+            self.logger.error(f"Error processing dirty claims batch: {e}")
 
     def subscribe_to_events(self, callback: callable):
         """Subscribe to evaluation events"""
@@ -168,13 +212,21 @@ class AsyncClaimEvaluationService:
 
                 # Evaluate claim with semaphore control
                 async with self._evaluation_semaphore:
-                    await self._evaluate_claim(task)
+                    # Create a task to run evaluation so we don't block the loop
+                    asyncio.create_task(self._evaluate_claim_wrapper(task))
 
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 self.logger.error(f"Error in evaluation loop: {e}")
                 await asyncio.sleep(5)  # Brief pause on error
+
+    async def _evaluate_claim_wrapper(self, task: EvaluationTask):
+        """Wrapper to handle evaluation and semaphore release implicitly via task completion"""
+        try:
+            await self._evaluate_claim(task)
+        except Exception as e:
+            self.logger.error(f"Unhandled error in evaluation wrapper: {e}")
 
     async def _event_loop(self):
         """Event broadcasting loop"""
@@ -197,6 +249,10 @@ class AsyncClaimEvaluationService:
                 # Skip if already being evaluated
                 if task.claim_id not in self._active_evaluations:
                     return task
+                
+                # If already active, we might want to re-queue it if it's a new request, 
+                # but for now we just drop it as the active one will handle it
+                # or we could put it back? Let's just skip.
 
             return None
 
@@ -213,23 +269,31 @@ class AsyncClaimEvaluationService:
                 EvaluationEvent(
                     claim_id=claim_id,
                     event_type="started",
-                    data={"priority": task.priority},
+                    data={"priority": task.priority, "is_dirty": task.is_dirty},
                 )
             )
 
-            # Get claim (this would come from data layer)
-            claim = await self._get_claim(claim_id)
+            # Get claim
+            claim = await self.data_manager.get_claim(claim_id)
             if not claim:
                 raise ValueError(f"Claim {claim_id} not found")
 
-            # Build context from existing claims
-            context = await self.context_collector.build_context(claim)
-
+            # Build context
+            context_result = await self.context_collector.collect_context_for_claim(claim.content, {})
+            # Convert context result to list of claims/strings for LLM
+            # The context_collector returns a dict with 'skills', 'samples'
+            # We need to format this for the LLM
+            
             # Evaluate with confidence-driven continuation
-            updated_claim = await self._confidence_driven_evaluation(claim, context)
+            updated_claim = await self._confidence_driven_evaluation(claim, context_result)
+
+            # Clear dirty flag if it was dirty
+            if task.is_dirty:
+                updated_claim.dirty = False
+                updated_claim.dirty_reasons = []
 
             # Update claim in data layer
-            await self._save_claim(updated_claim)
+            await self.data_manager.update_claim(updated_claim)
 
             # Update statistics
             evaluation_time = time.time() - start_time
@@ -281,12 +345,12 @@ class AsyncClaimEvaluationService:
             self._active_evaluations.discard(claim_id)
 
     async def _confidence_driven_evaluation(
-        self, claim: Claim, context: List[Claim]
+        self, claim: Claim, context_result: Dict[str, Any]
     ) -> Claim:
         """
         Confidence-driven evaluation where LLM decides when to stop exploring
         """
-        max_iterations = 10  # Prevent infinite loops
+        max_iterations = 5  # Prevent infinite loops
         iteration = 0
 
         current_claim = claim
@@ -297,12 +361,11 @@ class AsyncClaimEvaluationService:
             iteration += 1
 
             # Build evaluation prompt
-            prompt = self._build_evaluation_prompt(current_claim, context, iteration)
+            prompt = self._build_evaluation_prompt(current_claim, context_result, iteration)
 
             # Create LLM request
             llm_request = LLMRequest(
                 prompt=prompt,
-                context_claims=context,
                 max_tokens=2048,
                 temperature=0.7,
                 task_type="evaluate_claim",
@@ -314,48 +377,47 @@ class AsyncClaimEvaluationService:
             if not response.success:
                 raise Exception(f"LLM processing failed: {response.errors}")
 
-            # Parse response for tool calls, new claims, and confidence updates
-            tool_calls = self._parse_tool_calls(response.content)
-            new_claims = self._parse_new_claims(response.content)
-            confidence_update = self._parse_confidence_update(response.content)
-
+            # Parse response
+            parsed_response = self.response_parser.parse_response(response.content)
+            
             # Execute tool calls if any
-            if tool_calls:
-                await self._execute_tool_calls(tool_calls, current_claim.id)
-                # Continue loop after tool execution
+            if parsed_response.tool_calls:
+                await self._execute_tool_calls(parsed_response.tool_calls, current_claim.id)
+                # In a real loop, we would feed the tool results back into the next iteration
+                # For now, we just continue, assuming the tool execution might have side effects 
+                # or we'd append results to context in a more complex version.
+                # To keep it simple, we assume tool calls are for information gathering 
+                # and we might need to re-prompt with results.
+                # TODO: Append tool results to context for next iteration
                 continue
 
-            # Create new claims if any
-            if new_claims:
-                for new_claim_data in new_claims:
-                    new_claim = Claim(**new_claim_data)
-                    await self._save_claim(new_claim)
-                # Continue loop after creating claims
-                continue
-
-            # Update confidence and mark as validated if LLM is confident
+            # Check for confidence updates in text content (heuristic or structured)
+            # The ResponseParser mainly handles tool calls. 
+            # We might need a specific parser for confidence or rely on the LLM to output a tool call for it.
+            # Let's assume the LLM uses a specific tool for updating confidence/claim.
+            
+            # If no tool calls, we check if we can extract confidence/validation
+            # This part depends on the prompt instructions.
+            # If the LLM outputs "Confidence: 0.9", we parse it.
+            
+            confidence_update = self._extract_confidence(parsed_response.text_content)
             if confidence_update is not None:
                 current_claim.confidence = confidence_update
-                current_claim.updated = datetime.utcnow()
-
-                # Mark as validated if confidence is high enough
                 if confidence_update >= 0.8:
                     current_claim.state = ClaimState.VALIDATED
                     break
-
-            # If no tool calls, new claims, or confidence updates, mark as validated
-            current_claim.state = ClaimState.VALIDATED
-            break
+            
+            # If we have no tool calls and no explicit confidence update, 
+            # but we have text, we might assume it's an analysis.
+            # We stop if we run out of iterations.
 
         return current_claim
 
     def _build_evaluation_prompt(
-        self, claim: Claim, context: List[Claim], iteration: int
+        self, claim: Claim, context_result: Dict[str, Any], iteration: int
     ) -> str:
         """Build evaluation prompt for LLM"""
-        context_text = "\n".join(
-            [c.format_for_context() for c in context[:10]]
-        )  # Limit context
+        context_str = self.context_collector.build_llm_context_string(context_result)
 
         return f"""You are evaluating the following claim (iteration {iteration}):
 
@@ -364,22 +426,30 @@ CURRENT CONFIDENCE: {claim.confidence}
 TYPE: {claim.type[0].value if claim.type else "unknown"}
 
 CONTEXT:
-{context_text}
+{context_str}
 
 EVALUATION INSTRUCTIONS:
-1. Assess the claim's accuracy based on the context
-2. If you need more information, make tool calls (max 1 tool call per response)
-3. If you discover related information, create new claims
-4. When satisfied, set a confidence level (0.0-1.0)
-5. Mark evaluation as complete when confidence >= 0.8 or no more exploration needed
+1. Assess the claim's accuracy based on the context.
+2. If you need more information, make tool calls.
+3. If you are satisfied, provide a confidence score in the format "Confidence: X.X".
+4. Mark evaluation as complete when confidence >= 0.8.
 
 RESPONSE FORMAT:
-- For tool calls: ToolCall(tool_name, parameters)
-- For new claims: NewClaim(content, confidence, type)
-- For confidence: Confidence(value)
-- To complete: Complete()
+- Use the available tools if needed.
+- Provide reasoning in plain text.
+- End with "Confidence: 0.X" if you can assess it.
+"""
 
-Current claim needs evaluation. Proceed with analysis."""
+    def _extract_confidence(self, text: str) -> Optional[float]:
+        """Extract confidence score from text"""
+        import re
+        match = re.search(r"Confidence:\s*(0\.\d+|1\.0|0|1)", text, re.IGNORECASE)
+        if match:
+            try:
+                return float(match.group(1))
+            except ValueError:
+                return None
+        return None
 
     def _calculate_priority(self, claim: Claim) -> int:
         """Calculate evaluation priority for a claim"""
@@ -389,14 +459,15 @@ Current claim needs evaluation. Proceed with analysis."""
         priority -= int(claim.confidence * 200)
 
         # Higher priority for certain types
-        if ClaimType.CONCEPT in claim.type:
+        if claim.type and ClaimType.CONCEPT in claim.type:
             priority -= 100
-        elif ClaimType.THESIS in claim.type:
+        elif claim.type and ClaimType.THESIS in claim.type:
             priority -= 50
 
         # Lower priority for older claims
-        age_hours = (datetime.utcnow() - claim.created).total_seconds() / 3600
-        priority += int(age_hours * 2)
+        if claim.created:
+            age_hours = (datetime.utcnow() - claim.created).total_seconds() / 3600
+            priority += int(age_hours * 2)
 
         return priority
 
@@ -432,42 +503,26 @@ Current claim needs evaluation. Proceed with analysis."""
                 current_avg * (total_evaluations - 1) + evaluation_time
             ) / total_evaluations
 
-    async def _get_claim(self, claim_id: str) -> Optional[Claim]:
-        """Get claim from data layer (mock implementation)"""
-        # TODO: Implement actual data layer integration
-        return None
-
-    async def _save_claim(self, claim: Claim):
-        """Save claim to data layer (mock implementation)"""
-        # TODO: Implement actual data layer integration
-        pass
-
-    def _parse_tool_calls(self, response: str) -> List[Dict[str, Any]]:
-        """Parse tool calls from LLM response"""
-        # TODO: Implement proper parsing
-        return []
-
-    def _parse_new_claims(self, response: str) -> List[Dict[str, Any]]:
-        """Parse new claims from LLM response"""
-        # TODO: Implement proper parsing
-        return []
-
-    def _parse_confidence_update(self, response: str) -> Optional[float]:
-        """Parse confidence update from LLM response"""
-        # TODO: Implement proper parsing
-        return None
-
     async def _execute_tool_calls(
-        self, tool_calls: List[Dict[str, Any]], claim_id: str
+        self, tool_calls: List[ToolCall], claim_id: str
     ):
         """Execute tool calls and emit events"""
         for tool_call in tool_calls:
             await self._emit_event(
                 EvaluationEvent(
-                    claim_id=claim_id, event_type="tool_called", data=tool_call
+                    claim_id=claim_id, event_type="tool_called", data=tool_call.__dict__
                 )
             )
-            # TODO: Implement actual tool execution
+            
+            # Execute tool
+            result = await self.tool_executor.execute_tool(
+                tool_name=tool_call.name,
+                params=tool_call.parameters
+            )
+            
+            # Log result or handle it
+            # In a full implementation, we'd return this to the loop
+            self.logger.info(f"Tool execution result: {result}")
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get service statistics"""

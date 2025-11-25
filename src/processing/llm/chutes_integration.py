@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
-from core.basic_models import BasicClaim, ClaimState, ClaimType
+from ...core.basic_models import BasicClaim, ClaimState, ClaimType
 from .error_handling import with_error_handling, LLMErrorHandler, RetryConfig
 
 
@@ -190,8 +190,7 @@ class ChutesProcessor:
                         confidence=confidence,
                         type=[ClaimType(claim_type)] if claim_type in [t.value for t in ClaimType] else [ClaimType.CONCEPT],
                         state=ClaimState.EXPLORE,
-                        created_by="chutes_ai_processor",
-                        created_at=datetime.utcnow()
+                        created=datetime.utcnow()
                     )
                     claims.append(claim)
 
@@ -316,8 +315,7 @@ Focus on providing accurate, well-reasoned claims with appropriate confidence sc
                 confidence=0.8,
                 type=[ClaimType.CONCEPT],
                 state=ClaimState.EXPLORE,
-                created_by="chutes_ai_processor",
-                created_at=datetime.utcnow()
+                created=datetime.utcnow()
             )
 
             return LLMProcessingResult(

@@ -10,15 +10,15 @@ from typing import Dict, List, Optional, Any, Union
 from pathlib import Path
 import logging
 
-from core.models import Claim, ClaimState, ClaimType
-from config.simple_config import Config
-from processing.llm_bridge import LLMBridge, LLMRequest
-from processing.chutes_adapter import create_chutes_adapter_from_config
-from processing.llm.lm_studio_adapter import create_lm_studio_adapter_from_config
-from processing.async_eval import AsyncClaimEvaluationService
-from processing.context import ContextCollector
-from processing.tool_manager import DynamicToolCreator
-from data.data_manager import get_data_manager
+from src.core.models import Claim, ClaimState, ClaimType
+from src.config.simple_config import Config
+from src.processing.bridge import LLMBridge, LLMRequest
+from src.processing.chutes_adapter import create_chutes_adapter_from_config
+from src.processing.llm.lm_studio_adapter import create_lm_studio_adapter_from_config
+from src.processing.async_eval import AsyncClaimEvaluationService
+from src.processing.context_collector import ContextCollector
+from src.processing.tool_manager import DynamicToolCreator
+from src.data.data_manager import get_data_manager
 
 
 class Conjecture:

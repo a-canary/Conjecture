@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 from typing import List
 import re
 
-from src.data.models import (
-    Claim, Relationship, ClaimFilter, DataConfig, ProcessingResult, BatchResult,
+from src.core.models import (
+    Claim, Relationship, ClaimFilter, ClaimType, ClaimState, DirtyReason,
     ClaimNotFoundError, InvalidClaimError, RelationshipError, DataLayerError,
     validate_claim_id, validate_confidence, generate_claim_id
 )
@@ -26,8 +26,7 @@ class TestClaimModel:
         assert claim.confidence == 0.95
         assert claim.dirty is True
         assert set(claim.tags) == {"astronomy", "science", "physics"}
-        assert claim.created_by == "test_user"
-        assert isinstance(claim.created_at, datetime)
+        assert isinstance(claim.created, datetime)
 
     @pytest.mark.models
     def test_claim_with_minimal_data(self):
@@ -36,13 +35,14 @@ class TestClaimModel:
             id="c0000002",
             content="This is a minimal valid claim with at least 10 characters.",
             confidence=0.5,
-            created_by="user123"
+            type=[ClaimType.CONCEPT]
         )
         
         assert claim.id == "c0000002"
         assert claim.dirty is True  # Default value
+        assert claim.needs_evaluation is True  # New claims need evaluation by default
         assert claim.tags == []     # Default value
-        assert claim.updated_at is None  # Optional field
+        assert claim.updated_at is not None  # Has default value
 
     @pytest.mark.models
     def test_claim_id_validation(self):
@@ -54,7 +54,7 @@ class TestClaimModel:
                 id=claim_id,
                 content="Valid claim for testing ID validation.",
                 confidence=0.7,
-                created_by="test_user"
+                type=[ClaimType.CONCEPT]
             )
             assert claim.id == claim_id
 
@@ -77,7 +77,7 @@ class TestClaimModel:
                     id=invalid_id,
                     content="Valid content but invalid ID.",
                     confidence=0.7,
-                    created_by="test_user"
+                    type=[ClaimType.CONCEPT]
                 )
 
     @pytest.mark.models
@@ -95,8 +95,7 @@ class TestClaimModel:
             claim = Claim(
                 id="c0000001",
                 content=content,
-                confidence=0.7,
-                created_by="test_user"
+                confidence=0.7
             )
             assert claim.content == content
 
@@ -112,8 +111,7 @@ class TestClaimModel:
                 Claim(
                     id="c0000001",
                     content=content,
-                    confidence=0.7,
-                    created_by="test_user"
+                    confidence=0.7
                 )
 
     @pytest.mark.models
@@ -126,8 +124,7 @@ class TestClaimModel:
             claim = Claim(
                 id="c0000001",
                 content="Valid claim for confidence testing.",
-                confidence=confidence,
-                created_by="test_user"
+                confidence=confidence
             )
             assert claim.confidence == confidence
 
@@ -139,8 +136,7 @@ class TestClaimModel:
                 Claim(
                     id="c0000001",
                     content="Valid claim but invalid confidence.",
-                    confidence=confidence,
-                    created_by="test_user"
+                    confidence=confidence
                 )
 
     @pytest.mark.models
@@ -160,8 +156,7 @@ class TestClaimModel:
                 id="c0000001",
                 content="Valid claim for tags testing.",
                 confidence=0.7,
-                tags=tags,
-                created_by="test_user"
+                tags=tags
             )
             # Check duplicates are removed
             assert len(set(claim.tags)) == len(claim.tags)
@@ -181,8 +176,7 @@ class TestClaimModel:
                     id="c0000001",
                     content="Valid claim but invalid tags.",
                     confidence=0.7,
-                    tags=tags,
-                    created_by="test_user"
+                    tags=tags
                 )
 
     @pytest.mark.models
@@ -216,20 +210,17 @@ class TestClaimModel:
         claim1 = Claim(
             id="c0000001",
             content="Test content for equality.",
-            confidence=0.7,
-            created_by="user1"
+            confidence=0.7
         )
         claim2 = Claim(
             id="c0000001",
             content="Test content for equality.",
-            confidence=0.7,
-            created_by="user1"
+            confidence=0.7
         )
         claim3 = Claim(
             id="c0000002",
             content="Test content for equality.",
-            confidence=0.7,
-            created_by="user1"
+            confidence=0.7
         )
 
         # Claims with same ID should be equal
@@ -242,14 +233,12 @@ class TestClaimModel:
         claim1 = Claim(
             id="c0000001",
             content="Test content for hashing.",
-            confidence=0.7,
-            created_by="user1"
+            confidence=0.7
         )
         claim2 = Claim(
             id="c0000001",
             content="Test content for hashing.",
-            confidence=0.7,
-            created_by="user1"
+            confidence=0.7
         )
 
         # Same claims should have same hash
@@ -258,6 +247,35 @@ class TestClaimModel:
         # Claims should be hashable (can be used in sets)
         claim_set = {claim1, claim2}
         assert len(claim_set) == 1
+
+    @pytest.mark.models
+    def test_claim_confidence_assessment(self):
+        """Test claim confidence assessment vs validation."""
+        # High confidence claim should be confident
+        confident_claim = Claim(
+            id="c0000001",
+            content="This is a confident claim with high confidence",
+            confidence=0.9,
+            type=[ClaimType.CONCEPT]
+        )
+
+        # Low confidence claim should need evaluation
+        uncertain_claim = Claim(
+            id="c0000002",
+            content="This claim needs more evaluation",
+            confidence=0.6,
+            type=[ClaimType.CONCEPT]
+        )
+
+        # Test confidence assessment (not validation)
+        assert confident_claim.is_confident == True  # Uses default threshold 0.8
+        assert confident_claim.needs_evaluation == False
+
+        assert uncertain_claim.is_confident == False  # Uses default threshold 0.8
+        assert uncertain_claim.needs_evaluation == True
+
+        # Test with custom threshold by checking internal method
+        assert uncertain_claim._get_default_threshold() == 0.8  # Default threshold
 
 
 class TestRelationshipModel:
@@ -271,8 +289,7 @@ class TestRelationshipModel:
         assert relationship.supporter_id == "c0000001"
         assert relationship.supported_id == "c0000002"
         assert relationship.relationship_type == "supports"
-        assert relationship.created_by == "test_user"
-        assert isinstance(relationship.created_at, datetime)
+        assert isinstance(relationship.created, datetime)
 
     @pytest.mark.models
     def test_relationship_with_minimal_data(self):
@@ -283,8 +300,7 @@ class TestRelationshipModel:
         )
         
         assert relationship.relationship_type == "supports"  # Default
-        assert relationship.created_by is None              # Optional
-        assert relationship.id is None                      # Optional
+        assert isinstance(relationship.created, datetime)
 
     @pytest.mark.models
     def test_relationship_type_validation(self):
@@ -342,7 +358,6 @@ class TestClaimFilterModel:
             confidence_min=0.7,
             confidence_max=0.9,
             dirty_only=True,
-            created_by="test_user",
             content_contains="quantum",
             limit=20,
             offset=10
@@ -352,7 +367,6 @@ class TestClaimFilterModel:
         assert filter_obj.confidence_min == 0.7
         assert filter_obj.confidence_max == 0.9
         assert filter_obj.dirty_only is True
-        assert filter_obj.created_by == "test_user"
         assert filter_obj.content_contains == "quantum"
         assert filter_obj.limit == 20
         assert filter_obj.offset == 10
@@ -625,15 +639,13 @@ class TestModelIntegration:
         claim1 = Claim(
             id="c0000001",
             content="First claim in relationship test.",
-            confidence=0.8,
-            created_by="user1"
+            confidence=0.8
         )
-        
+
         claim2 = Claim(
-            id="c0000002", 
+            id="c0000002",
             content="Second claim in relationship test.",
-            confidence=0.7,
-            created_by="user1"
+            confidence=0.7
         )
         
         relationship = Relationship(
@@ -750,15 +762,13 @@ class TestModelEdgeCases:
             id="c0000001",
             content="Test claim with minimum confidence.",
             confidence=0.0,
-            created_by="test_user"
-        )
+                    )
         
         Claim(
             id="c0000002",
             content="Test claim with maximum confidence.",
             confidence=1.0,
-            created_by="test_user"
-        )
+                    )
 
     @pytest.mark.models
     def test_long_content(self):
@@ -769,8 +779,7 @@ class TestModelEdgeCases:
             id="c0000001",
             content=long_content,
             confidence=0.7,
-            created_by="test_user"
-        )
+                    )
         
         assert len(claim.content) == 10000
 
@@ -784,8 +793,7 @@ class TestModelEdgeCases:
             content="Test claim with many tags.",
             confidence=0.7,
             tags=many_tags,
-            created_by="test_user"
-        )
+                    )
         
         assert len(claim.tags) == 100
         assert len(set(claim.tags)) == 100  # No duplicates
@@ -807,8 +815,7 @@ class TestModelEdgeCases:
             claim = Claim(
                 id="c0000001",
                 content=content,
-                confidence=0.7,
-                created_by="test_user"
+                confidence=0.7
             )
             assert claim.content == content
 

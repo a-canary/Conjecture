@@ -10,8 +10,15 @@ from typing import Dict, Any, List
 from pathlib import Path
 from datetime import datetime
 
+# Import the registry system
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+from src.tools.registry import register_tool
 
-def apply_diff(file_path: str, diff_content: str, 
+
+@register_tool(name="ApplyDiff", is_core=False)
+def apply_diff(file_path: str, diff_content: str,
                backup_original: bool = True,
                dry_run: bool = False,
                strip_leading_levels: int = 0,

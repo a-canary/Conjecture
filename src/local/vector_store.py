@@ -442,6 +442,26 @@ class LocalVectorStore:
                     }
                 return None
 
+    async def _update_sqlite_vector(self, claim_id: str, updates: Dict[str, Any]) -> None:
+        """Update a vector in the SQLite database."""
+        async with aiosqlite.connect(self.db_path) as conn:
+            set_clause = ', '.join(f"{k} = ?" for k in updates.keys())
+            values = list(updates.values()) + [claim_id]
+            
+            await conn.execute(f'''
+                UPDATE vector_metadata SET {set_clause} WHERE id = ?
+            ''', values)
+            await conn.commit()
+
+    async def _update_faiss_vector(self, claim_id: str, embedding: List[float]) -> None:
+        """Update a vector in the FAISS index."""
+        if self.use_faiss and self.faiss_index and claim_id in self._id_to_idx:
+            idx = self._id_to_idx[claim_id]
+            embedding_array = np.array(embedding, dtype=np.float32)
+            
+            self.faiss_index.remove_ids(np.array([idx]))
+            self.faiss_index.add(embedding_array.reshape(1, -1))
+
     async def update_vector(self, 
                            claim_id: str, 
                            content: Optional[str] = None,
@@ -452,15 +472,14 @@ class LocalVectorStore:
             raise RuntimeError("Vector store not initialized")
         
         try:
-            # Get current data
             current = await self.get_vector(claim_id)
             if not current:
                 return False
             
-            # Update fields
             updates = {
                 'content': content if content is not None else current['content'],
-                'embedding_hash': current['embedding_hash']
+                'embedding_hash': current['embedding_hash'],
+                'updated_at': datetime.utcnow().isoformat()
             }
             
             if embedding is not None:
@@ -471,26 +490,10 @@ class LocalVectorStore:
             if metadata is not None:
                 updates['metadata'] = json.dumps(metadata)
             
-            updates['updated_at'] = datetime.utcnow().isoformat()
+            await self._update_sqlite_vector(claim_id, updates)
             
-            # Update in SQLite
-            async with aiosqlite.connect(self.db_path) as conn:
-                set_clause = ', '.join(f"{k} = ?" for k in updates.keys())
-                values = list(updates.values()) + [claim_id]
-                
-                await conn.execute(f'''
-                    UPDATE vector_metadata SET {set_clause} WHERE id = ?
-                ''', values)
-                await conn.commit()
-            
-            # Update in FAISS if needed
-            if self.use_faiss and self.faiss_index and embedding is not None and claim_id in self._id_to_idx:
-                idx = self._id_to_idx[claim_id]
-                embedding_array = np.array(embedding, dtype=np.float32)
-                
-                # FAISS doesn't support easy updates, so we remove and re-add
-                self.faiss_index.remove_ids(np.array([idx]))
-                self.faiss_index.add(embedding_array.reshape(1, -1))
+            if embedding is not None:
+                await self._update_faiss_vector(claim_id, embedding)
             
             return True
             

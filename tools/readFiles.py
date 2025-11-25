@@ -7,7 +7,14 @@ import os
 import glob
 from typing import List, Dict, Any
 
+# Import the registry system
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+from src.tools.registry import register_tool
 
+
+@register_tool(name="ReadFiles", is_core=True)
 def readFiles(path_pattern: str, max_files: int = 50, encoding: str = 'utf-8') -> List[Dict[str, Any]]:
     """
     Read files from disk using glob patterns
@@ -119,6 +126,7 @@ def readFiles(path_pattern: str, max_files: int = 50, encoding: str = 'utf-8') -
         }]
 
 
+@register_tool(name="ReadFile", is_core=False)
 def readFile(file_path: str, encoding: str = 'utf-8') -> Dict[str, Any]:
     """
     Read a single file
@@ -213,6 +221,7 @@ def readFile(file_path: str, encoding: str = 'utf-8') -> Dict[str, Any]:
         }
 
 
+@register_tool(name="ListFiles", is_core=False)
 def listFiles(directory: str, pattern: str = "*", recursive: bool = False) -> List[Dict[str, Any]]:
     """
     List files in a directory without reading content

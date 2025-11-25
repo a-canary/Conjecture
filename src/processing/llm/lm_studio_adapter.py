@@ -8,10 +8,10 @@ import time
 import os
 from typing import Any, Dict, List, Optional
 
-from processing.bridge import LLMProvider, LLMRequest, LLMResponse
-from processing.llm.local_providers_adapter import LocalProviderProcessor
-from core.models import Claim, ClaimType, ClaimState
-from config.simple_config import Config
+from ..bridge import LLMProvider, LLMRequest, LLMResponse
+from .local_providers_adapter import LocalProviderProcessor
+from ...core.models import Claim, ClaimType, ClaimState
+from ...config.simple_config import Config
 
 
 class LMStudioAdapter(LLMProvider):

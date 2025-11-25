@@ -12,11 +12,11 @@ import importlib.util
 import glob
 from pathlib import Path
 
-from config.simple_config import Config
-from core.models import Claim, ClaimState, ClaimType
-from processing.bridge import LLMBridge, LLMRequest
-from processing.chutes_adapter import create_chutes_adapter_from_config
-from processing.llm.lm_studio_adapter import create_lm_studio_adapter_from_config
+from .config.simple_config import Config
+from .core.models import Claim, ClaimState, ClaimType
+from .processing.bridge import LLMBridge, LLMRequest
+from .processing.chutes_adapter import create_chutes_adapter_from_config
+from .processing.llm.lm_studio_adapter import create_lm_studio_adapter_from_config
 
 
 class Conjecture:
@@ -358,9 +358,8 @@ Respond with:
                 if updates.get("validated", False)
                 else ClaimState.EXPLORE,
                 tags=original_claim.tags,
-                created_by=original_claim.created_by,
-                created_at=original_claim.created_at,
-                updated_at=datetime.utcnow(),
+                created=original_claim.created,
+                updated=datetime.utcnow(),
             )
 
             return updated_claim

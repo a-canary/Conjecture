@@ -1,227 +1,279 @@
-# Conjecture: Simple AI Reasoning System
+# Conjecture: AI-Powered Evidence-Based Reasoning System
 
-## 🎯 Core Philosophy
+Conjecture is a lightweight, modular AI reasoning system that helps you create, search, and analyze evidence-based claims. Built with simplicity in mind, it provides powerful functionality with minimal complexity.
 
-**90% of functionality with 10% of complexity**  
-Conjecture delivers powerful evidence-based AI reasoning with minimal architectural overhead. No over-engineering. No complex service layers. Just clean, direct functionality.
+## 🎯 What It Does
 
-## 📐 Architecture Overview
+Conjecture enables you to:
+- **Create Claims**: Store knowledge claims with confidence scores and evidence
+- **Search Claims**: Find relevant information using semantic search
+- **Analyze Evidence**: Evaluate and validate claims using AI-powered tools
+- **Web Research**: Automatically gather evidence from the web
+- **Multiple Backends**: Use local models (Ollama, LM Studio) or cloud providers (OpenAI, Anthropic, etc.)
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Interfaces Layer                         │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐        │
-│  │   CLI   │  │   TUI   │  │   GUI   │  │  Future │        │
-│  └─────────┘  └─────────┘  └─────────┘  └─────────┘        │
-└─────────────────────────────────────────────────────────────┘
-                            │
-                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│                 Core Engine Layer                           │
-│                   Single Conjecture Class                   │
-│         ┌─────────────────────────────────────┐             │
-│         │  process_request() │ create_claim() │             │
-│         │  search_claims()   │ get_statistics() │           │
-│         └─────────────────────────────────────┘             │
-└─────────────────────────────────────────────────────────────┘
-                            │
-                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   Data Layer                                │
-│        ┌─────────────────────────────────────┐              │
-│        │    SQLite Storage │ Embeddings       │              │
-│        └─────────────────────────────────────┘              │
-└─────────────────────────────────────────────────────────────┘
-```
+## 🚀 Quick Start
 
-## 🚀 Backend System
-
-Conjecture supports multiple backend configurations through a pluggable system:
-
-| Backend | Description | Use Case |
-|---------|-------------|----------|
-| `auto` | Intelligent auto-detection | Recommended for most users |
-| `local` | Local models (Ollama, LM Studio) | Privacy-focused, offline use |
-| `cloud` | Cloud providers (OpenAI, Anthropic) | Advanced analysis, web search |
-| `hybrid` | Combines local and cloud | Optimal performance with fallback |
-
+### 1. Installation
 ```bash
-# Use any backend
-conjecture --backend auto create "Your claim"
-conjecture --backend local search "machine learning"
-conjecture --backend cloud analyze c1234567
-```
+# Clone the repository
+git clone <repository-url>
+cd Conjecture
 
-## 🛠️ Tools Available
-
-| Tool | Purpose | Parameters |
-|------|---------|------------|
-| **WebSearch** | Search web for information | `query`, `max_results` |
-| **CreateClaim** | Create knowledge claim | `content`, `confidence`, `claim_type`, `tags` |
-| **ReadFiles** | Read content from files | `files` (array) |
-| **WriteCodeFile** | Write code to file | `file_path`, `content` |
-
-## 📁 File Structure
-
-```
-src/
-├── engine.py              # Core engine class
-├── cli/
-│   └── modular_cli.py     # Unified CLI interface with auto-detection
-│   └── backends/
-│       ├── auto.py
-│       ├── local.py
-│       ├── cloud.py
-│       └── hybrid.py
-├── config/
-│   └── config.py          # Simple configuration parser
-│   └── config.example     # Configuration template
-├── data/
-│   └── conjecture.db      # SQLite database for claims storage
-└── tools.py               # Core tool implementations
-
-.env                     # Your configuration (auto-created from config.example)
-```
-
-## 🚀 Getting Started
-
-### 1. Install Dependencies
-```bash
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Configure Provider
-Copy the template and edit with your preferred provider:
+### 2. Configuration
 ```bash
-cp config/config.example .env
+# Copy the configuration template
+cp .env.example .env
+
+# Edit .env with your preferred provider
+# For local use (recommended):
+#   - Install Ollama from https://ollama.ai/
+#   - Set PROVIDER_API_URL=http://localhost:11434
+#   - Set PROVIDER_MODEL=llama2
+
+# For cloud use:
+#   - Get API key from your provider
+#   - Set PROVIDER_API_URL, PROVIDER_API_KEY, and PROVIDER_MODEL
 ```
 
-### 3. Choose Your Provider
-- **Local (Recommended)**: Install Ollama from https://ollama.ai/
-- **Cloud**: Get API keys from OpenAI, Anthropic, etc.
-
-### 4. Test Your Setup
+### 3. Run Conjecture
 ```bash
-# Test the system
-python -m src.cli.modular_cli
+# Make the main script executable (Unix/Linux/macOS)
+chmod +x conjecture
 
-# Create your first claim
-conjecture create "The sky is blue" --confidence 0.95
+# Or run directly with Python
+python conjecture
+
+# Test your setup
+python conjecture validate
+```
+
+## 📋 Usage Examples
+
+### Basic Commands
+```bash
+# Create a claim
+python conjecture create "The sky is blue due to Rayleigh scattering" --confidence 0.95
 
 # Search for claims
-conjecture search "sky"
+python conjecture search "sky color"
 
 # View statistics
-conjecture stats
+python conjecture stats
+
+# Analyze a specific claim
+python conjecture analyze c0000001
 ```
+
+### Backend Selection
+```bash
+# Use local models (offline, private)
+python conjecture --backend local create "Local claim"
+
+# Use cloud models (more powerful)
+python conjecture --backend cloud search "AI research"
+
+# Auto-detect best backend
+python conjecture --backend auto analyze c0000001
+```
+
+### Advanced Features
+```bash
+# Web search integration
+python conjecture research "quantum computing applications"
+
+# Batch operations
+python conjecture create --file claims.json
+
+# Export results
+python conjecture export --format json --output results.json
+```
+
+## 🛠️ Available Tools
+
+| Tool | Description | Example |
+|------|-------------|---------|
+| **WebSearch** | Search the web for current information | `research "AI trends 2024"` |
+| **CreateClaim** | Store knowledge claims with evidence | `create "Python is popular" --confidence 0.9` |
+| **ReadFiles** | Analyze content from local files | `analyze --file document.pdf` |
+| **WriteCodeFile** | Generate and save code | `generate --language python "sorting algorithm"` |
+
+## 🏗️ Architecture
+
+Conjecture uses a clean, modular architecture:
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   CLI Interface │    │  Core Engine    │    │   Data Layer    │
+│                 │    │                 │    │                 │
+│ • Commands      │───▶│ • Processing    │───▶│ • SQLite DB     │
+│ • Backends      │    │ • Tools         │    │ • Embeddings    │
+│ • Validation    │    │ • Analysis      │    │ • Search        │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+### Key Components
+- **`conjecture`**: Main entry point script
+- **`src/cli/modular_cli.py`**: Unified CLI with backend auto-detection
+- **`src/engine.py`**: Core reasoning engine
+- **`src/tools.py`**: AI-powered tools (web search, file analysis, etc.)
+- **`data/conjecture.db`**: SQLite database for claim storage
+
+## 🔧 Configuration
+
+### Environment Variables (.env)
+```bash
+# Provider Configuration
+PROVIDER_API_URL=https://llm.chutes.ai/v1  # Your chosen provider
+PROVIDER_API_KEY=your_api_key_here
+PROVIDER_MODEL=zai-org/GLM-4.6-FP8
+
+# Local Provider Example
+# PROVIDER_API_URL=http://localhost:11434  # Ollama
+# PROVIDER_API_KEY=
+# PROVIDER_MODEL=llama2
+
+# Application Settings
+DB_PATH=data/conjecture.db
+CONFIDENCE_THRESHOLD=0.95
+MAX_CONTEXT_SIZE=10
+DEBUG=false
+```
+
+### Supported Providers
+
+#### Local Providers (Privacy-focused)
+- **Ollama**: `http://localhost:11434` - Install from https://ollama.ai/
+- **LM Studio**: `http://localhost:1234` - Install from https://lmstudio.ai/
+
+#### Cloud Providers (High performance)
+- **Chutes.ai**: Fast and cost-effective
+- **OpenRouter**: Access to 100+ models
+- **OpenAI**: GPT models
+- **Anthropic**: Claude models
+- **Google**: Gemini models
 
 ## 🧪 Testing
 
-All basic workflows are tested and passing:
+Run the test suite to verify your installation:
+
 ```bash
-python comprehensive_test_suite.py
+# Run all tests
+python test_core_tools_complete.py
+
+# Test specific components
+python test_core_direct.py
+python test_core_tools_integration.py
+
+# Test emoji support
+python test_emoji_comprehensive.py
 ```
 
-### Workflows Verified:
-- Research: WebSearch → ReadFiles → CreateClaim
-- Code Development: ReadFiles → WriteCodeFile → CreateClaim
-- Validation: Search → CreateClaim → Analyze
-- Evaluation: GatherEvidence → CreateClaim → Analyze
+## 📊 Features
 
-## 📊 Complexity Comparison
+### Core Functionality
+- ✅ **Claim Management**: Create, search, and analyze knowledge claims
+- ✅ **Evidence-Based**: Attach evidence and confidence scores to claims
+- ✅ **Web Integration**: Automatic web search for claim validation
+- ✅ **Multiple Backends**: Support for local and cloud AI providers
+- ✅ **Semantic Search**: Find relevant claims using natural language
 
-| Metric | Original | Simplified | Reduction |
-|--------|----------|------------|-----------|
-| Total lines | ~2000 | ~500 | **75% fewer** |
-| Files | 50+ | 6 | **88% fewer** |
-| Dependencies | Complex | Basic | **Significantly fewer** |
-| Complexity | Enterprise | Essential | **90% simpler** |
-| Features | 100% | 90% | **10% tradeoff** |
+### User Experience
+- ✅ **Rich CLI**: Beautiful terminal output with progress indicators
+- ✅ **Emoji Support**: Enhanced visual feedback (see [EMOJI_USAGE.md](./EMOJI_USAGE.md))
+- ✅ **Cross-Platform**: Works on Windows, macOS, and Linux
+- ✅ **Auto-Detection**: Intelligent backend selection
 
-## ✅ Benefits Achieved
+### Developer Features
+- ✅ **Modular Design**: Easy to extend and customize
+- ✅ **Clean Architecture**: Well-organized codebase
+- ✅ **Comprehensive Tests**: High test coverage
+- ✅ **Type Safety**: Full type annotations
 
-- **Simplicity**: 5x less code, 8x fewer files
-- **Clarity**: Straightforward, readable implementation
-- **Maintainability**: Easy to understand and modify
-- **Performance**: Fast startup, low overhead
-- **Reliability**: Comprehensive testing coverage
-- **Flexibility**: Modular design for easy extension
-- **Accessibility**: Simple API and interactive interface
+## 📁 Project Structure
 
-## 🎯 Tradeoffs Made
-
-- Removed vector similarity search (kept basic text search)
-- Simplified LLM integration (mock implementation)
-- Removed advanced caching and optimization
-- Simplified configuration system
-- Removed background processing and pooling
-
-These tradeoffs provide dramatic complexity reduction while maintaining core functionality for 90% of use cases.
-
-## 📚 Configuration Guide
-
-Conjecture uses a simple `.env` file for configuration with clear examples:
-
-```ini
-# Conjecture Configuration File
-# Uncomment and fill in one provider section below
-
-# ===== LOCAL PROVIDERS =====
-# Use Ollama (recommended for privacy and offline use)
-#[ollama]
-#provider = "ollama"
-#base_url = "http://localhost:11434"
-#model = "llama3"  # Common models: llama3, mistral, codellama, phi3
-
-# Use LM Studio (local server for LLMs)
-#[lm_studio]
-#provider = "lm_studio"
-#base_url = "http://localhost:1234/v1"
-#model = "local-model"  # Your local model name
-
-# ===== CLOUD PROVIDERS =====
-# Use OpenAI (GPT models)
-#[openai]
-#provider = "openai"
-#api_key = "your-openai-api-key-here"
-#model = "gpt-4-turbo"  # Common models: gpt-4-turbo, gpt-4, gpt-3.5-turbo
-
-# Use Anthropic (Claude models)
-#[anthropic]
-#provider = "anthropic"
-#api_key = "your-anthropic-api-key-here"
-#model = "claude-3-sonnet-20240229"  # Common models: claude-3-opus, claude-3-sonnet, claude-3-haiku
-
-# Use Google Gemini
-#[google]
-#provider = "google"
-#api_key = "your-google-api-key-here"
-#model = "gemini-pro"  # Common models: gemini-pro, gemini-pro-vision
-
-# Use Cohere
-#[cohere]
-#provider = "cohere"
-#api_key = "your-cohere-api-key-here"
-#model = "command"  # Common models: command, command-light
-
-# ===== CONFIGURATION NOTES =====
-# 1. Only uncomment ONE provider section at a time
-# 2. Save this file as ".env" in the project root directory
-# 3. Restart Conjecture after making changes
-# 4. Use "conjecture config" to validate your configuration
-# 5. Use "conjecture setup" for interactive provider guidance
+```
+Conjecture/
+├── conjecture                    # Main entry point
+├── requirements.txt              # Python dependencies
+├── .env.example                  # Configuration template
+├── README.md                     # This file
+├── src/
+│   ├── cli/
+│   │   └── modular_cli.py       # Unified CLI interface
+│   ├── engine.py                 # Core reasoning engine
+│   ├── tools.py                  # AI-powered tools
+│   └── config/
+│       └── config.py            # Configuration management
+├── data/
+│   └── conjecture.db            # SQLite database (auto-created)
+├── tests/                       # Test files
+├── docs/                        # Documentation
+└── EMOJI_USAGE.md               # Emoji feature documentation
 ```
 
-## 💡 Future Enhancements
+## 🤝 Contributing
 
-The simplified architecture provides a solid foundation for incremental improvements:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Run the test suite
+6. Submit a pull request
 
-1. **Real LLM Integration**: Replace mock with actual API calls
-2. **Enhanced Search**: Add basic keyword improvements
-3. **More Tools**: Extend with additional specialized tools
-4. **UI Integration**: Simple web interface
-5. **Configuration**: Add basic config file support
+## 📚 Documentation
 
-## 🛡️ Security Note
+- [EMOJI_USAGE.md](./EMOJI_USAGE.md) - Complete emoji feature guide
+- [CORE_TOOLS_IMPLEMENTATION_SUMMARY.md](./CORE_TOOLS_IMPLEMENTATION_SUMMARY.md) - Core tools documentation
+- [SIMPLIFICATION_SUMMARY.md](./SIMPLIFICATION_SUMMARY.md) - Architecture decisions
 
-The repository has been cleaned of all exposed API keys. All sensitive data has been removed from git history.
+## 🛡️ Security
+
+- No API keys are stored in the repository
+- All sensitive data is managed through environment variables
+- Local providers keep your data completely private
+- Regular security updates and dependency management
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**"Provider not found" error**
+- Check your `.env` file configuration
+- Verify the provider URL is accessible
+- Ensure API key is valid (for cloud providers)
+
+**"Database locked" error**
+- Ensure only one instance of Conjecture is running
+- Check file permissions on the `data/` directory
+
+**"Module not found" error**
+- Run `pip install -r requirements.txt` again
+- Check your Python version (3.8+ recommended)
+
+### Getting Help
+
+```bash
+# Check configuration
+python conjecture config
+
+# Validate setup
+python conjecture validate
+
+# See available commands
+python conjecture --help
+
+# Check backend status
+python conjecture backends
+```
+
+## 📄 License
+
+[Add your license information here]
+
+---
+
+**Conjecture** - Making evidence-based reasoning accessible and powerful.

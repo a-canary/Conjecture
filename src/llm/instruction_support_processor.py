@@ -9,7 +9,7 @@ from datetime import datetime
 import json
 import re
 
-from ..core.models import Claim, create_claim_index, create_instruction_claim
+from ..core.models import Claim, create_claim_index, create_claim
 from ..core.support_relationship_manager import SupportRelationshipManager
 from ..context.complete_context_builder import CompleteContextBuilder, BuiltContext
 
@@ -29,7 +29,7 @@ class ProcessingResult:
     """Result of LLM instruction support processing"""
 
     success: bool
-    new_instruction_claims: List[UnifiedClaim]
+    new_instruction_claims: List[Claim]
     created_relationships: List[Tuple[str, str]]  # (supporter_id, supported_id)
     processing_time_ms: float
     llm_response: str
@@ -48,7 +48,7 @@ class InstructionSupportProcessor:
     - Validate and persist new relationships
     """
 
-    def __init__(self, claims: List[UnifiedClaim], llm_client=None):
+    def __init__(self, claims: List[Claim], llm_client=None):
         """
         Initialize the instruction support processor
 
@@ -351,8 +351,8 @@ Please provide your analysis:
 
     def _create_instruction_claims(
         self, identification: InstructionIdentification
-    ) -> List[UnifiedClaim]:
-        """Create UnifiedClaim objects from identified instructions"""
+    ) -> List[Claim]:
+        """Create Claim objects from identified instructions"""
         new_claims = []
 
         for i, instruction_data in enumerate(identification.instruction_claims):
@@ -365,9 +365,9 @@ Please provide your analysis:
                 and len(content) > 10
                 and len(content) <= self.max_instruction_length
             ):
-                claim = create_instruction_claim(
+                claim = create_claim(
                     content=content,
-                    created_by="llm-processor",
+                    tag="instruction",
                     confidence=confidence,
                     tags=self.instruction_tags,
                 )
@@ -379,7 +379,7 @@ Please provide your analysis:
     def _create_support_relationships(
         self,
         target_claim_id: str,
-        instruction_claims: List[UnifiedClaim],
+        instruction_claims: List[Claim],
         identification: InstructionIdentification,
     ) -> List[Tuple[str, str]]:
         """Create support relationships between instructions and targets"""
@@ -438,10 +438,10 @@ Please provide your analysis:
 
     def _persist_changes(
         self,
-        new_claims: List[UnifiedClaim],
+        new_claims: List[Claim],
         relationships: List[Tuple[str, str]],
         validation_errors: List[str],
-    ) -> Tuple[List[UnifiedClaim], List[Tuple[str, str]]]:
+    ) -> Tuple[List[Claim], List[Tuple[str, str]]]:
         """Persist new claims and relationships"""
         if validation_errors:
             return [], []
@@ -524,7 +524,7 @@ Please provide your analysis:
             },
         }
 
-    def refresh(self, new_claims: List[UnifiedClaim]) -> None:
+    def refresh(self, new_claims: List[Claim]) -> None:
         """Refresh the processor with new claim data"""
         self.claims = new_claims
         self.claim_index = create_claim_index(new_claims)
