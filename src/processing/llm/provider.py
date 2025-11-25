@@ -1,15 +1,15 @@
 """
-Simple Unified LLM Provider
+LLM Provider
 Minimal provider-specific code using HTTP requests
 """
 
 import json
 import requests
 from typing import Dict, Any, Optional
-from ...config.simple_config import Config
+from ...config.config import Config
 
 
-class SimpleUnifiedProvider:
+class Provider:
     """Single provider class that handles all LLM APIs"""
 
     def __init__(self, config: Config):
@@ -133,6 +133,6 @@ class SimpleUnifiedProvider:
             return {"success": False, "content": "", "error": str(e)}
 
 
-def create_simple_provider(config: Optional[Config] = None) -> SimpleUnifiedProvider:
+def create_provider(config: Optional[Config] = None) -> Provider:
     """Factory function"""
-    return SimpleUnifiedProvider(config or Config())
+    return Provider(config or Config())

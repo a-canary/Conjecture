@@ -1,167 +1,146 @@
-#!/usr/bin/env python3
 """
-Simple Configuration System for Conjecture
-Uses a plain text .env file with commented examples for common providers
+Configuration for Conjecture
+Single source of truth with no monkey-patching
 """
 
 import os
-import re
-from typing import Optional, Dict, Any
 from pathlib import Path
+from typing import Any, Dict, Optional
 
-# Configuration file path
-CONFIG_FILE = ".env"
-EXAMPLE_CONFIG = "config/config.example"
+try:
+    from dotenv import load_dotenv
 
-class ProviderConfig:
-    """Simple provider configuration"""
-    def __init__(self, name: str, base_url: str = "", api_key: str = "", model: str = "", is_local: bool = False):
-        self.name = name
-        self.base_url = base_url
-        self.api_key = api_key
-        self.model = model
-        self.is_local = is_local
-        self.priority = 1  # Default priority
+    load_dotenv()
+except ImportError:
+    pass
 
-def load_config() -> Optional[ProviderConfig]:
+
+class Config:
     """
-    Load provider configuration from .env file
-    Returns the first enabled provider configuration
+    Configuration class for Conjecture
+    All essential settings in one place with proper validation
     """
-    config_path = Path(CONFIG_FILE)
 
-    # If .env doesn't exist, check if config.example exists and copy it
-    if not config_path.exists():
-        example_path = Path(EXAMPLE_CONFIG)
-        if example_path.exists():
-            try:
-                import shutil
-                shutil.copy2(example_path, config_path)
-                print(f"Created {CONFIG_FILE} from template")
-            except Exception:
-                pass
+    def __init__(self):
+        # === Core Settings ===
+        self.confidence_threshold = float(os.getenv("CONFIDENCE_THRESHOLD", "0.95"))
+        self.confident_threshold = float(os.getenv("CONFIDENT_THRESHOLD", "0.8"))
+        self.session_confident_threshold = None
+        self.max_context_size = int(os.getenv("MAX_CONTEXT_SIZE", "10"))
+        self.batch_size = int(os.getenv("BATCH_SIZE", "10"))
+        self.debug = os.getenv("DEBUG", "false").lower() == "true"
 
-    # If still no config file, return None
-    if not config_path.exists():
-        return None
+        # === Database Settings ===
+        self.database_type = os.getenv("DATABASE_TYPE", "sqlite")
+        self.database_path = os.getenv("DB_PATH", "data/conjecture.db")
+        self.data_dir = Path(self.database_path).parent
+        self.data_dir.mkdir(exist_ok=True)
 
-    # Parse the config file
-    try:
-        with open(config_path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
+        # === LLM Provider Settings ===
+        self.llm_provider = os.getenv("LLM_PROVIDER", "chutes")
+        self.provider_api_url = os.getenv(
+            "PROVIDER_API_URL", "https://llm.chutes.ai/v1"
+        )
+        self.provider_api_key = os.getenv("PROVIDER_API_KEY", "")
+        self.provider_model = os.getenv("PROVIDER_MODEL", "zai-org/GLM-4.6-FP8")
 
-        current_section = None
-        provider_config = None
+        # === Derived Settings ===
+        self.llm_enabled = (
+            bool(self.provider_api_key) or "localhost" in self.provider_api_url
+        )
 
-        for line in lines:
-            line = line.strip()
+    # === Confidence Threshold Methods ===
+    def set_confident_threshold(self, threshold: float):
+        """Set session-level confident threshold override"""
+        if 0.0 <= threshold <= 1.0:
+            self.session_confident_threshold = threshold
+        else:
+            raise ValueError("Confident threshold must be between 0.0 and 1.0")
 
-            # Skip empty lines and comments
-            if not line or line.startswith('#'):
-                continue
+    def get_effective_confident_threshold(self) -> float:
+        """Get effective confident threshold (session override or global default)"""
+        return self.session_confident_threshold or self.confident_threshold
 
-            # Check for section header [provider]
-            section_match = re.match(r'\[([a-zA-Z_]+)\]', line)
-            if section_match:
-                current_section = section_match.group(1).lower()
-                continue
+    def reset_confident_threshold(self):
+        """Reset to global default confident threshold"""
+        self.session_confident_threshold = None
 
-            # Parse key=value pairs
-            if '=' in line and current_section:
-                key, value = line.split('=', 1)
-                key = key.strip().lower()
-                value = value.strip().strip('"\'')
+    # === Utility Methods ===
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert configuration to dictionary"""
+        return {
+            "database_type": self.database_type,
+            "database_path": self.database_path,
+            "confidence_threshold": self.confidence_threshold,
+            "max_context_size": self.max_context_size,
+            "batch_size": self.batch_size,
+            "llm_enabled": self.llm_enabled,
+            "llm_provider": self.llm_provider,
+            "provider_model": self.provider_model,
+            "provider_api_url": self.provider_api_url,
+            "debug": self.debug,
+        }
 
-                # Initialize provider config if this is the first valid section
-                if provider_config is None:
-                    provider_config = ProviderConfig(name=current_section, is_local=False)
+    def validate(self) -> bool:
+        """Validate configuration settings"""
+        try:
+            assert 0.0 <= self.confidence_threshold <= 1.0
+            assert self.max_context_size > 0
+            assert self.batch_size > 0
+            assert self.data_dir.exists() or self.data_dir.parent.exists()
 
-                if key == 'provider':
-                    provider_config.name = value.lower()
-                elif key == 'base_url':
-                    provider_config.base_url = value
-                    if 'localhost' in value or '127.0.0.1' in value:
-                        provider_config.is_local = True
-                elif key == 'api_key':
-                    provider_config.api_key = value
-                elif key == 'model':
-                    provider_config.model = value
+            if self.llm_enabled:
+                assert self.provider_model is not None
 
-        return provider_config
+            return True
+        except Exception as e:
+            print(f"Configuration validation failed: {e}")
+            return False
 
-    except Exception as e:
-        print(f"Warning: Could not parse config file: {e}")
-        return None
+    def __str__(self) -> str:
+        """String representation for debugging"""
+        return f"Config(db={self.database_type}, llm={self.llm_provider}, confidence={self.confidence_threshold})"
 
-def validate_config() -> bool:
-    """
-    Validate that a configuration exists and is valid
-    Returns True if config is valid, False otherwise
-    """
-    provider = load_config()
-    return provider is not None and provider.name != "none"
+    # === Property Methods ===
+    @property
+    def chroma_settings(self) -> Dict[str, Any]:
+        """ChromaDB settings (only when using chroma)"""
+        if self.database_type != "chroma":
+            return {}
+        return {
+            "collection_name": "claims",
+            "host": os.getenv("CHROMA_HOST", "localhost"),
+            "port": int(os.getenv("CHROMA_PORT", "8000")),
+            "path": os.getenv("CHROMA_PATH", "data/chroma_db"),
+        }
 
-def get_primary_provider() -> Optional[ProviderConfig]:
-    """
-    Get the primary configured provider
-    """
-    return load_config()
+    @property
+    def llm_settings(self) -> Dict[str, Any]:
+        """LLM settings (only when LLM is enabled)"""
+        if not self.llm_enabled:
+            return {}
+        return {
+            "model": self.provider_model,
+            "temperature": float(os.getenv("LLM_TEMPERATURE", "0.3")),
+            "max_tokens": int(os.getenv("LLM_MAX_TOKENS", "2000")),
+            "timeout": int(os.getenv("LLM_TIMEOUT", "30")),
+        }
 
-def show_configuration_status(detailed: bool = False):
-    """
-    Show current configuration status
-    """
-    provider = get_primary_provider()
 
-    if provider:
-        print(f"✅ Using {provider.name} provider")
-        if detailed:
-            print(f"   Model: {provider.model}")
-            print(f"   Base URL: {provider.base_url}")
-            print(f"   Local: {provider.is_local}")
-    else:
-        print("❌ No configuration found")
-        print(f"   Create {CONFIG_FILE} with your provider settings")
-        print(f"   Use 'conjecture setup' for help")
+# Global configuration instance
+config = Config()
 
-def get_unified_validator():
-    """
-    Return a simple validator object for compatibility
-    """
-    class SimpleValidator:
-        def validate_configuration(self):
-            return SimpleValidationResult(success=validate_config(), errors=[])
 
-    class SimpleValidationResult:
-        def __init__(self, success: bool, errors: list):
-            self.success = success
-            self.errors = errors
+def get_config() -> Config:
+    """Get the global configuration instance"""
+    return config
 
-    return SimpleValidator()
 
-# For backward compatibility with existing code
-def validate_config():
-    """Backward compatible function"""
-    return validate_config()
-
-def get_primary_provider():
-    """Backward compatible function"""
-    return get_primary_provider()
-
-def show_configuration_status(detailed: bool = False):
-    """Backward compatible function"""
-    return show_configuration_status(detailed)
-```
-
-This implementation:
-
-1. Replaces the complex configuration system with a simple, user-friendly approach
-2. Uses a plain text .env file with clear commented examples for all major providers
-3. Parses the configuration file with minimal code
-4. Maintains backward compatibility with existing code
-5. Provides clear guidance to users on how to configure their provider
-6. Automatically creates the config file from the example if it doesn't exist
-7. Supports both local and cloud providers with automatic detection of local providers
-8. Returns a simple ProviderConfig object that's compatible with the rest of the system
-
-The system is now much simpler for users to understand and configure while maintaining all the required functionality.
+if __name__ == "__main__":
+    # Test configuration
+    cfg = Config()
+    print("Configuration Test:")
+    print(f"Valid: {cfg.validate()}")
+    print(f"Settings: {cfg.to_dict()}")
+    print(f"LLM Enabled: {cfg.llm_enabled}")
+    print(f"Debug Mode: {cfg.debug}")

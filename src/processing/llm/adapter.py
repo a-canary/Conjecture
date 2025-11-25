@@ -1,14 +1,13 @@
 """
-Unified LLM Adapter
+LLM Adapter
 Single adapter pattern for all LLM providers using the registry
 """
 
 from typing import Optional, Dict, Any
-from .provider_registry import registry
-from ...config.simple_config import Config
+from ...config.config import Config
 
 
-class UnifiedLLMAdapter:
+class LLMAdapter:
     """Single adapter for all LLM providers"""
 
     def __init__(self, config: Optional[Config] = None):
@@ -71,6 +70,6 @@ class UnifiedLLMAdapter:
         return "none"
 
 
-def create_unified_adapter(config: Optional[Config] = None) -> UnifiedLLMAdapter:
-    """Factory function to create unified adapter"""
-    return UnifiedLLMAdapter(config)
+def create_adapter(config: Optional[Config] = None) -> LLMAdapter:
+    """Factory function to create adapter"""
+    return LLMAdapter(config)

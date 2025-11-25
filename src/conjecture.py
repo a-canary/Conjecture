@@ -11,9 +11,9 @@ from pathlib import Path
 import logging
 
 from src.core.models import Claim, ClaimState, ClaimType
-from src.config.unified_config import Config
+from src.config.config import Config
 from src.processing.bridge import LLMBridge, LLMRequest
-from src.processing.llm.simple_provider import create_simple_provider
+from src.processing.llm.provider import create_provider
 from src.processing.async_eval import AsyncClaimEvaluationService
 from src.processing.context_collector import ContextCollector
 from src.processing.tool_manager import DynamicToolCreator
@@ -86,7 +86,7 @@ class Conjecture:
     def _initialize_llm_bridge(self):
         """Initialize LLM bridge with simple unified provider"""
         try:
-            provider = create_simple_provider(self.config)
+            provider = create_provider(self.config)
             self.llm_bridge = LLMBridge(provider=provider)
 
             if self.llm_bridge.is_available():
