@@ -1,253 +1,369 @@
 """
-Conjecture: Simple API Interface
-Provides elegant, unified access to all functionality
+Conjecture: Async Evidence-Based AI Reasoning System
+Provides elegant, unified access to all functionality with async support
 """
 
+import asyncio
+import time
 from datetime import datetime
-from typing import Any, Dict, List, Optional
-
-import os
-import sys
-import importlib.util
-import glob
+from typing import Dict, List, Optional, Any, Union
 from pathlib import Path
+import logging
 
-from .config.simple_config import Config
-from .core.models import Claim, ClaimState, ClaimType
-from .processing.bridge import LLMBridge, LLMRequest
-from .processing.chutes_adapter import create_chutes_adapter_from_config
-from .processing.llm.lm_studio_adapter import create_lm_studio_adapter_from_config
+from src.core.models import Claim, ClaimState, ClaimType
+from src.config.unified_config import Config
+from src.processing.bridge import LLMBridge, LLMRequest
+from src.processing.llm.simple_provider import create_simple_provider
+from src.processing.async_eval import AsyncClaimEvaluationService
+from src.processing.context_collector import ContextCollector
+from src.processing.tool_manager import DynamicToolCreator
+from src.data.data_manager import get_data_manager
 
 
 class Conjecture:
     """
-    Simple, elegant API for Conjecture
-    Single interface for all evidence-based AI reasoning
+    Enhanced Conjecture with Async Claim Evaluation and Dynamic Tool Creation
+    Implements the full architecture described in the specifications
     """
 
     def __init__(self, config: Optional[Config] = None):
-        """Initialize with optional custom configuration"""
+        """Initialize Enhanced Conjecture with all components"""
         self.config = config or Config()
 
-        # Initialize backend (will be implemented based on database_type)
-        self._initialize_backend()
+        # Initialize data layer
+        self.data_manager = get_data_manager(use_mock_embeddings=False)
 
-        # Initialize LLM bridge with Chutes.ai
+        # Initialize LLM bridge
         self._initialize_llm_bridge()
 
-        print(f"Conjecture initialized: {self.config}")
+        # Initialize processing components
+        self.context_collector = ContextCollector(self.data_manager)
+        self.async_evaluation = AsyncClaimEvaluationService(
+            llm_bridge=self.llm_bridge, context_collector=self.context_collector
+        )
+        self.tool_creator = DynamicToolCreator(
+            llm_bridge=self.llm_bridge, tools_dir="tools"
+        )
 
-    def _initialize_backend(self):
-        """Initialize appropriate backend based on configuration"""
-        if self.config.database_type == "chroma":
-            print("Using ChromaDB backend")
-            # TODO: Initialize ChromaDB backend
-        elif self.config.database_type == "file":
-            print("Using file-based backend")
-            # TODO: Initialize file-based backend
-        else:
-            print("Using mock backend")
-            # TODO: Initialize mock backend
+        # Service state
+        self._services_started = False
+
+        # Statistics
+        self._stats = {
+            "claims_processed": 0,
+            "tools_created": 0,
+            "evaluation_time_total": 0.0,
+            "session_count": 0,
+        }
+
+        self.logger = logging.getLogger(__name__)
+
+        print(f"Enhanced Conjecture initialized with config: {self.config}")
+
+    async def start_services(self):
+        """Start background services"""
+        if self._services_started:
+            return
+
+        await self.async_evaluation.start()
+        self._services_started = True
+
+        self.logger.info("Enhanced Conjecture services started")
+
+    async def stop_services(self):
+        """Stop background services"""
+        if not self._services_started:
+            return
+
+        await self.async_evaluation.stop()
+        self._services_started = False
+
+        self.logger.info("Enhanced Conjecture services stopped")
 
     def _initialize_llm_bridge(self):
-        """Initialize LLM bridge with appropriate provider based on configuration"""
+        """Initialize LLM bridge with simple unified provider"""
         try:
-            # Determine which provider to use based on configuration
-            llm_provider = (
-                self.config.llm_provider.lower()
-                if self.config.llm_provider
-                else "chutes"
-            )
-
-            primary_adapter = None
-            fallback_adapter = None
-
-            if llm_provider == "lm_studio":
-                # Use LM Studio as primary provider
-                primary_adapter = create_lm_studio_adapter_from_config()
-                # Use Chutes as fallback if available
-                try:
-                    fallback_adapter = create_chutes_adapter_from_config()
-                except:
-                    fallback_adapter = None
-            else:
-                # Use Chutes as primary provider (default)
-                primary_adapter = create_chutes_adapter_from_config()
-                # Use LM Studio as fallback if available
-                try:
-                    fallback_adapter = create_lm_studio_adapter_from_config()
-                except:
-                    fallback_adapter = None
-
-            # Initialize bridge
-            self.llm_bridge = LLMBridge(provider=primary_adapter)
-            if fallback_adapter:
-                self.llm_bridge.set_fallback(fallback_adapter)
+            provider = create_simple_provider(self.config)
+            self.llm_bridge = LLMBridge(provider=provider)
 
             if self.llm_bridge.is_available():
-                print(f"LLM Bridge: {llm_provider} connected (primary)")
+                print(f"LLM Bridge: {self.config.llm_provider or 'chutes'} connected")
             else:
-                print(f"LLM Bridge: {llm_provider} not available, using fallback")
+                print("LLM Bridge: No providers available, using mock mode")
 
         except Exception as e:
             print(f"LLM Bridge initialization failed: {e}")
-            self.llm_bridge = LLMBridge()  # Empty bridge for graceful degradation
+            self.llm_bridge = LLMBridge()
 
-    def explore(
+    async def explore(
         self,
         query: str,
         max_claims: int = 10,
         claim_types: Optional[List[str]] = None,
         confidence_threshold: Optional[float] = None,
+        auto_evaluate: bool = True,
     ) -> "ExplorationResult":
         """
-        Explore knowledge base for claims related to query
+        Enhanced exploration with automatic claim evaluation
 
         Args:
-            query: Your question or topic to explore
-            max_claims: Maximum number of claims to return
+            query: Research question or topic
+            max_claims: Maximum claims to return
             claim_types: Specific claim types to include
             confidence_threshold: Minimum confidence level
+            auto_evaluate: Whether to automatically evaluate created claims
 
         Returns:
-            ExplorationResult: Comprehensive results with claims and insights
+            ExplorationResult with claims and evaluation status
         """
+        start_time = time.time()
+
         if not query or len(query.strip()) < 5:
             raise ValueError("Query must be at least 5 characters long")
 
-        max_claims = max(1, min(max_claims, 50))  # Clamp between 1-50
         confidence_threshold = confidence_threshold or self.config.confidence_threshold
 
-        print(f"Exploring: '{query}'")
-        print(f"   Max claims: {max_claims}, Confidence: {confidence_threshold}")
+        print(f"Enhanced exploration: '{query}'")
 
-        # Try LLM-powered exploration first
-        if self.llm_bridge and self.llm_bridge.is_available():
-            try:
-                return self._explore_with_llm(
-                    query, max_claims, claim_types, confidence_threshold
+        try:
+            # Start services if not already running
+            if not self._services_started:
+                await self.start_services()
+
+            # Generate initial claims using LLM
+            initial_claims = await self._generate_initial_claims(query, max_claims)
+
+            # Filter by confidence threshold
+            filtered_claims = [
+                claim
+                for claim in initial_claims
+                if claim.confidence >= confidence_threshold
+            ]
+
+            # Store claims in data layer
+            stored_claims = []
+            for claim in filtered_claims:
+                stored_claim = await self.data_manager.create_claim(
+                    content=claim.content,
+                    confidence=claim.confidence,
+                    claim_type=claim.type[0].value,
+                    tags=claim.tags,
+                    state=ClaimState.EXPLORE,
                 )
-            except Exception as e:
-                print(f"⚠️  LLM exploration failed: {e}, falling back to mock")
+                stored_claims.append(stored_claim)
 
-        # Fallback to mock results
-        return self._explore_mock(query, max_claims, claim_types, confidence_threshold)
+                # Submit for evaluation if enabled
+                if auto_evaluate:
+                    await self.async_evaluation.submit_claim(stored_claim)
 
-    def _explore_with_llm(
-        self,
-        query: str,
-        max_claims: int,
-        claim_types: Optional[List[str]],
-        confidence_threshold: float,
-    ) -> "ExplorationResult":
-        """Explore using LLM bridge"""
-        import time
+            # Check for tool creation opportunities
+            await self._check_tool_needs(stored_claims)
 
-        start_time = time.time()
-
-        # Build exploration prompt
-        prompt = f"""You are an expert knowledge explorer. Analyze the topic "{query}" and generate relevant claims.
-
-Please provide claims in this format:
-<claim type="concept" confidence="0.8">A factual claim about {query}</claim>
-<claim type="thesis" confidence="0.7">An analytical insight about {query}</claim>
-<claim type="example" confidence="0.6">A specific example related to {query}</claim>
-
-Focus on:
-- Accuracy and factual correctness
-- Appropriate confidence scores (0.0-1.0)
-- Clear, concise claims
-- Different claim types for comprehensive coverage
-
-Generate up to {max_claims} claims with confidence ≥ {confidence_threshold}."""
-
-        # Create LLM request
-        llm_request = LLMRequest(
-            prompt=prompt, max_tokens=2048, temperature=0.7, task_type="explore"
-        )
-
-        # Process with LLM
-        response = self.llm_bridge.process(llm_request)
-
-        # Filter and format results
-        processing_time = time.time() - start_time
-
-        if response.success:
-            # Filter by confidence threshold and claim types
-            filtered_claims = []
-            for claim in response.generated_claims:
-                if claim.confidence >= confidence_threshold:
-                    if claim_types is None or any(
-                        t.value in claim_types for t in claim.type
-                    ):
-                        filtered_claims.append(claim)
-
-            # Limit to max_claims
-            final_claims = filtered_claims[:max_claims]
+            processing_time = time.time() - start_time
+            self._update_stats(processing_time, len(stored_claims))
 
             result = ExplorationResult(
                 query=query,
-                claims=final_claims,
+                claims=stored_claims,
                 total_found=len(filtered_claims),
                 search_time=processing_time,
                 confidence_threshold=confidence_threshold,
                 max_claims=max_claims,
+                evaluation_pending=auto_evaluate,
+                tools_created=len(self.tool_creator.get_created_tools()),
             )
 
             print(
-                f"Found {len(result.claims)} claims via LLM in {result.search_time:.2f}s"
+                f"Enhanced exploration completed: {len(result.claims)} claims in {result.search_time:.2f}s"
             )
             return result
-        else:
-            raise Exception(f"LLM processing failed: {response.errors}")
 
-    def _explore_mock(
-        self,
-        query: str,
-        max_claims: int,
-        claim_types: Optional[List[str]],
-        confidence_threshold: float,
-    ) -> "ExplorationResult":
-        """Fallback mock exploration"""
-        mock_claims = self._generate_mock_claims(query, max_claims, claim_types)
-        filtered_claims = [
-            c for c in mock_claims if c.confidence >= confidence_threshold
-        ]
+        except Exception as e:
+            self.logger.error(f"Error in enhanced exploration: {e}")
+            raise
 
-        result = ExplorationResult(
-            query=query,
-            claims=filtered_claims[:max_claims],
-            total_found=len(filtered_claims),
-            search_time=0.1,  # Mock timing
-            confidence_threshold=confidence_threshold,
-            max_claims=max_claims,
-        )
+    async def _generate_initial_claims(
+        self, query: str, max_claims: int
+    ) -> List[Claim]:
+        """Generate initial claims using LLM with context awareness"""
+        try:
+            # Get relevant context for query
+            context_claims = await self.context_collector.collect_context_for_claim(
+                query, {"task": "exploration"}, max_skills=3, max_samples=5
+            )
 
-        print(f"Found {len(result.claims)} claims (mock) in {result.search_time:.2f}s")
-        return result
+            # Build context string
+            context_string = ""
+            if context_claims.get("skills"):
+                context_string += "RELEVANT SKILLS:\n"
+                for skill in context_claims["skills"]:
+                    context_string += f"- {skill['context_format']}\n"
+                context_string += "\n"
 
-    def add_claim(
+            if context_claims.get("samples"):
+                context_string += "RELEVANT EXAMPLES:\n"
+                for sample in context_claims["samples"]:
+                    context_string += f"- {sample['context_format']}\n"
+                context_string += "\n"
+
+            # Build exploration prompt
+            prompt = f"""Research and analyze the topic: "{query}"
+
+{context_string}
+
+Generate comprehensive claims about this topic. Focus on:
+1. Factual accuracy and verifiable information
+2. Key concepts and definitions
+3. Important relationships and dependencies
+4. Practical applications and examples
+5. Current state and future directions
+
+For each claim, provide:
+- Clear, specific statement
+- Confidence score (0.0-1.0) based on certainty
+- Appropriate claim type (concept, reference, thesis, example, goal)
+- Relevant tags for categorization
+
+Generate up to {max_claims} high-quality claims."""
+
+            llm_request = LLMRequest(
+                prompt=prompt, max_tokens=3000, temperature=0.7, task_type="explore"
+            )
+
+            response = self.llm_bridge.process(llm_request)
+
+            if response.success:
+                return self._parse_claims_from_response(response.content)
+            else:
+                raise Exception(f"LLM processing failed: {response.errors}")
+
+        except Exception as e:
+            self.logger.error(f"Error generating initial claims: {e}")
+            return []
+
+    def _parse_claims_from_response(self, response: str) -> List[Claim]:
+        """Parse claims from LLM response"""
+        claims = []
+
+        try:
+            # Simple parsing - look for claim patterns
+            import re
+
+            # Pattern for claims with confidence and type
+            claim_pattern = (
+                r'Claim:\s*"([^"]+)"\s*Confidence:\s*([\d.]+)\s*Type:\s*(\w+)'
+            )
+            matches = re.findall(claim_pattern, response, re.IGNORECASE)
+
+            for i, (content, confidence, claim_type) in enumerate(matches):
+                try:
+                    claim = Claim(
+                        id=f"exploration_{int(time.time())}_{i}",
+                        content=content.strip(),
+                        confidence=float(confidence),
+                        type=[ClaimType(claim_type.lower())],
+                        tags=["exploration", "auto_generated"],
+                        state=ClaimState.EXPLORE,
+                    )
+                    claims.append(claim)
+                except (ValueError, KeyError) as e:
+                    self.logger.warning(f"Failed to parse claim: {e}")
+                    continue
+
+            # If no structured claims found, try simpler parsing
+            if not claims:
+                lines = response.split("\n")
+                for i, line in enumerate(lines):
+                    if line.strip() and len(line.strip()) > 20:
+                        claim = Claim(
+                            id=f"exploration_{int(time.time())}_{i}",
+                            content=line.strip(),
+                            confidence=0.7,  # Default confidence
+                            type=[ClaimType.CONCEPT],
+                            tags=["exploration", "auto_generated"],
+                            state=ClaimState.EXPLORE,
+                        )
+                        claims.append(claim)
+
+        except Exception as e:
+            self.logger.error(f"Error parsing claims from response: {e}")
+
+        return claims[:10]  # Limit to 10 claims
+
+    async def _check_tool_needs(self, claims: List[Claim]):
+        """Check if any claims indicate need for new tools"""
+        for claim in claims:
+            try:
+                tool_need = await self.tool_creator.discover_tool_need(claim)
+                if tool_need:
+                    print(f"Tool need detected: {tool_need[:100]}...")
+
+                    # Search for implementation methods
+                    methods = await self.tool_creator.websearch_tool_methods(tool_need)
+
+                    if methods:
+                        # Create tool
+                        tool_name = f"tool_{claim.id[:8]}"
+                        tool_path = await self.tool_creator.create_tool_file(
+                            tool_name, tool_need, methods
+                        )
+
+                        if tool_path:
+                            # Create skill and sample claims
+                            skill_claim = await self.tool_creator.create_skill_claim(
+                                tool_name, tool_need, tool_path
+                            )
+                            sample_claim = await self.tool_creator.create_sample_claim(
+                                tool_name, tool_path
+                            )
+
+                            # Store skill and sample claims
+                            await self.data_manager.create_claim(
+                                content=skill_claim.content,
+                                confidence=skill_claim.confidence,
+                                claim_type=skill_claim.type[0].value,
+                                tags=skill_claim.tags,
+                                state=skill_claim.state,
+                            )
+
+                            await self.data_manager.create_claim(
+                                content=sample_claim.content,
+                                confidence=sample_claim.confidence,
+                                claim_type=sample_claim.type[0].value,
+                                tags=sample_claim.tags,
+                                state=sample_claim.state,
+                            )
+
+                            self._stats["tools_created"] += 1
+                            print(f"Created new tool: {tool_name}")
+
+            except Exception as e:
+                self.logger.error(
+                    f"Error checking tool needs for claim {claim.id}: {e}"
+                )
+
+    async def add_claim(
         self,
         content: str,
         confidence: float,
         claim_type: str,
         tags: Optional[List[str]] = None,
-        validate_with_llm: bool = True,
+        auto_evaluate: bool = True,
         **kwargs,
     ) -> Claim:
         """
-        Add a new claim to the knowledge base
+        Enhanced claim creation with automatic evaluation
 
         Args:
-            content: Claim content (minimum 10 characters)
-            confidence: Confidence score (0.0-1.0)
-            claim_type: Type of claim ("concept", "reference", etc.)
-            tags: Optional topic tags
-            validate_with_llm: Whether to validate claim with LLM
+            content: Claim content
+            confidence: Initial confidence score
+            claim_type: Type of claim
+            tags: Optional tags
+            auto_evaluate: Whether to submit for evaluation
             **kwargs: Additional claim attributes
 
         Returns:
-            Claim: The created claim with generated ID
+            Created claim
         """
         # Validate inputs
         if len(content.strip()) < 10:
@@ -263,307 +379,108 @@ Generate up to {max_claims} claims with confidence ≥ {confidence_threshold}.""
                 f"Invalid claim type: {claim_type}. Valid types: {valid_types}"
             )
 
-        # Create initial claim
-        claim = Claim(
-            id=f"claim_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{len(content)}",
+        # Create claim
+        claim = await self.data_manager.create_claim(
             content=content.strip(),
             confidence=confidence,
-            type=[claim_type_enum],
+            claim_type=claim_type_enum.value,
             tags=tags or [],
+            state=ClaimState.EXPLORE,
             **kwargs,
         )
 
-        # Validate with LLM if requested and available
-        if validate_with_llm and self.llm_bridge and self.llm_bridge.is_available():
-            try:
-                validated_claim = self._validate_claim_with_llm(claim)
-                print(f"Created and validated claim: {validated_claim}")
-                return validated_claim
-            except Exception as e:
-                print(f"⚠️  LLM validation failed: {e}, using original claim")
+        # Submit for evaluation if enabled
+        if auto_evaluate and self._services_started:
+            await self.async_evaluation.submit_claim(claim)
 
-        print(f"Created claim: {claim}")
+        self._stats["claims_processed"] += 1
+        print(f"Created claim: {claim.id}")
 
-        # TODO: Store claim in backend
         return claim
 
-    def _validate_claim_with_llm(self, claim: Claim) -> Claim:
-        """Validate claim using LLM bridge"""
-        prompt = f"""You are an expert fact-checker. Evaluate this claim for accuracy and provide an appropriate confidence score.
-
-Claim: "{claim.content}"
-Original confidence: {claim.confidence}
-Claim type: {claim.type[0].value if claim.type else "unknown"}
-
-Please analyze:
-1. Factual accuracy
-2. Completeness of the claim
-3. Any missing context or qualifications
-4. Appropriate confidence score (0.0-1.0)
-
-Respond with:
-- VALIDATED: [True/False] 
-- CONFIDENCE: [0.0-1.0]
-- REASONING: [Brief explanation]
-- SUGGESTED_EDIT: [Improved claim text if needed, otherwise "NO_CHANGE"]"""
-
-        # Create LLM request
-        llm_request = LLMRequest(
-            prompt=prompt,
-            context_claims=[claim],
-            max_tokens=500,
-            temperature=0.3,
-            task_type="validate",
-        )
-
-        # Process with LLM
-        response = self.llm_bridge.process(llm_request)
-
-        if response.success and response.content:
-            # Parse validation response
-            validated_claim = self._parse_validation_response(claim, response.content)
-            return validated_claim
-        else:
-            raise Exception(f"LLM validation failed: {response.errors}")
-
-    def _parse_validation_response(
-        self, original_claim: Claim, validation_text: str
-    ) -> Claim:
-        """Parse LLM validation response and update claim"""
+    async def get_evaluation_status(self, claim_id: str) -> Dict[str, Any]:
+        """Get evaluation status for a specific claim"""
         try:
-            # Simple parsing of validation response
-            lines = validation_text.strip().split("\n")
-            updates = {}
+            claim = await self.data_manager.get_claim(claim_id)
+            if not claim:
+                return {"error": "Claim not found"}
 
-            for line in lines:
-                if line.startswith("VALIDATED:"):
-                    updates["validated"] = "True" in line
-                elif line.startswith("CONFIDENCE:"):
-                    try:
-                        updates["confidence"] = float(line.split(":")[1].strip())
-                    except:
-                        pass
-                elif line.startswith("SUGGESTED_EDIT:"):
-                    edit = line.split(":", 1)[1].strip()
-                    if edit != "NO_CHANGE":
-                        updates["content"] = edit
-
-            # Create updated claim
-            updated_claim = Claim(
-                id=original_claim.id,
-                content=updates.get("content", original_claim.content),
-                confidence=updates.get("confidence", original_claim.confidence),
-                type=original_claim.type,
-                state=ClaimState.VALIDATED
-                if updates.get("validated", False)
-                else ClaimState.EXPLORE,
-                tags=original_claim.tags,
-                created=original_claim.created,
-                updated=datetime.utcnow(),
-            )
-
-            return updated_claim
-
+            return {
+                "claim_id": claim_id,
+                "state": claim.state.value,
+                "confidence": claim.confidence,
+                "last_updated": claim.updated.isoformat(),
+                "evaluation_active": claim_id
+                in self.async_evaluation._active_evaluations,
+            }
         except Exception as e:
-            print(f"Error parsing validation response: {e}")
-            return original_claim
+            return {"error": str(e)}
 
-    def _generate_mock_claims(
-        self, query: str, max_claims: int, claim_types: Optional[List[str]]
-    ) -> List[Claim]:
-        """Generate mock claims for demonstration"""
-        mock_claims = [
-            Claim(
-                id="mock_001",
-                content=f"{query} requires understanding of fundamental concepts and principles",
-                confidence=0.85,
-                type=[ClaimType.CONCEPT],
-                tags=[
-                    "fundamental",
-                    query.lower().split()[0] if query.split() else "topic",
-                ],
-            ),
-            Claim(
-                id="mock_002",
-                content=f"Research on {query} shows significant progress in recent years",
-                confidence=0.92,
-                type=[ClaimType.REFERENCE],
-                tags=["research", "progress"],
-            ),
-            Claim(
-                id="mock_003",
-                content=f"Mastering {query} involves developing specific skills and competencies",
-                confidence=0.78,
-                type=[ClaimType.CONCEPT],
-                tags=["mastery", "skills"],
-            ),
-            Claim(
-                id="mock_004",
-                content=f"The goal of studying {query} is to achieve comprehensive understanding",
-                confidence=0.88,
-                type=[ClaimType.GOAL],
-                tags=["understanding", "comprehensive"],
-            ),
-            Claim(
-                id="mock_005",
-                content=f"An example of {query} can be found in practical applications",
-                confidence=0.75,
-                type=[ClaimType.EXAMPLE],
-                tags=["example", "practical"],
-            ),
-            Claim(
-                id="mock_006",
-                content=f"The thesis regarding {query} suggests multiple perspectives exist",
-                confidence=0.82,
-                type=[ClaimType.THESIS],
-                tags=["thesis", "perspectives"],
-            ),
-        ]
+    async def wait_for_evaluation(
+        self, claim_id: str, timeout: int = 60
+    ) -> Dict[str, Any]:
+        """Wait for claim evaluation to complete"""
+        start_time = time.time()
 
-        # Filter by claim types if specified
-        if claim_types:
-            filtered_types = [t.lower() for t in claim_types]
-            mock_claims = [
-                c for c in mock_claims if any(t.value in filtered_types for t in c.type)
-            ]
+        while time.time() - start_time < timeout:
+            status = await self.get_evaluation_status(claim_id)
 
-        return mock_claims[:max_claims]
+            if "error" in status:
+                return status
+
+            if status["state"] == ClaimState.VALIDATED.value:
+                return {"success": True, "claim": status}
+
+            if not status["evaluation_active"]:
+                return {
+                    "success": False,
+                    "reason": "Evaluation not active",
+                    "claim": status,
+                }
+
+            await asyncio.sleep(2)
+
+        return {"success": False, "reason": "Timeout", "claim": status}
 
     def get_statistics(self) -> Dict[str, Any]:
-        """Get system statistics and health metrics"""
-        return {
+        """Get comprehensive system statistics"""
+        base_stats = {
             "config": self.config.to_dict(),
-            "database_type": self.config.database_type,
-            "database_path": self.config.database_path,
-            "llm_enabled": self.config.llm_enabled,
-            "claims_count": 0,  # TODO: Get actual count
-            "tools_count": len(self.tools),
-            "skills_count": len(self.skills),
-            "system_healthy": True,
-            "uptime": "N/A",  # TODO: Track actual uptime
+            "services_running": self._services_started,
+            "claims_processed": self._stats["claims_processed"],
+            "tools_created": self._stats["tools_created"],
+            "total_evaluation_time": self._stats["evaluation_time_total"],
+            "session_count": self._stats["session_count"],
         }
 
-    def _load_tools(self):
-        """Load all tools from the tools/ directory"""
-        tools_dir = Path("tools")
-        if not tools_dir.exists():
-            print("Tools directory not found")
-            return
+        # Add async evaluation stats
+        if self._services_started:
+            eval_stats = self.async_evaluation.get_statistics()
+            base_stats.update({"evaluation_service": eval_stats})
 
-        # Find all Python files in tools directory
-        tool_files = list(tools_dir.glob("*.py"))
+        # Add tool creator stats
+        tool_stats = self.tool_creator.get_created_tools()
+        base_stats.update({"created_tools": tool_stats})
 
-        for tool_file in tool_files:
-            if tool_file.name == "__init__.py":
-                continue
+        return base_stats
 
-            try:
-                # Load the module
-                spec = importlib.util.spec_from_file_location(tool_file.stem, tool_file)
-                module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(module)
+    def _update_stats(self, processing_time: float, claims_count: int):
+        """Update internal statistics"""
+        self._stats["evaluation_time_total"] += processing_time
+        self._stats["claims_processed"] += claims_count
 
-                # Find all functions in the module
-                for attr_name in dir(module):
-                    attr = getattr(module, attr_name)
-                    if callable(attr) and not attr_name.startswith("_"):
-                        self.tools[attr_name] = attr
+    async def __aenter__(self):
+        """Async context manager entry"""
+        await self.start_services()
+        return self
 
-                print(f"✅ Loaded tool: {tool_file.name}")
-
-            except Exception as e:
-                print(f"❌ Failed to load tool {tool_file.name}: {e}")
-
-    def _load_skills(self):
-        """Load all skill claims from the skills/ directory"""
-        skills_dir = Path("skills")
-        if not skills_dir.exists():
-            print("Skills directory not found")
-            return
-
-        # Find all Python files in skills directory
-        skill_files = list(skills_dir.glob("*.py"))
-
-        for skill_file in skill_files:
-            if skill_file.name == "__init__.py":
-                continue
-
-            try:
-                # Load the module
-                spec = importlib.util.spec_from_file_location(
-                    skill_file.stem, skill_file
-                )
-                module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(module)
-
-                # Look for create_*_skills functions
-                for attr_name in dir(module):
-                    if attr_name.startswith("create_") and attr_name.endswith(
-                        "_skills"
-                    ):
-                        create_func = getattr(module, attr_name)
-                        if callable(create_func):
-                            skills = create_func()
-                            self.skills.extend(skills)
-                            print(
-                                f"✅ Loaded {len(skills)} skills from {skill_file.name}"
-                            )
-                            break
-
-            except Exception as e:
-                print(f"❌ Failed to load skills from {skill_file.name}: {e}")
-
-    def get_tool_examples(self) -> List[str]:
-        """Get examples from all loaded tools"""
-        examples = []
-        for tool_name, tool_func in self.tools.items():
-            if tool_name == "examples":
-                continue  # Skip the examples function itself
-            try:
-                # Look for examples function in the tool's module
-                module_name = tool_func.__module__
-                if module_name:
-                    module = sys.modules.get(module_name)
-                    if module and hasattr(module, "examples"):
-                        tool_examples = module.examples()
-                        examples.extend(tool_examples)
-            except:
-                pass
-        return examples
-
-    def get_relevant_context(self, query: str) -> List[Claim]:
-        """Get relevant skills and tool examples for a query"""
-        relevant_claims = []
-
-        # Add skills that match query tags or content
-        query_lower = query.lower()
-        for skill in self.skills:
-            if any(tag.lower() in query_lower for tag in skill.tags) or any(
-                keyword in skill.content.lower() for keyword in query_lower.split()
-            ):
-                relevant_claims.append(skill)
-
-        # Add tool examples as claims
-        examples = self.get_tool_examples()
-        for example in examples:
-            if any(keyword in example.lower() for keyword in query_lower.split()):
-                claim = Claim(
-                    id=f"tool_example_{len(relevant_claims)}",
-                    content=example,
-                    confidence=0.8,
-                    type=[ClaimType.EXAMPLE],
-                    tags=["tool", "example"],
-                )
-                relevant_claims.append(claim)
-
-        return relevant_claims
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Async context manager exit"""
+        await self.stop_services()
 
 
 class ExplorationResult:
-    """
-    Result of an exploration query
-    Provides comprehensive results with claims and insights
-    """
+    """Enhanced exploration result with evaluation information"""
 
     def __init__(
         self,
@@ -573,6 +490,8 @@ class ExplorationResult:
         search_time: float,
         confidence_threshold: float,
         max_claims: int,
+        evaluation_pending: bool = False,
+        tools_created: int = 0,
     ):
         self.query = query
         self.claims = claims
@@ -580,29 +499,30 @@ class ExplorationResult:
         self.search_time = search_time
         self.confidence_threshold = confidence_threshold
         self.max_claims = max_claims
+        self.evaluation_pending = evaluation_pending
+        self.tools_created = tools_created
         self.timestamp = datetime.utcnow()
 
-    def __str__(self) -> str:
-        return f"ExplorationResult(query='{self.query}', claims={len(self.claims)}, time={self.search_time:.2f}s)"
-
     def summary(self) -> str:
-        """Provide a human-readable summary of results"""
+        """Provide enhanced summary"""
         if not self.claims:
             return f"No claims found for '{self.query}' above confidence threshold {self.confidence_threshold}"
 
         lines = [
-            f"🎯 Explored: '{self.query}'",
+            f"🎯 Enhanced Exploration: '{self.query}'",
             f"📊 Found: {len(self.claims)} claims (of {self.total_found} total)",
             f"⏱️  Time: {self.search_time:.2f}s",
             f"🎚️  Confidence: ≥{self.confidence_threshold}",
+            f"🔄 Evaluation: {'Pending' if self.evaluation_pending else 'Disabled'}",
+            f"🔧 Tools Created: {self.tools_created}",
             "",
             "📋 Top Claims:",
         ]
 
-        for i, claim in enumerate(self.claims[:5], 1):  # Show top 5
-            type_str = ",".join([t.value for t in claim.type])
+        for i, claim in enumerate(self.claims[:5], 1):
+            type_str = claim.type[0].value if claim.type else "unknown"
             lines.append(
-                f"  {i}. [{claim.confidence:.2f}, {type_str}] {claim.content[:100]}{'...' if len(claim.content) > 100 else ''}"
+                f"  {i}. [{claim.confidence:.2f}, {type_str}, {claim.state.value}] {claim.content[:100]}{'...' if len(claim.content) > 100 else ''}"
             )
 
         if len(self.claims) > 5:
@@ -611,49 +531,53 @@ class ExplorationResult:
         return "\n".join(lines)
 
 
-# Convenience functions for immediate use
-def explore(query: str, max_claims: int = 10, **kwargs) -> ExplorationResult:
-    """
-    Quick exploration function - no setup required
-    """
-    cf = Conjecture()
-    return cf.explore(query, max_claims, **kwargs)
+# Convenience functions
+async def explore(query: str, **kwargs) -> ExplorationResult:
+    """Quick exploration function"""
+    async with Conjecture() as cf:
+        return await cf.explore(query, **kwargs)
 
 
-def add_claim(content: str, confidence: float, claim_type: str, **kwargs) -> Claim:
-    """
-    Quick add claim function - no setup required
-    """
-    cf = Conjecture()
-    return cf.add_claim(content, confidence, claim_type, **kwargs)
+async def add_claim(
+    content: str, confidence: float, claim_type: str, **kwargs
+) -> Claim:
+    """Quick claim creation function"""
+    async with Conjecture() as cf:
+        return await cf.add_claim(content, confidence, claim_type, **kwargs)
 
 
 if __name__ == "__main__":
-    print("🧪 Testing Conjecture API")
-    print("=" * 30)
 
-    # Test initialization
-    cf = Conjecture()
-    print(f"✅ Conjecture initialized: {cf.config}")
+    async def test_enhanced_conjecture():
+        print("🧪 Testing Enhanced Conjecture")
+        print("=" * 40)
 
-    # Test exploration
-    print("\n🔍 Testing exploration...")
-    result = cf.explore("machine learning", max_claims=3)
-    print(result.summary())
+        async with Conjecture() as cf:
+            # Test enhanced exploration
+            print("\n🔍 Testing enhanced exploration...")
+            result = await cf.explore("quantum computing applications", max_claims=3)
+            print(result.summary())
 
-    # Test adding claim
-    print("\n➕ Testing claim creation...")
-    claim = cf.add_claim(
-        content="Machine learning algorithms require substantial training data to achieve optimal performance",
-        confidence=0.87,
-        claim_type="concept",
-        tags=["machine learning", "algorithms", "performance"],
-    )
-    print(f"✅ Created: {claim}")
+            # Test claim creation
+            print("\n➕ Testing enhanced claim creation...")
+            claim = await cf.add_claim(
+                content="Enhanced Conjecture provides async evaluation and dynamic tool creation",
+                confidence=0.9,
+                claim_type="concept",
+                tags=["architecture", "enhancement"],
+            )
+            print(f"✅ Created claim: {claim.id}")
 
-    # Test statistics
-    print("\n📊 Testing statistics...")
-    stats = cf.get_statistics()
-    print(f"System stats: {stats}")
+            # Wait for evaluation
+            print("\n⏳ Waiting for evaluation...")
+            eval_result = await cf.wait_for_evaluation(claim.id, timeout=10)
+            print(f"Evaluation result: {eval_result}")
 
-    print("\n🎉 Conjecture API test completed!")
+            # Test statistics
+            print("\n📊 Testing enhanced statistics...")
+            stats = cf.get_statistics()
+            print(f"Enhanced stats: {stats}")
+
+        print("\n🎉 Enhanced Conjecture tests completed!")
+
+    asyncio.run(test_enhanced_conjecture())

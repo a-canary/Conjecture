@@ -18,7 +18,7 @@ from .bridge import LLMBridge, LLMRequest
 from .context_collector import ContextCollector
 from .response_parser import ResponseParser
 from .tool_executor import ToolExecutor
-from data.data_manager import DataManager
+from ..data.data_manager import DataManager
 
 
 class ClaimScope(Enum):
@@ -78,7 +78,7 @@ class AsyncClaimEvaluationService:
         self.data_manager = data_manager
         self.tool_executor = tool_executor
         self.response_parser = ResponseParser()
-        
+
         self.max_concurrent_evaluations = max_concurrent_evaluations
         self.evaluation_timeout = evaluation_timeout
 
@@ -142,7 +142,9 @@ class AsyncClaimEvaluationService:
 
         self.logger.info("Async Claim Evaluation Service stopped")
 
-    async def submit_claim(self, claim: Claim, priority_boost: int = 0, is_dirty: bool = False):
+    async def submit_claim(
+        self, claim: Claim, priority_boost: int = 0, is_dirty: bool = False
+    ):
         """Submit a claim for evaluation"""
         if not claim.id:
             raise ValueError("Claim must have an ID")
@@ -150,15 +152,13 @@ class AsyncClaimEvaluationService:
         # Calculate priority based on multiple factors
         base_priority = self._calculate_priority(claim)
         adjusted_priority = base_priority + priority_boost
-        
+
         # Dirty claims get higher priority
         if is_dirty:
             adjusted_priority -= 500
 
         task = EvaluationTask(
-            priority=adjusted_priority, 
-            claim_id=claim.id,
-            is_dirty=is_dirty
+            priority=adjusted_priority, claim_id=claim.id, is_dirty=is_dirty
         )
 
         async with self._queue_lock:
@@ -180,15 +180,15 @@ class AsyncClaimEvaluationService:
             # For now, we'll assume a filter method exists or we implement a scan
             # This is a placeholder for the actual data query
             dirty_claims = await self.data_manager.get_dirty_claims()
-            
+
             count = 0
             for claim in dirty_claims:
                 await self.submit_claim(claim, is_dirty=True)
                 count += 1
-            
+
             self._stats["dirty_claims_processed"] += count
             self.logger.info(f"Queued {count} dirty claims for evaluation")
-            
+
         except Exception as e:
             self.logger.error(f"Error processing dirty claims batch: {e}")
 
@@ -249,8 +249,8 @@ class AsyncClaimEvaluationService:
                 # Skip if already being evaluated
                 if task.claim_id not in self._active_evaluations:
                     return task
-                
-                # If already active, we might want to re-queue it if it's a new request, 
+
+                # If already active, we might want to re-queue it if it's a new request,
                 # but for now we just drop it as the active one will handle it
                 # or we could put it back? Let's just skip.
 
@@ -279,13 +279,17 @@ class AsyncClaimEvaluationService:
                 raise ValueError(f"Claim {claim_id} not found")
 
             # Build context
-            context_result = await self.context_collector.collect_context_for_claim(claim.content, {})
+            context_result = await self.context_collector.collect_context_for_claim(
+                claim.content, {}
+            )
             # Convert context result to list of claims/strings for LLM
             # The context_collector returns a dict with 'skills', 'samples'
             # We need to format this for the LLM
-            
+
             # Evaluate with confidence-driven continuation
-            updated_claim = await self._confidence_driven_evaluation(claim, context_result)
+            updated_claim = await self._confidence_driven_evaluation(
+                claim, context_result
+            )
 
             # Clear dirty flag if it was dirty
             if task.is_dirty:
@@ -361,7 +365,9 @@ class AsyncClaimEvaluationService:
             iteration += 1
 
             # Build evaluation prompt
-            prompt = self._build_evaluation_prompt(current_claim, context_result, iteration)
+            prompt = self._build_evaluation_prompt(
+                current_claim, context_result, iteration
+            )
 
             # Create LLM request
             llm_request = LLMRequest(
@@ -379,35 +385,37 @@ class AsyncClaimEvaluationService:
 
             # Parse response
             parsed_response = self.response_parser.parse_response(response.content)
-            
+
             # Execute tool calls if any
             if parsed_response.tool_calls:
-                await self._execute_tool_calls(parsed_response.tool_calls, current_claim.id)
+                await self._execute_tool_calls(
+                    parsed_response.tool_calls, current_claim.id
+                )
                 # In a real loop, we would feed the tool results back into the next iteration
-                # For now, we just continue, assuming the tool execution might have side effects 
+                # For now, we just continue, assuming the tool execution might have side effects
                 # or we'd append results to context in a more complex version.
-                # To keep it simple, we assume tool calls are for information gathering 
+                # To keep it simple, we assume tool calls are for information gathering
                 # and we might need to re-prompt with results.
                 # TODO: Append tool results to context for next iteration
                 continue
 
             # Check for confidence updates in text content (heuristic or structured)
-            # The ResponseParser mainly handles tool calls. 
+            # The ResponseParser mainly handles tool calls.
             # We might need a specific parser for confidence or rely on the LLM to output a tool call for it.
             # Let's assume the LLM uses a specific tool for updating confidence/claim.
-            
+
             # If no tool calls, we check if we can extract confidence/validation
             # This part depends on the prompt instructions.
             # If the LLM outputs "Confidence: 0.9", we parse it.
-            
+
             confidence_update = self._extract_confidence(parsed_response.text_content)
             if confidence_update is not None:
                 current_claim.confidence = confidence_update
                 if confidence_update >= 0.8:
                     current_claim.state = ClaimState.VALIDATED
                     break
-            
-            # If we have no tool calls and no explicit confidence update, 
+
+            # If we have no tool calls and no explicit confidence update,
             # but we have text, we might assume it's an analysis.
             # We stop if we run out of iterations.
 
@@ -443,6 +451,7 @@ RESPONSE FORMAT:
     def _extract_confidence(self, text: str) -> Optional[float]:
         """Extract confidence score from text"""
         import re
+
         match = re.search(r"Confidence:\s*(0\.\d+|1\.0|0|1)", text, re.IGNORECASE)
         if match:
             try:
@@ -503,9 +512,7 @@ RESPONSE FORMAT:
                 current_avg * (total_evaluations - 1) + evaluation_time
             ) / total_evaluations
 
-    async def _execute_tool_calls(
-        self, tool_calls: List[ToolCall], claim_id: str
-    ):
+    async def _execute_tool_calls(self, tool_calls: List[ToolCall], claim_id: str):
         """Execute tool calls and emit events"""
         for tool_call in tool_calls:
             await self._emit_event(
@@ -513,13 +520,12 @@ RESPONSE FORMAT:
                     claim_id=claim_id, event_type="tool_called", data=tool_call.__dict__
                 )
             )
-            
+
             # Execute tool
             result = await self.tool_executor.execute_tool(
-                tool_name=tool_call.name,
-                params=tool_call.parameters
+                tool_name=tool_call.name, params=tool_call.parameters
             )
-            
+
             # Log result or handle it
             # In a full implementation, we'd return this to the loop
             self.logger.info(f"Tool execution result: {result}")

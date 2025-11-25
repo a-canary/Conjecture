@@ -127,7 +127,7 @@ def get_config() -> Config:
     return config
 
 
-# Add confidence threshold methods to Config class
+# Add confidence threshold methods directly to Config class
 def set_confident_threshold(self, threshold: float):
     """Set session-level confident threshold override"""
     if 0.0 <= threshold <= 1.0:
@@ -146,7 +146,7 @@ def reset_confident_threshold(self):
     self.session_confident_threshold = None
 
 
-# Monkey patch the methods onto the Config class
+# Add methods to class
 Config.set_confident_threshold = set_confident_threshold
 Config.get_effective_confident_threshold = get_effective_confident_threshold
 Config.reset_confident_threshold = reset_confident_threshold

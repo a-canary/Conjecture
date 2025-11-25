@@ -8,7 +8,8 @@ Each tool module should be imported to register its functions with the ToolRegis
 # Import the registry system
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from src.tools.registry import register_tool
 
@@ -20,6 +21,7 @@ from . import apply_diff
 
 # Ensure registry auto-discovers tools from this directory
 from src.tools.registry import ToolRegistry
-ToolRegistry.auto_discover_tools(os.path.dirname(__file__))
 
-__all__ = ['ToolRegistry', 'register_tool']
+ToolRegistry._discover_tools(os.path.dirname(__file__))
+
+__all__ = ["ToolRegistry", "register_tool"]

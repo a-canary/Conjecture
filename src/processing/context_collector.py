@@ -10,7 +10,7 @@ import logging
 import re
 
 from ..core.models import Claim
-from data.data_manager import DataManager
+from ..data.data_manager import DataManager
 
 
 logger = logging.getLogger(__name__)

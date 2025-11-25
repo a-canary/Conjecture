@@ -72,6 +72,38 @@ class LLMBridge:
         self.provider = provider
         self.fallback_provider = None
 
+    def process(self, request: LLMRequest) -> LLMResponse:
+        """Process request using available provider"""
+        if self.provider and hasattr(self.provider, "process_request"):
+            # Handle simple provider interface
+            result = self.provider.process_request(
+                request.prompt,
+                max_tokens=request.max_tokens,
+                temperature=request.temperature,
+            )
+            return LLMResponse(
+                success=result["success"],
+                content=result["content"],
+                generated_claims=[],
+                metadata={},
+                errors=[result.get("error", "")] if not result["success"] else [],
+                processing_time=0.0,
+                tokens_used=0,
+            )
+        elif self.provider:
+            # Handle original LLMProvider interface
+            return self.provider.process_request(request)
+        else:
+            return LLMResponse(
+                success=False,
+                content="",
+                generated_claims=[],
+                metadata={},
+                errors=["No LLM provider available"],
+                processing_time=0.0,
+                tokens_used=0,
+            )
+
     def set_provider(self, provider: LLMProvider):
         """Set primary LLM provider"""
         self.provider = provider
@@ -79,6 +111,12 @@ class LLMBridge:
     def set_fallback(self, provider: LLMProvider):
         """Set fallback provider for resilience"""
         self.fallback_provider = provider
+
+    def is_available(self) -> bool:
+        """Check if any provider is available"""
+        if self.provider and hasattr(self.provider, "is_available"):
+            return self.provider.is_available()
+        return self.provider is not None
 
     def process(self, request: LLMRequest) -> LLMResponse:
         """
