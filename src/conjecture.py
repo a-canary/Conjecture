@@ -17,7 +17,7 @@ from src.processing.llm.simple_provider import create_simple_provider
 from src.processing.async_eval import AsyncClaimEvaluationService
 from src.processing.context_collector import ContextCollector
 from src.processing.tool_manager import DynamicToolCreator
-from src.data.data_manager import get_data_manager
+from src.data.repositories import get_data_manager, RepositoryFactory
 
 
 class Conjecture:
@@ -30,8 +30,11 @@ class Conjecture:
         """Initialize Enhanced Conjecture with all components"""
         self.config = config or Config()
 
-        # Initialize data layer
+        # Initialize data layer with repository pattern
         self.data_manager = get_data_manager(use_mock_embeddings=False)
+        self.claim_repository = RepositoryFactory.create_claim_repository(
+            self.data_manager
+        )
 
         # Initialize LLM bridge
         self._initialize_llm_bridge()
@@ -140,16 +143,17 @@ class Conjecture:
                 if claim.confidence >= confidence_threshold
             ]
 
-            # Store claims in data layer
+            # Store claims using repository pattern
             stored_claims = []
             for claim in filtered_claims:
-                stored_claim = await self.data_manager.create_claim(
-                    content=claim.content,
-                    confidence=claim.confidence,
-                    claim_type=claim.type[0].value,
-                    tags=claim.tags,
-                    state=ClaimState.EXPLORE,
-                )
+                claim_data = {
+                    "content": claim.content,
+                    "confidence": claim.confidence,
+                    "claim_type": claim.type[0].value,
+                    "tags": claim.tags,
+                    "state": ClaimState.EXPLORE,
+                }
+                stored_claim = await self.claim_repository.create(claim_data)
                 stored_claims.append(stored_claim)
 
                 # Submit for evaluation if enabled
@@ -379,15 +383,16 @@ Generate up to {max_claims} high-quality claims."""
                 f"Invalid claim type: {claim_type}. Valid types: {valid_types}"
             )
 
-        # Create claim
-        claim = await self.data_manager.create_claim(
-            content=content.strip(),
-            confidence=confidence,
-            claim_type=claim_type_enum.value,
-            tags=tags or [],
-            state=ClaimState.EXPLORE,
+        # Create claim using repository
+        claim_data = {
+            "content": content.strip(),
+            "confidence": confidence,
+            "claim_type": claim_type_enum.value,
+            "tags": tags or [],
+            "state": ClaimState.EXPLORE,
             **kwargs,
-        )
+        }
+        claim = await self.claim_repository.create(claim_data)
 
         # Submit for evaluation if enabled
         if auto_evaluate and self._services_started:
@@ -401,7 +406,7 @@ Generate up to {max_claims} high-quality claims."""
     async def get_evaluation_status(self, claim_id: str) -> Dict[str, Any]:
         """Get evaluation status for a specific claim"""
         try:
-            claim = await self.data_manager.get_claim(claim_id)
+            claim = await self.claim_repository.get_by_id(claim_id)
             if not claim:
                 return {"error": "Claim not found"}
 
