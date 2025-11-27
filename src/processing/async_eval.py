@@ -13,7 +13,7 @@ import logging
 from collections import defaultdict
 import heapq
 
-from ..core.models import Claim, ClaimState, ClaimType, ToolCall, ExecutionResult
+from ..core.models import Claim, ClaimState, ToolCall, ExecutionResult
 from .bridge import LLMBridge, LLMRequest
 from .context_collector import ContextCollector
 from .response_parser import ResponseParser
@@ -431,7 +431,7 @@ class AsyncClaimEvaluationService:
 
 CLAIM: {claim.content}
 CURRENT CONFIDENCE: {claim.confidence}
-TYPE: {claim.type[0].value if claim.type else "unknown"}
+TAGS: {",".join(claim.tags) if claim.tags else "none"}
 
 CONTEXT:
 {context_str}
@@ -467,10 +467,10 @@ RESPONSE FORMAT:
         # Higher priority for higher confidence claims
         priority -= int(claim.confidence * 200)
 
-        # Higher priority for certain types
-        if claim.type and ClaimType.CONCEPT in claim.type:
+        # Higher priority for certain tags
+        if claim.tags and "concept" in claim.tags:
             priority -= 100
-        elif claim.type and ClaimType.THESIS in claim.type:
+        elif claim.tags and "thesis" in claim.tags:
             priority -= 50
 
         # Lower priority for older claims

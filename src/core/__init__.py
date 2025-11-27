@@ -11,7 +11,7 @@ from .models import (
     Claim,
     ClaimBatch,
     ClaimState,
-    ClaimType,
+    ClaimState,
     DirtyReason,
     ProcessingResult,
     ToolCall,

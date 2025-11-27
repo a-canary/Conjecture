@@ -15,13 +15,13 @@ from src.data.chroma_integration import ChromaIntegration
 def test_basic_claim_creation():
     """Test basic claim creation"""
     claim = Claim(
-        id="test_001",
+        id="c0000001",
         content="Quantum encryption uses photon polarization",
         confidence=0.85,
         type=[ClaimType.CONCEPT],
         tags=["quantum", "encryption"],
     )
-    assert claim.id == "test_001"
+    assert claim.id == "c0000001"
     assert claim.confidence == 0.85
     assert claim.state == ClaimState.EXPLORE
     print("✅ Basic claim creation: PASS")
@@ -45,7 +45,7 @@ def test_add_claim():
         return False
 
     claim = Claim(
-        id="test_002",
+        id="c0000002",
         content="Test claim for addition",
         confidence=0.9,
         type=[ClaimType.CONCEPT],

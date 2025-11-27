@@ -1,38 +1,67 @@
 {
   "summary": {
-    "total": 25,
-    "passed": 25,
-    "failed": 0,
-    "success_rate": 100.0,
-    "duration": 24.78800320625305
+    "total": 12,
+    "passed": 0,
+    "failed": 12,
+    "success_rate": 0.0,
+    "duration": 0.0010004043579101562
   },
   "unit_tests": {
-    "total": 8,
-    "passed": 8,
-    "failed": 0,
-    "success_rate": 100.0,
-    "errors": []
+    "total": 3,
+    "passed": 0,
+    "failed": 3,
+    "success_rate": 0.0,
+    "errors": [
+      "Claim Model: No module named 'src'",
+      "Tool Registry: No module named 'src'",
+      "LLM Inference: No module named 'src'"
+    ]
   },
   "integration_tests": {
-    "total": 6,
-    "passed": 6,
-    "failed": 0,
-    "success_rate": 100.0,
-    "errors": []
+    "total": 3,
+    "passed": 0,
+    "failed": 3,
+    "success_rate": 0.0,
+    "errors": [
+      "Claims -> LLM Inference: No module named 'src'",
+      "LLM Inference -> Tools: No module named 'src'",
+      "Complete Flow Integration: No module named 'src'"
+    ]
   },
   "e2e_tests": {
-    "total": 6,
-    "passed": 6,
-    "failed": 0,
-    "success_rate": 100.0,
-    "errors": []
+    "total": 3,
+    "passed": 0,
+    "failed": 3,
+    "success_rate": 0.0,
+    "errors": [
+      "Research Assistant Scenario: No module named 'src'",
+      "Code Generation Scenario: No module named 'src'",
+      "Multi-Turn Conversation: No module named 'src'"
+    ]
   },
   "compliance_tests": {
-    "total": 5,
-    "passed": 5,
-    "failed": 0,
-    "success_rate": 100.0,
-    "errors": []
+    "total": 3,
+    "passed": 0,
+    "failed": 3,
+    "success_rate": 0.0,
+    "errors": [
+      "No Circular Dependencies: No module named 'src'",
+      "Separation of Concerns: No module named 'src'",
+      "Pure Function Design: No module named 'src'"
+    ]
   },
-  "errors": []
+  "errors": [
+    "Claim Model: No module named 'src'",
+    "Tool Registry: No module named 'src'",
+    "LLM Inference: No module named 'src'",
+    "Claims -> LLM Inference: No module named 'src'",
+    "LLM Inference -> Tools: No module named 'src'",
+    "Complete Flow Integration: No module named 'src'",
+    "Research Assistant Scenario: No module named 'src'",
+    "Code Generation Scenario: No module named 'src'",
+    "Multi-Turn Conversation: No module named 'src'",
+    "No Circular Dependencies: No module named 'src'",
+    "Separation of Concerns: No module named 'src'",
+    "Pure Function Design: No module named 'src'"
+  ]
 }

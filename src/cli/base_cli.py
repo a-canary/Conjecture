@@ -23,7 +23,7 @@ from rich.table import Table
 # Add parent to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from config.config import UnifiedValidationResult, get_primary_provider, validate_config
+from config.config import get_config, validate_config
 
 
 class BaseCLI(ABC):
@@ -242,7 +242,7 @@ class BaseCLI(ABC):
         results.sort(key=lambda x: x["similarity"], reverse=True)
         return results[:limit]
 
-    def _print_validation_result(self, result: UnifiedValidationResult):
+    def _print_validation_result(self, result):
         """Print validation result."""
         if result.success:
             self.console.print(

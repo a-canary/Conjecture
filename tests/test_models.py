@@ -1,15 +1,25 @@
 """
 Comprehensive tests for Pydantic models and validation in the Conjecture data layer.
 """
+
 import pytest
 from datetime import datetime, timedelta
 from typing import List
 import re
 
 from src.core.models import (
-    Claim, Relationship, ClaimFilter, ClaimType, ClaimState, DirtyReason,
-    ClaimNotFoundError, InvalidClaimError, RelationshipError, DataLayerError,
-    validate_claim_id, validate_confidence, generate_claim_id
+    Claim,
+    Relationship,
+    ClaimFilter,
+    ClaimState,
+    DirtyReason,
+    ClaimNotFoundError,
+    InvalidClaimError,
+    RelationshipError,
+    DataLayerError,
+    validate_claim_id,
+    validate_confidence,
+    generate_claim_id,
 )
 
 
@@ -20,7 +30,7 @@ class TestClaimModel:
     def test_valid_claim_creation(self, sample_claim_data):
         """Test creating a valid claim."""
         claim = Claim(**sample_claim_data)
-        
+
         assert claim.id == "c0000001"
         assert claim.content == sample_claim_data["content"]
         assert claim.confidence == 0.95
@@ -29,36 +39,35 @@ class TestClaimModel:
         assert isinstance(claim.created, datetime)
 
     @pytest.mark.models
-    def test_claim_with_minimal_data(self):
+def test_claim_with_minimal_data(self):
         """Test creating a claim with only required fields."""
         claim = Claim(
             id="c0000002",
             content="This is a minimal valid claim with at least 10 characters.",
             confidence=0.5,
-            type=[ClaimType.CONCEPT]
+            tags=["concept"]
         )
         
         assert claim.id == "c0000002"
         assert claim.dirty is True  # Default value
         assert claim.needs_evaluation is True  # New claims need evaluation by default
-        assert claim.tags == []     # Default value
+        assert claim.tags == ["concept"]     # Default value
         assert claim.updated_at is not None  # Has default value
 
     @pytest.mark.models
     def test_claim_id_validation(self):
         """Test claim ID format validation."""
-        # Valid IDs
+# Valid IDs
         valid_ids = ["c0000001", "c1234567", "c9999999"]
         for claim_id in valid_ids:
             claim = Claim(
                 id=claim_id,
                 content="Valid claim for testing ID validation.",
-                confidence=0.7,
-                type=[ClaimType.CONCEPT]
+                confidence=0.7
             )
             assert claim.id == claim_id
 
-        # Invalid IDs
+# Invalid IDs
         invalid_ids = [
             "C0000001",      # Uppercase C
             "c000001",       # Too short
@@ -72,12 +81,11 @@ class TestClaimModel:
         ]
         
         for invalid_id in invalid_ids:
-            with pytest.raises(ValueError, match="Claim ID must be in format c#######"):
+            with pytest.raises(ValueError, match="Claim ID must contain only alphanumeric characters and hyphens"):
                 Claim(
                     id=invalid_id,
                     content="Valid content but invalid ID.",
-                    confidence=0.7,
-                    type=[ClaimType.CONCEPT]
+                    confidence=0.7
                 )
 
     @pytest.mark.models
@@ -85,58 +93,54 @@ class TestClaimModel:
         """Test claim content length validation."""
         # Valid content
         valid_contents = [
-            "A" * 10,                           # Exactly 10 characters
+            "A" * 10,  # Exactly 10 characters
             "This is a valid claim with sufficient length.",
-            "A" * 1000,                         # Long content
-            "特殊字符 and 日本語 and 🚀 emojis"   # Special characters
+            "A" * 1000,  # Long content
+            "特殊字符 and 日本語 and 🚀 emojis",  # Special characters
         ]
-        
+
         for content in valid_contents:
-            claim = Claim(
-                id="c0000001",
-                content=content,
-                confidence=0.7
-            )
+            claim = Claim(id="c0000001", content=content, confidence=0.7)
             assert claim.content == content
 
         # Invalid content
         invalid_contents = [
-            "",               # Empty string
-            "A" * 9,          # Too short (9 characters)
-            "   ",            # Only whitespace
+            "",  # Empty string
+            "A" * 9,  # Too short (9 characters)
+            "   ",  # Only whitespace
         ]
-        
+
         for content in invalid_contents:
-            with pytest.raises(ValueError, match="ensure this value has at least 10 characters"):
-                Claim(
-                    id="c0000001",
-                    content=content,
-                    confidence=0.7
-                )
+            with pytest.raises(
+                ValueError, match="ensure this value has at least 10 characters"
+            ):
+                Claim(id="c0000001", content=content, confidence=0.7)
 
     @pytest.mark.models
     def test_confidence_validation(self):
         """Test confidence score validation."""
         # Valid confidence values
         valid_confidences = [0.0, 0.1, 0.5, 0.99, 1.0]
-        
+
         for confidence in valid_confidences:
             claim = Claim(
                 id="c0000001",
                 content="Valid claim for confidence testing.",
-                confidence=confidence
+                confidence=confidence,
             )
             assert claim.confidence == confidence
 
         # Invalid confidence values
         invalid_confidences = [-0.1, -1.0, 1.1, 2.0, 100.0]
-        
+
         for confidence in invalid_confidences:
-            with pytest.raises(ValueError, match="ensure this value is less than or equal to 1"):
+            with pytest.raises(
+                ValueError, match="ensure this value is less than or equal to 1"
+            ):
                 Claim(
                     id="c0000001",
                     content="Valid claim but invalid confidence.",
-                    confidence=confidence
+                    confidence=confidence,
                 )
 
     @pytest.mark.models
@@ -147,16 +151,16 @@ class TestClaimModel:
             ["science", "physics"],
             ["tag1", "tag2", "tag3"],
             ["single_tag"],
-            [],                    # Empty list
-            ["duplicate", "duplicate", "unique"]  # Duplicates should be removed
+            [],  # Empty list
+            ["duplicate", "duplicate", "unique"],  # Duplicates should be removed
         ]
-        
+
         for tags in valid_tags_cases:
             claim = Claim(
                 id="c0000001",
                 content="Valid claim for tags testing.",
                 confidence=0.7,
-                tags=tags
+                tags=tags,
             )
             # Check duplicates are removed
             assert len(set(claim.tags)) == len(claim.tags)
@@ -164,19 +168,19 @@ class TestClaimModel:
 
         # Invalid tags
         invalid_tags_cases = [
-            ["", "valid_tag"],                 # Empty tag
-            ["valid_tag", None],               # None value
-            ["valid_tag", 123],                # Non-string value
-            [""],                              # Only empty string
+            ["", "valid_tag"],  # Empty tag
+            ["valid_tag", None],  # None value
+            ["valid_tag", 123],  # Non-string value
+            [""],  # Only empty string
         ]
-        
+
         for tags in invalid_tags_cases:
             with pytest.raises(ValueError, match="All tags must be non-empty strings"):
                 Claim(
                     id="c0000001",
                     content="Valid claim but invalid tags.",
                     confidence=0.7,
-                    tags=tags
+                    tags=tags,
                 )
 
     @pytest.mark.models
@@ -208,19 +212,13 @@ class TestClaimModel:
     def test_claim_equality(self):
         """Test claim equality comparison."""
         claim1 = Claim(
-            id="c0000001",
-            content="Test content for equality.",
-            confidence=0.7
+            id="c0000001", content="Test content for equality.", confidence=0.7
         )
         claim2 = Claim(
-            id="c0000001",
-            content="Test content for equality.",
-            confidence=0.7
+            id="c0000001", content="Test content for equality.", confidence=0.7
         )
         claim3 = Claim(
-            id="c0000002",
-            content="Test content for equality.",
-            confidence=0.7
+            id="c0000002", content="Test content for equality.", confidence=0.7
         )
 
         # Claims with same ID should be equal
@@ -231,14 +229,10 @@ class TestClaimModel:
     def test_claim_hash(self):
         """Test claim hashing for use in sets."""
         claim1 = Claim(
-            id="c0000001",
-            content="Test content for hashing.",
-            confidence=0.7
+            id="c0000001", content="Test content for hashing.", confidence=0.7
         )
         claim2 = Claim(
-            id="c0000001",
-            content="Test content for hashing.",
-            confidence=0.7
+            id="c0000001", content="Test content for hashing.", confidence=0.7
         )
 
         # Same claims should have same hash
@@ -249,14 +243,14 @@ class TestClaimModel:
         assert len(claim_set) == 1
 
     @pytest.mark.models
-    def test_claim_confidence_assessment(self):
+def test_claim_confidence_assessment(self):
         """Test claim confidence assessment vs validation."""
         # High confidence claim should be confident
         confident_claim = Claim(
             id="c0000001",
             content="This is a confident claim with high confidence",
             confidence=0.9,
-            type=[ClaimType.CONCEPT]
+            tags=["concept"]
         )
 
         # Low confidence claim should need evaluation
@@ -264,7 +258,7 @@ class TestClaimModel:
             id="c0000002",
             content="This claim needs more evaluation",
             confidence=0.6,
-            type=[ClaimType.CONCEPT]
+            tags=["concept"]
         )
 
         # Test confidence assessment (not validation)
@@ -285,7 +279,7 @@ class TestRelationshipModel:
     def test_valid_relationship_creation(self, sample_relationship_data):
         """Test creating a valid relationship."""
         relationship = Relationship(**sample_relationship_data)
-        
+
         assert relationship.supporter_id == "c0000001"
         assert relationship.supported_id == "c0000002"
         assert relationship.relationship_type == "supports"
@@ -294,11 +288,8 @@ class TestRelationshipModel:
     @pytest.mark.models
     def test_relationship_with_minimal_data(self):
         """Test creating a relationship with only required fields."""
-        relationship = Relationship(
-            supporter_id="c0000001",
-            supported_id="c0000002"
-        )
-        
+        relationship = Relationship(supporter_id="c0000001", supported_id="c0000002")
+
         assert relationship.relationship_type == "supports"  # Default
         assert isinstance(relationship.created, datetime)
 
@@ -306,24 +297,24 @@ class TestRelationshipModel:
     def test_relationship_type_validation(self):
         """Test relationship type validation."""
         valid_types = ["supports", "contradicts", "extends", "clarifies"]
-        
+
         for rel_type in valid_types:
             relationship = Relationship(
                 supporter_id="c0000001",
                 supported_id="c0000002",
-                relationship_type=rel_type
+                relationship_type=rel_type,
             )
             assert relationship.relationship_type == rel_type
 
         # Invalid relationship types
         invalid_types = ["invalid", "related", "references", "", None]
-        
+
         for rel_type in invalid_types:
             with pytest.raises(ValueError, match="Relationship type must be one of"):
                 Relationship(
                     supporter_id="c0000001",
                     supported_id="c0000002",
-                    relationship_type=rel_type
+                    relationship_type=rel_type,
                 )
 
     @pytest.mark.models
@@ -343,12 +334,12 @@ class TestClaimFilterModel:
     def test_empty_filter(self):
         """Test creating an empty filter."""
         filter_obj = ClaimFilter()
-        
+
         assert filter_obj.tags is None
         assert filter_obj.confidence_min is None
         assert filter_obj.confidence_max is None
         assert filter_obj.limit == 100  # Default
-        assert filter_obj.offset == 0   # Default
+        assert filter_obj.offset == 0  # Default
 
     @pytest.mark.models
     def test_filter_with_all_fields(self):
@@ -360,9 +351,9 @@ class TestClaimFilterModel:
             dirty_only=True,
             content_contains="quantum",
             limit=20,
-            offset=10
+            offset=10,
         )
-        
+
         assert filter_obj.tags == ["science", "physics"]
         assert filter_obj.confidence_min == 0.7
         assert filter_obj.confidence_max == 0.9
@@ -375,45 +366,46 @@ class TestClaimFilterModel:
     def test_confidence_range_validation(self):
         """Test confidence range validation."""
         # Valid ranges
-        valid_ranges = [
-            (0.3, 0.7),
-            (0.0, 1.0),
-            (0.5, 0.5),
-            (None, 0.8),
-            (0.2, None)
-        ]
-        
+        valid_ranges = [(0.3, 0.7), (0.0, 1.0), (0.5, 0.5), (None, 0.8), (0.2, None)]
+
         for min_conf, max_conf in valid_ranges:
-            filter_obj = ClaimFilter(
-                confidence_min=min_conf,
-                confidence_max=max_conf
-            )
+            filter_obj = ClaimFilter(confidence_min=min_conf, confidence_max=max_conf)
             assert filter_obj.confidence_min == min_conf
             assert filter_obj.confidence_max == max_conf
 
         # Invalid ranges (max < min)
-        with pytest.raises(ValueError, match="confidence_max must be >= confidence_min"):
+        with pytest.raises(
+            ValueError, match="confidence_max must be >= confidence_min"
+        ):
             ClaimFilter(confidence_min=0.8, confidence_max=0.3)
 
-        with pytest.raises(ValueError, match="confidence_max must be >= confidence_min"):
+        with pytest.raises(
+            ValueError, match="confidence_max must be >= confidence_min"
+        ):
             ClaimFilter(confidence_min=0.7, confidence_max=0.6)
 
     @pytest.mark.models
     def test_filter_bounds_validation(self):
         """Test filter parameter bounds validation."""
         # Valid bounds
-        ClaimFilter(limit=1)      # Minimum
-        ClaimFilter(limit=1000)   # Maximum
-        ClaimFilter(offset=0)     # Minimum
+        ClaimFilter(limit=1)  # Minimum
+        ClaimFilter(limit=1000)  # Maximum
+        ClaimFilter(offset=0)  # Minimum
 
         # Invalid bounds
-        with pytest.raises(ValueError, match="ensure this value is greater than or equal to 1"):
+        with pytest.raises(
+            ValueError, match="ensure this value is greater than or equal to 1"
+        ):
             ClaimFilter(limit=0)
 
-        with pytest.raises(ValueError, match="ensure this value is less than or equal to 1000"):
+        with pytest.raises(
+            ValueError, match="ensure this value is less than or equal to 1000"
+        ):
             ClaimFilter(limit=1001)
 
-        with pytest.raises(ValueError, match="ensure this value is greater than or equal to 0"):
+        with pytest.raises(
+            ValueError, match="ensure this value is greater than or equal to 0"
+        ):
             ClaimFilter(offset=-1)
 
 
@@ -424,7 +416,7 @@ class TestDataConfigModel:
     def test_default_config(self):
         """Test default configuration values."""
         config = DataConfig()
-        
+
         assert config.sqlite_path == "./data/conjecture.db"
         assert config.chroma_path == "./data/vector_db"
         assert config.embedding_model == "all-MiniLM-L6-v2"
@@ -441,9 +433,9 @@ class TestDataConfigModel:
             embedding_model="custom-model",
             cache_size=2000,
             cache_ttl=600,
-            batch_size=50
+            batch_size=50,
         )
-        
+
         assert config.sqlite_path == "/custom/path.db"
         assert config.chroma_path == "/custom/vector"
         assert config.embedding_model == "custom-model"
@@ -455,23 +447,31 @@ class TestDataConfigModel:
     def test_config_bounds_validation(self):
         """Test configuration parameter bounds."""
         # Valid bounds
-        DataConfig(cache_size=0)      # Minimum
-        DataConfig(cache_size=10000)   # Large value
-        DataConfig(cache_ttl=0)        # Minimum
-        DataConfig(batch_size=1)       # Minimum
-        DataConfig(batch_size=1000)    # Maximum
+        DataConfig(cache_size=0)  # Minimum
+        DataConfig(cache_size=10000)  # Large value
+        DataConfig(cache_ttl=0)  # Minimum
+        DataConfig(batch_size=1)  # Minimum
+        DataConfig(batch_size=1000)  # Maximum
 
         # Invalid bounds
-        with pytest.raises(ValueError, match="ensure this value is greater than or equal to 0"):
+        with pytest.raises(
+            ValueError, match="ensure this value is greater than or equal to 0"
+        ):
             DataConfig(cache_size=-1)
 
-        with pytest.raises(ValueError, match="ensure this value is greater than or equal to 0"):
+        with pytest.raises(
+            ValueError, match="ensure this value is greater than or equal to 0"
+        ):
             DataConfig(cache_ttl=-1)
 
-        with pytest.raises(ValueError, match="ensure this value is greater than or equal to 1"):
+        with pytest.raises(
+            ValueError, match="ensure this value is greater than or equal to 1"
+        ):
             DataConfig(batch_size=0)
 
-        with pytest.raises(ValueError, match="ensure this value is less than or equal to 1000"):
+        with pytest.raises(
+            ValueError, match="ensure this value is less than or equal to 1000"
+        ):
             DataConfig(batch_size=1001)
 
 
@@ -487,9 +487,9 @@ class TestProcessingResultModel:
             message="Processed successfully",
             updated_confidence=0.85,
             processing_time=0.123,
-            metadata={"model": "bert", "version": "1.0"}
+            metadata={"model": "bert", "version": "1.0"},
         )
-        
+
         assert result.claim_id == "c0000001"
         assert result.success is True
         assert result.message == "Processed successfully"
@@ -500,11 +500,8 @@ class TestProcessingResultModel:
     @pytest.mark.models
     def test_minimal_processing_result(self):
         """Test creating a processing result with minimal data."""
-        result = ProcessingResult(
-            claim_id="c0000001",
-            success=False
-        )
-        
+        result = ProcessingResult(claim_id="c0000001", success=False)
+
         assert result.claim_id == "c0000001"
         assert result.success is False
         assert result.message is None
@@ -522,17 +519,17 @@ class TestBatchResultModel:
         processing_results = [
             ProcessingResult(claim_id="c0000001", success=True),
             ProcessingResult(claim_id="c0000002", success=False, message="Error"),
-            ProcessingResult(claim_id="c0000003", success=True)
+            ProcessingResult(claim_id="c0000003", success=True),
         ]
-        
+
         batch_result = BatchResult(
             total_items=3,
             successful_items=2,
             failed_items=1,
             results=processing_results,
-            errors=["Processing failed for c0000002"]
+            errors=["Processing failed for c0000002"],
         )
-        
+
         assert batch_result.total_items == 3
         assert batch_result.successful_items == 2
         assert batch_result.failed_items == 1
@@ -584,7 +581,7 @@ class TestUtilityFunctions:
         # Test that it generates correct format
         for i in [0, 1, 10, 100, 1000, 10000, 100000, 1000000]:
             claim_id = generate_claim_id(i)
-            assert claim_id.startswith('c')
+            assert claim_id.startswith("c")
             assert len(claim_id) == 8
             assert claim_id[1:].isdigit()
 
@@ -597,7 +594,7 @@ class TestCustomExceptions:
         """Test ClaimNotFoundError exception."""
         error = ClaimNotFoundError("Claim c0000001 not found")
         assert str(error) == "Claim c0000001 not found"
-        
+
         # Test that it's a proper exception
         with pytest.raises(ClaimNotFoundError):
             raise ClaimNotFoundError("Test message")
@@ -607,7 +604,7 @@ class TestCustomExceptions:
         """Test InvalidClaimError exception."""
         error = InvalidClaimError("Invalid claim data")
         assert str(error) == "Invalid claim data"
-        
+
         with pytest.raises(InvalidClaimError):
             raise InvalidClaimError("Test")
 
@@ -616,7 +613,7 @@ class TestCustomExceptions:
         """Test RelationshipError exception."""
         error = RelationshipError("Cannot create relationship")
         assert str(error) == "Cannot create relationship"
-        
+
         with pytest.raises(RelationshipError):
             raise RelationshipError("Test")
 
@@ -625,7 +622,7 @@ class TestCustomExceptions:
         """Test DataLayerError base exception."""
         error = DataLayerError("Database operation failed")
         assert str(error) == "Database operation failed"
-        
+
         with pytest.raises(DataLayerError):
             raise DataLayerError("Test")
 
@@ -637,24 +634,20 @@ class TestModelIntegration:
     def test_claim_relationship_combination(self):
         """Test using claims and relationships together."""
         claim1 = Claim(
-            id="c0000001",
-            content="First claim in relationship test.",
-            confidence=0.8
+            id="c0000001", content="First claim in relationship test.", confidence=0.8
         )
 
         claim2 = Claim(
-            id="c0000002",
-            content="Second claim in relationship test.",
-            confidence=0.7
+            id="c0000002", content="Second claim in relationship test.", confidence=0.7
         )
-        
+
         relationship = Relationship(
             supporter_id=claim1.id,
             supported_id=claim2.id,
             relationship_type="supports",
-            created_by="user1"
+            created_by="user1",
         )
-        
+
         # Verify relationship links claims correctly
         assert relationship.supporter_id == claim1.id
         assert relationship.supported_id == claim2.id
@@ -665,35 +658,32 @@ class TestModelIntegration:
         """Test batch result processing with multiple claims."""
         claim_ids = ["c0000001", "c0000002", "c0000003"]
         results = []
-        
+
         for claim_id in claim_ids:
             result = ProcessingResult(
-                claim_id=claim_id,
-                success=True,
-                updated_confidence=0.8
+                claim_id=claim_id, success=True, updated_confidence=0.8
             )
             results.append(result)
-        
+
         batch_result = BatchResult(
             total_items=len(claim_ids),
             successful_items=3,
             failed_items=0,
-            results=results
+            results=results,
         )
-        
+
         assert len(batch_result.results) == len(claim_ids)
         assert all(r.success for r in batch_result.results)
 
     @pytest.mark.models
-    def test_filter_with_real_claims(self):
+def test_filter_with_real_claims(self):
         """Test applying filters to real claim data."""
         claim = Claim(
             id="c0000001",
             content="Scientific claim about physics with high confidence.",
             confidence=0.9,
             tags=["science", "physics"],
-            dirty=False,
-            created_by="scientist"
+            is_dirty=False,
         )
         
         # Test various filters
@@ -713,7 +703,7 @@ class TestModelPerformance:
     """Performance tests for model operations."""
 
     @pytest.mark.models
-    def test_claim_creation_performance(self, benchmark):
+def test_claim_creation_performance(self, benchmark):
         """Benchmark claim creation performance."""
         def create_claim():
             return Claim(
@@ -721,7 +711,6 @@ class TestModelPerformance:
                 content="Performance test claim with sufficient content length.",
                 confidence=0.7,
                 tags=["performance", "test"],
-                created_by="perf_user"
             )
         
         result = benchmark(create_claim)
@@ -731,10 +720,10 @@ class TestModelPerformance:
     def test_claim_validation_performance(self, claim_generator):
         """Benchmark claim validation performance."""
         claim_data = claim_generator.generate(1)[0]
-        
+
         def validate_and_create():
             return Claim(**claim_data)
-        
+
         # Should be very fast (<1ms)
         result = benchmark(validate_and_create)
         assert isinstance(result, Claim)
@@ -742,9 +731,10 @@ class TestModelPerformance:
     @pytest.mark.models
     def test_serialization_performance(self, valid_claim: Claim):
         """Benchmark claim serialization performance."""
+
         def serialize_claim():
             return valid_claim.json()
-        
+
         result = benchmark(serialize_claim)
         assert isinstance(result, str)
         assert len(result) > 0
@@ -755,23 +745,23 @@ class TestModelEdgeCases:
     """Test edge cases and boundary conditions."""
 
     @pytest.mark.models
-    def test_extreme_confidence_values(self):
+def test_extreme_confidence_values(self):
         """Test extreme confidence values."""
         # Boundary values
         Claim(
             id="c0000001",
             content="Test claim with minimum confidence.",
             confidence=0.0,
-                    )
+        )
         
         Claim(
             id="c0000002",
             content="Test claim with maximum confidence.",
             confidence=1.0,
-                    )
+        )
 
     @pytest.mark.models
-    def test_long_content(self):
+def test_long_content(self):
         """Test claim with very long content."""
         long_content = "A" * 10000  # 10KB of content
         
@@ -779,12 +769,12 @@ class TestModelEdgeCases:
             id="c0000001",
             content=long_content,
             confidence=0.7,
-                    )
+        )
         
         assert len(claim.content) == 10000
 
     @pytest.mark.models
-    def test_many_tags(self):
+def test_many_tags(self):
         """Test claim with many tags."""
         many_tags = [f"tag_{i}" for i in range(100)]
         
@@ -793,7 +783,7 @@ class TestModelEdgeCases:
             content="Test claim with many tags.",
             confidence=0.7,
             tags=many_tags,
-                    )
+        )
         
         assert len(claim.tags) == 100
         assert len(set(claim.tags)) == 100  # No duplicates
@@ -808,15 +798,11 @@ class TestModelEdgeCases:
             "Claim with newlines:\nLine 1\nLine 2\nLine 3",
             "Claim with tabs:\tTabbed\tcontent\t here",
             "Claim with special chars: !@#$%^&*()[]{}|;:',.<>/?",
-            "Claim with math: E=mc² and ∫f(x)dx = F(x) + C"
+            "Claim with math: E=mc² and ∫f(x)dx = F(x) + C",
         ]
-        
+
         for content in special_contents:
-            claim = Claim(
-                id="c0000001",
-                content=content,
-                confidence=0.7
-            )
+            claim = Claim(id="c0000001", content=content, confidence=0.7)
             assert claim.content == content
 
     @pytest.mark.models
@@ -826,8 +812,8 @@ class TestModelEdgeCases:
         relationship = Relationship(
             supporter_id="c0000001",
             supported_id="c0000001",  # Same claim
-            relationship_type="supports"
+            relationship_type="supports",
         )
-        
+
         # Model accepts it (validation happens in DataManager)
         assert relationship.supporter_id == relationship.supported_id

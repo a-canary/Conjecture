@@ -9,6 +9,30 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field, validator
 
 
+class RelationshipError(Exception):
+    """Exception raised for relationship-related errors"""
+
+    pass
+
+
+class DataLayerError(Exception):
+    """Exception raised for data layer operation errors"""
+
+    pass
+
+
+class ClaimNotFoundError(Exception):
+    """Exception raised when a claim is not found"""
+
+    pass
+
+
+class InvalidClaimError(Exception):
+    """Exception raised for invalid claim data"""
+
+    pass
+
+
 class ClaimState(str, Enum):
     """Claim state enumeration"""
 
@@ -16,17 +40,6 @@ class ClaimState(str, Enum):
     VALIDATED = "Validated"
     ORPHANED = "Orphaned"
     QUEUED = "Queued"
-
-
-class ClaimType(str, Enum):
-    """Claim type enumeration"""
-
-    CONCEPT = "concept"
-    REFERENCE = "reference"
-    THESIS = "thesis"
-    SKILL = "skill"
-    EXAMPLE = "example"
-    GOAL = "goal"
 
 
 class DirtyReason(str, Enum):
@@ -60,7 +73,6 @@ class Claim(BaseModel):
     supports: List[str] = Field(
         default_factory=list, description="Claims this claim supports"
     )
-    type: List[ClaimType] = Field(..., min_items=1, description="Claim types")
     tags: List[str] = Field(default_factory=list, description="Topic tags")
     created: datetime = Field(
         default_factory=datetime.utcnow, description="Creation timestamp"
@@ -74,6 +86,10 @@ class Claim(BaseModel):
     # Dirty flag fields
     is_dirty: bool = Field(
         default=True, description="Whether claim needs re-evaluation"
+    )
+    dirty: bool = Field(
+        default=True,
+        description="Whether claim needs re-evaluation (backward compatibility)",
     )
     dirty_reason: Optional[DirtyReason] = Field(
         default=None, description="Reason why claim was marked dirty"
@@ -94,14 +110,6 @@ class Claim(BaseModel):
                     raise ValueError("Tags must be non-empty strings")
         return list(dict.fromkeys(v))  # Remove duplicates while preserving order
 
-    @validator("id")
-    def validate_claim_id(cls, v):
-        """Validate claim ID format"""
-        import re
-        if not re.match(r"^c\d{7}$", v):
-            raise ValueError("Claim ID must be in format c#######")
-        return v
-
     @validator("updated")
     def validate_updated_timestamp(cls, v, values):
         """Ensure updated timestamp is not before creation"""
@@ -116,7 +124,6 @@ class Claim(BaseModel):
             "state": self.state.value,
             "supported_by": self.supported_by,
             "supports": self.supports,
-            "type": [t.value for t in self.type],
             "tags": self.tags,
             "created": self.created.isoformat(),
             "updated": self.updated.isoformat(),
@@ -140,7 +147,6 @@ class Claim(BaseModel):
             state=ClaimState(metadata["state"]),
             supported_by=metadata.get("supported_by", []),
             supports=metadata.get("supports", []),
-            type=[ClaimType(t) for t in metadata["type"]],
             tags=metadata.get("tags", []),
             created=datetime.fromisoformat(metadata["created"]),
             updated=datetime.fromisoformat(metadata["updated"]),
@@ -160,21 +166,19 @@ class Claim(BaseModel):
 
     def format_for_llm_analysis(self) -> str:
         """Format claim for detailed LLM analysis with metadata"""
-        type_str = ",".join([t.value for t in self.type])
         tags_str = ",".join(self.tags) if self.tags else "none"
         return (
             f"Claim ID: {self.id}\n"
             f"Content: {self.content}\n"
             f"Confidence: {self.confidence:.2f}\n"
             f"State: {self.state.value}\n"
-            f"Type: {type_str}\n"
             f"Tags: {tags_str}\n"
             f"Supports: {', '.join(self.supports) if self.supports else 'none'}\n"
             f"Supported By: {', '.join(self.supported_by) if self.supported_by else 'none'}"
         )
 
     def __repr__(self) -> str:
-        return f"Claim(id={self.id}, confidence={self.confidence}, state={self.state.value}, type={[t.value for t in self.type]}, dirty={self.is_dirty})"
+        return f"Claim(id={self.id}, confidence={self.confidence}, state={self.state.value}, dirty={self.is_dirty})"
 
     @property
     def dirty(self) -> bool:
@@ -210,6 +214,7 @@ class Claim(BaseModel):
         """Get effective confidence threshold"""
         try:
             from ..config.simple_config import get_config
+
             config = get_config()
             return config.get_effective_confident_threshold()
         except ImportError:
@@ -283,21 +288,40 @@ class ClaimFilter(BaseModel):
     """Filter for querying claims"""
 
     tags: Optional[List[str]] = Field(default=None, description="Filter by tags")
-    confidence_min: Optional[float] = Field(default=None, ge=0.0, le=1.0, description="Minimum confidence")
-    confidence_max: Optional[float] = Field(default=None, ge=0.0, le=1.0, description="Maximum confidence")
-    dirty_only: Optional[bool] = Field(default=None, description="Filter only dirty claims")
-    content_contains: Optional[str] = Field(default=None, description="Content contains text")
-    limit: Optional[int] = Field(default=100, ge=1, description="Maximum results to return")
+    confidence_min: Optional[float] = Field(
+        default=None, ge=0.0, le=1.0, description="Minimum confidence"
+    )
+    confidence_max: Optional[float] = Field(
+        default=None, ge=0.0, le=1.0, description="Maximum confidence"
+    )
+    dirty_only: Optional[bool] = Field(
+        default=None, description="Filter only dirty claims"
+    )
+    content_contains: Optional[str] = Field(
+        default=None, description="Content contains text"
+    )
+    limit: Optional[int] = Field(
+        default=100, ge=1, description="Maximum results to return"
+    )
     offset: Optional[int] = Field(default=0, ge=0, description="Results offset")
-    created_after: Optional[datetime] = Field(default=None, description="Created after timestamp")
-    created_before: Optional[datetime] = Field(default=None, description="Created before timestamp")
-    states: Optional[List[ClaimState]] = Field(default=None, description="Filter by states")
-    types: Optional[List[ClaimType]] = Field(default=None, description="Filter by types")
+    created_after: Optional[datetime] = Field(
+        default=None, description="Created after timestamp"
+    )
+    created_before: Optional[datetime] = Field(
+        default=None, description="Created before timestamp"
+    )
+    states: Optional[List[ClaimState]] = Field(
+        default=None, description="Filter by states"
+    )
 
     @validator("confidence_max")
     def validate_confidence_range(cls, v, values):
         """Validate confidence_max is >= confidence_min"""
-        if v is not None and "confidence_min" in values and values["confidence_min"] is not None:
+        if (
+            v is not None
+            and "confidence_min" in values
+            and values["confidence_min"] is not None
+        ):
             if v < values["confidence_min"]:
                 raise ValueError("confidence_max must be >= confidence_min")
         return v
@@ -306,27 +330,53 @@ class ClaimFilter(BaseModel):
 class Relationship(BaseModel):
     """Relationship between claims"""
 
-    supporter: str = Field(..., description="ID of supporting claim")
-    supported: str = Field(..., description="ID of supported claim")
+    supporter_id: str = Field(..., description="ID of supporting claim")
+    supported_id: str = Field(..., description="ID of supported claim")
     relationship_type: str = Field(..., description="Type of relationship")
-    confidence: float = Field(default=1.0, ge=0.0, le=1.0, description="Relationship confidence")
-    created: datetime = Field(default_factory=datetime.utcnow, description="Creation timestamp")
+    confidence: float = Field(
+        default=1.0, ge=0.0, le=1.0, description="Relationship confidence"
+    )
+    created: datetime = Field(
+        default_factory=datetime.utcnow, description="Creation timestamp"
+    )
+    created_by: Optional[str] = Field(
+        default=None, description="User who created relationship"
+    )
 
     @validator("relationship_type")
     def validate_relationship_type(cls, v):
         """Validate relationship type"""
-        valid_types = ['supports', 'contradicts', 'relates_to', 'depends_on']
+        valid_types = ["supports", "contradicts", "relates_to", "depends_on"]
         if v not in valid_types:
             raise ValueError(f"Relationship type must be one of: {valid_types}")
         return v
+
+    @property
+    def supporter(self) -> str:
+        """Backward compatibility property"""
+        return self.supporter_id
+
+    @property
+    def supported(self) -> str:
+        """Backward compatibility property"""
+        return self.supported_id
+
+    @property
+    def created_at(self) -> datetime:
+        """Backward compatibility property for created timestamp"""
+        return self.created
 
 
 class DataConfig(BaseModel):
     """Configuration for data layer"""
 
-    sqlite_path: str = Field(default="data/conjecture.db", description="SQLite database path")
+    sqlite_path: str = Field(
+        default="./data/conjecture.db", description="SQLite database path"
+    )
     chroma_path: str = Field(default="data/chroma", description="ChromaDB path")
-    embedding_model: str = Field(default="all-MiniLM-L6-v2", description="Embedding model name")
+    embedding_model: str = Field(
+        default="all-MiniLM-L6-v2", description="Embedding model name"
+    )
     max_tokens: int = Field(default=8000, ge=1000, description="Maximum context tokens")
 
     @validator("max_tokens")
@@ -344,7 +394,9 @@ class ProcessingResult(BaseModel):
     processed_claims: int = Field(..., description="Number of claims processed")
     updated_claims: int = Field(..., description="Number of claims updated")
     errors: List[str] = Field(default_factory=list, description="Processing errors")
-    execution_time: Optional[float] = Field(None, description="Execution time in seconds")
+    execution_time: Optional[float] = Field(
+        None, description="Execution time in seconds"
+    )
     message: str = Field(default="", description="Processing message")
 
 
@@ -353,7 +405,9 @@ class BatchResult(BaseModel):
 
     results: List[ProcessingResult] = Field(..., description="Processing results")
     batch_id: str = Field(..., description="Batch identifier")
-    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Batch timestamp")
+    timestamp: datetime = Field(
+        default_factory=datetime.utcnow, description="Batch timestamp"
+    )
 
 
 # Helper functions for working with Claim collections
@@ -403,32 +457,24 @@ def create_claim(
     tag: str = "concept",
     confidence: float = 0.8,
     tags: Optional[List[str]] = None,
-    claim_type: Optional[ClaimType] = None,
 ) -> Claim:
     """Create a claim with the specified tag"""
-    import uuid
-
     # Generate default tags based on the provided tag
     if tag == "instruction":
         default_tags = ["instruction", "guidance"]
-        claim_type = claim_type or ClaimType.CONCEPT
-        prefix = "instruction"
     elif tag == "evidence":
         default_tags = ["evidence", "fact"]
-        claim_type = claim_type or ClaimType.REFERENCE
-        prefix = "evidence"
+    elif tag == "tool_example":
+        default_tags = ["tool_example", "example"]
     else:  # default to concept
         default_tags = [tag] if tag else ["concept"]
-        claim_type = claim_type or ClaimType.CONCEPT
-        prefix = tag if tag else "concept"
 
     claim_tags = tags if tags is not None else default_tags
 
     return Claim(
-        id=f"{prefix}-{uuid.uuid4().hex[:8]}",
+        id=generate_claim_id(),
         content=content,
         confidence=confidence,
-        type=[claim_type],
         tags=claim_tags,
     )
 
@@ -436,7 +482,8 @@ def create_claim(
 def validate_claim_id(claim_id: str) -> bool:
     """Validate claim ID format"""
     import re
-    return bool(re.match(r"^c\d{7}$", claim_id))
+
+    return bool(re.match(r"^c[a-f0-9]{7}$", claim_id))
 
 
 def validate_confidence(confidence: float) -> bool:
@@ -447,25 +494,30 @@ def validate_confidence(confidence: float) -> bool:
 def generate_claim_id() -> str:
     """Generate a new claim ID"""
     import uuid
+
     return f"c{uuid.uuid4().hex[:7]}"
 
 
 # Custom exceptions
 class ClaimNotFoundError(Exception):
     """Raised when a claim is not found"""
+
     pass
 
 
 class InvalidClaimError(Exception):
     """Raised when a claim is invalid"""
+
     pass
 
 
 class RelationshipError(Exception):
     """Raised when a relationship operation fails"""
+
     pass
 
 
 class DataLayerError(Exception):
     """Raised when a data layer operation fails"""
+
     pass

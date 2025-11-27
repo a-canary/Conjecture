@@ -11,14 +11,14 @@ import os
 import sys
 
 # Add src to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from src.conjecture import Conjecture
 
 
 def main():
     """Main entry point for Simplified Conjecture"""
-    print("🚀 Simplified Conjecture - Evidence-Based AI Reasoning")
+    print("Simplified Conjecture - Evidence-Based AI Reasoning")
     print("=" * 60)
     print("Features:")
     print("  • 90% of functionality with 10% of the complexity")
@@ -40,7 +40,7 @@ def main():
     print()
 
     # Interactive demo
-    print("🎯 Interactive Demo")
+    print("Interactive Demo")
     print("-" * 30)
     print("Try these commands:")
     print("  • Research machine learning")
@@ -54,8 +54,8 @@ def main():
         try:
             user_input = input(">>> ").strip()
 
-            if user_input.lower() in ["quit", "exit", "q"]:
-                print("👋 Goodbye!")
+if user_input.lower() in ["quit", "exit", "q"]:
+                print("Goodbye!")
                 break
 
             if not user_input:
@@ -82,19 +82,19 @@ def main():
                         else:
                             print(f"  ✗ {tool_name}: {tool_result['result']['error']}")
 
-            else:
-                print(f"❌ Error: {result.get('error', 'Unknown error')}")
+else:
+                print(f"Error: {result.get('error', 'Unknown error')}")
 
             print()
 
         except KeyboardInterrupt:
-            print("\n👋 Goodbye!")
+            print("\nGoodbye!")
             break
         except EOFError:
-            print("\n👋 Goodbye!")
+            print("\nGoodbye!")
             break
         except Exception as e:
-            print(f"❌ Unexpected error: {e}")
+            print(f"Unexpected error: {e}")
 
 
 def demo_workflows():

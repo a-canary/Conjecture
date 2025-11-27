@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Any, Union
 from pathlib import Path
 import logging
 
-from src.core.models import Claim, ClaimState, ClaimType
+from src.core.models import Claim, ClaimState
 from src.config.config import Config
 from src.processing.bridge import LLMBridge, LLMRequest
 from src.processing.llm.provider import create_provider
@@ -41,8 +41,14 @@ class Conjecture:
 
         # Initialize processing components
         self.context_collector = ContextCollector(self.data_manager)
+        from .processing.tool_executor import ToolExecutor
+
+        tool_executor = ToolExecutor()
         self.async_evaluation = AsyncClaimEvaluationService(
-            llm_bridge=self.llm_bridge, context_collector=self.context_collector
+            llm_bridge=self.llm_bridge,
+            context_collector=self.context_collector,
+            data_manager=self.data_manager,
+            tool_executor=tool_executor,
         )
         self.tool_creator = DynamicToolCreator(
             llm_bridge=self.llm_bridge, tools_dir="tools"
@@ -149,7 +155,6 @@ class Conjecture:
                 claim_data = {
                     "content": claim.content,
                     "confidence": claim.confidence,
-                    "claim_type": claim.type[0].value,
                     "tags": claim.tags,
                     "state": ClaimState.EXPLORE,
                 }
@@ -265,8 +270,7 @@ Generate up to {max_claims} high-quality claims."""
                         id=f"exploration_{int(time.time())}_{i}",
                         content=content.strip(),
                         confidence=float(confidence),
-                        type=[ClaimType(claim_type.lower())],
-                        tags=["exploration", "auto_generated"],
+                        tags=["exploration", "auto_generated", claim_type.lower()],
                         state=ClaimState.EXPLORE,
                     )
                     claims.append(claim)
@@ -283,8 +287,7 @@ Generate up to {max_claims} high-quality claims."""
                             id=f"exploration_{int(time.time())}_{i}",
                             content=line.strip(),
                             confidence=0.7,  # Default confidence
-                            type=[ClaimType.CONCEPT],
-                            tags=["exploration", "auto_generated"],
+                            tags=["exploration", "auto_generated", "concept"],
                             state=ClaimState.EXPLORE,
                         )
                         claims.append(claim)
@@ -325,7 +328,6 @@ Generate up to {max_claims} high-quality claims."""
                             await self.data_manager.create_claim(
                                 content=skill_claim.content,
                                 confidence=skill_claim.confidence,
-                                claim_type=skill_claim.type[0].value,
                                 tags=skill_claim.tags,
                                 state=skill_claim.state,
                             )
@@ -333,7 +335,6 @@ Generate up to {max_claims} high-quality claims."""
                             await self.data_manager.create_claim(
                                 content=sample_claim.content,
                                 confidence=sample_claim.confidence,
-                                claim_type=sample_claim.type[0].value,
                                 tags=sample_claim.tags,
                                 state=sample_claim.state,
                             )
@@ -350,7 +351,6 @@ Generate up to {max_claims} high-quality claims."""
         self,
         content: str,
         confidence: float,
-        claim_type: str,
         tags: Optional[List[str]] = None,
         auto_evaluate: bool = True,
         **kwargs,
@@ -361,7 +361,6 @@ Generate up to {max_claims} high-quality claims."""
         Args:
             content: Claim content
             confidence: Initial confidence score
-            claim_type: Type of claim
             tags: Optional tags
             auto_evaluate: Whether to submit for evaluation
             **kwargs: Additional claim attributes
@@ -375,19 +374,10 @@ Generate up to {max_claims} high-quality claims."""
         if not (0.0 <= confidence <= 1.0):
             raise ValueError("Confidence must be between 0.0 and 1.0")
 
-        try:
-            claim_type_enum = ClaimType(claim_type.lower())
-        except ValueError:
-            valid_types = [t.value for t in ClaimType]
-            raise ValueError(
-                f"Invalid claim type: {claim_type}. Valid types: {valid_types}"
-            )
-
         # Create claim using repository
         claim_data = {
             "content": content.strip(),
             "confidence": confidence,
-            "claim_type": claim_type_enum.value,
             "tags": tags or [],
             "state": ClaimState.EXPLORE,
             **kwargs,
@@ -449,6 +439,12 @@ Generate up to {max_claims} high-quality claims."""
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get comprehensive system statistics"""
+        from src.tools.registry import ToolRegistry
+
+        # Get tool counts
+        registry = ToolRegistry()
+        available_tools = len(registry.core_tools) + len(registry.optional_tools)
+
         base_stats = {
             "config": self.config.to_dict(),
             "services_running": self._services_started,
@@ -456,6 +452,9 @@ Generate up to {max_claims} high-quality claims."""
             "tools_created": self._stats["tools_created"],
             "total_evaluation_time": self._stats["evaluation_time_total"],
             "session_count": self._stats["session_count"],
+            "available_tools": available_tools,
+            "available_skills": 4,  # Research, Code, Test, Evaluate
+            "total_claims": 0,  # Would need to query database for actual count
         }
 
         # Add async evaluation stats
@@ -525,9 +524,9 @@ class ExplorationResult:
         ]
 
         for i, claim in enumerate(self.claims[:5], 1):
-            type_str = claim.type[0].value if claim.type else "unknown"
+            tags_str = ",".join(claim.tags) if claim.tags else "none"
             lines.append(
-                f"  {i}. [{claim.confidence:.2f}, {type_str}, {claim.state.value}] {claim.content[:100]}{'...' if len(claim.content) > 100 else ''}"
+                f"  {i}. [{claim.confidence:.2f}, {tags_str}, {claim.state.value}] {claim.content[:100]}{'...' if len(claim.content) > 100 else ''}"
             )
 
         if len(self.claims) > 5:
@@ -544,11 +543,11 @@ async def explore(query: str, **kwargs) -> ExplorationResult:
 
 
 async def add_claim(
-    content: str, confidence: float, claim_type: str, **kwargs
+    content: str, confidence: float, **kwargs
 ) -> Claim:
     """Quick claim creation function"""
     async with Conjecture() as cf:
-        return await cf.add_claim(content, confidence, claim_type, **kwargs)
+        return await cf.add_claim(content, confidence, **kwargs)
 
 
 if __name__ == "__main__":
@@ -568,8 +567,7 @@ if __name__ == "__main__":
             claim = await cf.add_claim(
                 content="Enhanced Conjecture provides async evaluation and dynamic tool creation",
                 confidence=0.9,
-                claim_type="concept",
-                tags=["architecture", "enhancement"],
+                tags=["concept", "architecture", "enhancement"],
             )
             print(f"✅ Created claim: {claim.id}")
 

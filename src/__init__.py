@@ -12,8 +12,9 @@ from .core import (
 )
 from .core.models import (
     Claim,
-    ClaimType,
     ClaimState,
+    Relationship,
+    ClaimFilter,
 )
 
 # High-level API

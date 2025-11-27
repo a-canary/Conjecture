@@ -14,7 +14,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 # Add parent to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from config.config import get_primary_provider, validate_config
+from config.config import get_config, validate_config
 
 from ..base_cli import BackendNotAvailableError, BaseCLI
 from .cloud import CloudBackend

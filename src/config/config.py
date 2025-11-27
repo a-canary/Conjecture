@@ -136,6 +136,43 @@ def get_config() -> Config:
     return config
 
 
+def print_config_summary():
+    """Print configuration summary for debugging"""
+    cfg = get_config()
+    print("=== Configuration Summary ===")
+    print(f"Database: {cfg.database_type} at {cfg.database_path}")
+    print(f"LLM Provider: {cfg.llm_provider}")
+    print(f"LLM Enabled: {cfg.llm_enabled}")
+    print(f"Confidence Threshold: {cfg.confidence_threshold}")
+    print(f"Debug Mode: {cfg.debug}")
+    print("============================")
+
+
+def validate_config(env_file: str = ".env") -> bool:
+    """Validate configuration (wrapper for Config.validate())"""
+    try:
+        from dotenv import load_dotenv
+
+        load_dotenv(env_file)
+    except ImportError:
+        pass
+
+    cfg = Config()
+    return cfg.validate()
+
+
+def get_primary_provider():
+    """Get the primary LLM provider configuration"""
+    cfg = get_config()
+    return {
+        "api_url": cfg.provider_api_url,
+        "api_key": cfg.provider_api_key,
+        "model": cfg.provider_model,
+        "provider": cfg.llm_provider,
+        "enabled": cfg.llm_enabled,
+    }
+
+
 if __name__ == "__main__":
     # Test configuration
     cfg = Config()

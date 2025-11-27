@@ -7,6 +7,9 @@ Unified entry point for the modular Conjecture CLI
 import sys
 import os
 
+# Set UTF-8 encoding for proper emoji/Unicode support
+os.environ['PYTHONIOENCODING'] = 'utf-8'
+
 # Ensure we're in the project root
 script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(script_dir)

@@ -256,7 +256,55 @@ def filter_claims_by_tags(claims: List[Claim], tags: List[str], match_all: bool 
     """Pure function to filter claims by tags"""
     target_tags = set(tags)
     
-    if match_all:
+if match_all:
         return [c for c in claims if target_tags.issubset(set(c.tags))]
     else:
         return [c for c in claims if any(tag in target_tags for tag in c.tags)]
+
+
+def update_claim_with_dirty_propagation(
+    updated_claim: Claim,
+    original_claim: Claim,
+    all_claims: Dict[str, Claim],
+    dirty_system: Optional['DirtyFlagSystem'] = None
+) -> Tuple[Claim, List[str]]:
+    """
+    Update a claim and propagate dirty flags to supported claims
+    
+    Args:
+        updated_claim: The new version of the claim
+        original_claim: The original version before update
+        all_claims: Dictionary of all claims for relationship lookup
+        dirty_system: Optional dirty flag system for propagation
+        
+    Returns:
+        Tuple of (updated_claim, list_of_marked_dirty_claim_ids)
+    """
+    marked_dirty_ids = []
+    
+    # Check if claim actually changed in meaningful ways
+    if (updated_claim.content != original_claim.content or 
+        abs(updated_claim.confidence - original_claim.confidence) > 0.01):
+        
+        # Find claims that this claim supports (B claims where A supports B)
+        supported_claim_ids = updated_claim.supports
+        
+        for supported_id in supported_claim_ids:
+            if supported_id in all_claims:
+                supported_claim = all_claims[supported_id]
+                
+                # Mark the supported claim as dirty
+                if dirty_system:
+                    dirty_system.mark_claim_dirty(
+                        supported_claim, 
+                        DirtyReason.SUPPORTING_CLAIM_CHANGED,
+                        priority=8,
+                        cascade=False
+                    )
+                else:
+                    # Fallback: mark dirty directly
+                    supported_claim.mark_dirty(DirtyReason.SUPPORTING_CLAIM_CHANGED, priority=8)
+                
+                marked_dirty_ids.append(supported_id)
+    
+    return updated_claim, marked_dirty_ids

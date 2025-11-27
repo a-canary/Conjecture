@@ -13,7 +13,7 @@ from pathlib import Path
 import logging
 import hashlib
 
-from ..core.models import Claim, ClaimType, ClaimState
+from ..core.models import Claim, ClaimState
 from .bridge import LLMBridge, LLMRequest
 
 # Try to import tools, but handle gracefully if not available
@@ -204,7 +204,6 @@ class DynamicToolCreator:
             prompt = f"""Analyze this claim to determine if a new tool is needed:
 
 CLAIM: {claim.content}
-TYPE: {claim.type[0].value if claim.type else "unknown"}
 TAGS: {", ".join(claim.tags)}
 
 Available tools: WebSearch, ReadFiles, WriteCodeFile, CreateClaim, ClaimSupport
@@ -489,8 +488,7 @@ Format as a clear, step-by-step procedure for LLM to follow."""
                     id=f"skill_{tool_name}_{int(datetime.utcnow().timestamp())}",
                     content=response.content.strip(),
                     confidence=0.85,
-                    type=[ClaimType.CONCEPT],
-                    tags=["skill", "tool", tool_name],
+                    tags=["skill", "tool", tool_name, "concept"],
                     state=ClaimState.VALIDATED,
                 )
 
@@ -504,8 +502,7 @@ Format as a clear, step-by-step procedure for LLM to follow."""
             id=f"skill_{tool_name}_{int(datetime.utcnow().timestamp())}",
             content=f"To use {tool_name}: 1) Prepare required parameters, 2) Call execute() function, 3) Handle response appropriately",
             confidence=0.7,
-            type=[ClaimType.CONCEPT],
-            tags=["skill", "tool", tool_name],
+            tags=["skill", "tool", tool_name, "concept"],
             state=ClaimState.EXPLORE,
         )
 
@@ -569,8 +566,7 @@ Format as a concrete example that can be used as a reference."""
                     id=f"sample_{tool_name}_{int(datetime.utcnow().timestamp())}",
                     content=response.content.strip(),
                     confidence=0.9,
-                    type=[ClaimType.EXAMPLE],
-                    tags=["sample", "tool", tool_name],
+                    tags=["sample", "tool", tool_name, "example"],
                     state=ClaimState.VALIDATED,
                 )
 
@@ -584,8 +580,7 @@ Format as a concrete example that can be used as a reference."""
             id=f"sample_{tool_name}_{int(datetime.utcnow().timestamp())}",
             content=f"Example: result = execute(parameter1='value', parameter2='optional')",
             confidence=0.8,
-            type=[ClaimType.EXAMPLE],
-            tags=["sample", "tool", tool_name],
+            tags=["sample", "tool", tool_name, "example"],
             state=ClaimState.EXPLORE,
         )
 

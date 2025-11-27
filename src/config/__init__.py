@@ -3,8 +3,8 @@ Conjecture: Simplified configuration package
 Now with unified configuration validation
 """
 
-# Legacy configuration imports
-from .simple_config import (
+# Unified configuration imports
+from .config import (
     Config,
     config,
     get_config,

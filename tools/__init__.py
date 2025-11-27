@@ -22,6 +22,7 @@ from . import apply_diff
 # Ensure registry auto-discovers tools from this directory
 from src.tools.registry import ToolRegistry
 
-ToolRegistry._discover_tools(os.path.dirname(__file__))
+# Initialize registry (it will auto-discover tools)
+registry = ToolRegistry()
 
 __all__ = ["ToolRegistry", "register_tool"]
