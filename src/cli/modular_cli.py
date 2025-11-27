@@ -418,6 +418,43 @@ def analyze(
                 raise typer.Exit(1)
 
     except typer.Exit:
+raise
+
+
+@app.command()
+def prompt(
+    prompt_text: str = typer.Argument(..., help="The prompt text (will be created as a claim)"),
+    confidence: float = typer.Option(0.8, "--confidence", "-c", help="Initial confidence score"),
+    verbose: int = typer.Option(0, "--verbose", "-v", help="Verbosity level: 0=final only, 1=tool calls, 2=claims>90%"),
+):
+    """Process a prompt as a claim with workspace context."""
+    try:
+        # Use current backend (no backend override option for prompt)
+        cli_backend = current_backend
+
+        if not cli_backend:
+            error_console.print(
+                "[red]No backend initialized. Use --backend option.[/red]"
+            )
+            raise typer.Exit(1)
+
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            console=console,
+        ) as progress:
+            task = progress.add_task("Processing prompt...", total=None)
+
+            try:
+                result = cli_backend.process_prompt(prompt_text, confidence, verbose)
+                progress.update(task, description="Prompt processed successfully!")
+
+            except Exception as e:
+                progress.update(task, description="Error occurred")
+                error_console.print(f"[red]Error processing prompt: {e}[/red]")
+                raise typer.Exit(1)
+
+    except typer.Exit:
         raise
 
 
@@ -440,7 +477,7 @@ def config():
     console.print(f"\n[bold]Next Steps:[/bold]")
     if result.success:
         console.print("Configuration is valid!")
-        console.print("You can now use: create, get, search, analyze commands")
+        console.print("You can now use: create, get, search, analyze, prompt commands")
 
         # Show available backends
         console.print(f"\n[bold]Available Backends:[/bold]")

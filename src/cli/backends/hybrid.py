@@ -80,12 +80,13 @@ class HybridBackend(BaseCLI):
             raise ValueError("Mode must be 'local', 'cloud', or 'auto'")
         self.preferred_mode = mode
 
-    def create_claim(
+def create_claim(
         self,
         content: str,
         confidence: float,
-        user: str,
+        user_id: str,
         analyze: bool = False,
+        tags: list = None,
         **kwargs,
     ) -> str:
         """Create a new claim using the best available backend."""
@@ -101,7 +102,7 @@ class HybridBackend(BaseCLI):
 
         try:
             claim_id = backend.create_claim(
-                content, confidence, user, analyze, **kwargs
+                content, confidence, user_id, analyze, tags, **kwargs
             )
 
             # Store which backend was used
@@ -172,7 +173,38 @@ class HybridBackend(BaseCLI):
         else:
             raise BackendNotAvailableError("No backends available for analysis")
 
-        return analysis
+return analysis
+
+    def process_prompt(
+        self, 
+        prompt_text: str, 
+        confidence: float = 0.8,
+        verbose: int = 0,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """Process user prompt as claim with dirty evaluation using hybrid backend."""
+        if not self.is_available():
+            raise BackendNotAvailableError("Hybrid backend is not properly configured")
+
+        available = self._detect_available_backends()
+
+        # For prompt processing, prefer cloud for better responses
+        if available["cloud"]:
+            if verbose >= 1:
+                self.console.print(
+                    "[blue]🧠 Using cloud services for prompt processing...[/blue]"
+                )
+            result = self.cloud_backend.process_prompt(prompt_text, confidence, verbose, **kwargs)
+            result["hybrid_mode"] = "cloud_preferred"
+        elif available["local"]:
+            if verbose >= 1:
+                self.console.print("[blue]💻 Using local services for prompt processing...[/blue]")
+            result = self.local_backend.process_prompt(prompt_text, confidence, verbose, **kwargs)
+            result["hybrid_mode"] = "local_fallback"
+        else:
+            raise BackendNotAvailableError("No backends available for prompt processing")
+
+        return result
 
     def get_hybrid_status(self) -> Dict[str, Any]:
         """Get comprehensive status of hybrid backend."""

@@ -173,8 +173,9 @@ class AutoBackend(BaseCLI):
         self,
         content: str,
         confidence: float,
-        user: str,
+        user_id: str,
         analyze: bool = False,
+        tags: list = None,
         **kwargs,
     ) -> str:
         """Create a claim using the auto-selected backend."""
@@ -184,7 +185,9 @@ class AutoBackend(BaseCLI):
             f"[blue]🤖 Auto-detected {backend._get_backend_type()} backend for claim creation[/blue]"
         )
 
-        return backend.create_claim(content, confidence, user, analyze, **kwargs)
+        return backend.create_claim(
+            content, confidence, user_id, analyze, tags, **kwargs
+        )
 
     def get_claim(self, claim_id: str) -> Optional[dict]:
         """Get a claim by ID."""
@@ -214,6 +217,23 @@ class AutoBackend(BaseCLI):
         analysis["backend_selection"] = backend._get_backend_type()
 
         return analysis
+
+    def process_prompt(
+        self, prompt_text: str, confidence: float = 0.8, verbose: int = 0, **kwargs
+    ) -> Dict[str, Any]:
+        """Process user prompt as claim with dirty evaluation using auto-detected backend."""
+        backend = self._select_and_initialize_backend("process_prompt")
+
+        if verbose >= 1:
+            self.console.print(
+                f"[blue]🧠 Auto-detected {backend._get_backend_type()} backend for prompt processing[/blue]"
+            )
+
+        result = backend.process_prompt(prompt_text, confidence, verbose, **kwargs)
+        result["auto_detected"] = True
+        result["backend_selection"] = backend._get_backend_type()
+
+        return result
 
     def get_backend_info(self) -> Dict[str, Any]:
         """Get information about the auto-detected backend."""

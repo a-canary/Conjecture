@@ -44,10 +44,19 @@ class Config:
         self.provider_api_key = os.getenv("PROVIDER_API_KEY", "")
         self.provider_model = os.getenv("PROVIDER_MODEL", "zai-org/GLM-4.6-FP8")
 
+        # === Workspace Context ===
+        self.workspace = os.getenv("CONJECTURE_WORKSPACE", "default")
+        self.user = os.getenv("CONJECTURE_USER", "user")
+        self.team = os.getenv("CONJECTURE_TEAM", "default")
+
         # === Derived Settings ===
         self.llm_enabled = (
             bool(self.provider_api_key) or "localhost" in self.provider_api_url
         )
+
+        # === Derived User Context ===
+        self.user_context = f"{self.workspace}/{self.user}"
+        self.full_context = f"{self.workspace}/{self.team}/{self.user}"
 
     # === Confidence Threshold Methods ===
     def set_confident_threshold(self, threshold: float):
@@ -78,6 +87,11 @@ class Config:
             "llm_provider": self.llm_provider,
             "provider_model": self.provider_model,
             "provider_api_url": self.provider_api_url,
+            "workspace": self.workspace,
+            "user": self.user,
+            "team": self.team,
+            "user_context": self.user_context,
+            "full_context": self.full_context,
             "debug": self.debug,
         }
 

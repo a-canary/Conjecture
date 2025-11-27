@@ -44,12 +44,13 @@ class LocalBackend(BaseCLI):
         """Check if local backend is available."""
         return self._validate_local_config()
 
-    def create_claim(
+def create_claim(
         self,
         content: str,
         confidence: float,
-        user: str,
+        user_id: str,
         analyze: bool = False,
+        tags: list = None,
         **kwargs,
     ) -> str:
         """Create a new claim using local backend."""
@@ -84,12 +85,12 @@ class LocalBackend(BaseCLI):
                     "offline_capable": True,
                 }
 
-                claim_id = self._save_claim(content, confidence, user, metadata)
+                claim_id = self._save_claim(content, confidence, user_id, metadata, tags)
                 progress.update(task, description="Claim created successfully!")
 
-                # Display result
+# Display result
                 panel = self._create_claim_panel(
-                    claim_id, content, confidence, user, metadata
+                    claim_id, content, confidence, user_id, metadata
                 )
                 self.console.print(panel)
 
@@ -201,7 +202,17 @@ class LocalBackend(BaseCLI):
                     "base_url", "http://localhost:1234"
                 )
 
-        return status
+return status
+
+    def process_prompt(
+        self, 
+        prompt_text: str, 
+        confidence: float = 0.8,
+        verbose: int = 0,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """Process user prompt as claim with dirty evaluation using local backend."""
+        return super().process_prompt(prompt_text, confidence, verbose, **kwargs)
 
     def list_local_models(self) -> List[str]:
         """List available local models."""
