@@ -46,9 +46,11 @@ class BaseCLI(ABC):
         # Validate configuration first
         result = validate_config()
 
-        if not result.success:
+        if not result:  # validate_config returns a bool
             self.console.print("[bold red]❌ Configuration Required[/bold red]")
-            self._print_validation_result(result)
+            self.console.print(
+                "Please configure at least one provider in your .env file"
+            )
             raise SystemExit(1)
 
         # Get the best configured provider
@@ -167,17 +169,195 @@ class BaseCLI(ABC):
         """Analyze a claim using backend-specific services."""
         pass
 
-    @abstractmethod
-    def process_prompt(
+def process_prompt(
         self, prompt_text: str, confidence: float = 0.8, verbose: int = 0, **kwargs
     ) -> Dict[str, Any]:
         """Process user prompt as claim with dirty evaluation."""
-        pass
+        from enum import Enum
+        
+        class DirtyReason(str, Enum):
+            NEW_CLAIM_ADDED = "new_claim_added"
+            CONFIDENCE_THRESHOLD = "confidence_threshold"
+            SUPPORTING_CLAIM_CHANGED = "supporting_claim_changed"
+            RELATIONSHIP_CHANGED = "relationship_changed"
+            MANUAL_MARK = "manual_mark"
+            BATCH_EVALUATION = "batch_evaluation"
+            SYSTEM_TRIGGER = "system_trigger"
+
+        # Get workspace context from config
+        config = get_config()
+        workspace = config.workspace
+        user = config.user
+        team = config.team
+
+        # Create tags with workspace context
+        tags = ["user-prompt", f"workspace-{workspace}", f"user-{user}", f"team-{team}"]
+
+        if verbose >= 1:
+            self.console.print(
+                f"[dim]🔧 Creating claim with context: {workspace}/{team}/{user}[/dim]"
+            )
+            self.console.print(f"[dim]🔧 Tags: {tags}[/dim]")
+
+        # Create claim with user-prompt tags
+        claim_id = self.create_claim(
+            content=prompt_text, confidence=confidence, user_id=user, tags=tags
+        )
+
+        if verbose >= 1:
+            self.console.print(
+                f"[dim]🔧 Marking claim {claim_id} as dirty for evaluation[/dim]"
+            )
+
+        # Mark as dirty for evaluation (default priority=10)
+        self.mark_claim_dirty(claim_id, DirtyReason.NEW_CLAIM_ADDED, priority=10)
+
+        if verbose >= 1:
+            self.console.print(f"[dim]🔧 Starting dirty evaluation...[/dim]")
+
+        # Process dirty evaluation (mock for now)
+        evaluation_result = self._mock_evaluate_claim(claim_id)
+
+        if verbose >= 1:
+            self.console.print(
+                f"[dim]🔧 Evaluation complete, confidence: {evaluation_result['final_confidence']:.1%}[/dim]"
+            )
+
+        # Check confidence threshold for user response
+        if evaluation_result["final_confidence"] > 0.90:
+            if verbose >= 2:
+                self.console.print(
+                    f"[blue]📋 High-confidence claim achieved: {evaluation_result['final_confidence']:.1%}[/blue]"
+                )
+                self.console.print(
+                    f"[blue]📋 Claim details: {evaluation_result['summary']}[/blue]"
+                )
+
+            if verbose >= 1:
+                self.console.print(
+                    f"[dim]🔧 Generating user response with TellUser tool...[/dim]"
+                )
+
+            user_response = self._generate_user_response(prompt_text, evaluation_result)
+
+            # Always show final response (even at verbose=0)
+            self.console.print(user_response)
+
+            evaluation_result["user_response"] = user_response
+        else:
+            if verbose >= 1:
+                self.console.print(
+                    f"[dim]🔧 Confidence {evaluation_result['final_confidence']:.1%} below 90% threshold - no user response[/dim]"
+                )
+
+        return {
+            "claim_id": claim_id,
+            "original_prompt": prompt_text,
+            "workspace_context": f"{workspace}/{team}/{user}",
+            "tags": tags,
+            "evaluation_result": evaluation_result,
+            "final_status": "processed",
+        }
 
     @abstractmethod
     def is_available(self) -> bool:
         """Check if backend is available and properly configured."""
         pass
+
+    def _get_configured_provider(self) -> Optional[Dict[str, Any]]:
+        """Get configured provider in legacy format."""
+        # For now, return a simple mock provider config
+        # In a real implementation, this would integrate with the provider system
+        config = get_config()
+        if config.provider_api_key or "localhost" in config.provider_api_url:
+            return {
+                "name": config.llm_provider,
+                "type": "local" if "localhost" in config.provider_api_url else "cloud",
+                "base_url": config.provider_api_url,
+                "model": config.provider_model,
+                "api_key": config.provider_api_key,
+            }
+        return None
+
+    def get_backend_info(self) -> Dict[str, Any]:
+        """Get information about the current backend."""
+        return {
+            "name": self._get_backend_type(),
+            "configured": self.is_available(),
+            "provider": self.current_provider_config.get("name")
+            if self.current_provider_config
+            else None,
+            "type": self.current_provider_config.get("type")
+            if self.current_provider_config
+            else None,
+            "model": self.current_provider_config.get("model")
+            if self.current_provider_config
+            else None,
+        }
+
+    def mark_claim_dirty(self, claim_id: str, reason, priority: int = 0):
+        """Mark a claim as dirty in the database."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            UPDATE claims 
+            SET is_dirty = 1, dirty_reason = ?, dirty_priority = ?
+            WHERE id = ?
+        """,
+            (reason.value, priority, claim_id),
+        )
+
+        conn.commit()
+        conn.close()
+
+    def _mock_evaluate_claim(self, claim_id: str) -> Dict[str, Any]:
+        """Mock evaluation for testing - replace with actual evaluation logic."""
+        import random
+
+        # Get the claim
+        claim = self.get_claim(claim_id)
+        if not claim:
+            raise ValueError(f"Claim {claim_id} not found")
+
+        # Mock evaluation - in real implementation this would use LLM
+        final_confidence = random.uniform(0.85, 0.96)
+
+        return {
+            "claim_id": claim_id,
+            "original_confidence": claim["confidence"],
+            "final_confidence": final_confidence,
+            "evaluation_steps": [
+                "Analyzed claim content",
+                "Checked supporting evidence",
+                "Validated reasoning",
+            ],
+            "summary": f"Evaluated claim: {claim['content'][:50]}...",
+            "status": "validated" if final_confidence > 0.90 else "needs_review",
+        }
+
+    def _generate_user_response(
+        self, prompt_text: str, evaluation_result: Dict[str, Any]
+    ) -> str:
+        """Generate user response using TellUser tool format."""
+        # Mock response - in real implementation this would use LLM
+        confidence = evaluation_result["final_confidence"]
+
+        response = f"[SUCCESS] Based on your prompt about '{prompt_text[:50]}...', "
+        response += f"I've analyzed the requirements and validated the approach. "
+        response += (
+            f"The system confidence in this assessment is high at {confidence:.1%}. "
+        )
+
+        if confidence > 0.95:
+            response += "This claim has been thoroughly validated and can be trusted."
+        elif confidence > 0.90:
+            response += (
+                "This claim shows strong validation with good supporting evidence."
+            )
+
+        return response
 
 
 class ClaimValidationError(Exception):

@@ -1,6 +1,6 @@
 """
-Local Backend for Conjecture CLI
-Provides local LLM services integration
+Cloud Backend for Conjecture CLI
+Provides cloud-based LLM services integration
 """
 
 import os
@@ -13,20 +13,20 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.console import Console
 
-from ..base_cli import BaseCLI, BackendNotAvailableError
+from .base_cli import BaseCLI, BackendNotAvailableError
 
 
-class LocalBackend(BaseCLI):
-    """Local backend implementation using local LLM services."""
+class CloudBackend(BaseCLI):
+    """Cloud backend implementation using cloud LLM services."""
 
     def __init__(self):
-        super().__init__(name="local", help_text="Local LLM backend")
-        self.supported_providers = ["ollama", "lm_studio"]
+        super().__init__(name="cloud", help_text="Cloud LLM backend")
+        self.supported_providers = ["openai", "anthropic", "chutes", "openrouter"]
         self.console = Console()
         self.error_console = Console(stderr=True)
 
     def is_available(self) -> bool:
-        """Check if local backend is properly configured."""
+        """Check if cloud backend is properly configured."""
         try:
             self._init_services()
             return bool(self.current_provider_config)
@@ -42,9 +42,9 @@ class LocalBackend(BaseCLI):
         tags: list = None,
         **kwargs,
     ) -> str:
-        """Create a new claim using local backend."""
+        """Create a new claim using cloud backend."""
         if not self.is_available():
-            raise BackendNotAvailableError("Local backend is not properly configured")
+            raise BackendNotAvailableError("Cloud backend is not properly configured")
 
         try:
             self._init_services()
@@ -55,7 +55,9 @@ class LocalBackend(BaseCLI):
                 TextColumn("[progress.description]{task.description}"),
                 console=self.console,
             ) as progress:
-                task = progress.add_task("Creating claim locally...", total=None)
+                task = progress.add_task(
+                    "Creating claim with cloud services...", total=None
+                )
 
                 # Validate input
                 if not 0.0 <= confidence <= 1.0:
@@ -64,14 +66,15 @@ class LocalBackend(BaseCLI):
                 if len(content) < 10:
                     raise ValueError("Content must be at least 10 characters")
 
-                # Save claim with local metadata
+                # Save claim with cloud metadata
                 metadata = {
                     "analyzed": analyze,
                     "provider": self.current_provider_config.get("name")
                     if self.current_provider_config
                     else None,
-                    "backend": "local",
-                    "offline_capable": True,
+                    "backend": "cloud",
+                    "cloud_processing": True,
+                    "requires_internet": True,
                 }
 
                 claim_id = self._save_claim(
@@ -88,13 +91,13 @@ class LocalBackend(BaseCLI):
                 # Analyze if requested and provider is available
                 if analyze and self.current_provider_config:
                     progress.update(
-                        task, description="Analyzing claim with local services..."
+                        task, description="Analyzing claim with cloud services..."
                     )
                     self.console.print(
                         f"[yellow]Analyzing with {self.current_provider_config['name']}...[/yellow]"
                     )
-                    # TODO: Implement local LLM analysis
-                    self.console.print("[green]Analysis complete (local model)[/green]")
+                    # TODO: Implement cloud LLM analysis
+                    self.console.print("[green]Analysis complete (cloud model)[/green]")
 
                 return claim_id
 
@@ -108,20 +111,24 @@ class LocalBackend(BaseCLI):
         return self._get_claim(claim_id)
 
     def search_claims(self, query: str, limit: int = 10, **kwargs) -> List[dict]:
-        """Search claims using local vector similarity."""
+        """Search claims using cloud-enhanced vector similarity."""
+        # Initialize database without full config validation for search-only
         try:
             self._init_services()
-            self._init_database()
         except SystemExit:
             # For search-only, we can proceed without a provider if embeddings are available
-            self._init_database()
+            pass
+
+        self._init_database()
 
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=self.console,
         ) as progress:
-            task = progress.add_task("Searching claims locally...", total=None)
+            task = progress.add_task(
+                "Searching claims with cloud enhancement...", total=None
+            )
 
             try:
                 results = self._search_claims(query, limit)
@@ -133,52 +140,55 @@ class LocalBackend(BaseCLI):
                 raise
 
     def analyze_claim(self, claim_id: str, **kwargs) -> Dict[str, Any]:
-        """Analyze a claim using local services."""
+        """Analyze a claim using cloud services."""
         if not self.is_available():
-            raise BackendNotAvailableError("Local backend is not properly configured")
+            raise BackendNotAvailableError("Cloud backend is not properly configured")
 
         claim = self.get_claim(claim_id)
         if not claim:
             raise ValueError(f"Claim {claim_id} not found")
 
         self.console.print(
-            f"[blue]🔍 Analyzing claim {claim_id} with local services...[/blue]"
+            f"[blue]🔍 Analyzing claim {claim_id} with cloud services...[/blue]"
         )
 
-        # Mock analysis for now - would integrate with local LLM
+        # Mock analysis for now - would integrate with cloud LLM APIs
         analysis = {
             "claim_id": claim_id,
-            "backend": "local",
+            "backend": "cloud",
             "provider": self.current_provider_config.get("name")
             if self.current_provider_config
             else None,
-            "analysis_type": "local_semantic",
+            "analysis_type": "cloud_semantic",
             "confidence_score": claim.get("confidence", 0.0),
             "sentiment": "neutral",
-            "topics": ["general"],
+            "topics": ["general", "fact_checking"],
             "verification_status": "pending",
-            "local_processing": True,
-            "offline_capable": True,
+            "cloud_processing": True,
+            "requires_internet": True,
+            "model_used": self.current_provider_config.get("model", "unknown")
+            if self.current_provider_config
+            else None,
         }
 
-        self.console.print("[green]✅ Local analysis complete[/green]")
+        self.console.print("[green]✅ Cloud analysis complete[/green]")
         return analysis
 
     def process_prompt(
         self, prompt_text: str, confidence: float = 0.8, verbose: int = 0, **kwargs
     ) -> Dict[str, Any]:
-        """Process user prompt as claim with dirty evaluation using local backend."""
+        """Process user prompt as claim with dirty evaluation using cloud backend."""
         return super().process_prompt(prompt_text, confidence, verbose, **kwargs)
 
-    def get_local_services_status(self) -> Dict[str, Any]:
-        """Get status of local services."""
+    def get_cloud_services_status(self) -> Dict[str, Any]:
+        """Get status of cloud services."""
         status = {
-            "backend_type": "local",
+            "backend_type": "cloud",
             "available": self.is_available(),
             "supported_providers": self.supported_providers,
             "current_provider": None,
             "endpoints": {},
-            "offline_capable": True,
+            "requires_internet": True,
         }
 
         if self.current_provider_config:
@@ -187,36 +197,4 @@ class LocalBackend(BaseCLI):
             status["current_type"] = self.current_provider_config.get("type", "")
             status["base_url"] = self.current_provider_config.get("base_url", "")
 
-            # Check specific provider endpoints
-            if "ollama" in provider_name.lower():
-                status["endpoints"]["ollama"] = self.current_provider_config.get(
-                    "base_url", "http://localhost:11434"
-                )
-            elif "lm_studio" in provider_name.lower():
-                status["endpoints"]["lm_studio"] = self.current_provider_config.get(
-                    "base_url", "http://localhost:1234"
-                )
-
         return status
-
-    def list_local_models(self) -> List[str]:
-        """List available local models."""
-        # Mock list - would integrate with actual provider APIs
-        if self.current_provider_config:
-            provider_name = self.current_provider_config.get("name", "").lower()
-            if "ollama" in provider_name:
-                return ["llama2", "mistral", "codellama", "vicuna"]
-            elif "lm_studio" in provider_name:
-                return ["custom-model", "llama-2-7b", "mistral-7b"]
-
-        return []
-
-    def pull_model(self, model_name: str) -> bool:
-        """Pull a model from local registry."""
-        if not self.is_available():
-            raise BackendNotAvailableError("Local backend is not properly configured")
-
-        self.console.print(f"[blue]📥 Pulling model {model_name}...[/blue]")
-        # Mock implementation - would integrate with actual provider APIs
-        self.console.print(f"[green]✅ Model {model_name} pulled successfully[/green]")
-        return True

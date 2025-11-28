@@ -410,7 +410,7 @@ def analyze(
                     title=f"Analysis Results for {claim_id}",
                     border_style="green",
                 )
-                console.print(panel)
+console.print(panel)
 
             except Exception as e:
                 progress.update(task, description="Error occurred")
@@ -418,7 +418,7 @@ def analyze(
                 raise typer.Exit(1)
 
     except typer.Exit:
-raise
+        raise
 
 
 @app.command()

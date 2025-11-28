@@ -1,39 +1,50 @@
+#!/usr/bin/env python3
 """
 Local Backend for Conjecture CLI
-Provides local LLM services integration
+Handles local services like Ollama and LM Studio
 """
 
 import os
 import sys
 from typing import Any, Dict, List, Optional
 
+from rich.progress import Progress, SpinnerColumn, TextColumn
+
 # Add parent to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.console import Console
+from config.config import get_primary_provider, validate_config
 
-from ..base_cli import BaseCLI, BackendNotAvailableError
+from ..base_cli import BackendNotAvailableError, BaseCLI
 
 
 class LocalBackend(BaseCLI):
-    """Local backend implementation using local LLM services."""
+    """Backend implementation for local services (Ollama, LM Studio)."""
 
     def __init__(self):
-        super().__init__(name="local", help_text="Local LLM backend")
-        self.supported_providers = ["ollama", "lm_studio"]
-        self.console = Console()
-        self.error_console = Console(stderr=True)
+        super().__init__("conjecture-local", "Conjecture CLI with Local Services")
+        self.supported_providers = ["ollama", "lm_studio", "localai"]
 
-    def is_available(self) -> bool:
-        """Check if local backend is properly configured."""
+    def _validate_local_config(self) -> bool:
+        """Validate that a local provider is configured."""
         try:
-            self._init_services()
-            return bool(self.current_provider_config)
-        except SystemExit:
+            result = validate_config()
+            if not result.success:
+                return False
+
+            provider = get_primary_provider()
+            if not provider:
+                return False
+
+            return provider.is_local
+        except Exception:
             return False
 
-    def create_claim(
+    def is_available(self) -> bool:
+        """Check if local backend is available."""
+        return self._validate_local_config()
+
+def create_claim(
         self,
         content: str,
         confidence: float,
@@ -74,12 +85,10 @@ class LocalBackend(BaseCLI):
                     "offline_capable": True,
                 }
 
-                claim_id = self._save_claim(
-                    content, confidence, user_id, metadata, tags
-                )
+                claim_id = self._save_claim(content, confidence, user_id, metadata, tags)
                 progress.update(task, description="Claim created successfully!")
 
-                # Display result
+# Display result
                 panel = self._create_claim_panel(
                     claim_id, content, confidence, user_id, metadata
                 )
@@ -87,14 +96,14 @@ class LocalBackend(BaseCLI):
 
                 # Analyze if requested and provider is available
                 if analyze and self.current_provider_config:
-                    progress.update(
-                        task, description="Analyzing claim with local services..."
-                    )
+                    progress.update(task, description="Analyzing claim locally...")
                     self.console.print(
                         f"[yellow]Analyzing with {self.current_provider_config['name']}...[/yellow]"
                     )
                     # TODO: Implement local LLM analysis
-                    self.console.print("[green]Analysis complete (local model)[/green]")
+                    self.console.print(
+                        "[green]Analysis complete (mock implementation)[/green]"
+                    )
 
                 return claim_id
 
@@ -109,19 +118,21 @@ class LocalBackend(BaseCLI):
 
     def search_claims(self, query: str, limit: int = 10, **kwargs) -> List[dict]:
         """Search claims using local vector similarity."""
+        # Initialize database without full config validation for search-only
         try:
             self._init_services()
-            self._init_database()
         except SystemExit:
             # For search-only, we can proceed without a provider if embeddings are available
-            self._init_database()
+            pass
+
+        self._init_database()
 
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=self.console,
         ) as progress:
-            task = progress.add_task("Searching claims locally...", total=None)
+            task = progress.add_task("Searching local claims...", total=None)
 
             try:
                 results = self._search_claims(query, limit)
@@ -164,12 +175,6 @@ class LocalBackend(BaseCLI):
         self.console.print("[green]✅ Local analysis complete[/green]")
         return analysis
 
-    def process_prompt(
-        self, prompt_text: str, confidence: float = 0.8, verbose: int = 0, **kwargs
-    ) -> Dict[str, Any]:
-        """Process user prompt as claim with dirty evaluation using local backend."""
-        return super().process_prompt(prompt_text, confidence, verbose, **kwargs)
-
     def get_local_services_status(self) -> Dict[str, Any]:
         """Get status of local services."""
         status = {
@@ -197,7 +202,17 @@ class LocalBackend(BaseCLI):
                     "base_url", "http://localhost:1234"
                 )
 
-        return status
+return status
+
+    def process_prompt(
+        self, 
+        prompt_text: str, 
+        confidence: float = 0.8,
+        verbose: int = 0,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """Process user prompt as claim with dirty evaluation using local backend."""
+        return super().process_prompt(prompt_text, confidence, verbose, **kwargs)
 
     def list_local_models(self) -> List[str]:
         """List available local models."""
@@ -216,7 +231,7 @@ class LocalBackend(BaseCLI):
         if not self.is_available():
             raise BackendNotAvailableError("Local backend is not properly configured")
 
-        self.console.print(f"[blue]📥 Pulling model {model_name}...[/blue]")
-        # Mock implementation - would integrate with actual provider APIs
+        self.console.print(f"[yellow]📥 Pulling model {model_name}...[/yellow]")
+        # Mock implementation - would integrate with actual provider
         self.console.print(f"[green]✅ Model {model_name} pulled successfully[/green]")
         return True
