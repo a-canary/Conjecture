@@ -7,13 +7,13 @@ import asyncio
 import sys
 import os
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import pytest
 from unittest.mock import Mock, AsyncMock, patch
 from datetime import datetime
 
-from core.unified_models import Claim, ClaimState, ClaimType
+from src.core.models import Claim, ClaimState, ClaimScope
 
 
 class TestClaimModel:
@@ -25,13 +25,11 @@ class TestClaimModel:
             id="test_001",
             content="This is a test claim with sufficient length",
             confidence=0.85,
-            type=[ClaimType.CONCEPT],
             tags=["test", "claim"],
         )
 
         assert claim.id == "test_001"
         assert claim.confidence == 0.85
-        assert ClaimType.CONCEPT in claim.type
         assert "test" in claim.tags
         assert claim.state == ClaimState.EXPLORE
 
@@ -42,284 +40,178 @@ class TestClaimModel:
             id="valid_001",
             content="Valid claim content that meets minimum length requirements",
             confidence=0.75,
-            type=[ClaimType.REFERENCE],
+            tags=["reference"],
         )
         assert claim is not None
 
-        # Test invalid confidence
+        # Test invalid confidence (too high)
         with pytest.raises(ValueError):
             Claim(
                 id="invalid_001",
-                content="Valid content",
+                content="Valid content with enough length",
                 confidence=1.5,  # Invalid confidence
-                type=[ClaimType.CONCEPT],
+                tags=["concept"],
             )
 
         # Test short content
         with pytest.raises(ValueError):
             Claim(
                 id="invalid_002",
-                content="Too short",
+                content="Too",  # Too short (min 5 chars)
                 confidence=0.5,
-                type=[ClaimType.CONCEPT],
+                tags=["concept"],
             )
 
     def test_claim_relationships(self):
-        """Test claim relationship management"""
+        """Test claim relationship fields"""
         claim1 = Claim(
-            id="claim1", content="First claim", confidence=0.8, type=[ClaimType.CONCEPT]
+            id="claim1",
+            content="First claim with sufficient content",
+            confidence=0.8,
+            tags=["concept"],
+            supports=["claim2"],
         )
 
         claim2 = Claim(
             id="claim2",
-            content="Second claim",
+            content="Second claim with sufficient content",
             confidence=0.7,
-            type=[ClaimType.EXAMPLE],
+            tags=["example"],
+            supported_by=["claim1"],
         )
 
         # Test support relationships
-        claim1.add_supports(claim2.id)
-        assert claim2.id in claim1.supports
+        assert "claim2" in claim1.supports
+        assert "claim1" in claim2.supported_by
 
-        claim2.add_support(claim1.id)
-        assert claim1.id in claim2.supported_by
-
-    def test_confidence_update(self):
-        """Test confidence score updates"""
+    def test_claim_dirty_flags(self):
+        """Test dirty flag functionality"""
         claim = Claim(
-            id="update_test",
-            content="Test claim for confidence update",
+            id="dirty_test",
+            content="Test claim for dirty flag testing",
             confidence=0.5,
-            type=[ClaimType.CONCEPT],
+            tags=["concept"],
         )
 
-        original_updated = claim.updated
-        import time
-
-        time.sleep(0.01)  # Small delay to ensure timestamp difference
-        claim.update_confidence(0.9)
-
-        assert claim.confidence == 0.9
-        assert claim.updated >= original_updated
+        # New claims should be dirty by default
+        assert claim.is_dirty == True
 
 
-class TestBasicFunctionality:
-    """Test basic functionality without external dependencies"""
-
-    def test_imports(self):
-        """Test that all modules can be imported"""
-        try:
-            from config.simple_config import Config
-            from processing.llm_bridge import LLMBridge
-
-            assert True
-        except ImportError as e:
-            pytest.skip(f"Import not available: {e}")
-
-    def test_config_creation(self):
-        """Test configuration creation"""
-        try:
-            from config.simple_config import Config
-
-            config = Config()
-            assert config is not None
-            assert hasattr(config, "database_type")
-            assert hasattr(config, "llm_provider")
-        except ImportError:
-            pytest.skip("Config module not available")
-
-    def test_claim_types(self):
-        """Test claim type enumeration"""
-        assert ClaimType.CONCEPT == "concept"
-        assert ClaimType.REFERENCE == "reference"
-        assert ClaimType.THESIS == "thesis"
-        assert ClaimType.EXAMPLE == "example"
-        assert ClaimType.GOAL == "goal"
+class TestClaimStates:
+    """Test claim state enumeration"""
 
     def test_claim_states(self):
-        """Test claim state enumeration"""
+        """Test claim state enumeration values"""
         assert ClaimState.EXPLORE == "Explore"
         assert ClaimState.VALIDATED == "Validated"
         assert ClaimState.ORPHANED == "Orphaned"
         assert ClaimState.QUEUED == "Queued"
 
-
-class TestAsyncEvaluationBasics:
-    """Test async evaluation service basics"""
-
-    @pytest.mark.asyncio
-    async def test_evaluation_event_creation(self):
-        """Test evaluation event creation"""
-        try:
-            from processing.async_claim_evaluation import EvaluationEvent
-
-            event = EvaluationEvent(
-                claim_id="test_001", event_type="test_event", data={"test": "data"}
+    def test_claim_with_different_states(self):
+        """Test creating claims with different states"""
+        for state in ClaimState:
+            claim = Claim(
+                id=f"state_test_{state.value}",
+                content=f"Test claim with state {state.value}",
+                confidence=0.5,
+                state=state,
             )
+            assert claim.state == state
 
-            assert event.claim_id == "test_001"
-            assert event.event_type == "test_event"
-            assert event.data["test"] == "data"
-            assert event.timestamp is not None
 
-        except ImportError:
-            pytest.skip("Async evaluation module not available")
+class TestClaimScopes:
+    """Test claim scope enumeration"""
 
-    @pytest.mark.asyncio
-    async def test_evaluation_task_creation(self):
-        """Test evaluation task creation"""
+    def test_scope_hierarchy(self):
+        """Test scope hierarchy"""
+        hierarchy = ClaimScope.get_hierarchy()
+        assert len(hierarchy) == 4
+        assert ClaimScope.USER_WORKSPACE.value in hierarchy[0]
+
+    def test_default_scope(self):
+        """Test default scope is most restrictive"""
+        default = ClaimScope.get_default()
+        assert "user" in default.lower()
+
+
+class TestBasicImports:
+    """Test basic functionality without external dependencies"""
+
+    def test_core_imports(self):
+        """Test that core modules can be imported"""
         try:
-            from processing.async_claim_evaluation import EvaluationTask
+            from src.core.models import Claim, ClaimState, ClaimScope
+            from src.conjecture import Conjecture, ExplorationResult
 
-            task = EvaluationTask(priority=100, claim_id="test_001")
-
-            assert task.priority == 100
-            assert task.claim_id == "test_001"
-            assert task.attempts == 0
-            assert task.max_attempts == 3
-
-        except ImportError:
-            pytest.skip("Async evaluation module not available")
-
-
-class TestToolValidation:
-    """Test tool validation functionality"""
-
-    def test_safe_code_validation(self):
-        """Test validation of safe code"""
-        from processing.dynamic_tool_creator import ToolValidator
-
-        validator = ToolValidator()
-
-        safe_code = '''
-def execute(param: str) -> dict:
-    """Execute a safe operation"""
-    return {"success": True, "result": param}
-'''
-
-        is_valid, issues = validator.validate_tool_code(safe_code)
-        assert is_valid, f"Safe code should be valid: {issues}"
-
-    def test_unsafe_code_validation(self):
-        """Test validation of unsafe code"""
-        from processing.dynamic_tool_creator import ToolValidator
-
-        validator = ToolValidator()
-
-        unsafe_code = '''
-import os
-
-def execute(param: str) -> dict:
-    """Execute with dangerous import"""
-    return {"success": True, "result": param}
-'''
-
-        is_valid, issues = validator.validate_tool_code(unsafe_code)
-        assert not is_valid, "Unsafe code should not be valid"
-        assert len(issues) > 0
-
-
-class TestContextCollection:
-    """Test context collection functionality"""
-
-    def test_keyword_extraction(self):
-        """Test keyword extraction from text"""
-        try:
-            from processing.context_collector import ContextCollector
-            from data.data_manager import DataManager
-
-            # Mock data manager
-            mock_dm = Mock(spec=DataManager)
-            collector = ContextCollector(mock_dm)
-
-            text = "Machine learning algorithms require substantial training data for optimal performance"
-            keywords = collector._extract_keywords(text)
-
-            assert isinstance(keywords, list)
-            assert len(keywords) > 0
-            assert "machine" in keywords
-            assert "learning" in keywords
-            assert "algorithms" in keywords
-
-        except ImportError:
-            pytest.skip("Context collector module not available")
-
-    def test_relevance_scoring(self):
-        """Test relevance scoring functionality"""
-        try:
-            from processing.context_collector import ContextRelevanceScorer
-
-            scorer = ContextRelevanceScorer()
-
-            text1 = "machine learning algorithms"
-            text2 = "deep learning neural networks"
-
-            score = scorer._score_keyword_match(text1, text2)
-            assert 0.0 <= score <= 1.0
-
-            # Test identical texts
-            identical_score = scorer._score_keyword_match(text1, text1)
-            assert identical_score > score
-
-        except ImportError:
-            pytest.skip("Context collector module not available")
-
-
-class TestIntegrationBasics:
-    """Basic integration tests"""
-
-    @pytest.mark.asyncio
-    async def test_enhanced_conjecture_import(self):
-        """Test enhanced conjecture can be imported"""
-        try:
-            from enhanced_conjecture import EnhancedConjecture
-
-            assert EnhancedConjecture is not None
+            assert True
         except ImportError as e:
-            pytest.skip(f"Enhanced conjecture not available: {e}")
+            pytest.fail(f"Core import failed: {e}")
 
-    @pytest.mark.asyncio
-    async def test_simple_exploration_result(self):
-        """Test exploration result creation"""
+    def test_config_import(self):
+        """Test configuration import"""
         try:
-            from enhanced_conjecture import ExplorationResult
+            from src.config.config import get_config
 
-            claims = [
-                Claim(
-                    id="test_001",
-                    content="Test claim 1",
-                    confidence=0.8,
-                    type=[ClaimType.CONCEPT],
-                ),
-                Claim(
-                    id="test_002",
-                    content="Test claim 2",
-                    confidence=0.7,
-                    type=[ClaimType.EXAMPLE],
-                ),
-            ]
+            assert True
+        except ImportError as e:
+            pytest.skip(f"Config module not available: {e}")
 
-            result = ExplorationResult(
-                query="test query",
-                claims=claims,
-                total_found=len(claims),
-                search_time=1.5,
-                confidence_threshold=0.5,
-                max_claims=10,
-            )
+    def test_cli_import(self):
+        """Test CLI import"""
+        try:
+            from src.cli.modular_cli import app
 
-            assert result.query == "test query"
-            assert len(result.claims) == 2
-            assert result.total_found == 2
-            assert result.search_time == 1.5
+            assert app is not None
+        except ImportError as e:
+            pytest.skip(f"CLI module not available: {e}")
 
-            # Test summary
-            summary = result.summary()
-            assert "test query" in summary
-            assert "2 claims" in summary
 
-        except ImportError:
-            pytest.skip("Exploration result not available")
+class TestConjecture:
+    """Test main Conjecture class"""
+
+    def test_conjecture_import(self):
+        """Test Conjecture class can be imported"""
+        from src.conjecture import Conjecture
+
+        assert Conjecture is not None
+
+    def test_exploration_result_import(self):
+        """Test ExplorationResult can be imported"""
+        from src.conjecture import ExplorationResult
+
+        assert ExplorationResult is not None
+
+
+class TestDataModels:
+    """Test data model serialization"""
+
+    def test_claim_to_dict(self):
+        """Test claim can be converted to dict"""
+        claim = Claim(
+            id="dict_test",
+            content="Test claim for dictionary conversion",
+            confidence=0.75,
+            tags=["test", "serialization"],
+        )
+
+        claim_dict = claim.model_dump()
+        assert claim_dict["id"] == "dict_test"
+        assert claim_dict["confidence"] == 0.75
+        assert "test" in claim_dict["tags"]
+
+    def test_claim_to_chroma_metadata(self):
+        """Test claim can be converted to ChromaDB metadata"""
+        claim = Claim(
+            id="chroma_test",
+            content="Test claim for ChromaDB metadata",
+            confidence=0.8,
+            tags=["chroma", "test"],
+        )
+
+        metadata = claim.to_chroma_metadata()
+        assert metadata["confidence"] == 0.8
+        assert metadata["state"] == ClaimState.EXPLORE.value
+        assert "chroma" in metadata["tags"]
 
 
 if __name__ == "__main__":

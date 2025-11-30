@@ -374,7 +374,7 @@ def analyze(
     ),
 ):
     """Analyze a claim using LLM services."""
-try:
+    try:
         # Override backend if specified
         if backend:
             cli_backend = get_backend(backend)
@@ -423,9 +423,18 @@ try:
 
 @app.command()
 def prompt(
-    prompt_text: str = typer.Argument(..., help="The prompt text (will be created as a claim)"),
-    confidence: float = typer.Option(0.8, "--confidence", "-c", help="Initial confidence score"),
-    verbose: int = typer.Option(0, "--verbose", "-v", help="Verbosity level: 0=final only, 1=tool calls, 2=claims>90%"),
+    prompt_text: str = typer.Argument(
+        ..., help="The prompt text (will be created as a claim)"
+    ),
+    confidence: float = typer.Option(
+        0.8, "--confidence", "-c", help="Initial confidence score"
+    ),
+    verbose: int = typer.Option(
+        0,
+        "--verbose",
+        "-v",
+        help="Verbosity level: 0=final only, 1=tool calls, 2=claims>90%",
+    ),
 ):
     """Process a prompt as a claim with workspace context."""
     try:

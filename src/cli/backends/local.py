@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.console import Console
 
-from .base_cli import BaseCLI, BackendNotAvailableError
+from ..base_cli import BaseCLI, BackendNotAvailableError
 
 
 class LocalBackend(BaseCLI):
