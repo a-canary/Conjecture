@@ -102,27 +102,50 @@ class BaseCLI(ABC):
         self._workspace = config.workspace
 
     def _get_claim(self, claim_id: str) -> Optional[dict]:
-        """Get claim from database using SQLiteManager."""
-        # Use asyncio to run the async method
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            claim_dict = loop.run_until_complete(
-                self.sqlite_manager.get_claim(claim_id)
-            )
-            return claim_dict
-        finally:
-            loop.close()
+        """Get claim from database."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT id, content, confidence, state, tags, scope, is_dirty, 
+                   dirty_reason, dirty_priority, created, created_by
+            FROM claims
+            WHERE id = ?
+        """,
+            (claim_id,),
+        )
+
+        row = cursor.fetchone()
+        conn.close()
+
+        if not row:
+            return None
+
+        return {
+            "id": row[0],
+            "content": row[1],
+            "confidence": row[2],
+            "state": row[3],
+            "tags": json.loads(row[4]) if row[4] else [],
+            "scope": row[5],
+            "is_dirty": bool(row[6]),
+            "dirty_reason": row[7],
+            "dirty_priority": row[8],
+            "created_at": row[9],
+            "created_by": row[10],
+        }
 
     def _search_claims(self, query: str, limit: int = 10) -> List[dict]:
         """Search claims using vector similarity."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
-        # Get all claims with embeddings
+        # Get all claims with embeddings (using correct schema)
         cursor.execute("""
-            SELECT id, content, confidence, user_id, metadata, tags, scope, is_dirty, dirty_reason, dirty_priority, created_at, embedding
+            SELECT id, content, confidence, state, tags, scope, is_dirty, dirty_reason, dirty_priority, created, embedding, created_by
             FROM claims
+            WHERE embedding IS NOT NULL
         """)
 
         rows = cursor.fetchall()
@@ -137,29 +160,40 @@ class BaseCLI(ABC):
         # Calculate similarities
         results = []
         for row in rows:
-            claim_embedding = np.frombuffer(row[10], dtype=np.float32)
+            try:
+                # Embedding is stored as JSON array
+                claim_embedding = np.array(json.loads(row[10]), dtype=np.float32)
 
-            # Calculate cosine similarity
-            similarity = np.dot(query_embedding, claim_embedding) / (
-                np.linalg.norm(query_embedding) * np.linalg.norm(claim_embedding)
-            )
+                # Calculate cosine similarity
+                norm_query = np.linalg.norm(query_embedding)
+                norm_claim = np.linalg.norm(claim_embedding)
 
-            results.append(
-                {
-                    "id": row[0],
-                    "content": row[1],
-                    "confidence": row[2],
-                    "user_id": row[3],
-                    "metadata": json.loads(row[4]) if row[4] else None,
-                    "tags": json.loads(row[5]) if row[5] else [],
-                    "scope": row[6],
-                    "is_dirty": bool(row[7]),
-                    "dirty_reason": row[8],
-                    "dirty_priority": row[9],
-                    "created_at": row[10],
-                    "similarity": float(similarity),
-                }
-            )
+                if norm_query > 0 and norm_claim > 0:
+                    similarity = np.dot(query_embedding, claim_embedding) / (
+                        norm_query * norm_claim
+                    )
+                else:
+                    similarity = 0.0
+
+                results.append(
+                    {
+                        "id": row[0],
+                        "content": row[1],
+                        "confidence": row[2],
+                        "state": row[3],
+                        "tags": json.loads(row[4]) if row[4] else [],
+                        "scope": row[5],
+                        "is_dirty": bool(row[6]),
+                        "dirty_reason": row[7],
+                        "dirty_priority": row[8],
+                        "created_at": row[9],
+                        "created_by": row[11],
+                        "similarity": float(similarity),
+                    }
+                )
+            except (json.JSONDecodeError, TypeError, ValueError):
+                # Skip claims with invalid embeddings
+                continue
 
         # Sort by similarity and return top results
         results.sort(key=lambda x: x["similarity"], reverse=True)

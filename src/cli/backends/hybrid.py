@@ -43,6 +43,15 @@ class HybridBackend(BaseCLI):
             "cloud": self.cloud_backend.is_available(),
         }
 
+    def set_preferred_mode(self, mode: str) -> None:
+        """Set the preferred mode for backend selection."""
+        if mode in ["local", "cloud", "auto"]:
+            self.preferred_mode = mode
+        else:
+            raise ValueError(
+                f"Invalid mode: {mode}. Must be 'local', 'cloud', or 'auto'"
+            )
+
     def _select_best_backend(self, operation: str = "general") -> BaseCLI:
         """Select the best backend for the given operation."""
         available = self._detect_available_backends()

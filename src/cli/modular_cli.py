@@ -255,13 +255,18 @@ def get(
                 if claim:
                     progress.update(task, description="Claim retrieved successfully!")
 
+                    user = claim.get("created_by", claim.get("user_id", "unknown"))
+                    created = claim.get("created_at", claim.get("created", "unknown"))
+                    metadata = claim.get("metadata", {})
                     panel = Panel(
                         f"[bold]ID:[/bold] {claim['id']}\n"
                         f"[bold]Content:[/bold] {claim['content']}\n"
                         f"[bold]Confidence:[/bold] {claim['confidence']:.2f}\n"
-                        f"[bold]User:[/bold] {claim['user_id']}\n"
-                        f"[bold]Created:[/bold] {claim['created_at']}\n"
-                        f"[bold]Metadata:[/bold] {json.dumps(claim['metadata'], indent=2)}",
+                        f"[bold]State:[/bold] {claim.get('state', 'unknown')}\n"
+                        f"[bold]User:[/bold] {user}\n"
+                        f"[bold]Created:[/bold] {created}\n"
+                        f"[bold]Tags:[/bold] {claim.get('tags', [])}\n"
+                        f"[bold]Dirty:[/bold] {claim.get('is_dirty', False)}",
                         title=f"Claim Details: {claim_id}",
                         border_style="blue",
                     )
@@ -339,7 +344,9 @@ def search(
                                 f"{result['similarity']:.3f}"
                                 if "similarity" in result
                                 else "N/A",
-                                result["user_id"],
+                                result.get(
+                                    "created_by", result.get("user_id", "unknown")
+                                ),
                             )
 
                     console.print(table)

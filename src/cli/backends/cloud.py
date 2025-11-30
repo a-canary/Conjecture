@@ -147,7 +147,7 @@ class CloudBackend(BaseCLI):
             raise ValueError(f"Claim {claim_id} not found")
 
         self.console.print(
-            f"[blue]🔍 Analyzing claim {claim_id} with cloud services...[/blue]"
+            f"[blue][CLOUD] Analyzing claim {claim_id} with cloud services...[/blue]"
         )
 
         # Mock analysis for now - would integrate with cloud LLM APIs
@@ -169,7 +169,7 @@ class CloudBackend(BaseCLI):
             else None,
         }
 
-        self.console.print("[green]✅ Cloud analysis complete[/green]")
+        self.console.print("[green][OK] Cloud analysis complete[/green]")
         return analysis
 
     def process_prompt(

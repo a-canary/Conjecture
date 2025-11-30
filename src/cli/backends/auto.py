@@ -209,7 +209,7 @@ class AutoBackend(BaseCLI):
         backend = self._select_and_initialize_backend("analyze")
 
         self.console.print(
-            f"[blue]🧠 Auto-detected {backend._get_backend_type()} backend for analysis[/blue]"
+            f"[blue][AUTO] Using {backend._get_backend_type()} backend for analysis[/blue]"
         )
 
         analysis = backend.analyze_claim(claim_id, **kwargs)
@@ -226,7 +226,7 @@ class AutoBackend(BaseCLI):
 
         if verbose >= 1:
             self.console.print(
-                f"[blue]🧠 Auto-detected {backend._get_backend_type()} backend for prompt processing[/blue]"
+                f"[blue][AUTO] Using {backend._get_backend_type()} backend for prompt processing[/blue]"
             )
 
         result = backend.process_prompt(prompt_text, confidence, verbose, **kwargs)
