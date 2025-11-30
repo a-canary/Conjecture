@@ -153,14 +153,5 @@ class ClaimBatch(BaseModel):
         return ids, documents, embeddings, metadatas
 
 
-class ProcessingResult(BaseModel):
-    """Result of claim processing"""
-
-    success: bool = Field(..., description="Processing success status")
-    processed_claims: int = Field(..., description="Number of claims processed")
-    updated_claims: int = Field(..., description="Number of claims updated")
-    errors: List[str] = Field(default_factory=list, description="Processing errors")
-    execution_time: Optional[float] = Field(
-        None, description="Execution time in seconds"
-    )
-    message: str = Field(default="", description="Processing message")
+# Import common result classes to maintain backward compatibility
+from .common_results import ProcessingResult, BatchResult

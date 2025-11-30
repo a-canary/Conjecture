@@ -439,23 +439,8 @@ class DataConfig(BaseModel):
         return v
 
 
-class ProcessingResult(BaseModel):
-    """Result of claim processing"""
-
-    success: bool = Field(..., description="Processing success status")
-    processed_claims: int = Field(..., description="Number of claims processed")
-    updated_claims: int = Field(..., description="Number of claims updated")
-    errors: List[str] = Field(default_factory=list, description="Processing errors")
-    execution_time: Optional[float] = Field(
-        None, description="Execution time in seconds"
-    )
-    message: str = Field(default="", description="Processing message")
-
-
-class BatchResult(BaseModel):
-    """Result of batch processing"""
-
-    results: List[ProcessingResult] = Field(..., description="Processing results")
+# Import common result classes to maintain backward compatibility
+from .common_results import ProcessingResult, BatchResult
     batch_id: str = Field(..., description="Batch identifier")
     timestamp: datetime = Field(
         default_factory=datetime.utcnow, description="Batch timestamp"
