@@ -344,14 +344,29 @@ class BaseCLI(ABC):
 
         if verbose >= 1:
             self.console.print(
-                f"[dim]🔧 Creating claim with context: {workspace}/{team}/{user}[/dim]"
+                f"[dim][INFO] Creating claim with context: {workspace}/{team}/{user}[/dim]"
             )
-            self.console.print(f"[dim]🔧 Scope: {scope}[/dim]")
-            self.console.print(f"[dim]🔧 Tags: {tags}[/dim]")
+            self.console.print(f"[dim][INFO] Scope: {scope}[/dim]")
+            self.console.print(f"[dim][INFO] Tags: {tags}[/dim]")
 
         # Initialize database if not already done
         if not self.sqlite_manager.connection:
-            asyncio.create_task(self.sqlite_manager.initialize())
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # If loop is running, schedule the task
+                    asyncio.ensure_future(self.sqlite_manager.initialize())
+                else:
+                    # If no loop running, run synchronously
+                    loop.run_until_complete(self.sqlite_manager.initialize())
+            except RuntimeError:
+                # No event loop exists, create one
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                try:
+                    loop.run_until_complete(self.sqlite_manager.initialize())
+                finally:
+                    pass  # Keep loop for future use
             self._workspace = workspace
 
         # Create claim using SQLiteManager
@@ -362,44 +377,58 @@ class BaseCLI(ABC):
             tags=tags,
             scope=ClaimScope.USER_WORKSPACE,  # Most restrictive by default
             is_dirty=True,
-            dirty=True,  # Backward compatibility
             dirty_reason=DirtyReason.NEW_CLAIM_ADDED,
             dirty_priority=10,
         )
 
         # Save claim to SQLite database
-        asyncio.create_task(self.sqlite_manager.create_claim(claim))
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                # If loop is running, schedule the task
+                asyncio.ensure_future(self.sqlite_manager.create_claim(claim))
+            else:
+                # If no loop running, run synchronously
+                loop.run_until_complete(self.sqlite_manager.create_claim(claim))
+        except RuntimeError:
+            # No event loop exists, create one
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(self.sqlite_manager.create_claim(claim))
+            finally:
+                pass  # Keep loop for future use
         claim_id = claim.id
 
         if verbose >= 1:
             self.console.print(
-                f"[dim]🔧 Marking claim {claim_id} as dirty for evaluation[/dim]"
+                f"[dim][INFO] Marking claim {claim_id} as dirty for evaluation[/dim]"
             )
 
         if verbose >= 1:
-            self.console.print(f"[dim]🔧 Starting dirty evaluation...[/dim]")
+            self.console.print(f"[dim][INFO] Starting dirty evaluation...[/dim]")
 
         # Process dirty evaluation (mock for now)
         evaluation_result = self._mock_evaluate_claim(claim_id)
 
         if verbose >= 1:
             self.console.print(
-                f"[dim]🔧 Evaluation complete, confidence: {evaluation_result['final_confidence']:.1%}[/dim]"
+                f"[dim][INFO] Evaluation complete, confidence: {evaluation_result['final_confidence']:.1%}[/dim]"
             )
 
         # Check confidence threshold for user response
         if evaluation_result["final_confidence"] > 0.90:
             if verbose >= 2:
                 self.console.print(
-                    f"[blue]📋 High-confidence claim achieved: {evaluation_result['final_confidence']:.1%}[/blue]"
+                    f"[blue][OK] High-confidence claim achieved: {evaluation_result['final_confidence']:.1%}[/blue]"
                 )
                 self.console.print(
-                    f"[blue]📋 Claim details: {evaluation_result['summary']}[/blue]"
+                    f"[blue][OK] Claim details: {evaluation_result['summary']}[/blue]"
                 )
 
             if verbose >= 1:
                 self.console.print(
-                    f"[dim]🔧 Generating user response with TellUser tool...[/dim]"
+                    f"[dim][INFO] Generating user response with TellUser tool...[/dim]"
                 )
 
             user_response = self._generate_user_response(prompt_text, evaluation_result)
@@ -411,7 +440,7 @@ class BaseCLI(ABC):
         else:
             if verbose >= 1:
                 self.console.print(
-                    f"[dim]🔧 Confidence {evaluation_result['final_confidence']:.1%} below 90% threshold - no user response[/dim]"
+                    f"[dim][INFO] Confidence {evaluation_result['final_confidence']:.1%} below 90% threshold - no user response[/dim]"
                 )
 
         return {
@@ -462,9 +491,28 @@ class BaseCLI(ABC):
 
     def mark_claim_dirty(self, claim_id: str, reason, priority: int = 0):
         """Mark a claim as dirty in the database."""
-        asyncio.create_task(
-            self.sqlite_manager.mark_claim_dirty(claim_id, reason, priority)
-        )
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                # If loop is running, schedule the task
+                asyncio.ensure_future(
+                    self.sqlite_manager.mark_claim_dirty(claim_id, reason, priority)
+                )
+            else:
+                # If no loop running, run synchronously
+                loop.run_until_complete(
+                    self.sqlite_manager.mark_claim_dirty(claim_id, reason, priority)
+                )
+        except RuntimeError:
+            # No event loop exists, create one
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(
+                    self.sqlite_manager.mark_claim_dirty(claim_id, reason, priority)
+                )
+            finally:
+                pass  # Keep loop for future use
 
     def _mock_evaluate_claim(self, claim_id: str) -> Dict[str, Any]:
         """Mock evaluation for testing - replace with actual evaluation logic."""
