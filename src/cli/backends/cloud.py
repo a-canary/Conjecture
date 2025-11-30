@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 # Add parent to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.progress import Progress, TextColumn
 from rich.console import Console
 
 from ..base_cli import BaseCLI, BackendNotAvailableError
@@ -51,12 +51,11 @@ class CloudBackend(BaseCLI):
             self._init_database()
 
             with Progress(
-                SpinnerColumn(),
                 TextColumn("[progress.description]{task.description}"),
                 console=self.console,
             ) as progress:
                 task = progress.add_task(
-                    "Creating claim with cloud services...", total=None
+                    "[cyan]Creating claim with cloud services...", total=None
                 )
 
                 # Validate input
@@ -122,12 +121,11 @@ class CloudBackend(BaseCLI):
         self._init_database()
 
         with Progress(
-            SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=self.console,
         ) as progress:
             task = progress.add_task(
-                "Searching claims with cloud enhancement...", total=None
+                "[cyan]Searching claims with cloud enhancement...", total=None
             )
 
             try:

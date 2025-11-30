@@ -16,7 +16,7 @@ from typing import Any, Dict, List, Optional, Union
 import numpy as np
 from rich.console import Console
 from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.progress import Progress, TextColumn
 from rich.table import Table
 
 # Add parent to path for imports
@@ -52,7 +52,7 @@ class BaseCLI(ABC):
         result = validate_config()
 
         if not result:  # validate_config returns a bool
-            self.console.print("[bold red]❌ Configuration Required[/bold red]")
+            self.console.print("[bold red][ERROR] Configuration Required[/bold red]")
             self.console.print(
                 "Please configure at least one provider in your .env file"
             )
@@ -79,8 +79,23 @@ class BaseCLI(ABC):
 
     def _init_database(self):
         """Initialize SQLite database with scope support."""
-        # Initialize the SQLite database manager
-        asyncio.create_task(self.sqlite_manager.initialize())
+        # Initialize the SQLite database manager synchronously
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                # If loop is running, schedule the task
+                asyncio.ensure_future(self.sqlite_manager.initialize())
+            else:
+                # If no loop running, run synchronously
+                loop.run_until_complete(self.sqlite_manager.initialize())
+        except RuntimeError:
+            # No event loop exists, create one
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(self.sqlite_manager.initialize())
+            finally:
+                pass  # Keep loop for future use
 
         # Set workspace context
         config = get_config()
@@ -161,40 +176,91 @@ class BaseCLI(ABC):
         user_id: str,
         metadata: dict = None,
         tags: list = None,
-        scope: str = "global",
+        scope: str = "user-workspace",
     ) -> str:
-        """Save claim to database."""
+        """Save claim to database using SQLiteManager schema."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
+        # Ensure table exists with correct schema
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS claims (
+                id VARCHAR(20) PRIMARY KEY,
+                content TEXT NOT NULL,
+                confidence REAL NOT NULL,
+                state VARCHAR(20) NOT NULL DEFAULT 'Explore',
+                supported_by TEXT NOT NULL DEFAULT '[]',
+                supports TEXT NOT NULL DEFAULT '[]',
+                tags TEXT NOT NULL DEFAULT '[]',
+                scope VARCHAR(50) NOT NULL DEFAULT 'user-workspace',
+                created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                embedding TEXT,
+                is_dirty BOOLEAN NOT NULL DEFAULT 1,
+                dirty_reason VARCHAR(50),
+                dirty_timestamp TIMESTAMP,
+                dirty_priority INTEGER NOT NULL DEFAULT 0,
+                created_by VARCHAR(50),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
         # Generate embedding
         embedding = self._generate_embedding(content)
-        embedding_bytes = embedding.tobytes()
+        embedding_list = embedding.tolist()
 
         # Generate ID
-        claim_id = f"c{int(time.time() * 1000) % 1000000000:07d}"
+        claim_id = f"c{int(time.time() * 1000) % 100000000:08d}"
 
-        # Save claim
+        # Save claim with correct schema
         cursor.execute(
             """
-            INSERT INTO claims (id, content, confidence, user_id, embedding, metadata, tags, scope)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO claims (id, content, confidence, state, tags, scope, embedding, is_dirty, created_by)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
             (
                 claim_id,
                 content,
                 confidence,
-                user_id,
-                embedding_bytes,
-                json.dumps(metadata) if metadata else None,
-                json.dumps(tags) if tags else None,
+                "Explore",
+                json.dumps(tags) if tags else "[]",
                 scope,
+                json.dumps(embedding_list),
+                1,  # is_dirty = True
+                user_id,
             ),
         )
 
         conn.commit()
         conn.close()
         return claim_id
+
+    def _create_claim_panel(
+        self,
+        claim_id: str,
+        content: str,
+        confidence: float,
+        user_id: str,
+        metadata: dict = None,
+    ) -> Panel:
+        """Create a Rich panel displaying claim information."""
+        content_preview = content[:100] + "..." if len(content) > 100 else content
+        metadata_str = json.dumps(metadata, indent=2) if metadata else "{}"
+
+        panel_content = (
+            f"[bold]ID:[/bold] {claim_id}\n"
+            f"[bold]Content:[/bold] {content_preview}\n"
+            f"[bold]Confidence:[/bold] {confidence:.2f}\n"
+            f"[bold]Created By:[/bold] {user_id}\n"
+            f"[bold]Metadata:[/bold] {metadata_str}"
+        )
+
+        return Panel(
+            panel_content,
+            title=f"[green]Claim Created: {claim_id}[/green]",
+            border_style="green",
+        )
 
     # Abstract methods that must be implemented by backends
     @abstractmethod

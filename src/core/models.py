@@ -6,7 +6,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class RelationshipError(Exception):
@@ -141,10 +141,6 @@ class Claim(BaseModel):
     is_dirty: bool = Field(
         default=True, description="Whether claim needs re-evaluation"
     )
-    dirty: bool = Field(
-        default=True,
-        description="Whether claim needs re-evaluation (backward compatibility)",
-    )
     dirty_reason: Optional[DirtyReason] = Field(
         default=None, description="Reason why claim was marked dirty"
     )
@@ -155,7 +151,8 @@ class Claim(BaseModel):
         default=0, description="Priority for dirty evaluation (higher = more urgent)"
     )
 
-    @validator("tags")
+    @field_validator("tags")
+    @classmethod
     def validate_tags(cls, v):
         """Validate tags are strings and not empty"""
         if v:
@@ -164,12 +161,12 @@ class Claim(BaseModel):
                     raise ValueError("Tags must be non-empty strings")
         return list(dict.fromkeys(v))  # Remove duplicates while preserving order
 
-    @validator("updated")
-    def validate_updated_timestamp(cls, v, values):
+    @model_validator(mode="after")
+    def validate_updated_timestamp(self):
         """Ensure updated timestamp is not before creation"""
-        if "created" in values and v < values["created"]:
+        if self.updated < self.created:
             raise ValueError("Updated timestamp cannot be before creation timestamp")
-        return v
+        return self
 
     def to_chroma_metadata(self) -> Dict[str, Any]:
         """Convert claim to ChromaDB metadata format"""
@@ -279,7 +276,7 @@ class Claim(BaseModel):
 class ClaimBatch(BaseModel):
     """Batch model for processing multiple claims"""
 
-    claims: List[Claim] = Field(..., min_items=1, description="List of claims")
+    claims: List[Claim] = Field(..., min_length=1, description="List of claims")
     batch_id: str = Field(..., description="Batch identifier")
     timestamp: datetime = Field(
         default_factory=datetime.utcnow, description="Batch timestamp"
@@ -368,17 +365,16 @@ class ClaimFilter(BaseModel):
         default=None, description="Filter by states"
     )
 
-    @validator("confidence_max")
-    def validate_confidence_range(cls, v, values):
+    @model_validator(mode="after")
+    def validate_confidence_range(self):
         """Validate confidence_max is >= confidence_min"""
         if (
-            v is not None
-            and "confidence_min" in values
-            and values["confidence_min"] is not None
+            self.confidence_max is not None
+            and self.confidence_min is not None
+            and self.confidence_max < self.confidence_min
         ):
-            if v < values["confidence_min"]:
-                raise ValueError("confidence_max must be >= confidence_min")
-        return v
+            raise ValueError("confidence_max must be >= confidence_min")
+        return self
 
 
 class Relationship(BaseModel):
@@ -397,7 +393,8 @@ class Relationship(BaseModel):
         default=None, description="User who created relationship"
     )
 
-    @validator("relationship_type")
+    @field_validator("relationship_type")
+    @classmethod
     def validate_relationship_type(cls, v):
         """Validate relationship type"""
         valid_types = ["supports", "contradicts", "relates_to", "depends_on"]
@@ -433,11 +430,12 @@ class DataConfig(BaseModel):
     )
     max_tokens: int = Field(default=8000, ge=1000, description="Maximum context tokens")
 
-    @validator("max_tokens")
+    @field_validator("max_tokens")
+    @classmethod
     def validate_max_tokens(cls, v):
         """Validate max_tokens is reasonable"""
         if v < 1000:
-            raise ValueError("ensure this value is greater than or equal to 0")
+            raise ValueError("max_tokens must be at least 1000")
         return v
 
 

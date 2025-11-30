@@ -182,7 +182,7 @@ class AutoBackend(BaseCLI):
         backend = self._select_and_initialize_backend("create")
 
         self.console.print(
-            f"[blue]🤖 Auto-detected {backend._get_backend_type()} backend for claim creation[/blue]"
+            f"[blue][AUTO] Using {backend._get_backend_type()} backend for claim creation[/blue]"
         )
 
         return backend.create_claim(
@@ -199,7 +199,7 @@ class AutoBackend(BaseCLI):
         backend = self._select_and_initialize_backend("search")
 
         self.console.print(
-            f"[blue]🔍 Auto-detected {backend._get_backend_type()} backend for search[/blue]"
+            f"[blue][AUTO] Using {backend._get_backend_type()} backend for search[/blue]"
         )
 
         return backend.search_claims(query, limit, **kwargs)

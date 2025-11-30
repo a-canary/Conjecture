@@ -75,7 +75,7 @@ class HybridBackend(BaseCLI):
         backend_name = backend._get_backend_type()
 
         self.console.print(
-            f"[blue]🔄 Using {backend_name} backend for claim creation...[/blue]"
+            f"[blue][HYBRID] Using {backend_name} backend for claim creation...[/blue]"
         )
 
         try:
@@ -101,7 +101,7 @@ class HybridBackend(BaseCLI):
                 fallback = fallback_backends[0]
                 fallback_name = fallback._get_backend_type()
                 self.console.print(
-                    f"[yellow]⚠️  {backend_name} failed, trying {fallback_name} fallback...[/yellow]"
+                    f"[yellow][WARN] {backend_name} failed, trying {fallback_name} fallback...[/yellow]"
                 )
                 return fallback.create_claim(
                     content, confidence, user_id, analyze, tags, **kwargs
@@ -119,7 +119,7 @@ class HybridBackend(BaseCLI):
         backend = self._select_best_backend("search")
 
         self.console.print(
-            f"[blue]🔍 Using {backend._get_backend_type()} backend for search[/blue]"
+            f"[blue][HYBRID] Using {backend._get_backend_type()} backend for search[/blue]"
         )
 
         return backend.search_claims(query, limit, **kwargs)
@@ -134,12 +134,14 @@ class HybridBackend(BaseCLI):
         # For analysis, prefer cloud for more powerful models
         if available["cloud"]:
             self.console.print(
-                "[blue]🧠 Using cloud services for enhanced analysis...[/blue]"
+                "[blue][HYBRID] Using cloud services for enhanced analysis...[/blue]"
             )
             analysis = self.cloud_backend.analyze_claim(claim_id, **kwargs)
             analysis["hybrid_mode"] = "cloud_preferred"
         elif available["local"]:
-            self.console.print("[blue]💻 Using local services for analysis...[/blue]")
+            self.console.print(
+                "[blue][HYBRID] Using local services for analysis...[/blue]"
+            )
             analysis = self.local_backend.analyze_claim(claim_id, **kwargs)
             analysis["hybrid_mode"] = "local_fallback"
         else:

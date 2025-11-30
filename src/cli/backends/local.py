@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 # Add parent to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.progress import Progress, TextColumn
 from rich.console import Console
 
 from ..base_cli import BaseCLI, BackendNotAvailableError
@@ -51,11 +51,10 @@ class LocalBackend(BaseCLI):
             self._init_database()
 
             with Progress(
-                SpinnerColumn(),
                 TextColumn("[progress.description]{task.description}"),
                 console=self.console,
             ) as progress:
-                task = progress.add_task("Creating claim locally...", total=None)
+                task = progress.add_task("[cyan]Creating claim locally...", total=None)
 
                 # Validate input
                 if not 0.0 <= confidence <= 1.0:
@@ -117,11 +116,10 @@ class LocalBackend(BaseCLI):
             self._init_database()
 
         with Progress(
-            SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=self.console,
         ) as progress:
-            task = progress.add_task("Searching claims locally...", total=None)
+            task = progress.add_task("[cyan]Searching claims locally...", total=None)
 
             try:
                 results = self._search_claims(query, limit)
@@ -161,7 +159,7 @@ class LocalBackend(BaseCLI):
             "offline_capable": True,
         }
 
-        self.console.print("[green]✅ Local analysis complete[/green]")
+        self.console.print("[green][OK] Local analysis complete[/green]")
         return analysis
 
     def process_prompt(
@@ -216,7 +214,9 @@ class LocalBackend(BaseCLI):
         if not self.is_available():
             raise BackendNotAvailableError("Local backend is not properly configured")
 
-        self.console.print(f"[blue]📥 Pulling model {model_name}...[/blue]")
+        self.console.print(f"[blue][INFO] Pulling model {model_name}...[/blue]")
         # Mock implementation - would integrate with actual provider APIs
-        self.console.print(f"[green]✅ Model {model_name} pulled successfully[/green]")
+        self.console.print(
+            f"[green][OK] Model {model_name} pulled successfully[/green]"
+        )
         return True

@@ -7,7 +7,7 @@ Unified entry point for all Conjecture CLI functionality with auto-detection
 
 import asyncio
 import typer
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.progress import Progress, TextColumn
 from rich.table import Table
 from rich.panel import Panel
 from rich.prompt import Prompt, Confirm
@@ -37,20 +37,17 @@ import os
 os.environ["PYTHONIOENCODING"] = "utf-8"
 
 # Force UTF-8 encoding for Rich console with safe fallback
-try:
-    console = Console(
-        file=sys.stdout,
-        force_terminal=True,
-        legacy_windows=True,  # Enable legacy Windows rendering for compatibility
-        width=None,
-        no_color=False,  # Allow colors but be safe about it
-        ascii_only=False,  # Let Rich handle Unicode safely
-    )
-except Exception:
-    # Fallback to safe console if Rich console creation fails
-    console = get_safe_console()
+# Use standard Rich Console for Progress compatibility
+console = Console(
+    file=sys.stdout,
+    force_terminal=True,
+    legacy_windows=True,  # Enable legacy Windows rendering for compatibility
+    width=None,
+    no_color=False,  # Allow colors but be safe about it
+)
 
-error_console = get_safe_console()  # Use safe console for error printing
+# Error console can use safe console
+error_console = Console(stderr=True, legacy_windows=True)
 
 from .backends import (
     BACKEND_REGISTRY,
@@ -205,11 +202,10 @@ def create(
             raise typer.Exit(1)
 
         with Progress(
-            SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=console,
         ) as progress:
-            task = progress.add_task("Creating claim...", total=None)
+            task = progress.add_task("[cyan]Creating claim...", total=None)
 
             try:
                 claim_id = cli_backend.create_claim(content, confidence, user, analyze)
@@ -248,11 +244,10 @@ def get(
             raise typer.Exit(1)
 
         with Progress(
-            SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=console,
         ) as progress:
-            task = progress.add_task("Retrieving claim...", total=None)
+            task = progress.add_task("[cyan]Retrieving claim...", total=None)
 
             try:
                 claim = cli_backend.get_claim(claim_id)
@@ -308,11 +303,10 @@ def search(
             raise typer.Exit(1)
 
         with Progress(
-            SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=console,
         ) as progress:
-            task = progress.add_task("Searching claims...", total=None)
+            task = progress.add_task("[cyan]Searching claims...", total=None)
 
             try:
                 results = cli_backend.search_claims(query, limit)
@@ -388,11 +382,10 @@ def analyze(
             raise typer.Exit(1)
 
         with Progress(
-            SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=console,
         ) as progress:
-            task = progress.add_task("Analyzing claim...", total=None)
+            task = progress.add_task("[cyan]Analyzing claim...", total=None)
 
             try:
                 analysis = cli_backend.analyze_claim(claim_id)
@@ -448,11 +441,10 @@ def prompt(
             raise typer.Exit(1)
 
         with Progress(
-            SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=console,
         ) as progress:
-            task = progress.add_task("Processing prompt...", total=None)
+            task = progress.add_task("[cyan]Processing prompt...", total=None)
 
             try:
                 result = cli_backend.process_prompt(prompt_text, confidence, verbose)
@@ -473,28 +465,38 @@ def config():
     console.print("[bold]Configuration Status[/bold]")
     console.print("=" * 50)
 
-    result = validate_config()
+    try:
+        is_valid = validate_config()
+    except Exception as e:
+        is_valid = False
+        console.print(f"[yellow]Warning: Config validation error: {e}[/yellow]")
 
     # Print validation result
-    if result.success:
+    if is_valid:
         console.print("[bold green]Configuration Validation: PASSED[/bold green]")
     else:
-        console.print("[bold red]Configuration Validation: FAILED[/bold red]")
-        for error in result.errors:
-            console.print(f"  • {error}")
+        console.print("[bold yellow]Configuration Validation: INCOMPLETE[/bold yellow]")
+        console.print("  • Some configuration may be missing or invalid")
 
     console.print(f"\n[bold]Next Steps:[/bold]")
-    if result.success:
+    if is_valid:
         console.print("Configuration is valid!")
         console.print("You can now use: create, get, search, analyze, prompt commands")
 
         # Show available backends
         console.print(f"\n[bold]Available Backends:[/bold]")
         for name in BACKEND_REGISTRY.keys():
-            backend_class = BACKEND_REGISTRY[name]
-            backend_instance = backend_class()
-            status = "OK" if backend_instance.is_available() else "FAIL"
-            console.print(f"  {status} {name.lower()}")
+            try:
+                backend_class = BACKEND_REGISTRY[name]
+                backend_instance = backend_class()
+                status = (
+                    "[green]OK[/green]"
+                    if backend_instance.is_available()
+                    else "[red]FAIL[/red]"
+                )
+                console.print(f"  {status} {name.lower()}")
+            except Exception:
+                console.print(f"  [red]ERROR[/red] {name.lower()}")
     else:
         console.print("Configure at least one provider:")
         console.print("  • Run: [cyan]conjecture setup[/cyan]")
