@@ -3,15 +3,12 @@ Conjecture: Core package for Simplified Universal Claim Architecture
 Provides unified claim models and relationship management
 """
 
-# Import the Conjecture class from the main module
-from ..conjecture import Conjecture, ExplorationResult
-
 # Core models - single source of truth
 from .models import (
     Claim,
     ClaimBatch,
     ClaimState,
-    ClaimState,
+    ClaimScope,
     DirtyReason,
     ProcessingResult,
     ToolCall,
@@ -24,33 +21,22 @@ from .models import (
     filter_claims_by_tags,
     filter_claims_by_confidence,
     create_claim,
-)
-
-from .support_relationship_manager import (
-    SupportRelationshipManager,
-    RelationshipMetrics,
-    TraversalResult,
+    generate_claim_id,
 )
 
 # Export core components
 __all__ = [
-    # Conjecture class
-    "Conjecture",
-    "ExplorationResult",
     # Core claim models
     "Claim",
     "ClaimType",
     "ClaimState",
+    "ClaimScope",
     "ClaimBatch",
     "DirtyReason",
     "ProcessingResult",
     "ToolCall",
     "ExecutionResult",
     "ParsedResponse",
-    # Relationship management
-    "SupportRelationshipManager",
-    "RelationshipMetrics",
-    "TraversalResult",
     # Helper functions
     "create_claim_index",
     "get_orphaned_claims",
@@ -59,4 +45,5 @@ __all__ = [
     "filter_claims_by_tags",
     "filter_claims_by_confidence",
     "create_claim",
+    "generate_claim_id",
 ]

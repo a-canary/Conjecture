@@ -23,6 +23,8 @@ from rich.table import Table
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from config.config import get_config, validate_config
+from data.sqlite_manager import SQLiteManager
+from core.models import Claim, ClaimScope, DirtyReason, generate_claim_id
 
 
 class BaseCLI(ABC):
@@ -36,6 +38,9 @@ class BaseCLI(ABC):
         self.embedding_model = None
         self.current_provider_config = None
         self.db_path = "data/conjecture.db"
+        # Initialize SQLite database manager
+        self.sqlite_manager = SQLiteManager(self.db_path)
+        self._workspace = None
 
     def _get_backend_type(self) -> str:
         """Get the backend type for this CLI."""
@@ -73,28 +78,77 @@ class BaseCLI(ABC):
                 raise SystemExit(1)
 
     def _init_database(self):
-        """Initialize SQLite database."""
+        """Initialize SQLite database with scope support."""
+        # Initialize the SQLite database manager
+        asyncio.create_task(self.sqlite_manager.initialize())
+
+        # Set workspace context
+        config = get_config()
+        self._workspace = config.workspace
+
+    def _get_claim(self, claim_id: str) -> Optional[dict]:
+        """Get claim from database using SQLiteManager."""
+        # Use asyncio to run the async method
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            claim_dict = loop.run_until_complete(
+                self.sqlite_manager.get_claim(claim_id)
+            )
+            return claim_dict
+        finally:
+            loop.close()
+
+    def _search_claims(self, query: str, limit: int = 10) -> List[dict]:
+        """Search claims using vector similarity."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
+        # Get all claims with embeddings
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS claims (
-                id TEXT PRIMARY KEY,
-                content TEXT NOT NULL,
-                confidence REAL NOT NULL,
-                user_id TEXT NOT NULL,
-                embedding BLOB,
-                metadata TEXT,
-                tags TEXT,
-                is_dirty BOOLEAN DEFAULT 1,
-                dirty_reason TEXT,
-                dirty_priority INTEGER DEFAULT 0,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
+            SELECT id, content, confidence, user_id, metadata, tags, scope, is_dirty, dirty_reason, dirty_priority, created_at, embedding
+            FROM claims
         """)
 
-        conn.commit()
+        rows = cursor.fetchall()
         conn.close()
+
+        if not rows:
+            return []
+
+        # Generate query embedding
+        query_embedding = self._generate_embedding(query)
+
+        # Calculate similarities
+        results = []
+        for row in rows:
+            claim_embedding = np.frombuffer(row[10], dtype=np.float32)
+
+            # Calculate cosine similarity
+            similarity = np.dot(query_embedding, claim_embedding) / (
+                np.linalg.norm(query_embedding) * np.linalg.norm(claim_embedding)
+            )
+
+            results.append(
+                {
+                    "id": row[0],
+                    "content": row[1],
+                    "confidence": row[2],
+                    "user_id": row[3],
+                    "metadata": json.loads(row[4]) if row[4] else None,
+                    "tags": json.loads(row[5]) if row[5] else [],
+                    "scope": row[6],
+                    "is_dirty": bool(row[7]),
+                    "dirty_reason": row[8],
+                    "dirty_priority": row[9],
+                    "created_at": row[10],
+                    "similarity": float(similarity),
+                }
+            )
+
+        # Sort by similarity and return top results
+        results.sort(key=lambda x: x["similarity"], reverse=True)
+        return results[:limit]
 
     def _generate_embedding(self, text: str) -> np.ndarray:
         """Generate embedding for text."""
@@ -107,6 +161,7 @@ class BaseCLI(ABC):
         user_id: str,
         metadata: dict = None,
         tags: list = None,
+        scope: str = "global",
     ) -> str:
         """Save claim to database."""
         conn = sqlite3.connect(self.db_path)
@@ -122,8 +177,8 @@ class BaseCLI(ABC):
         # Save claim
         cursor.execute(
             """
-            INSERT INTO claims (id, content, confidence, user_id, embedding, metadata, tags)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO claims (id, content, confidence, user_id, embedding, metadata, tags, scope)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """,
             (
                 claim_id,
@@ -133,6 +188,7 @@ class BaseCLI(ABC):
                 embedding_bytes,
                 json.dumps(metadata) if metadata else None,
                 json.dumps(tags) if tags else None,
+                scope,
             ),
         )
 
@@ -149,6 +205,7 @@ class BaseCLI(ABC):
         user_id: str,
         analyze: bool = False,
         tags: list = None,
+        scope: str = "global",
         **kwargs,
     ) -> str:
         """Create a new claim."""
@@ -169,48 +226,55 @@ class BaseCLI(ABC):
         """Analyze a claim using backend-specific services."""
         pass
 
-def process_prompt(
+    def process_prompt(
         self, prompt_text: str, confidence: float = 0.8, verbose: int = 0, **kwargs
     ) -> Dict[str, Any]:
-        """Process user prompt as claim with dirty evaluation."""
-        from enum import Enum
-        
-        class DirtyReason(str, Enum):
-            NEW_CLAIM_ADDED = "new_claim_added"
-            CONFIDENCE_THRESHOLD = "confidence_threshold"
-            SUPPORTING_CLAIM_CHANGED = "supporting_claim_changed"
-            RELATIONSHIP_CHANGED = "relationship_changed"
-            MANUAL_MARK = "manual_mark"
-            BATCH_EVALUATION = "batch_evaluation"
-            SYSTEM_TRIGGER = "system_trigger"
-
+        """Process user prompt as claim with dirty evaluation using local database."""
         # Get workspace context from config
         config = get_config()
         workspace = config.workspace
         user = config.user
         team = config.team
 
-        # Create tags with workspace context
-        tags = ["user-prompt", f"workspace-{workspace}", f"user-{user}", f"team-{team}"]
+        # Use simplified scope system - default to USER_WORKSPACE for security
+        scope = ClaimScope.USER_WORKSPACE.value.format(workspace=workspace)
+
+        # Create tags with user-prompt type only (scope handles context)
+        tags = ["user-prompt"]
 
         if verbose >= 1:
             self.console.print(
                 f"[dim]🔧 Creating claim with context: {workspace}/{team}/{user}[/dim]"
             )
+            self.console.print(f"[dim]🔧 Scope: {scope}[/dim]")
             self.console.print(f"[dim]🔧 Tags: {tags}[/dim]")
 
-        # Create claim with user-prompt tags
-        claim_id = self.create_claim(
-            content=prompt_text, confidence=confidence, user_id=user, tags=tags
+        # Initialize database if not already done
+        if not self.sqlite_manager.connection:
+            asyncio.create_task(self.sqlite_manager.initialize())
+            self._workspace = workspace
+
+        # Create claim using SQLiteManager
+        claim = Claim(
+            id=generate_claim_id(),
+            content=prompt_text,
+            confidence=confidence,
+            tags=tags,
+            scope=ClaimScope.USER_WORKSPACE,  # Most restrictive by default
+            is_dirty=True,
+            dirty=True,  # Backward compatibility
+            dirty_reason=DirtyReason.NEW_CLAIM_ADDED,
+            dirty_priority=10,
         )
+
+        # Save claim to SQLite database
+        asyncio.create_task(self.sqlite_manager.create_claim(claim))
+        claim_id = claim.id
 
         if verbose >= 1:
             self.console.print(
                 f"[dim]🔧 Marking claim {claim_id} as dirty for evaluation[/dim]"
             )
-
-        # Mark as dirty for evaluation (default priority=10)
-        self.mark_claim_dirty(claim_id, DirtyReason.NEW_CLAIM_ADDED, priority=10)
 
         if verbose >= 1:
             self.console.print(f"[dim]🔧 Starting dirty evaluation...[/dim]")
@@ -254,6 +318,7 @@ def process_prompt(
             "claim_id": claim_id,
             "original_prompt": prompt_text,
             "workspace_context": f"{workspace}/{team}/{user}",
+            "scope": scope,
             "tags": tags,
             "evaluation_result": evaluation_result,
             "final_status": "processed",
@@ -297,20 +362,9 @@ def process_prompt(
 
     def mark_claim_dirty(self, claim_id: str, reason, priority: int = 0):
         """Mark a claim as dirty in the database."""
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
-
-        cursor.execute(
-            """
-            UPDATE claims 
-            SET is_dirty = 1, dirty_reason = ?, dirty_priority = ?
-            WHERE id = ?
-        """,
-            (reason.value, priority, claim_id),
+        asyncio.create_task(
+            self.sqlite_manager.mark_claim_dirty(claim_id, reason, priority)
         )
-
-        conn.commit()
-        conn.close()
 
     def _mock_evaluate_claim(self, claim_id: str) -> Dict[str, Any]:
         """Mock evaluation for testing - replace with actual evaluation logic."""

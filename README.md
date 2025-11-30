@@ -118,8 +118,8 @@ Conjecture uses a clean, modular architecture:
 ### Key Components
 - **`conjecture`**: Main entry point script
 - **`src/cli/modular_cli.py`**: Unified CLI with backend auto-detection
-- **`src/engine.py`**: Core reasoning engine
-- **`src/tools.py`**: AI-powered tools (web search, file analysis, etc.)
+- **`src/conjecture.py`**: Core Conjecture class with async evaluation
+- **`src/core.py`**: Core models and utilities
 - **`data/conjecture.db`**: SQLite database for claim storage
 
 ## 🔧 Configuration
@@ -162,14 +162,15 @@ Run the test suite to verify your installation:
 
 ```bash
 # Run all tests
-python test_core_tools_complete.py
+python -m pytest tests/
 
 # Test specific components
-python test_core_direct.py
-python test_core_tools_integration.py
+python -m pytest tests/test_core_tools.py
+python -m pytest tests/test_data_layer.py
+python -m pytest tests/test_dirty_flag.py
 
 # Test emoji support
-python test_emoji_comprehensive.py
+python -m pytest tests/test_emoji.py
 ```
 
 ## 📊 Features
@@ -201,17 +202,22 @@ Conjecture/
 ├── requirements.txt              # Python dependencies
 ├── .env.example                  # Configuration template
 ├── README.md                     # This file
+├── CLAUDES_TODOLIST.md          # Development review and cleanup tasks
 ├── src/
 │   ├── cli/
 │   │   └── modular_cli.py       # Unified CLI interface
-│   ├── engine.py                 # Core reasoning engine
-│   ├── tools.py                  # AI-powered tools
-│   └── config/
-│       └── config.py            # Configuration management
+│   ├── conjecture.py            # Core Conjecture class
+│   ├── core.py                  # Core models and utilities
+│   ├── config/                  # Configuration management
+│   ├── processing/              # LLM integration and evaluation
+│   ├── core/                    # Data models and operations
+│   ├── tools/                   # Tool registry and management
+│   └── utils/                   # Utility functions
 ├── data/
 │   └── conjecture.db            # SQLite database (auto-created)
-├── tests/                       # Test files
+├── tests/                       # Test files (consolidated)
 ├── docs/                        # Documentation
+├── archive/                     # Archived files and documentation
 └── EMOJI_USAGE.md               # Emoji feature documentation
 ```
 
@@ -227,8 +233,9 @@ Conjecture/
 ## 📚 Documentation
 
 - [EMOJI_USAGE.md](./EMOJI_USAGE.md) - Complete emoji feature guide
-- [CORE_TOOLS_IMPLEMENTATION_SUMMARY.md](./CORE_TOOLS_IMPLEMENTATION_SUMMARY.md) - Core tools documentation
-- [SIMPLIFICATION_SUMMARY.md](./SIMPLIFICATION_SUMMARY.md) - Architecture decisions
+- [CLAUDES_TODOLIST.md](./CLAUDES_TODOLIST.md) - Development review and cleanup tasks
+- [docs/](./docs/) - Additional documentation and specifications
+- [archive/](./archive/) - Archived documentation and historical files
 
 ## 🛡️ Security
 

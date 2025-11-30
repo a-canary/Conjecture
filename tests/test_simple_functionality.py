@@ -93,14 +93,14 @@ class TestClaimModel:
             type=[ClaimType.CONCEPT],
         )
 
-    original_updated = claim.updated
-    import time
+        original_updated = claim.updated
+        import time
 
-    time.sleep(0.01)  # Small delay to ensure timestamp difference
-    claim.update_confidence(0.9)
+        time.sleep(0.01)  # Small delay to ensure timestamp difference
+        claim.update_confidence(0.9)
 
-    assert claim.confidence == 0.9
-    assert claim.updated >= original_updated
+        assert claim.confidence == 0.9
+        assert claim.updated >= original_updated
 
 
 class TestBasicFunctionality:
@@ -187,11 +187,36 @@ class TestToolValidation:
 
     def test_safe_code_validation(self):
         """Test validation of safe code"""
-        pytest.skip("Tool creator module has syntax errors - temporarily disabled")
+        from processing.dynamic_tool_creator import ToolValidator
+
+        validator = ToolValidator()
+
+        safe_code = '''
+def execute(param: str) -> dict:
+    """Execute a safe operation"""
+    return {"success": True, "result": param}
+'''
+
+        is_valid, issues = validator.validate_tool_code(safe_code)
+        assert is_valid, f"Safe code should be valid: {issues}"
 
     def test_unsafe_code_validation(self):
         """Test validation of unsafe code"""
-        pytest.skip("Tool creator module has syntax errors - temporarily disabled")
+        from processing.dynamic_tool_creator import ToolValidator
+
+        validator = ToolValidator()
+
+        unsafe_code = '''
+import os
+
+def execute(param: str) -> dict:
+    """Execute with dangerous import"""
+    return {"success": True, "result": param}
+'''
+
+        is_valid, issues = validator.validate_tool_code(unsafe_code)
+        assert not is_valid, "Unsafe code should not be valid"
+        assert len(issues) > 0
 
 
 class TestContextCollection:

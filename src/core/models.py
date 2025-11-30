@@ -42,6 +42,56 @@ class ClaimState(str, Enum):
     QUEUED = "Queued"
 
 
+class ClaimScope(str, Enum):
+    """Claim scope enumeration - simplified for local-first design"""
+
+    # Most restrictive (default) to least restrictive
+    USER_WORKSPACE = (
+        "user-{workspace}"  # Personal work: tasks, questions, hypotheses, bugs
+    )
+    TEAM_WORKSPACE = (
+        "team-{workspace}"  # Team project info: features, discoveries, insights
+    )
+    TEAM_WIDE = "team-wide"  # Global team knowledge: best practices, decisions
+    PUBLIC = "public"  # Shareable global truths for broader audience
+
+    @classmethod
+    def get_default(cls) -> str:
+        """Get the default scope (most restrictive for security)"""
+        return cls.USER_WORKSPACE.value
+
+    @classmethod
+    def get_hierarchy(cls) -> list:
+        """Get scope hierarchy from most to least restrictive"""
+        return [
+            cls.USER_WORKSPACE.value,
+            cls.TEAM_WORKSPACE.value,
+            cls.TEAM_WIDE.value,
+            cls.PUBLIC.value,
+        ]
+
+    @classmethod
+    def normalize_scope(cls, scope: str, workspace: str = None) -> str:
+        """Normalize scope with workspace context where applicable"""
+        if workspace and scope in [cls.USER_WORKSPACE.value, cls.TEAM_WORKSPACE.value]:
+            return scope.format(workspace=workspace)
+        return scope
+
+    @classmethod
+    def is_valid_scope(cls, scope: str) -> bool:
+        """Check if scope is valid"""
+        return scope in [s.value for s in cls]
+
+    @classmethod
+    def get_scope_level(cls, scope: str) -> int:
+        """Get restriction level (0=most restrictive, 3=least restrictive)"""
+        hierarchy = cls.get_hierarchy()
+        try:
+            return hierarchy.index(scope)
+        except ValueError:
+            return -1  # Invalid scope
+
+
 class DirtyReason(str, Enum):
     """Dirty flag reason enumeration"""
 
@@ -74,6 +124,10 @@ class Claim(BaseModel):
         default_factory=list, description="Claims this claim supports"
     )
     tags: List[str] = Field(default_factory=list, description="Topic tags")
+    scope: ClaimScope = Field(
+        default=ClaimScope.USER_WORKSPACE,
+        description="Claim scope: user-workspace (personal), team-workspace (project), team-wide (global team), or public (shareable)",
+    )
     created: datetime = Field(
         default_factory=datetime.utcnow, description="Creation timestamp"
     )

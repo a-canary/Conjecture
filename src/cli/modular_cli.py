@@ -374,7 +374,7 @@ def analyze(
     ),
 ):
     """Analyze a claim using LLM services."""
-    try:
+try:
         # Override backend if specified
         if backend:
             cli_backend = get_backend(backend)
@@ -410,7 +410,7 @@ def analyze(
                     title=f"Analysis Results for {claim_id}",
                     border_style="green",
                 )
-console.print(panel)
+                console.print(panel)
 
             except Exception as e:
                 progress.update(task, description="Error occurred")
