@@ -12,38 +12,18 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from ...core.basic_models import BasicClaim, ClaimState, ClaimType
 from .error_handling import with_error_handling, LLMErrorHandler, RetryConfig
-
-
-@dataclass
-class LLMProcessingResult:
-    """Result from LLM processing operation"""
-
-    success: bool
-    processed_claims: List[BasicClaim]
-    errors: List[str]
-    processing_time: float
-    tokens_used: int
-    model_used: str
-
-
-@dataclass
-class GenerationConfig:
-    """Configuration for Cohere API generation"""
-
-    temperature: float = 0.7
-    max_tokens: int = 2048
-    top_p: float = 0.8
-    top_k: int = 40
-    frequency_penalty: float = 0.0
-    presence_penalty: float = 0.0
-    p: float = 0.75  # Cohere-specific parameter
-    k: int = 0  # Cohere-specific parameter
+from .common import GenerationConfig, LLMProcessingResult
 
 
 class CohereProcessor:
     """Cohere API integration for claim processing and analysis"""
 
-    def __init__(self, api_key: str, api_url: str = "https://api.cohere.ai/v1", model_name: str = "command"):
+    def __init__(
+        self,
+        api_key: str,
+        api_url: str = "https://api.cohere.ai/v1",
+        model_name: str = "command",
+    ):
         if not api_key:
             raise ValueError("API key is required for Cohere integration")
 
@@ -65,12 +45,14 @@ class CohereProcessor:
                 base_delay=1.0,
                 max_delay=30.0,
                 exponential_base=2.0,
-                jitter=True
+                jitter=True,
             )
         )
 
     @with_error_handling("generation")
-    def _make_api_request(self, prompt: str, config: Optional[GenerationConfig] = None) -> Dict[str, Any]:
+    def _make_api_request(
+        self, prompt: str, config: Optional[GenerationConfig] = None
+    ) -> Dict[str, Any]:
         """Make API request to Cohere with enhanced error handling"""
         if config is None:
             config = GenerationConfig()
@@ -78,7 +60,7 @@ class CohereProcessor:
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Accept": "application/json",
         }
 
         data = {
@@ -90,20 +72,19 @@ class CohereProcessor:
             "k": config.k,
             "frequency_penalty": config.frequency_penalty,
             "presence_penalty": config.presence_penalty,
-            "truncate": "END"  # How to handle prompts longer than context
+            "truncate": "END",  # How to handle prompts longer than context
         }
 
         response = requests.post(
-            f"{self.api_url}/generate",
-            headers=headers,
-            json=data,
-            timeout=30
+            f"{self.api_url}/generate", headers=headers, json=data, timeout=30
         )
         response.raise_for_status()
         return response.json()
 
     @with_error_handling("generation")
-    def _make_chat_request(self, messages: List[Dict[str, str]], config: Optional[GenerationConfig] = None) -> Dict[str, Any]:
+    def _make_chat_request(
+        self, messages: List[Dict[str, str]], config: Optional[GenerationConfig] = None
+    ) -> Dict[str, Any]:
         """Make chat API request to Cohere with enhanced error handling"""
         if config is None:
             config = GenerationConfig()
@@ -111,18 +92,15 @@ class CohereProcessor:
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Accept": "application/json",
         }
 
         # Convert messages to Cohere chat format
         chat_history = []
         message = ""
         for msg in messages[:-1]:  # All except last message go to history
-            chat_history.append({
-                "role": msg["role"],
-                "message": msg["content"]
-            })
-        
+            chat_history.append({"role": msg["role"], "message": msg["content"]})
+
         # Last message is the current prompt
         if messages:
             message = messages[-1]["content"]
@@ -136,14 +114,11 @@ class CohereProcessor:
             "p": config.p,
             "k": config.k,
             "frequency_penalty": config.frequency_penalty,
-            "presence_penalty": config.presence_penalty
+            "presence_penalty": config.presence_penalty,
         }
 
         response = requests.post(
-            f"{self.api_url}/chat",
-            headers=headers,
-            json=data,
-            timeout=30
+            f"{self.api_url}/chat", headers=headers, json=data, timeout=30
         )
         response.raise_for_status()
         return response.json()
@@ -159,7 +134,7 @@ class CohereProcessor:
                 if not generations:
                     raise ValueError("No generations in response")
                 content = generations[0].get("text", "")
-            
+
             if not content:
                 raise ValueError("No content in response")
 
@@ -182,30 +157,36 @@ class CohereProcessor:
             content = self._extract_content(response)
             total_tokens = len(content) // 4  # Rough estimate
             completion_tokens = total_tokens
-        
+
         return total_tokens, completion_tokens
 
     def _format_claim_for_processing(self, claim: BasicClaim) -> str:
         """Format a claim for LLM processing"""
-        claim_type_desc = ClaimType(claim.claim_type).name if claim.claim_type else "UNKNOWN"
+        claim_type_desc = (
+            ClaimType(claim.claim_type).name if claim.claim_type else "UNKNOWN"
+        )
         claim_state_desc = ClaimState(claim.state).name if claim.state else "UNKNOWN"
-        
+
         return f"""
 Claim ID: {claim.claim_id}
 Type: {claim_type_desc}
 State: {claim_state_desc}
 Content: {claim.content}
 Confidence: {claim.confidence}
-Evidence: {'Available' if claim.evidence else 'None'}
+Evidence: {"Available" if claim.evidence else "None"}
 """
 
-    def _parse_claims_from_response(self, response_text: str, original_claims: List[BasicClaim]) -> List[BasicClaim]:
+    def _parse_claims_from_response(
+        self, response_text: str, original_claims: List[BasicClaim]
+    ) -> List[BasicClaim]:
         """Parse processed claims from LLM response"""
         processed_claims = []
-        
+
         try:
             # Try to parse as JSON first
-            if response_text.strip().startswith('{') or response_text.strip().startswith('['):
+            if response_text.strip().startswith(
+                "{"
+            ) or response_text.strip().startswith("["):
                 data = json.loads(response_text)
                 if isinstance(data, list):
                     claims_data = data
@@ -214,7 +195,7 @@ Evidence: {'Available' if claim.evidence else 'None'}
             else:
                 # Parse from text format
                 claims_data = self._parse_text_claims(response_text)
-            
+
             for claim_data in claims_data:
                 # Find original claim
                 original_claim = None
@@ -222,31 +203,37 @@ Evidence: {'Available' if claim.evidence else 'None'}
                     if orig_claim.claim_id == claim_data.get("claim_id"):
                         original_claim = orig_claim
                         break
-                
+
                 if original_claim:
                     # Update original claim with processed data
                     if "state" in claim_data:
                         try:
-                            original_claim.state = ClaimState[claim_data["state"].upper()]
+                            original_claim.state = ClaimState[
+                                claim_data["state"].upper()
+                            ]
                         except KeyError:
                             pass
-                    
+
                     if "confidence" in claim_data:
                         original_claim.confidence = float(claim_data["confidence"])
-                    
+
                     if "analysis" in claim_data:
                         original_claim.analysis = claim_data["analysis"]
-                    
+
                     if "verification" in claim_data:
                         original_claim.verification = claim_data["verification"]
-                    
+
                     processed_claims.append(original_claim)
                 else:
                     # Create new claim if original not found
                     new_claim = BasicClaim(
-                        claim_id=claim_data.get("claim_id", f"generated_{len(processed_claims)}"),
+                        claim_id=claim_data.get(
+                            "claim_id", f"generated_{len(processed_claims)}"
+                        ),
                         content=claim_data.get("content", ""),
-                        claim_type=claim_data.get("claim_type", ClaimType.ASSERTION.value)
+                        claim_type=claim_data.get(
+                            "claim_type", ClaimType.ASSERTION.value
+                        ),
                     )
                     processed_claims.append(new_claim)
 
@@ -259,8 +246,8 @@ Evidence: {'Available' if claim.evidence else 'None'}
     def _parse_text_claims(self, text: str) -> List[Dict[str, Any]]:
         """Parse claims from text-based response"""
         claims = []
-        lines = text.strip().split('\n')
-        
+        lines = text.strip().split("\n")
+
         current_claim = {}
         for line in lines:
             line = line.strip()
@@ -269,40 +256,42 @@ Evidence: {'Available' if claim.evidence else 'None'}
                     claims.append(current_claim)
                     current_claim = {}
                 continue
-            
-            if ':' in line:
-                key, value = line.split(':', 1)
+
+            if ":" in line:
+                key, value = line.split(":", 1)
                 current_claim[key.strip().lower()] = value.strip()
-        
+
         if current_claim:
             claims.append(current_claim)
-        
+
         return claims
 
-    def generate_response(self, prompt: str, config: Optional[GenerationConfig] = None) -> LLMProcessingResult:
+    def generate_response(
+        self, prompt: str, config: Optional[GenerationConfig] = None
+    ) -> LLMProcessingResult:
         """Generate a response from Cohere"""
         start_time = time.time()
-        
+
         try:
             response = self._make_api_request(prompt, config)
             content = self._extract_content(response)
             total_tokens, completion_tokens = self._extract_usage_stats(response)
-            
+
             processing_time = time.time() - start_time
-            
+
             # Update stats
             self.stats["total_requests"] += 1
             self.stats["successful_requests"] += 1
             self.stats["total_tokens"] += total_tokens
             self.stats["total_processing_time"] += processing_time
-            
+
             return LLMProcessingResult(
                 success=True,
                 processed_claims=[],
                 errors=[],
                 processing_time=processing_time,
                 tokens_used=total_tokens,
-                model_used=self.model_name
+                model_used=self.model_name,
             )
 
         except Exception as e:
@@ -310,25 +299,32 @@ Evidence: {'Available' if claim.evidence else 'None'}
             self.stats["total_requests"] += 1
             self.stats["failed_requests"] += 1
             self.stats["total_processing_time"] += processing_time
-            
+
             return LLMProcessingResult(
                 success=False,
                 processed_claims=[],
                 errors=[str(e)],
                 processing_time=processing_time,
                 tokens_used=0,
-                model_used=self.model_name
+                model_used=self.model_name,
             )
 
-    def process_claims(self, claims: List[BasicClaim], task: str = "analyze", 
-                      config: Optional[GenerationConfig] = None, **kwargs) -> LLMProcessingResult:
+    def process_claims(
+        self,
+        claims: List[BasicClaim],
+        task: str = "analyze",
+        config: Optional[GenerationConfig] = None,
+        **kwargs,
+    ) -> LLMProcessingResult:
         """Process claims using Cohere"""
         start_time = time.time()
-        
+
         try:
             # Format claims for processing
-            claims_text = "\n".join([self._format_claim_for_processing(claim) for claim in claims])
-            
+            claims_text = "\n".join(
+                [self._format_claim_for_processing(claim) for claim in claims]
+            )
+
             # Create prompt based on task
             if task == "analyze":
                 prompt = f"""You are an enterprise-grade AI assistant with advanced analytical capabilities. Analyze the following claims systematically and professionally.
@@ -411,25 +407,25 @@ Return your analysis as structured JSON data."""
             response = self._make_api_request(prompt, config)
             content = self._extract_content(response)
             total_tokens, completion_tokens = self._extract_usage_stats(response)
-            
+
             # Parse processed claims
             processed_claims = self._parse_claims_from_response(content, claims)
-            
+
             processing_time = time.time() - start_time
-            
+
             # Update stats
             self.stats["total_requests"] += 1
             self.stats["successful_requests"] += 1
             self.stats["total_tokens"] += total_tokens
             self.stats["total_processing_time"] += processing_time
-            
+
             return LLMProcessingResult(
                 success=True,
                 processed_claims=processed_claims,
                 errors=[],
                 processing_time=processing_time,
                 tokens_used=total_tokens,
-                model_used=self.model_name
+                model_used=self.model_name,
             )
 
         except Exception as e:
@@ -437,29 +433,35 @@ Return your analysis as structured JSON data."""
             self.stats["total_requests"] += 1
             self.stats["failed_requests"] += 1
             self.stats["total_processing_time"] += processing_time
-            
+
             return LLMProcessingResult(
                 success=False,
                 processed_claims=claims,  # Return original claims on error
                 errors=[str(e)],
                 processing_time=processing_time,
                 tokens_used=0,
-                model_used=self.model_name
+                model_used=self.model_name,
             )
 
     def get_stats(self) -> Dict[str, Any]:
         """Get processing statistics"""
         stats = self.stats.copy()
-        
+
         if stats["total_requests"] > 0:
-            stats["success_rate"] = stats["successful_requests"] / stats["total_requests"]
-            stats["average_processing_time"] = stats["total_processing_time"] / stats["total_requests"]
-            stats["average_tokens_per_request"] = stats["total_tokens"] / stats["total_requests"]
+            stats["success_rate"] = (
+                stats["successful_requests"] / stats["total_requests"]
+            )
+            stats["average_processing_time"] = (
+                stats["total_processing_time"] / stats["total_requests"]
+            )
+            stats["average_tokens_per_request"] = (
+                stats["total_tokens"] / stats["total_requests"]
+            )
         else:
             stats["success_rate"] = 0.0
             stats["average_processing_time"] = 0.0
             stats["average_tokens_per_request"] = 0.0
-        
+
         return stats
 
     def reset_stats(self):
@@ -477,17 +479,21 @@ Return your analysis as structured JSON data."""
         try:
             # Test with a simple prompt
             result = self.generate_response("Hello", GenerationConfig(max_tokens=10))
-            
+
             return {
                 "status": "healthy" if result.success else "unhealthy",
                 "model": self.model_name,
                 "last_check": datetime.now().isoformat(),
-                "error": None if result.success else result.errors[0] if result.errors else "Unknown error"
+                "error": None
+                if result.success
+                else result.errors[0]
+                if result.errors
+                else "Unknown error",
             }
         except Exception as e:
             return {
                 "status": "unhealthy",
                 "model": self.model_name,
                 "last_check": datetime.now().isoformat(),
-                "error": str(e)
+                "error": str(e),
             }

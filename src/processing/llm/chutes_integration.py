@@ -7,38 +7,22 @@ import json
 import time
 import requests
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
 
-from ...core.basic_models import BasicClaim, ClaimState, ClaimType
-from .error_handling import with_error_handling, LLMErrorHandler, RetryConfig
-
-
-@dataclass
-class LLMProcessingResult:
-    """Result from LLM processing operation"""
-
-    success: bool
-    processed_claims: List[BasicClaim]
-    errors: List[str]
-    processing_time: float
-    tokens_used: int
-    model_used: str
-
-
-@dataclass
-class GenerationConfig:
-    """Configuration for Chutes.ai API generation"""
-
-    temperature: float = 0.7
-    max_tokens: int = 2048
-    top_p: float = 0.8
+from .error_handling import RetryConfig, CircuitBreakerConfig
+from .common import GenerationConfig, LLMProcessingResult
 
 
 class ChutesProcessor:
     """Chutes.ai API integration for claim processing and analysis"""
 
-    def __init__(self, api_key: str, api_url: str = "https://llm.chutes.ai/v1", model_name: str = "zai-org/GLM-4.6"):
+    def __init__(
+        self,
+        api_key: str,
+        api_url: str = "https://llm.chutes.ai/v1",
+        model_name: str = "zai-org/GLM-4.6",
+    ):
         if not api_key:
             raise ValueError("API key is required for Chutes.ai integration")
 
@@ -52,7 +36,7 @@ class ChutesProcessor:
             "total_tokens": 0,
             "total_processing_time": 0.0,
         }
-        
+
         # Initialize enhanced error handling
         self.error_handler = LLMErrorHandler(
             retry_config=RetryConfig(
@@ -60,19 +44,21 @@ class ChutesProcessor:
                 base_delay=1.0,
                 max_delay=30.0,
                 exponential_base=2.0,
-                jitter=True
+                jitter=True,
             )
         )
 
     @with_error_handling("generation")
-    def _make_api_request(self, messages: List[Dict[str, str]], config: Optional[GenerationConfig] = None) -> Dict[str, Any]:
+    def _make_api_request(
+        self, messages: List[Dict[str, str]], config: Optional[GenerationConfig] = None
+    ) -> Dict[str, Any]:
         """Make API request to Chutes.ai with enhanced error handling"""
         if config is None:
             config = GenerationConfig()
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
 
         data = {
@@ -80,14 +66,11 @@ class ChutesProcessor:
             "messages": messages,
             "max_tokens": config.max_tokens,
             "temperature": config.temperature,
-            "top_p": config.top_p
+            "top_p": config.top_p,
         }
 
         response = requests.post(
-            f"{self.api_url}/chat/completions",
-            headers=headers,
-            json=data,
-            timeout=30
+            f"{self.api_url}/chat/completions", headers=headers, json=data, timeout=30
         )
         response.raise_for_status()
         return response.json()
@@ -101,17 +84,17 @@ class ChutesProcessor:
                 return ""
 
             message = choices[0].get("message", {})
-            
+
             # Try reasoning_content first (Chutes.ai specific)
             content = message.get("reasoning_content")
             if content:
                 return content
-            
+
             # Fallback to standard content field
             content = message.get("content")
             if content:
                 return content
-            
+
             return ""
         except Exception as e:
             print(f"Error extracting content from Chutes.ai response: {e}")
@@ -169,9 +152,9 @@ class ChutesProcessor:
             if line.startswith("<claim ") and line.endswith("</claim>"):
                 try:
                     # Extract attributes from opening tag
-                    opening_tag = line[:line.index(">") + 1]
+                    opening_tag = line[: line.index(">") + 1]
                     closing_tag_index = line.index("</claim>")
-                    content = line[line.index(">") + 1:closing_tag_index]
+                    content = line[line.index(">") + 1 : closing_tag_index]
 
                     # Parse type attribute
                     type_start = opening_tag.find('type="') + 6
@@ -188,9 +171,11 @@ class ChutesProcessor:
                         id=f"c{int(time.time() * 1000) % 10000000:07d}",
                         content=content.strip(),
                         confidence=confidence,
-                        type=[ClaimType(claim_type)] if claim_type in [t.value for t in ClaimType] else [ClaimType.CONCEPT],
+                        type=[ClaimType(claim_type)]
+                        if claim_type in [t.value for t in ClaimType]
+                        else [ClaimType.CONCEPT],
                         state=ClaimState.EXPLORE,
-                        created=datetime.utcnow()
+                        created=datetime.utcnow(),
                     )
                     claims.append(claim)
 
@@ -202,10 +187,10 @@ class ChutesProcessor:
 
     @with_error_handling("processing")
     def process_claims(
-        self, 
-        claims: List[BasicClaim], 
+        self,
+        claims: List[BasicClaim],
         task: str = "analyze",
-        config: Optional[GenerationConfig] = None
+        config: Optional[GenerationConfig] = None,
     ) -> LLMProcessingResult:
         """Process claims using Chutes.ai API"""
         start_time = time.time()
@@ -230,15 +215,13 @@ Please respond with claims in this format:
 Focus on providing accurate, well-reasoned claims with appropriate confidence scores."""
 
             # Make API request
-            messages = [
-                {"role": "user", "content": prompt}
-            ]
+            messages = [{"role": "user", "content": prompt}]
 
             response = self._make_api_request(messages, config)
-            
+
             # Extract content using Chutes.ai specific format
             content = self._extract_content(response)
-            
+
             # Parse claims
             processed_claims = self._parse_generated_claims(content)
 
@@ -257,7 +240,7 @@ Focus on providing accurate, well-reasoned claims with appropriate confidence sc
                 errors=errors,
                 processing_time=processing_time,
                 tokens_used=tokens_used,
-                model_used=self.model_name
+                model_used=self.model_name,
             )
 
         except Exception as e:
@@ -275,14 +258,12 @@ Focus on providing accurate, well-reasoned claims with appropriate confidence sc
                 errors=errors,
                 processing_time=processing_time,
                 tokens_used=0,
-                model_used=self.model_name
+                model_used=self.model_name,
             )
 
     @with_error_handling("generation")
     def generate_response(
-        self, 
-        prompt: str, 
-        config: Optional[GenerationConfig] = None
+        self, prompt: str, config: Optional[GenerationConfig] = None
     ) -> LLMProcessingResult:
         """Generate response from Chutes.ai API"""
         start_time = time.time()
@@ -290,12 +271,10 @@ Focus on providing accurate, well-reasoned claims with appropriate confidence sc
 
         try:
             # Make API request
-            messages = [
-                {"role": "user", "content": prompt}
-            ]
+            messages = [{"role": "user", "content": prompt}]
 
             response = self._make_api_request(messages, config)
-            
+
             # Extract content using Chutes.ai specific format
             content = self._extract_content(response)
 
@@ -315,7 +294,7 @@ Focus on providing accurate, well-reasoned claims with appropriate confidence sc
                 confidence=0.8,
                 type=[ClaimType.CONCEPT],
                 state=ClaimState.EXPLORE,
-                created=datetime.utcnow()
+                created=datetime.utcnow(),
             )
 
             return LLMProcessingResult(
@@ -324,7 +303,7 @@ Focus on providing accurate, well-reasoned claims with appropriate confidence sc
                 errors=errors,
                 processing_time=processing_time,
                 tokens_used=tokens_used,
-                model_used=self.model_name
+                model_used=self.model_name,
             )
 
         except Exception as e:
@@ -342,14 +321,18 @@ Focus on providing accurate, well-reasoned claims with appropriate confidence sc
                 errors=errors,
                 processing_time=processing_time,
                 tokens_used=0,
-                model_used=self.model_name
+                model_used=self.model_name,
             )
 
     def get_stats(self) -> Dict[str, Any]:
         """Get processing statistics including error handling"""
         if self.stats["total_requests"] > 0:
-            avg_time = self.stats["total_processing_time"] / self.stats["total_requests"]
-            success_rate = self.stats["successful_requests"] / self.stats["total_requests"]
+            avg_time = (
+                self.stats["total_processing_time"] / self.stats["total_requests"]
+            )
+            success_rate = (
+                self.stats["successful_requests"] / self.stats["total_requests"]
+            )
         else:
             avg_time = 0.0
             success_rate = 0.0
@@ -363,7 +346,7 @@ Focus on providing accurate, well-reasoned claims with appropriate confidence sc
             "average_processing_time": avg_time,
             "total_processing_time": self.stats["total_processing_time"],
             "model": self.model_name,
-            "provider": "chutes"
+            "provider": "chutes",
         }
 
         # Add error handling stats

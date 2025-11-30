@@ -7,39 +7,22 @@ import json
 import time
 import requests
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
 
-from ...core.basic_models import BasicClaim, ClaimState, ClaimType
-from .error_handling import with_error_handling, LLMErrorHandler, RetryConfig
-
-
-@dataclass
-class LLMProcessingResult:
-    """Result from LLM processing operation"""
-
-    success: bool
-    processed_claims: List[BasicClaim]
-    errors: List[str]
-    processing_time: float
-    tokens_used: int
-    model_used: str
-
-
-@dataclass
-class GenerationConfig:
-    """Configuration for Anthropic API generation"""
-
-    temperature: float = 0.7
-    max_tokens: int = 2048
-    top_p: float = 0.8
-    top_k: int = 40
+from .error_handling import RetryConfig, CircuitBreakerConfig
+from .common import GenerationConfig, LLMProcessingResult
 
 
 class AnthropicProcessor:
     """Anthropic Claude API integration for claim processing and analysis"""
 
-    def __init__(self, api_key: str, api_url: str = "https://api.anthropic.com", model_name: str = "claude-3-haiku-20240307"):
+    def __init__(
+        self,
+        api_key: str,
+        api_url: str = "https://api.anthropic.com",
+        model_name: str = "claude-3-haiku-20240307",
+    ):
         if not api_key:
             raise ValueError("API key is required for Anthropic integration")
 
@@ -61,12 +44,14 @@ class AnthropicProcessor:
                 base_delay=1.0,
                 max_delay=30.0,
                 exponential_base=2.0,
-                jitter=True
+                jitter=True,
             )
         )
 
     @with_error_handling("generation")
-    def _make_api_request(self, messages: List[Dict[str, str]], config: Optional[GenerationConfig] = None) -> Dict[str, Any]:
+    def _make_api_request(
+        self, messages: List[Dict[str, str]], config: Optional[GenerationConfig] = None
+    ) -> Dict[str, Any]:
         """Make API request to Anthropic with enhanced error handling"""
         if config is None:
             config = GenerationConfig()
@@ -74,7 +59,7 @@ class AnthropicProcessor:
         headers = {
             "x-api-key": self.api_key,
             "Content-Type": "application/json",
-            "anthropic-version": "2023-06-01"
+            "anthropic-version": "2023-06-01",
         }
 
         # Convert OpenAI-style messages to Claude format
@@ -86,26 +71,25 @@ class AnthropicProcessor:
             "max_tokens": config.max_tokens,
             "temperature": config.temperature,
             "top_p": config.top_p,
-            "top_k": config.top_k
+            "top_k": config.top_k,
         }
 
         response = requests.post(
-            f"{self.api_url}/v1/messages",
-            headers=headers,
-            json=data,
-            timeout=30
+            f"{self.api_url}/v1/messages", headers=headers, json=data, timeout=30
         )
         response.raise_for_status()
         return response.json()
 
-    def _convert_messages_to_claude_format(self, messages: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    def _convert_messages_to_claude_format(
+        self, messages: List[Dict[str, str]]
+    ) -> List[Dict[str, str]]:
         """Convert OpenAI-style messages to Claude format"""
         claude_messages = []
-        
+
         for message in messages:
             role = message["role"]
             content = message["content"]
-            
+
             if role == "system":
                 # Claude uses system parameter separately, but we'll include it in the first user message if needed
                 continue
@@ -113,7 +97,7 @@ class AnthropicProcessor:
                 claude_messages.append({"role": "assistant", "content": content})
             elif role == "user":
                 claude_messages.append({"role": "user", "content": content})
-        
+
         return claude_messages
 
     def _extract_content(self, response: Dict[str, Any]) -> str:
@@ -143,25 +127,31 @@ class AnthropicProcessor:
 
     def _format_claim_for_processing(self, claim: BasicClaim) -> str:
         """Format a claim for LLM processing"""
-        claim_type_desc = ClaimType(claim.claim_type).name if claim.claim_type else "UNKNOWN"
+        claim_type_desc = (
+            ClaimType(claim.claim_type).name if claim.claim_type else "UNKNOWN"
+        )
         claim_state_desc = ClaimState(claim.state).name if claim.state else "UNKNOWN"
-        
+
         return f"""
 Claim ID: {claim.claim_id}
 Type: {claim_type_desc}
 State: {claim_state_desc}
 Content: {claim.content}
 Confidence: {claim.confidence}
-Evidence: {'Available' if claim.evidence else 'None'}
+Evidence: {"Available" if claim.evidence else "None"}
 """
 
-    def _parse_claims_from_response(self, response_text: str, original_claims: List[BasicClaim]) -> List[BasicClaim]:
+    def _parse_claims_from_response(
+        self, response_text: str, original_claims: List[BasicClaim]
+    ) -> List[BasicClaim]:
         """Parse processed claims from LLM response"""
         processed_claims = []
-        
+
         try:
             # Try to parse as JSON first
-            if response_text.strip().startswith('{') or response_text.strip().startswith('['):
+            if response_text.strip().startswith(
+                "{"
+            ) or response_text.strip().startswith("["):
                 data = json.loads(response_text)
                 if isinstance(data, list):
                     claims_data = data
@@ -170,7 +160,7 @@ Evidence: {'Available' if claim.evidence else 'None'}
             else:
                 # Parse from text format
                 claims_data = self._parse_text_claims(response_text)
-            
+
             for claim_data in claims_data:
                 # Find original claim
                 original_claim = None
@@ -178,31 +168,37 @@ Evidence: {'Available' if claim.evidence else 'None'}
                     if orig_claim.claim_id == claim_data.get("claim_id"):
                         original_claim = orig_claim
                         break
-                
+
                 if original_claim:
                     # Update original claim with processed data
                     if "state" in claim_data:
                         try:
-                            original_claim.state = ClaimState[claim_data["state"].upper()]
+                            original_claim.state = ClaimState[
+                                claim_data["state"].upper()
+                            ]
                         except KeyError:
                             pass
-                    
+
                     if "confidence" in claim_data:
                         original_claim.confidence = float(claim_data["confidence"])
-                    
+
                     if "analysis" in claim_data:
                         original_claim.analysis = claim_data["analysis"]
-                    
+
                     if "verification" in claim_data:
                         original_claim.verification = claim_data["verification"]
-                    
+
                     processed_claims.append(original_claim)
                 else:
                     # Create new claim if original not found
                     new_claim = BasicClaim(
-                        claim_id=claim_data.get("claim_id", f"generated_{len(processed_claims)}"),
+                        claim_id=claim_data.get(
+                            "claim_id", f"generated_{len(processed_claims)}"
+                        ),
                         content=claim_data.get("content", ""),
-                        claim_type=claim_data.get("claim_type", ClaimType.ASSERTION.value)
+                        claim_type=claim_data.get(
+                            "claim_type", ClaimType.ASSERTION.value
+                        ),
                     )
                     processed_claims.append(new_claim)
 
@@ -215,8 +211,8 @@ Evidence: {'Available' if claim.evidence else 'None'}
     def _parse_text_claims(self, text: str) -> List[Dict[str, Any]]:
         """Parse claims from text-based response"""
         claims = []
-        lines = text.strip().split('\n')
-        
+        lines = text.strip().split("\n")
+
         current_claim = {}
         for line in lines:
             line = line.strip()
@@ -225,42 +221,44 @@ Evidence: {'Available' if claim.evidence else 'None'}
                     claims.append(current_claim)
                     current_claim = {}
                 continue
-            
-            if ':' in line:
-                key, value = line.split(':', 1)
+
+            if ":" in line:
+                key, value = line.split(":", 1)
                 current_claim[key.strip().lower()] = value.strip()
-        
+
         if current_claim:
             claims.append(current_claim)
-        
+
         return claims
 
-    def generate_response(self, prompt: str, config: Optional[GenerationConfig] = None) -> LLMProcessingResult:
+    def generate_response(
+        self, prompt: str, config: Optional[GenerationConfig] = None
+    ) -> LLMProcessingResult:
         """Generate a response from Anthropic Claude"""
         start_time = time.time()
-        
+
         try:
             messages = [{"role": "user", "content": prompt}]
             response = self._make_api_request(messages, config)
-            
+
             content = self._extract_content(response)
             total_tokens, completion_tokens = self._extract_usage_stats(response)
-            
+
             processing_time = time.time() - start_time
-            
+
             # Update stats
             self.stats["total_requests"] += 1
             self.stats["successful_requests"] += 1
             self.stats["total_tokens"] += total_tokens
             self.stats["total_processing_time"] += processing_time
-            
+
             return LLMProcessingResult(
                 success=True,
                 processed_claims=[],
                 errors=[],
                 processing_time=processing_time,
                 tokens_used=total_tokens,
-                model_used=self.model_name
+                model_used=self.model_name,
             )
 
         except Exception as e:
@@ -268,25 +266,32 @@ Evidence: {'Available' if claim.evidence else 'None'}
             self.stats["total_requests"] += 1
             self.stats["failed_requests"] += 1
             self.stats["total_processing_time"] += processing_time
-            
+
             return LLMProcessingResult(
                 success=False,
                 processed_claims=[],
                 errors=[str(e)],
                 processing_time=processing_time,
                 tokens_used=0,
-                model_used=self.model_name
+                model_used=self.model_name,
             )
 
-    def process_claims(self, claims: List[BasicClaim], task: str = "analyze", 
-                      config: Optional[GenerationConfig] = None, **kwargs) -> LLMProcessingResult:
+    def process_claims(
+        self,
+        claims: List[BasicClaim],
+        task: str = "analyze",
+        config: Optional[GenerationConfig] = None,
+        **kwargs,
+    ) -> LLMProcessingResult:
         """Process claims using Anthropic Claude"""
         start_time = time.time()
-        
+
         try:
             # Format claims for processing
-            claims_text = "\n".join([self._format_claim_for_processing(claim) for claim in claims])
-            
+            claims_text = "\n".join(
+                [self._format_claim_for_processing(claim) for claim in claims]
+            )
+
             # Create prompt based on task
             if task == "analyze":
                 prompt = f"""You are Claude, an AI assistant with advanced reasoning capabilities. Analyze the following claims with precision and intellectual honesty.
@@ -368,28 +373,28 @@ Return your analysis as structured JSON data."""
 
             messages = [{"role": "user", "content": prompt}]
             response = self._make_api_request(messages, config)
-            
+
             content = self._extract_content(response)
             total_tokens, completion_tokens = self._extract_usage_stats(response)
-            
+
             # Parse processed claims
             processed_claims = self._parse_claims_from_response(content, claims)
-            
+
             processing_time = time.time() - start_time
-            
+
             # Update stats
             self.stats["total_requests"] += 1
             self.stats["successful_requests"] += 1
             self.stats["total_tokens"] += total_tokens
             self.stats["total_processing_time"] += processing_time
-            
+
             return LLMProcessingResult(
                 success=True,
                 processed_claims=processed_claims,
                 errors=[],
                 processing_time=processing_time,
                 tokens_used=total_tokens,
-                model_used=self.model_name
+                model_used=self.model_name,
             )
 
         except Exception as e:
@@ -397,29 +402,35 @@ Return your analysis as structured JSON data."""
             self.stats["total_requests"] += 1
             self.stats["failed_requests"] += 1
             self.stats["total_processing_time"] += processing_time
-            
+
             return LLMProcessingResult(
                 success=False,
                 processed_claims=claims,  # Return original claims on error
                 errors=[str(e)],
                 processing_time=processing_time,
                 tokens_used=0,
-                model_used=self.model_name
+                model_used=self.model_name,
             )
 
     def get_stats(self) -> Dict[str, Any]:
         """Get processing statistics"""
         stats = self.stats.copy()
-        
+
         if stats["total_requests"] > 0:
-            stats["success_rate"] = stats["successful_requests"] / stats["total_requests"]
-            stats["average_processing_time"] = stats["total_processing_time"] / stats["total_requests"]
-            stats["average_tokens_per_request"] = stats["total_tokens"] / stats["total_requests"]
+            stats["success_rate"] = (
+                stats["successful_requests"] / stats["total_requests"]
+            )
+            stats["average_processing_time"] = (
+                stats["total_processing_time"] / stats["total_requests"]
+            )
+            stats["average_tokens_per_request"] = (
+                stats["total_tokens"] / stats["total_requests"]
+            )
         else:
             stats["success_rate"] = 0.0
             stats["average_processing_time"] = 0.0
             stats["average_tokens_per_request"] = 0.0
-        
+
         return stats
 
     def reset_stats(self):
@@ -437,17 +448,21 @@ Return your analysis as structured JSON data."""
         try:
             # Test with a simple prompt
             result = self.generate_response("Hello", GenerationConfig(max_tokens=10))
-            
+
             return {
                 "status": "healthy" if result.success else "unhealthy",
                 "model": self.model_name,
                 "last_check": datetime.now().isoformat(),
-                "error": None if result.success else result.errors[0] if result.errors else "Unknown error"
+                "error": None
+                if result.success
+                else result.errors[0]
+                if result.errors
+                else "Unknown error",
             }
         except Exception as e:
             return {
                 "status": "unhealthy",
                 "model": self.model_name,
                 "last_check": datetime.now().isoformat(),
-                "error": str(e)
+                "error": str(e),
             }
