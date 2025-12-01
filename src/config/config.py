@@ -1,197 +1,189 @@
 """
 Configuration for Conjecture
-Single source of truth with no monkey-patching
+JSON-based configuration with workspace detection
 """
 
+import json
 import os
 from pathlib import Path
-from typing import Any, Dict, Optional
-
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv()
-except ImportError:
-    pass
+from typing import Any, Dict, List, Optional, Union
 
 
 class Config:
     """
     Configuration class for Conjecture
-    All essential settings in one place with proper validation
+    JSON-based configuration with workspace detection and provider management
     """
 
-    def __init__(self):
+    def __init__(self, config_path: Optional[Union[str, Path]] = None):
         # === Core Settings ===
-        self.confidence_threshold = float(os.getenv("CONFIDENCE_THRESHOLD", "0.95"))
-        self.confident_threshold = float(os.getenv("CONFIDENT_THRESHOLD", "0.8"))
+        self.confidence_threshold = 0.95
+        self.confident_threshold = 0.8
         self.session_confident_threshold = None
-        self.max_context_size = int(os.getenv("MAX_CONTEXT_SIZE", "10"))
-        self.batch_size = int(os.getenv("BATCH_SIZE", "10"))
-        self.debug = os.getenv("DEBUG", "false").lower() == "true"
+        self.max_context_size = 10
+        self.batch_size = 10
+        self.debug = False
 
         # === Database Settings ===
-        self.database_type = os.getenv("DATABASE_TYPE", "sqlite")
-        self.database_path = os.getenv("DB_PATH", "data/conjecture.db")
-        self.data_dir = Path(self.database_path).parent
-        self.data_dir.mkdir(exist_ok=True)
-
-        # === LLM Provider Settings ===
-        self.llm_provider = os.getenv("LLM_PROVIDER", "chutes")
-        self.provider_api_url = os.getenv(
-            "PROVIDER_API_URL", "https://llm.chutes.ai/v1"
-        )
-        self.provider_api_key = os.getenv("PROVIDER_API_KEY", "")
-        self.provider_model = os.getenv("PROVIDER_MODEL", "zai-org/GLM-4.6-FP8")
+        self.database_type = "sqlite"
+        self.database_path = "data/conjecture.db"
+        self.data_dir = None
 
         # === Workspace Context ===
-        self.workspace = os.getenv("CONJECTURE_WORKSPACE", "default")
-        self.user = os.getenv("CONJECTURE_USER", "user")
-        self.team = os.getenv("CONJECTURE_TEAM", "default")
+        self.workspace = "default"
+        self.user = "user"
+        self.team = "default"
 
-        # === Derived Settings ===
-        self.llm_enabled = (
-            bool(self.provider_api_key) or "localhost" in self.provider_api_url
+        # === LLM Provider Configuration ===
+        self.providers: List[Dict[str, Any]] = []
+        self.config_path = config_path or self._detect_config_path()
+
+        self._load_config()
+        self._setup_data_directory()
+
+    def _detect_config_path(self) -> Path:
+        """Detect configuration path (workspace or home)"""
+        # Check for workspace config first
+        workspace_config = Path.cwd() / ".conjecture" / "config.json"
+        if workspace_config.exists():
+            self.workspace = Path.cwd().name
+            return workspace_config
+
+        # Fall back to home config
+        home_config = Path.home() / ".conjecture" / "config.json"
+        return home_config
+
+    def _load_config(self):
+        """Load configuration from JSON file"""
+        try:
+            if not self.config_path.exists():
+                self._create_default_config()
+                return
+
+            with open(self.config_path, "r") as f:
+                config_data = json.load(f)
+
+            # Load providers
+            self.providers = config_data.get("providers", [])
+
+            # Load other settings (with defaults)
+            self.confidence_threshold = config_data.get("confidence_threshold", 0.95)
+            self.confident_threshold = config_data.get("confident_threshold", 0.8)
+            self.max_context_size = config_data.get("max_context_size", 10)
+            self.batch_size = config_data.get("batch_size", 10)
+            self.debug = config_data.get("debug", False)
+            self.database_path = config_data.get("database_path", "data/conjecture.db")
+            self.user = config_data.get("user", "user")
+            self.team = config_data.get("team", "default")
+
+        except Exception as e:
+            print(f"Error loading config: {e}")
+            self._create_default_config()
+
+    def _create_default_config(self):
+        """Create a default configuration file"""
+        default_config = {
+            "providers": [
+                {"url": "http://localhost:11434", "api": "", "model": "llama2"}
+            ],
+            "confidence_threshold": 0.95,
+            "confident_threshold": 0.8,
+            "max_context_size": 10,
+            "batch_size": 10,
+            "debug": False,
+            "database_path": "data/conjecture.db",
+            "user": "user",
+            "team": "default",
+        }
+
+        # Create config directory if it doesn't exist
+        self.config_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(self.config_path, "w") as f:
+            json.dump(default_config, f, indent=2)
+
+        # Load the default config
+        self.providers = default_config["providers"]
+
+    def _setup_data_directory(self):
+        """Setup data directory based on workspace"""
+        if self.workspace != "default":
+            # Workspace-specific data directory
+            workspace_dir = Path.cwd() / ".conjecture"
+            self.data_dir = workspace_dir / "data"
+            self.database_path = str(workspace_dir / "data" / "conjecture.db")
+        else:
+            # Global data directory
+            home_dir = Path.home() / ".conjecture"
+            self.data_dir = home_dir / "data"
+            self.database_path = str(home_dir / "data" / "conjecture.db")
+
+        self.data_dir.mkdir(parents=True, exist_ok=True)
+
+    def get_providers(self) -> List[Dict[str, Any]]:
+        """Get list of configured providers"""
+        return self.providers
+
+    def get_primary_provider(self) -> Optional[Dict[str, Any]]:
+        """Get the primary (first) provider"""
+        return self.providers[0] if self.providers else None
+
+    def is_workspace_config(self) -> bool:
+        """Check if using workspace-specific configuration"""
+        return (
+            "workspace" in str(self.config_path).lower() or self.workspace != "default"
         )
 
-        # === Derived User Context ===
-        self.user_context = f"{self.workspace}/{self.user}"
-        self.full_context = f"{self.workspace}/{self.team}/{self.user}"
-
-    # === Confidence Threshold Methods ===
-    def set_confident_threshold(self, threshold: float):
-        """Set session-level confident threshold override"""
-        if 0.0 <= threshold <= 1.0:
-            self.session_confident_threshold = threshold
-        else:
-            raise ValueError("Confident threshold must be between 0.0 and 1.0")
-
-    def get_effective_confident_threshold(self) -> float:
-        """Get effective confident threshold (session override or global default)"""
-        return self.session_confident_threshold or self.confident_threshold
-
-    def reset_confident_threshold(self):
-        """Reset to global default confident threshold"""
-        self.session_confident_threshold = None
-
-    # === Utility Methods ===
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert configuration to dictionary"""
+    def get_config_info(self) -> Dict[str, Any]:
+        """Get configuration information"""
         return {
-            "database_type": self.database_type,
-            "database_path": self.database_path,
-            "confidence_threshold": self.confidence_threshold,
-            "max_context_size": self.max_context_size,
-            "batch_size": self.batch_size,
-            "llm_enabled": self.llm_enabled,
-            "llm_provider": self.llm_provider,
-            "provider_model": self.provider_model,
-            "provider_api_url": self.provider_api_url,
+            "config_path": str(self.config_path),
             "workspace": self.workspace,
-            "user": self.user,
-            "team": self.team,
-            "user_context": self.user_context,
-            "full_context": self.full_context,
+            "is_workspace_config": self.is_workspace_config(),
+            "providers_count": len(self.providers),
+            "data_dir": str(self.data_dir),
+            "database_path": self.database_path,
             "debug": self.debug,
-        }
-
-    def validate(self) -> bool:
-        """Validate configuration settings"""
-        try:
-            assert 0.0 <= self.confidence_threshold <= 1.0
-            assert self.max_context_size > 0
-            assert self.batch_size > 0
-            assert self.data_dir.exists() or self.data_dir.parent.exists()
-
-            if self.llm_enabled:
-                assert self.provider_model is not None
-
-            return True
-        except Exception as e:
-            print(f"Configuration validation failed: {e}")
-            return False
-
-    def __str__(self) -> str:
-        """String representation for debugging"""
-        return f"Config(db={self.database_type}, llm={self.llm_provider}, confidence={self.confidence_threshold})"
-
-    # === Property Methods ===
-    @property
-    def chroma_settings(self) -> Dict[str, Any]:
-        """ChromaDB settings (only when using chroma)"""
-        if self.database_type != "chroma":
-            return {}
-        return {
-            "collection_name": "claims",
-            "host": os.getenv("CHROMA_HOST", "localhost"),
-            "port": int(os.getenv("CHROMA_PORT", "8000")),
-            "path": os.getenv("CHROMA_PATH", "data/chroma_db"),
-        }
-
-    @property
-    def llm_settings(self) -> Dict[str, Any]:
-        """LLM settings (only when LLM is enabled)"""
-        if not self.llm_enabled:
-            return {}
-        return {
-            "model": self.provider_model,
-            "temperature": float(os.getenv("LLM_TEMPERATURE", "0.3")),
-            "max_tokens": int(os.getenv("LLM_MAX_TOKENS", "2000")),
-            "timeout": int(os.getenv("LLM_TIMEOUT", "30")),
         }
 
 
 # Global configuration instance
-config = Config()
+_config = None
 
 
 def get_config() -> Config:
     """Get the global configuration instance"""
-    return config
+    global _config
+    if _config is None:
+        _config = Config()
+    return _config
 
 
-def print_config_summary():
-    """Print configuration summary for debugging"""
-    cfg = get_config()
-    print("=== Configuration Summary ===")
-    print(f"Database: {cfg.database_type} at {cfg.database_path}")
-    print(f"LLM Provider: {cfg.llm_provider}")
-    print(f"LLM Enabled: {cfg.llm_enabled}")
-    print(f"Confidence Threshold: {cfg.confidence_threshold}")
-    print(f"Debug Mode: {cfg.debug}")
-    print("============================")
+def validate_config() -> bool:
+    """Validate configuration (simplified for JSON-based config)"""
+    config = get_config()
+
+    # Check if we have at least one provider
+    if not config.providers:
+        print("No providers configured")
+        return False
+
+    # Check if primary provider has required fields
+    primary = config.get_primary_provider()
+    if not primary:
+        print("No primary provider found")
+        return False
+
+    required_fields = ["url", "model"]
+    for field in required_fields:
+        if not primary.get(field):
+            print(f"Primary provider missing required field: {field}")
+            return False
+
+    return True
 
 
-def validate_config(env_file: str = ".env") -> bool:
-    """Validate configuration (wrapper for Config.validate())"""
-    try:
-        from dotenv import load_dotenv
-
-        load_dotenv(env_file)
-    except ImportError:
-        pass
-
-    cfg = Config()
-    return cfg.validate()
-
-
-def get_primary_provider():
-    """Get the primary LLM provider configuration"""
-    cfg = get_config()
-    return {
-        "api_url": cfg.provider_api_url,
-        "api_key": cfg.provider_api_key,
-        "model": cfg.provider_model,
-        "provider": cfg.llm_provider,
-        "enabled": cfg.llm_enabled,
-    }
-
-
-if __name__ == "__main__":
-    # Test configuration
-    cfg = Config()
-    print("Configuration Test:")
-    print(f"Valid: {cfg.validate()}")
-    print(f"Settings: {cfg.to_dict()}")
-    print(f"LLM Enabled: {cfg.llm_enabled}")
-    print(f"Debug Mode: {cfg.debug}")
+def reload_config():
+    """Reload configuration from file"""
+    global _config
+    _config = Config()

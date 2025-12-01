@@ -6,9 +6,7 @@ Now with unified configuration validation
 # Unified configuration imports
 from .config import (
     Config,
-    config,
     get_config,
-    print_config_summary,
     validate_config as simple_validate_config,
 )
 
@@ -16,15 +14,15 @@ from .config import (
 # Note: Unified validator components are not fully implemented yet
 # Using simple config for now
 
-# Backward compatibility layer
-from .backward_compatibility import (
-    SimpleProviderValidator,
-    IndividualEnvValidator,
-    UnifiedProviderValidator,
-    SimpleValidator,
-    show_migration_suggestions,
-    check_api_usage,
-)
+# Backward compatibility layer (archived)
+# from .backward_compatibility import (
+#     SimpleProviderValidator,
+#     IndividualEnvValidator,
+#     UnifiedProviderValidator,
+#     SimpleValidator,
+#     show_migration_suggestions,
+#     check_api_usage,
+# )
 
 # Migration utilities (commented out to avoid circular imports)
 # from .migration_utils import (
@@ -41,19 +39,10 @@ def validate_config(env_file: str = ".env"):
 
 
 __all__ = [
-    # Legacy
+    # Core
     "Config",
-    "config",
     "get_config",
-    "print_config_summary",
     "simple_validate_config",
     # Simple validation
     "validate_config",
-    # Backward compatibility
-    "SimpleProviderValidator",
-    "IndividualEnvValidator",
-    "UnifiedProviderValidator",
-    "SimpleValidator",
-    "show_migration_suggestions",
-    "check_api_usage",
 ]

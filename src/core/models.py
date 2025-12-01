@@ -441,10 +441,6 @@ class DataConfig(BaseModel):
 
 # Import common result classes to maintain backward compatibility
 from .common_results import ProcessingResult, BatchResult
-    batch_id: str = Field(..., description="Batch identifier")
-    timestamp: datetime = Field(
-        default_factory=datetime.utcnow, description="Batch timestamp"
-    )
 
 
 # Helper functions for working with Claim collections

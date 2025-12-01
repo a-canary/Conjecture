@@ -10,8 +10,9 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 
-from .error_handling import RetryConfig, CircuitBreakerConfig
+from .error_handling import RetryConfig, CircuitBreakerConfig, with_error_handling
 from .common import GenerationConfig, LLMProcessingResult
+from ...core.models import Claim
 
 
 class ChutesProcessor:
@@ -100,7 +101,7 @@ class ChutesProcessor:
             print(f"Error extracting content from Chutes.ai response: {e}")
             return ""
 
-    def _format_claim_for_processing(self, claim: BasicClaim) -> str:
+    def _format_claim_for_processing(self, claim: Claim) -> str:
         """Format claim according to Conjecture input format"""
         type_str = ", ".join(
             [t.value if hasattr(t, "value") else str(t) for t in claim.type]
@@ -109,7 +110,7 @@ class ChutesProcessor:
         return f"- [{claim.id}, {claim.confidence:.3f}, {type_str}, {claim.state.value}] {claim.content}"
 
     def _format_context_for_processing(
-        self, claims: List[BasicClaim], include_supporting: bool = True
+        self, claims: List[Claim], include_supporting: bool = True
     ) -> str:
         """Format multiple claims into YAML-formatted context"""
         context_lines = ["# Conjecture Processing Context"]
@@ -134,7 +135,7 @@ class ChutesProcessor:
 
         return "\n".join(context_lines)
 
-    def _parse_generated_claims(self, response_text: str) -> List[BasicClaim]:
+    def _parse_generated_claims(self, response_text: str) -> List[Claim]:
         """Parse generated claims from Chutes.ai response"""
         claims = []
 
@@ -166,8 +167,8 @@ class ChutesProcessor:
                     conf_end = opening_tag.find('"', conf_start)
                     confidence = float(opening_tag[conf_start:conf_end])
 
-                    # Create BasicClaim object
-                    claim = BasicClaim(
+                    # Create Claim object
+                    claim = Claim(
                         id=f"c{int(time.time() * 1000) % 10000000:07d}",
                         content=content.strip(),
                         confidence=confidence,
@@ -188,7 +189,7 @@ class ChutesProcessor:
     @with_error_handling("processing")
     def process_claims(
         self,
-        claims: List[BasicClaim],
+        claims: List[Claim],
         task: str = "analyze",
         config: Optional[GenerationConfig] = None,
     ) -> LLMProcessingResult:
@@ -288,7 +289,7 @@ Focus on providing accurate, well-reasoned claims with appropriate confidence sc
             self.stats["total_processing_time"] += processing_time
 
             # Return as a single claim for consistency
-            synthetic_claim = BasicClaim(
+            synthetic_claim = Claim(
                 id=f"c{int(time.time() * 1000) % 10000000:07d}",
                 content=content.strip(),
                 confidence=0.8,

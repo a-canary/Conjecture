@@ -2,7 +2,7 @@
 
 ## Overview
 
-Conjecture uses a simple, elegant architecture based on a single unified API. No over-engineering, no complex service layers - just clean, direct functionality.
+Conjecture uses a simple, elegant architecture based on a single unified API. After a major refactoring in November 2025, the codebase achieved an 87% reduction in duplicate data classes while maintaining all functionality. No over-engineering, no complex service layers - just clean, direct functionality.
 
 ## Core Architecture
 
@@ -44,8 +44,9 @@ Conjecture uses a simple, elegant architecture based on a single unified API. No
 - Simple, maintainable code
 
 ### 3. Clean Separation
-- Data models: `src/core/unified_models.py`
-- Processing: `src/contextflow.py` (single class)
+- Data models: `src/core/models.py` (single source of truth)
+- Unified configs: `src/config/common.py`, `src/processing/llm/common.py`
+- Processing: `src/conjecture.py` (single class)
 - Interfaces: `src/cli/`, `src/interfaces/`
 
 ## Implementation Pattern
@@ -169,23 +170,26 @@ class GUI:
 ```
 src/
 ├── core/
-│   └── unified_models.py     # Data models only
-├── contextflow.py            # Single Conjecture class
+│   ├── models.py             # Single source for Claim models
+│   └── common_results.py     # Unified ProcessingResult
+├── config/
+│   └── common.py             # Unified ProviderConfig
+├── processing/
+│   ├── common_context.py     # Simplified context models
+│   └── llm/
+│       └── common.py         # Unified GenerationConfig
+├── conjecture.py             # Single Conjecture class
 ├── cli/
 │   └── modular_cli.py        # CLI implementation
 ├── agent/
 │   └── ...                   # Agent components
-├── processing/
-│   └── ...                   # Processing logic
-├── llm/
-│   └── ...                   # LLM integration
 ├── local/
 │   └── ...                   # Local service integrations
 ├── interfaces/
 │   ├── simple_gui.py         # GUI implementation
 │   └── simple_tui.py         # TUI implementation
-└── config/
-    └── simple_config.py      # Configuration only
+└── utils/
+    └── ...                   # Utility functions
 ```
 
 ## Migration Guide

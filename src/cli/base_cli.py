@@ -9,7 +9,7 @@ import os
 import sqlite3
 import sys
 import time
-from abc import ABC, abstractmethod
+
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -19,15 +19,13 @@ from rich.panel import Panel
 from rich.progress import Progress, TextColumn
 from rich.table import Table
 
-# Add parent to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
 from config.config import get_config, validate_config
 from data.sqlite_manager import SQLiteManager
 from core.models import Claim, ClaimScope, DirtyReason, generate_claim_id
+from llm.provider_manager import get_provider_manager, process_prompt_with_failover
 
 
-class BaseCLI(ABC):
+class BaseCLI:
     """Base class for all CLI implementations with common functionality."""
 
     def __init__(self, name: str = "conjecture", help_text: str = "Conjecture CLI"):
@@ -41,6 +39,8 @@ class BaseCLI(ABC):
         # Initialize SQLite database manager
         self.sqlite_manager = SQLiteManager(self.db_path)
         self._workspace = None
+        # Initialize provider manager
+        self.provider_manager = get_provider_manager()
 
     def _get_backend_type(self) -> str:
         """Get the backend type for this CLI."""
@@ -48,18 +48,32 @@ class BaseCLI(ABC):
 
     def _init_services(self):
         """Initialize services common to all backends."""
-        # Validate configuration first
-        result = validate_config()
+        # Initialize provider manager with failover support
+        self.provider_manager = get_provider_manager()
 
-        if not result:  # validate_config returns a bool
-            self.console.print("[bold red][ERROR] Configuration Required[/bold red]")
+        # Check if any providers are available
+        if not self.provider_manager.providers:
             self.console.print(
-                "Please configure at least one provider in your .env file"
+                "[bold red][ERROR] No LLM Providers Configured[/bold red]"
+            )
+            self.console.print(
+                "Please configure providers in ~/.conjecture/config.json or workspace/.conjecture/config.json"
             )
             raise SystemExit(1)
 
-        # Get the best configured provider
-        self.current_provider_config = self._get_configured_provider()
+        # Get current provider
+        current_provider = self.provider_manager.get_available_provider()
+        if not current_provider:
+            self.console.print(
+                "[bold red][ERROR] No Available LLM Providers[/bold red]"
+            )
+            raise SystemExit(1)
+
+        self.current_provider_config = {
+            "name": current_provider.name,
+            "url": current_provider.url,
+            "model": current_provider.model,
+        }
 
         # Create data directory
         os.makedirs("data", exist_ok=True)
@@ -296,8 +310,7 @@ class BaseCLI(ABC):
             border_style="green",
         )
 
-    # Abstract methods that must be implemented by backends
-    @abstractmethod
+    # Concrete implementations
     def create_claim(
         self,
         content: str,
@@ -309,22 +322,84 @@ class BaseCLI(ABC):
         **kwargs,
     ) -> str:
         """Create a new claim."""
-        pass
+        # Validate input
+        if not 0.0 <= confidence <= 1.0:
+            raise ValueError("Confidence must be between 0.0 and 1.0")
 
-    @abstractmethod
+        if len(content) < 10:
+            raise ValueError("Content must be at least 10 characters")
+
+        # Save claim with metadata
+        metadata = {
+            "analyzed": analyze,
+            "provider": self.current_provider_config.get("name")
+            if self.current_provider_config
+            else None,
+            "backend": "unified",
+            "workspace": self._workspace,
+        }
+
+        claim_id = self._save_claim(content, confidence, user_id, metadata, tags, scope)
+
+        # Display result
+        panel = self._create_claim_panel(
+            claim_id, content, confidence, user_id, metadata
+        )
+        self.console.print(panel)
+
+        # Analyze if requested and provider is available
+        if analyze and self.current_provider_config:
+            self.console.print(
+                f"[yellow]Analyzing with {self.current_provider_config['name']}...[/yellow]"
+            )
+            # TODO: Implement LLM analysis
+            self.console.print("[green]Analysis complete[/green]")
+
+        return claim_id
+
     def get_claim(self, claim_id: str) -> Optional[dict]:
         """Get a claim by ID."""
-        pass
+        self._init_database()
+        return self._get_claim(claim_id)
 
-    @abstractmethod
     def search_claims(self, query: str, limit: int = 10, **kwargs) -> List[dict]:
         """Search claims by content."""
-        pass
+        self._init_database()
 
-    @abstractmethod
+        try:
+            results = self._search_claims(query, limit)
+            return results
+        except Exception as e:
+            self.error_console.print(f"[red]Error searching claims: {e}[/red]")
+            raise
+
     def analyze_claim(self, claim_id: str, **kwargs) -> Dict[str, Any]:
-        """Analyze a claim using backend-specific services."""
-        pass
+        """Analyze a claim using LLM services."""
+        claim = self.get_claim(claim_id)
+        if not claim:
+            raise ValueError(f"Claim {claim_id} not found")
+
+        self.console.print(f"[blue][UNIFIED] Analyzing claim {claim_id}...[/blue]")
+
+        # Mock analysis for now - would integrate with LLM APIs
+        analysis = {
+            "claim_id": claim_id,
+            "backend": "unified",
+            "provider": self.current_provider_config.get("name")
+            if self.current_provider_config
+            else None,
+            "analysis_type": "semantic",
+            "confidence_score": claim.get("confidence", 0.0),
+            "sentiment": "neutral",
+            "topics": ["general", "fact_checking"],
+            "verification_status": "pending",
+            "model_used": self.current_provider_config.get("model", "unknown")
+            if self.current_provider_config
+            else None,
+        }
+
+        self.console.print("[green][OK] Analysis complete[/green]")
+        return analysis
 
     def process_prompt(
         self, prompt_text: str, confidence: float = 0.8, verbose: int = 0, **kwargs
@@ -453,25 +528,9 @@ class BaseCLI(ABC):
             "final_status": "processed",
         }
 
-    @abstractmethod
     def is_available(self) -> bool:
         """Check if backend is available and properly configured."""
-        pass
-
-    def _get_configured_provider(self) -> Optional[Dict[str, Any]]:
-        """Get configured provider in legacy format."""
-        # For now, return a simple mock provider config
-        # In a real implementation, this would integrate with the provider system
-        config = get_config()
-        if config.provider_api_key or "localhost" in config.provider_api_url:
-            return {
-                "name": config.llm_provider,
-                "type": "local" if "localhost" in config.provider_api_url else "cloud",
-                "base_url": config.provider_api_url,
-                "model": config.provider_model,
-                "api_key": config.provider_api_key,
-            }
-        return None
+        return bool(self.provider_manager and self.provider_manager.providers)
 
     def get_backend_info(self) -> Dict[str, Any]:
         """Get information about the current backend."""

@@ -8,8 +8,8 @@ import re
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
 from typing import Dict, List, Optional
-from ..base_adapter import BaseAdapter, ValidationResult
-from ..common import ProviderConfig
+from .adapters.base_adapter import BaseAdapter, ValidationResult
+from .common import ProviderConfig
 
 
 class SimpleProviderValidator:

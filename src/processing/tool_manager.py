@@ -16,10 +16,10 @@ import hashlib
 from ..core.models import Claim, ClaimState
 from .bridge import LLMBridge, LLMRequest
 
-# Try to import tools, but handle gracefully if not available
+# Try to import core tools, but handle gracefully if not available
 try:
-    from tools.webSearch import WebSearch
-    from tools.readFiles import ReadFiles
+    from core_tools.webSearch import WebSearch
+    from core_tools.readFiles import ReadFiles
 except ImportError:
     WebSearch = None
     ReadFiles = None

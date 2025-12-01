@@ -25,19 +25,38 @@ pip install -r requirements.txt
 
 ### 2. Configuration
 ```bash
-# Copy the configuration template
-cp .env.example .env
+# Create configuration directory (if it doesn't exist)
+mkdir -p ~/.conjecture
 
-# Edit .env with your preferred provider
-# For local use (recommended):
-#   - Install Ollama from https://ollama.ai/
-#   - Set PROVIDER_API_URL=http://localhost:11434
-#   - Set PROVIDER_MODEL=llama2
-
-# For cloud use:
-#   - Get API key from your provider
-#   - Set PROVIDER_API_URL, PROVIDER_API_KEY, and PROVIDER_MODEL
+# Edit the configuration file
+nano ~/.conjecture/config.json
 ```
+
+Example `~/.conjecture/config.json`:
+```json
+{
+  "providers": [
+    {
+      "url": "http://localhost:11434",
+      "api": "",
+      "model": "llama2"
+    },
+    {
+      "url": "https://openrouter.ai/api/v1",
+      "api": "sk-or-your-openrouter-key-here",
+      "model": "openai/gpt-3.5-turbo"
+    }
+  ]
+}
+```
+
+**For local use (recommended):**
+- Install Ollama from https://ollama.ai/
+- Use the default configuration (localhost:11434)
+
+**For cloud use:**
+- Get API key from your provider
+- Add provider to config.json with url, api key, and model
 
 ### 3. Run Conjecture
 ```bash
@@ -103,7 +122,7 @@ python conjecture export --format json --output results.json
 
 ## 🏗️ Architecture
 
-Conjecture uses a clean, modular architecture:
+Conjecture uses a clean, simplified architecture after major refactoring:
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -121,6 +140,15 @@ Conjecture uses a clean, modular architecture:
 - **`src/conjecture.py`**: Core Conjecture class with async evaluation
 - **`src/core.py`**: Core models and utilities
 - **`data/conjecture.db`**: SQLite database for claim storage
+
+### 🎉 Recent Major Simplification
+The codebase has undergone significant refactoring to reduce complexity:
+
+- **87% Reduction** in duplicate data classes (40 → 5 classes)
+- **Unified Data Models**: Single source of truth for all configurations
+- **Simplified Context Models**: Streamlined LLM processing
+- **All CLI Commands**: Fully functional (create, get, search, analyze, prompt)
+- **Test Suite**: Validated and passing
 
 ## 🔧 Configuration
 
@@ -209,8 +237,14 @@ Conjecture/
 │   ├── conjecture.py            # Core Conjecture class
 │   ├── core.py                  # Core models and utilities
 │   ├── config/                  # Configuration management
+│   │   └── common.py            # Unified ProviderConfig
 │   ├── processing/              # LLM integration and evaluation
-│   ├── core/                    # Data models and operations
+│   │   ├── common_context.py    # Simplified context models
+│   │   └── llm/
+│   │       └── common.py        # Unified GenerationConfig
+│   ├── core/
+│   │   ├── models.py            # Single source for Claim models
+│   │   └── common_results.py    # Unified ProcessingResult
 │   ├── tools/                   # Tool registry and management
 │   └── utils/                   # Utility functions
 ├── data/
@@ -232,8 +266,17 @@ Conjecture/
 
 ## 📚 Documentation
 
+### Core Documentation
 - [EMOJI_USAGE.md](./EMOJI_USAGE.md) - Complete emoji feature guide
 - [CLAUDES_TODOLIST.md](./CLAUDES_TODOLIST.md) - Development review and cleanup tasks
+- [docs/major_refactoring_summary.md](./docs/major_refactoring_summary.md) - **NEW**: Major simplification overview
+
+### Architecture Documentation
+- [docs/architecture/main.md](./docs/architecture/main.md) - Simple architecture specification
+- [docs/architecture/data_layer_architecture.md](./docs/architecture/data_layer_architecture.md) - **UPDATED**: Simplified data layer
+- [docs/architecture/implementation.md](./docs/architecture/implementation.md) - Interface implementation guide
+
+### Additional Resources
 - [docs/](./docs/) - Additional documentation and specifications
 - [archive/](./archive/) - Archived documentation and historical files
 

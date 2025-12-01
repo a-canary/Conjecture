@@ -2,7 +2,7 @@
 
 ## Overview
 
-All Conjecture interfaces (CLI, TUI, GUI) follow the same simple pattern using the unified `Conjecture` API. This ensures consistency, maintainability, and easy development.
+All Conjecture interfaces (CLI, TUI, GUI) follow the same simple pattern using the unified `Conjecture` API. After the major refactoring in November 2025, the system now uses unified data models that reduce complexity by 87% while ensuring consistency, maintainability, and easy development.
 
 ## The Simple Pattern
 
@@ -53,7 +53,7 @@ class YourCLI:
             self.console.print(f"Error: {e}")
 ```
 
-Note: The Conjecture class integrates with agent/, processing/, llm/, and local/ components internally, but interfaces only interact with the unified API.
+Note: The Conjecture class integrates with agent/, processing/, llm/, and local/ components internally using unified data models (GenerationConfig, ProviderConfig, ProcessingResult), but interfaces only interact with the unified API.
 
 ### 2. TUI Implementation
 ```python

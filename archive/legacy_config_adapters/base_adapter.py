@@ -5,11 +5,11 @@ Provides common interface and data structures for all configuration adapters
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from abc import ABC, abstractmethod
 from enum import Enum
 
-from .common import ProviderConfig, ValidationResult
+from ..common import ProviderConfig, ValidationResult
 
 
 class FormatPriority(Enum):
@@ -20,18 +20,6 @@ class FormatPriority(Enum):
     MEDIUM = 3
     LOW = 4
     LOWEST = 5
-    errors: List[str]
-    warnings: List[str]
-    format_type: str
-    priority: FormatPriority
-
-    def __post_init__(self):
-        if self.providers is None:
-            self.providers = []
-        if self.errors is None:
-            self.errors = []
-        if self.warnings is None:
-            self.warnings = []
 
 
 class BaseAdapter(ABC):

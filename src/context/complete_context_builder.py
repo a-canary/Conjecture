@@ -8,9 +8,9 @@ from dataclasses import dataclass
 from datetime import datetime
 import re
 
-from ..core.models import Claim, create_claim_index
-from ..core.support_relationship_manager import SupportRelationshipManager
-from ..tools.registry import ToolRegistry
+from core.models import Claim, create_claim_index
+from core.support_relationship_manager import SupportRelationshipManager
+from tools.registry import ToolRegistry
 
 
 @dataclass
@@ -210,7 +210,9 @@ class CompleteContextBuilder:
         Gets 30% of tokens.
         """
         # Get only direct supported claims (single level, not all descendants)
-        descendant_claims = self.relationship_manager.get_supported_claims(target_claim_id)
+        descendant_claims = self.relationship_manager.get_supported_claims(
+            target_claim_id
+        )
 
         # Sort by confidence (higher confidence first)
         descendant_claims.sort(key=lambda c: c.confidence, reverse=True)
@@ -376,7 +378,9 @@ class CompleteContextBuilder:
         # Target Claim (last for LLM attention, confidence redacted)
         context_parts.append("# Target Claim")
         # Redact confidence for target claim as required
-        target_formatted = f"[c{target_claim.id} | {target_claim.content} | / confidence_redacted]"
+        target_formatted = (
+            f"[c{target_claim.id} | {target_claim.content} | / confidence_redacted]"
+        )
         context_parts.append(target_formatted)
 
         return "\n".join(context_parts)
@@ -450,7 +454,7 @@ class CompleteContextBuilder:
         self,
         max_tokens: int = 8000,
         include_core_tools: bool = True,
-        additional_sections: Optional[List[str]] = None
+        additional_sections: Optional[List[str]] = None,
     ) -> str:
         """
         Build a simple context with just Core Tools and optional additional sections.
@@ -486,9 +490,11 @@ class CompleteContextBuilder:
         # Add instructions for LLM response format
         context_parts.append("# Instructions")
         context_parts.append("Please respond with only JSON tool calls in this format:")
-        context_parts.append('```json')
-        context_parts.append('{"tool_calls": [{"name": "ToolName", "arguments": {...}}]}')
-        context_parts.append('```')
+        context_parts.append("```json")
+        context_parts.append(
+            '{"tool_calls": [{"name": "ToolName", "arguments": {...}}]}'
+        )
+        context_parts.append("```")
         context_parts.append("")
 
         return "\n".join(context_parts)
@@ -507,13 +513,13 @@ class CompleteContextBuilder:
         else:
             core_tools = {}
             optional_tools = {}
-            tools_context_length =  0
+            tools_context_length = 0
 
         return {
-            'core_tools_count': len(core_tools),
-            'optional_tools_count': len(optional_tools),
-            'total_tools': len(core_tools) + len(optional_tools),
-            'core_tools_list': list(core_tools.keys()),
-            'optional_tools_list': list(optional_tools.keys()),
-            'tools_context_length': tools_context_length
+            "core_tools_count": len(core_tools),
+            "optional_tools_count": len(optional_tools),
+            "total_tools": len(core_tools) + len(optional_tools),
+            "core_tools_list": list(core_tools.keys()),
+            "optional_tools_list": list(optional_tools.keys()),
+            "tools_context_length": tools_context_length,
         }

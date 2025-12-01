@@ -9,9 +9,9 @@ from datetime import datetime
 import json
 import re
 
-from ..core.models import Claim, create_claim_index, create_claim
-from ..core.support_relationship_manager import SupportRelationshipManager
-from ..context.complete_context_builder import CompleteContextBuilder, BuiltContext
+from core.models import Claim, create_claim_index, create_claim
+from core.support_relationship_manager import SupportRelationshipManager
+from context.complete_context_builder import CompleteContextBuilder, BuiltContext
 
 
 @dataclass

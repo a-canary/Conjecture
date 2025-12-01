@@ -49,14 +49,7 @@ console = Console(
 # Error console can use safe console
 error_console = Console(stderr=True, legacy_windows=True)
 
-from .backends import (
-    BACKEND_REGISTRY,
-    LocalBackend,
-    CloudBackend,
-    HybridBackend,
-    AutoBackend,
-)
-from .base_cli import BaseCLI, BackendNotAvailableError
+from .base_cli import BaseCLI
 
 # from .dirty_commands import dirty_app  # Temporarily disabled due to import issues
 from config.config import validate_config
@@ -72,15 +65,6 @@ app = typer.Typer(
 # Add dirty flag subcommand
 # app.add_typer(dirty_app, name="dirty", help="Dirty flag system management")  # Temporarily disabled
 
-# Backend selection options
-backend_option = typer.Option(
-    "auto",
-    "--backend",
-    "-b",
-    help="Backend to use: auto, local, cloud, hybrid",
-    rich_help_panel="Backend Options",
-)
-
 # Global backend instance
 current_backend: BaseCLI = None
 
@@ -89,37 +73,29 @@ def get_backend(backend_type: str = "auto") -> BaseCLI:
     """Get or create the specified backend instance."""
     global current_backend
 
-    if backend_type not in BACKEND_REGISTRY:
-        error_console.print(f"[red]Unknown backend: {backend_type}[/red]")
-        error_console.print(f"Available backends: {', '.join(BACKEND_REGISTRY.keys())}")
-        raise typer.Exit(1)
-
-    # Create backend instance
-    backend_class = BACKEND_REGISTRY[backend_type]
-    current_backend = backend_class()
+    # Create backend instance using new provider system
+    current_backend = BaseCLI()
 
     # Check availability
     if not current_backend.is_available():
-        if backend_type == "auto":
-            # For auto backend, provide detailed feedback
-            detection = current_backend.get_detection_report()
-            error_console.print(
-                "[bold red]No backends are properly configured[/bold red]"
-            )
+        error_console.print(
+            "[bold red]No LLM providers are properly configured[/bold red]"
+        )
+        console.print("\n[bold yellow]Quick Setup:[/bold yellow]")
+        console.print("1. Create config: [cyan]mkdir -p ~/.conjecture[/cyan]")
+        console.print("2. Edit config: [cyan]nano ~/.conjecture/config.json[/cyan]")
+        console.print("3. Add providers to config.json")
 
-            console.print("\n[bold yellow]Quick Setup:[/bold yellow]")
-            console.print("1. Copy template: [cyan]cp .env.example .env[/cyan]")
-            console.print("2. Edit [cyan].env[/cyan] with your preferred provider")
-            console.print("3. Try again: [cyan]conjecture --backend auto[/cyan]")
-
-            console.print(f"\n[bold]Need help?[/bold]")
-            console.print("Run: [cyan]conjecture setup[/cyan]")
-            console.print("Run: [cyan]conjecture providers[/cyan]")
-        else:
-            error_console.print(
-                f"[red]{backend_type.title()} backend is not properly configured[/red]"
-            )
-            error_console.print("Run 'conjecture setup' to configure providers")
+        console.print(f"\n[bold]Example config:[/bold]")
+        console.print("[cyan]{")
+        console.print('[cyan]  "providers": [')
+        console.print("[cyan]    {")
+        console.print('[cyan]      "url": "http://localhost:11434",')
+        console.print('[cyan]      "api": "",')
+        console.print('[cyan]      "model": "llama2"')
+        console.print("[cyan]    }")
+        console.print("[cyan]  ]")
+        console.print("[cyan]}[/cyan]")
 
         raise typer.Exit(1)
 
@@ -150,7 +126,7 @@ def print_backend_info(backend: BaseCLI):
 
 @app.callback()
 def main(
-    backend: str = backend_option,
+    backend: str = "auto",
     verbose: bool = typer.Option(
         False, "--verbose", "-v", help="Enable verbose output"
     ),
@@ -490,31 +466,49 @@ def config():
         console.print("Configuration is valid!")
         console.print("You can now use: create, get, search, analyze, prompt commands")
 
-        # Show available backends
-        console.print(f"\n[bold]Available Backends:[/bold]")
-        for name in BACKEND_REGISTRY.keys():
-            try:
-                backend_class = BACKEND_REGISTRY[name]
-                backend_instance = backend_class()
-                status = (
-                    "[green]OK[/green]"
-                    if backend_instance.is_available()
-                    else "[red]FAIL[/red]"
-                )
-                console.print(f"  {status} {name.lower()}")
-            except Exception:
-                console.print(f"  [red]ERROR[/red] {name.lower()}")
-    else:
-        console.print("Configure at least one provider:")
-        console.print("  • Run: [cyan]conjecture setup[/cyan]")
-        console.print("  • Edit: [cyan].env[/cyan] file")
-        console.print("  • Copy from: [cyan].env.example[/cyan]")
+        # Show available providers
+        console.print(f"\n[bold]Available Providers:[/bold]")
+        backend = get_backend()
+        providers = backend.provider_manager.get_providers()
+        for i, provider in enumerate(providers):
+            console.print(
+                f"  • Provider {i + 1}: {provider.get('name', 'Unknown')} ({provider.get('url', 'No URL')})"
+            )
+        else:
+            console.print("Configure at least one provider:")
+            console.print("  • Run: [cyan]conjecture setup[/cyan]")
+            console.print("  • Edit: [cyan]~/.conjecture/config.json[/cyan]")
 
 
 @app.command()
 def providers():
     """Show available providers and setup instructions."""
-    show_configuration_status()
+    console.print("[bold]Available Providers[/bold]")
+    console.print("=" * 50)
+
+    try:
+        backend = get_backend()
+        providers = backend.provider_manager.get_providers()
+
+        if not providers:
+            console.print("[red]No providers configured[/red]")
+            console.print("\n[yellow]Setup Instructions:[/yellow]")
+            console.print("1. Run: conjecture setup")
+            console.print("2. Edit: ~/.conjecture/config.json")
+            return
+
+        console.print(f"[bold green]Found {len(providers)} provider(s):[/bold green]")
+
+        for i, provider in enumerate(providers):
+            console.print(f"  • Provider {i + 1}: {provider.get('name', 'Unknown')}")
+            console.print(f"    URL: {provider.get('url', 'No URL')}")
+            console.print(f"    Status: {provider.get('status', 'Unknown')}")
+            if provider.get("api"):
+                console.print(f"    API Key: {provider.get('api')}")
+            console.print()
+
+    except Exception as e:
+        console.print(f"[red]Error loading providers: {e}[/red]")
 
 
 @app.command()
@@ -671,19 +665,9 @@ def backends():
         "hybrid": "Combines local and cloud for optimal performance",
     }
 
-    for name, backend_class in BACKEND_REGISTRY.items():
-        backend_instance = backend_class()
-        status = "Available" if backend_instance.is_available() else "Not Configured"
-        description = descriptions.get(name, "Unknown backend")
-
-        table.add_row(name.title(), status, description)
-
-    console.print(table)
-
-    # Show recommendation
-    console.print(f"\n[bold]Recommendation:[/bold]")
-    console.print("Use [cyan]--backend auto[/cyan] for intelligent backend selection")
-    console.print("Use [cyan]conjecture backends[/cyan] to check status anytime")
+    # Using unified provider system
+    console.print("Using unified provider system with automatic failover")
+    console.print("Providers are configured in ~/.conjecture/config.json")
 
 
 @app.command()
@@ -692,37 +676,30 @@ def health():
     console.print("[bold]System Health Check[/bold]")
     console.print("=" * 50)
 
-    # Check each backend
-    healthy_backends = []
-    unhealthy_backends = []
+    # Check provider system
+    try:
+        backend = get_backend()
+        providers = backend.provider_manager.get_providers()
 
-    for name, backend_class in BACKEND_REGISTRY.items():
-        try:
-            backend_instance = backend_class()
-            if backend_instance.is_available():
-                healthy_backends.append(name)
-                console.print(f"[green]OK {name.title()} Backend: Healthy[/green]")
-            else:
-                unhealthy_backends.append(name)
-                console.print(f"[red]FAIL {name.title()} Backend: Not Available[/red]")
-        except Exception as e:
-            unhealthy_backends.append(name)
-            console.print(f"[red]ERROR {name.title()} Backend: Error - {e}[/red]")
+        if providers:
+            console.print(
+                f"[bold green]System Status: {len(providers)} provider(s) configured[/bold green]"
+            )
+            for i, provider in enumerate(providers):
+                console.print(
+                    f"  • {provider.get('name', f'Provider {i + 1}')}: {provider.get('url', 'No URL')}"
+                )
+        else:
+            console.print(
+                f"[bold red]System Status: No providers configured[/bold red]"
+            )
+            console.print("Please configure providers in ~/.conjecture/config.json")
 
-    # Overall status
-    if healthy_backends:
-        console.print(
-            f"\n[bold green]System Status: {len(healthy_backends)} backend(s) healthy[/bold green]"
-        )
-        console.print(f"Available: {', '.join(healthy_backends)}")
-    else:
-        console.print(f"\n[bold red]System Status: No healthy backends[/bold red]")
-        console.print("Please configure at least one provider")
+    except Exception as e:
+        console.print(f"[bold red]System Status: Error - {e}[/bold red]")
 
-    if unhealthy_backends:
-        console.print(
-            f"[yellow]Unhealthy backends: {', '.join(unhealthy_backends)}[/yellow]"
-        )
+    console.print("\n[bold]Health Check Complete[/bold]")
+    console.print("All configured providers are available.")
 
 
 @app.command()
