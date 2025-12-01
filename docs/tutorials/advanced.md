@@ -59,7 +59,7 @@ pip install -r requirements.txt
 
 ### Quick Start
 ```python
-from contextflow import Conjecture
+from conjecture import Conjecture
 
 # Initialize Conjecture
 cf = Conjecture()

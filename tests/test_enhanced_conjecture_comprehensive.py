@@ -17,7 +17,7 @@ import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from core.unified_models import Claim, ClaimState, ClaimType
+from core.models import Claim, ClaimState, ClaimType
 from processing.async_claim_evaluation import (
     AsyncClaimEvaluationService,
     EvaluationEvent,

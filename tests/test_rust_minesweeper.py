@@ -10,7 +10,7 @@ from tempfile import mkdtemp
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "src"))
 
-from contextflow import Conjecture
+from conjecture import Conjecture
 from core.basic_models import BasicClaim
 
 

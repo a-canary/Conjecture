@@ -41,6 +41,8 @@ class BaseCLI:
         self._workspace = None
         # Initialize provider manager
         self.provider_manager = get_provider_manager()
+        # Initialize services (embedding model, etc.)
+        self._init_services()
 
     def _get_backend_type(self) -> str:
         """Get the backend type for this CLI."""

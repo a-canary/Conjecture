@@ -53,7 +53,7 @@ Conjecture uses a simple, elegant architecture based on a single unified API. Af
 
 ### All Interfaces Follow This Pattern:
 ```python
-from contextflow import Conjecture
+from conjecture import Conjecture
 
 class YourInterface:
     def __init__(self):
@@ -69,7 +69,7 @@ class YourInterface:
 ### CLI Example:
 ```python
 # src/cli/modular_cli.py
-from contextflow import Conjecture
+from conjecture import Conjecture
 
 def main():
     cf = Conjecture()
@@ -80,7 +80,7 @@ def main():
 ### TUI Example:
 ```python
 # src/interfaces/simple_tui.py
-from contextflow import Conjecture
+from conjecture import Conjecture
 
 class TUIApp:
     def __init__(self):
@@ -95,7 +95,7 @@ class TUIApp:
 ### GUI Example:
 ```python
 # src/interfaces/simple_gui.py
-from contextflow import Conjecture
+from conjecture import Conjecture
 
 class GUIApp:
     def __init__(self):

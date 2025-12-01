@@ -9,7 +9,7 @@ import sys
 
 sys.path.insert(0, "./src")
 
-from contextflow import Conjecture
+from conjecture import Conjecture
 
 
 class TestFallbackMechanisms(unittest.TestCase):

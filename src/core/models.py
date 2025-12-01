@@ -42,6 +42,21 @@ class ClaimState(str, Enum):
     QUEUED = "Queued"
 
 
+class ClaimType(str, Enum):
+    """Claim type enumeration"""
+
+    FACT = "fact"
+    CONCEPT = "concept"
+    EXAMPLE = "example"
+    GOAL = "goal"
+    REFERENCE = "reference"
+    ASSERTION = "assertion"
+    THESIS = "thesis"
+    HYPOTHESIS = "hypothesis"
+    QUESTION = "question"
+    TASK = "task"
+
+
 class ClaimScope(str, Enum):
     """Claim scope enumeration - simplified for local-first design"""
 

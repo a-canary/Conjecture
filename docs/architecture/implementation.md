@@ -8,7 +8,7 @@ All Conjecture interfaces (CLI, TUI, GUI) follow the same simple pattern using t
 
 ### Core Principle
 ```python
-from contextflow import Conjecture
+from conjecture import Conjecture
 
 class YourInterface:
     def __init__(self):
@@ -26,7 +26,7 @@ class YourInterface:
 ### 1. CLI Implementation
 ```python
 # src/cli/modular_cli.py
-from contextflow import Conjecture
+from conjecture import Conjecture
 from rich.console import Console
 
 class YourCLI:
@@ -59,7 +59,7 @@ Note: The Conjecture class integrates with agent/, processing/, llm/, and local/
 ```python
 # src/interfaces/simple_tui.py
 import curses
-from contextflow import Conjecture
+from conjecture import Conjecture
 
 class YourTUI:
     def __init__(self):
@@ -91,7 +91,7 @@ class YourTUI:
 # src/interfaces/simple_gui.py
 import tkinter as tk
 from tkinter import messagebox
-from contextflow import Conjecture
+from conjecture import Conjecture
 
 class YourGUI:
     def __init__(self):

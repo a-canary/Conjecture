@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 
-from .error_handling import RetryConfig, CircuitBreakerConfig
+from .error_handling import RetryConfig, CircuitBreakerConfig, with_error_handling
 from .common import GenerationConfig, LLMProcessingResult
 
 

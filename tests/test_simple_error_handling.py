@@ -9,7 +9,7 @@ import sys
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-from src.engine import Conjecture
+from src.conjecture import Conjecture
 
 
 def test_invalid_requests():

@@ -82,7 +82,7 @@ class TestLLMProviderBase(unittest.TestCase):
         processor = processor_class.__new__(processor_class)
         
         # Initialize common attributes
-        processor.api_key init_kwargs.get("api_key", "test_key")
+        processor.api_key = init_kwargs.get("api_key", "test_key")
         processor.api_url = init_kwargs.get("api_url", "https://api.test.com")
         processor.model_name = init_kwargs.get("model_name", "test-model")
         processor.stats = {

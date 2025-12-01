@@ -123,7 +123,7 @@ async def test_local_vector_store():
             claim_id="test-1",
             content="Test claim content",
             embedding=test_embedding,
-            {"test": True}
+            metadata={"test": True}
         )
         
         if success:

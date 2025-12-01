@@ -39,7 +39,7 @@ class TestClaimModel:
         assert isinstance(claim.created, datetime)
 
     @pytest.mark.models
-def test_claim_with_minimal_data(self):
+    def test_claim_with_minimal_data(self):
         """Test creating a claim with only required fields."""
         claim = Claim(
             id="c0000002",

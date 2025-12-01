@@ -7,11 +7,12 @@ import json
 import time
 import requests
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime
 
-from .error_handling import RetryConfig, CircuitBreakerConfig
+from .error_handling import RetryConfig, CircuitBreakerConfig, with_error_handling
 from .common import GenerationConfig, LLMProcessingResult
+from ...core.basic_models import BasicClaim
 
 
 class OpenAIProcessor:

@@ -726,7 +726,7 @@ At its core, the system recognizes that skills are not separate components but r
 At the core of the solution is a single `Conjecture` class that provides access to all functionality:
 
 ```python
-from contextflow import Conjecture
+from conjecture import Conjecture
 
 # One class for all functionality
 cf = Conjecture()

@@ -18,7 +18,7 @@ def test_import_paths():
 
     # Test contextflow import
     try:
-        from contextflow import Conjecture
+        from conjecture import Conjecture
 
         results["contextflow"] = "✅ WORKS"
     except Exception as e:
@@ -59,7 +59,7 @@ def test_api_methods():
     print("\n=== API METHOD VALIDATION ===")
 
     try:
-        from contextflow import Conjecture
+        from conjecture import Conjecture
 
         cf = Conjecture()
 
@@ -89,7 +89,7 @@ def test_example_code():
     print("\n=== EXAMPLE CODE VALIDATION ===")
 
     try:
-        from contextflow import Conjecture
+        from conjecture import Conjecture
 
         cf = Conjecture()
 
@@ -154,7 +154,7 @@ def test_file_structure():
     print("\n=== FILE STRUCTURE VALIDATION ===")
 
     expected_files = {
-        "src/contextflow.py": os.path.exists("src/contextflow.py"),
+        "src/conjecture.py": os.path.exists("src/conjecture.py"),
         "src/core/__init__.py": os.path.exists("src/core/__init__.py"),
         "src/config/simple_config.py": os.path.exists("src/config/simple_config.py"),
         "docs/tutorials/basic_usage.md": os.path.exists(
@@ -217,7 +217,7 @@ def main():
     print("• Test all code examples in documentation before publishing")
 
     print("\n=== WORKING EXAMPLES ===")
-    print("✅ CORRECT: from contextflow import Conjecture")
+    print("✅ CORRECT: from conjecture import Conjecture")
     print("✅ CORRECT: from core.unified_models import Claim, ClaimType")
     print("✅ CORRECT: cf = Conjecture(); cf.explore('query')")
     print("✅ CORRECT: cf.add_claim('content', 0.8, 'concept', ['tag'])")

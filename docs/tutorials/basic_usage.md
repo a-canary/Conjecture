@@ -5,7 +5,7 @@ This document provides practical examples of how to use Conjecture for various t
 ## 1. Basic Exploration and Claim Creation
 
 ```python
-from contextflow import Conjecture
+from conjecture import Conjecture
 from core.unified_models import Claim, ClaimType
 
 # Initialize Conjecture
