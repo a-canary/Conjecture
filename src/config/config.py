@@ -8,6 +8,63 @@ import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+# Load environment variables from .env files
+try:
+    from dotenv import load_dotenv
+    # Try to load .env from project root
+    project_root = Path(__file__).parent.parent.parent
+
+    # Load .env files in order of precedence
+    for env_file in [project_root / '.env']:
+        if env_file.exists():
+            load_dotenv(env_file)
+except ImportError:
+    # dotenv not available, use system environment variables only
+    pass
+
+
+def substitute_env_vars(config_dict):
+    """
+    Recursively substitute environment variables in configuration values
+    Supports ${VAR} and ${VAR:-default} syntax
+    """
+    import re
+
+    if isinstance(config_dict, dict):
+        return {k: substitute_env_vars(v) for k, v in config_dict.items()}
+    elif isinstance(config_dict, list):
+        return [substitute_env_vars(item) for item in config_dict]
+    elif isinstance(config_dict, str):
+        # Replace ${VAR:-default} patterns
+        def replace_var(match):
+            var_expr = match.group(1)
+            if ':-' in var_expr:
+                var_name, default_value = var_expr.split(':-', 1)
+                return os.getenv(var_name, default_value)
+            else:
+                return os.getenv(var_expr, '')
+
+        # Handle both ${VAR} and ${VAR:-default} patterns
+        pattern = r'\$\{([^}]+)\}'
+        result = re.sub(pattern, replace_var, config_dict)
+
+        # Convert string boolean/numeric values to proper types
+        if result.lower() == 'true':
+            return True
+        elif result.lower() == 'false':
+            return False
+        elif result.isdigit():
+            return int(result)
+        elif result.replace('.', '').isdigit():
+            try:
+                return float(result)
+            except ValueError:
+                pass
+
+        return result
+    else:
+        return config_dict
+
 
 class Config:
     """
@@ -62,6 +119,9 @@ class Config:
 
             with open(self.config_path, "r") as f:
                 config_data = json.load(f)
+
+            # Substitute environment variables
+            config_data = substitute_env_vars(config_data)
 
             # Load providers
             self.providers = config_data.get("providers", [])

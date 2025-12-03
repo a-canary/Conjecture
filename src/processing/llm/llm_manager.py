@@ -18,8 +18,8 @@ from .anthropic_integration import AnthropicProcessor
 from .google_integration import GoogleProcessor, GOOGLE_AVAILABLE
 from .cohere_integration import CohereProcessor
 from .local_providers_adapter import LocalProviderProcessor
-from ...core.basic_models import BasicClaim
-from ...config.simple_config import Config
+from core.models import Claim
+from config.common import ProviderConfig
 
 
 class LLMManager:
@@ -202,7 +202,7 @@ class LLMManager:
 
     def process_claims(
         self,
-        claims: List[BasicClaim],
+        claims: List[Claim],
         task: str = "analyze",
         provider: Optional[str] = None,
         **kwargs

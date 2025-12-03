@@ -1,19 +1,37 @@
 {
   "providers": [
     {
-      "url": "http://localhost:11434",
-      "api": "",
-      "model": "llama2"
+      "url": "${OLLAMA_API_URL:-http://localhost:11434}",
+      "api_key": "${OLLAMA_API_KEY:-}",
+      "model": "${OLLAMA_MODEL:-llama2}"
     },
     {
-      "url": "https://openrouter.ai/api/v1",
-      "api": "sk-or-your-openrouter-key-here",
-      "model": "openai/gpt-3.5-turbo"
+      "url": "${OPENROUTER_API_URL:-https://openrouter.ai/api/v1}",
+      "api_key": "${OPENROUTER_API_KEY:-}",
+      "model": "${OPENROUTER_MODEL:-openai/gpt-3.5-turbo}"
     },
     {
-      "url": "https://api.openai.com/v1",
-      "api": "sk-your-openai-key-here",
-      "model": "gpt-3.5-turbo"
+      "url": "${OPENAI_API_URL:-https://api.openai.com/v1}",
+      "api_key": "${OPENAI_API_KEY:-}",
+      "model": "${OPENAI_MODEL:-gpt-3.5-turbo}"
+    },
+    {
+      "url": "${CHUTES_API_URL:-${PROVIDER_API_URL:-https://llm.chutes.ai/v1}}",
+      "api_key": "${CHUTES_API_KEY:-${PROVIDER_API_KEY:-}}",
+      "model": "${CHUTES_MODEL:-${PROVIDER_MODEL:-zai-org/GLM-4.6-FP8}}"
+    },
+    {
+      "url": "${LM_STUDIO_API_URL:-http://localhost:1234}",
+      "api_key": "${LM_STUDIO_API_KEY:-}",
+      "model": "${LM_STUDIO_MODEL:-ibm/granite-4-h-tiny}"
     }
-  ]
+  ],
+  "confidence_threshold": "${CONFIDENCE_THRESHOLD:-0.95}",
+  "confident_threshold": "${CONFIDENT_THRESHOLD:-0.8}",
+  "max_context_size": "${MAX_CONTEXT_SIZE:-10}",
+  "batch_size": "${BATCH_SIZE:-10}",
+  "debug": "${DEBUG:-false}",
+  "database_path": "${DB_PATH:-${DATABASE_PATH:-data/conjecture.db}}",
+  "user": "${CONJECTURE_USER:-user}",
+  "team": "${CONJECTURE_TEAM:-default}"
 }

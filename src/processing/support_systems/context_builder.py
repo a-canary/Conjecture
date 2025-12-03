@@ -15,7 +15,7 @@ from .models import (
     ContextItem, ContextItemType, ContextResult, OptimizedContext, TokenUsage
 )
 from .data_collection import DataCollector, DataItem
-from ..utils.id_generator import generate_context_id
+from utils.id_generator import generate_context_id
 
 
 logger = logging.getLogger(__name__)

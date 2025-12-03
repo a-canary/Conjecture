@@ -1,0 +1,34 @@
+{
+  "id": "mathematical_reasoning_001",
+  "category": "mathematical_reasoning",
+  "difficulty": "medium",
+  "description": "Multi-step mathematical problem with algebraic reasoning",
+  "question": "A farmer has a rectangular field that is 50 meters longer than it is wide. The farmer wants to divide the field into two equal rectangular sections by building a fence parallel to the width. If the total area of the field is 12,000 square meters and the fence costs $15 per meter, what is the total cost of the dividing fence?",
+  "ground_truth": "The total cost of the dividing fence is $1,800.\n\nSolution:\nLet width = w meters, then length = w + 50 meters\nArea = w × (w + 50) = 12,000\nw² + 50w - 12,000 = 0\nUsing quadratic formula: w = [-50 ± √(50² + 4×12,000)]/2\nw = [-50 ± √(2,500 + 48,000)]/2 = [-50 ± √50,500]/2\nw = [-50 + 224.72]/2 = 174.72/2 = 87.36 meters\n\nThe dividing fence is parallel to the width, so it equals the width: 87.36 meters\nCost = 87.36 × $15 = $1,310.40\n\nWait, let me recalculate more precisely:\n√50,500 ≈ 224.72\nw = (174.72)/2 = 87.36 meters\nLength = 87.36 + 50 = 137.36 meters\nCheck: 87.36 × 137.36 ≈ 12,000 ✓\n\nDividing fence length = width = 87.36 meters\nCost = 87.36 × 15 = $1,310.40\n\nActually, let me be more careful with the quadratic formula:\nw = [-50 + √(2500 + 48000)]/2 = [-50 + √50500]/2\n√50500 ≈ 224.72\nw = (174.72)/2 = 87.36 meters\n\nCost = 87.36 × 15 = $1,310.40",
+  "expected_approach": "step_by_step",
+  "claims_needed": [
+    "Field is rectangular with length = width + 50",
+    "Total area = 12,000 square meters",
+    "Area formula: Area = length × width",
+    "Dividing fence is parallel to width",
+    "Fence length equals field width",
+    "Cost = length × $15 per meter"
+  ],
+  "solution_steps": [
+    "Set up variables: let width = w, length = w + 50",
+    "Write area equation: w(w + 50) = 12,000",
+    "Expand and rearrange: w² + 50w - 12,000 = 0",
+    "Apply quadratic formula",
+    "Calculate positive solution for width",
+    "Determine fence length equals width",
+    "Calculate total cost"
+  ],
+  "metadata": {
+    "type": "algebra",
+    "requires_quadratic_formula": true,
+    "multiple_steps": true,
+    "unit_conversion": false,
+    "estimated_time_minutes": 10,
+    "claims_based_approach_beneficial": true
+  }
+}

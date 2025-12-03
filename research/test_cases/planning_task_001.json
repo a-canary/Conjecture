@@ -1,0 +1,39 @@
+{
+  "id": "planning_task_001",
+  "category": "task_decomposition",
+  "difficulty": "medium",
+  "description": "Complex planning task that benefits from decomposition",
+  "task": "You are a project manager tasked with organizing a company-wide technology conference for 500 attendees. The conference will last 3 days and include keynote speakers, technical workshops, networking events, and a product showcase. Your budget is $150,000 and you have 6 months to plan. Create a comprehensive project plan that breaks this down into manageable phases and key deliverables.",
+  "ground_truth": "A comprehensive project plan should include the following phases and key deliverables:\n\nPhase 1: Planning & Foundation (Months 1-2)\n- Define conference objectives and target audience\n- Establish budget breakdown and secure funding\n- Form planning committee with defined roles\n- Research and select venue (capacity 500+, 3-day availability)\n- Create initial timeline and milestone schedule\n- Develop risk management plan\n\nPhase 2: Content & Speakers (Months 2-4)\n- Identify and confirm keynote speakers (3-5 speakers)\n- Develop call for papers for technical workshops\n- Select and coordinate workshop presenters (20-30 sessions)\n- Plan product showcase logistics and exhibitor packages\n- Design conference agenda and schedule\n- Prepare speaker contracts and travel arrangements\n\nPhase 3: Logistics & Operations (Months 3-5)\n- Finalize venue contract and layout design\n- Arrange catering services for all meals and breaks\n- Set up registration system and payment processing\n- Plan audio/visual equipment and technical support\n- Coordinate transportation and accommodation options\n- Design conference materials (badges, programs, signage)\n- Arrange security and medical support\n\nPhase 4: Marketing & Registration (Months 2-6)\n- Create conference website and branding\n- Develop marketing campaign and promotional materials\n- Open early bird registration\n- Manage social media promotion and email campaigns\n- Track registration numbers and adjust capacity as needed\n- Send regular updates to registered attendees\n\nPhase 5: Execution & Follow-up (Month 6)\n- Final venue walkthrough and setup\n- Coordinate speaker and volunteer training\n- Manage on-site registration and check-in\n- Oversee all conference sessions and events\n- Collect feedback and evaluations\n- Process final payments and close out contracts\n- Prepare post-conference report and recommendations\n\nBudget Allocation (approximate):\n- Venue rental: $40,000\n- Catering: $35,000\n- Speaker fees and travel: $25,000\n- A/V equipment: $15,000\n- Marketing and materials: $10,000\n- Staff and security: $15,000\n- Contingency fund: $10,000",
+  "expected_approach": "decompose_and_organize",
+  "key_subtasks": [
+    "Define conference scope and objectives",
+    "Budget planning and financial management", 
+    "Venue selection and contracting",
+    "Speaker recruitment and management",
+    "Content development and scheduling",
+    "Marketing and promotion strategy",
+    "Registration and attendee management",
+    "Logistics and operations planning",
+    "Risk management and contingency planning",
+    "On-site execution management",
+    "Post-conference evaluation and reporting"
+  ],
+  "decomposition_benefits": [
+    "Reduces cognitive complexity",
+    "Enables parallel work streams",
+    "Provides clear milestones and deadlines",
+    "Facilitates resource allocation",
+    "Improves risk identification",
+    "Allows for progress tracking"
+  ],
+  "metadata": {
+    "type": "project_planning",
+    "complexity_level": "medium",
+    "time_constraint": "6 months",
+    "budget_constraint": "$150,000",
+    "stakeholder_count": "500+",
+    "estimated_time_minutes": 20,
+    "claims_based_approach_beneficial": true
+  }
+}

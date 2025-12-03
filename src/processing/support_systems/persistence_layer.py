@@ -13,7 +13,7 @@ from pathlib import Path
 import logging
 import uuid
 
-from ..core.models import Claim, ClaimBatch
+from ...core.models import Claim, ClaimBatch
 from .models import CacheEntry
 
 

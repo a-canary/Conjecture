@@ -16,7 +16,7 @@ from .models import (
     PromptTemplate, PromptTemplateType, PromptTemplateStatus,
     PromptValidationResult, PromptMetrics
 )
-from ..utils.id_generator import generate_template_id
+from utils.id_generator import generate_template_id
 
 
 logger = logging.getLogger(__name__)

@@ -1,0 +1,42 @@
+{
+  "id": "complex_reasoning_001",
+  "category": "complex_reasoning",
+  "difficulty": "hard",
+  "description": "Multi-step logical reasoning with conditional statements",
+  "question": "In a small town, there are five houses in a row, each painted a different color: red, blue, green, yellow, and white. Each house is owned by a person with a different profession: doctor, teacher, engineer, artist, and baker. Each person has a different favorite fruit: apple, banana, cherry, date, and elderberry. Using the following clues, determine who owns the red house and what is their favorite fruit?\n\nClues:\n1. The doctor lives in the middle house.\n2. The artist lives next to the person who likes apples.\n3. The engineer lives in the green house.\n4. The teacher likes bananas.\n5. The baker lives in the first house.\n6. The person who likes cherries lives next to the white house.\n7. The red house is somewhere to the left of the blue house.\n8. The artist does not live in the yellow house.\n9. The person who likes dates lives next to the doctor.\n10. The person who likes elderberries lives in the last house.",
+  "ground_truth": "The teacher owns the red house and their favorite fruit is banana.\n\nReasoning:\n- House 1: Baker, white house, likes cherries\n- House 2: Teacher, red house, likes bananas\n- House 3: Doctor, yellow house, likes dates\n- House 4: Engineer, green house, likes apples\n- House 5: Artist, blue house, likes elderberries",
+  "expected_approach": "break_down_problem",
+  "claims_needed": [
+    "House positions are 1-5 from left to right",
+    "Doctor lives in house 3 (middle)",
+    "Baker lives in house 1",
+    "Person who likes elderberries lives in house 5",
+    "Engineer lives in green house",
+    "Teacher likes bananas",
+    "Red house is left of blue house",
+    "Artist lives next to apple lover",
+    "Cherry lover lives next to white house",
+    "Date lover lives next to doctor (house 3)",
+    "Artist does not live in yellow house"
+  ],
+  "solution_steps": [
+    "Place doctor in house 3 and baker in house 1",
+    "Place elderberry lover in house 5",
+    "Determine date lover lives in house 2 or 4 (next to doctor)",
+    "Place engineer in green house (unknown position yet)",
+    "Place teacher who likes bananas (unknown position yet)",
+    "Use red-left-of-blue constraint",
+    "Use artist-next-to-apple constraint",
+    "Use cherry-next-to-white constraint",
+    "Use artist-not-yellow constraint",
+    "Solve remaining positions through elimination"
+  ],
+  "metadata": {
+    "type": "logic_puzzle",
+    "requires_deduction": true,
+    "multiple_constraints": true,
+    "spatial_reasoning": true,
+    "estimated_time_minutes": 15,
+    "claims_based_approach_beneficial": true
+  }
+}

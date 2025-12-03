@@ -1,6 +1,6 @@
 """
-Chutes.ai API Integration for Conjecture LLM Processing
-Implements LLM processing using Chutes.ai API with response format adaptation
+Fixed Chutes.ai API Integration for Conjecture LLM Processing
+Correctly handles GLM models with reasoning_content field
 """
 
 import json
@@ -12,11 +12,11 @@ from datetime import datetime
 
 from .error_handling import RetryConfig, CircuitBreakerConfig, with_error_handling
 from .common import GenerationConfig, LLMProcessingResult
-from ...core.models import Claim
+from ...core.models import Claim, ClaimType, ClaimState
 
 
 class ChutesProcessor:
-    """Chutes.ai API integration for claim processing and analysis"""
+    """Enhanced Chutes.ai API integration for claim processing and analysis"""
 
     def __init__(
         self,
@@ -38,7 +38,7 @@ class ChutesProcessor:
             "total_processing_time": 0.0,
         }
 
-        # Initialize enhanced error handling
+        # Enhanced error handling
         self.error_handler = LLMErrorHandler(
             retry_config=RetryConfig(
                 max_attempts=3,
@@ -53,7 +53,7 @@ class ChutesProcessor:
     def _make_api_request(
         self, messages: List[Dict[str, str]], config: Optional[GenerationConfig] = None
     ) -> Dict[str, Any]:
-        """Make API request to Chutes.ai with enhanced error handling"""
+        """Make API request to Chutes.ai with proper error handling"""
         if config is None:
             config = GenerationConfig()
 
@@ -70,35 +70,42 @@ class ChutesProcessor:
             "top_p": config.top_p,
         }
 
+        # Make the API request
         response = requests.post(
-            f"{self.api_url}/chat/completions", headers=headers, json=data, timeout=30
+            f"{self.api_url}/chat/completions", headers=headers, json=data, timeout=60
         )
         response.raise_for_status()
         return response.json()
 
     def _extract_content(self, response: Dict[str, Any]) -> str:
-        """Extract content from Chutes.ai response, handling their unique format"""
+        """Extract content from Chutes.ai response, handling GLM reasoning format correctly"""
         try:
-            # Chutes.ai uses 'reasoning_content' field instead of standard 'content'
+            # Check for choices
             choices = response.get("choices", [])
             if not choices:
+                print(f"No choices in response: {response}")
                 return ""
 
             message = choices[0].get("message", {})
-
-            # Try reasoning_content first (Chutes.ai specific)
-            content = message.get("reasoning_content")
-            if content:
-                return content
+            
+            # GLM models with reasoning use 'reasoning_content' field
+            # Check for reasoning_content first (GLM-4.6 and similar)
+            reasoning_content = message.get("reasoning_content")
+            if reasoning_content:
+                return reasoning_content.strip()
 
             # Fallback to standard content field
             content = message.get("content")
             if content:
-                return content
+                return content.strip()
 
+            # If neither field found, log the response structure
+            print(f"Unexpected response format. Response: {json.dumps(response, indent=2)}")
             return ""
+
         except Exception as e:
             print(f"Error extracting content from Chutes.ai response: {e}")
+            print(f"Response was: {json.dumps(response, indent=2)}")
             return ""
 
     def _format_claim_for_processing(self, claim: Claim) -> str:
@@ -220,8 +227,19 @@ Focus on providing accurate, well-reasoned claims with appropriate confidence sc
 
             response = self._make_api_request(messages, config)
 
-            # Extract content using Chutes.ai specific format
+            # Extract content using enhanced Chutes.ai format handling
             content = self._extract_content(response)
+
+            if not content:
+                errors.append("No content extracted from Chutes.ai response")
+                return LLMProcessingResult(
+                    success=False,
+                    processed_claims=[],
+                    errors=errors,
+                    processing_time=time.time() - start_time,
+                    tokens_used=0,
+                    model_used=self.model_name,
+                )
 
             # Parse claims
             processed_claims = self._parse_generated_claims(content)
@@ -276,8 +294,19 @@ Focus on providing accurate, well-reasoned claims with appropriate confidence sc
 
             response = self._make_api_request(messages, config)
 
-            # Extract content using Chutes.ai specific format
+            # Extract content using enhanced Chutes.ai format handling
             content = self._extract_content(response)
+
+            if not content:
+                errors.append("No content extracted from Chutes.ai response")
+                return LLMProcessingResult(
+                    success=False,
+                    processed_claims=[],
+                    errors=errors,
+                    processing_time=time.time() - start_time,
+                    tokens_used=0,
+                    model_used=self.model_name,
+                )
 
             # Update stats
             processing_time = time.time() - start_time
@@ -365,3 +394,50 @@ Focus on providing accurate, well-reasoned claims with appropriate confidence sc
             "total_tokens": 0,
             "total_processing_time": 0.0,
         }
+
+
+# Legacy compatibility functions for research scripts
+def make_chutes_request(api_url: str, api_key: str, model: str, prompt: str, temperature: float = 0.7, max_tokens: int = 1000) -> str:
+    """
+    Simplified function for making Chutes API requests
+    Used by research scripts that need a simple interface
+    """
+    try:
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
+
+        data = {
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+        }
+
+        response = requests.post(f"{api_url}/chat/completions", headers=headers, json=data, timeout=60)
+        response.raise_for_status()
+
+        result = response.json()
+
+        # Extract response text using GLM-aware logic
+        if "choices" in result and len(result["choices"]) > 0:
+            message = result["choices"][0].get("message", {})
+            
+            # Check for reasoning_content first (GLM models)
+            reasoning_content = message.get("reasoning_content")
+            if reasoning_content:
+                return reasoning_content.strip()
+            
+            # Fallback to standard content
+            content = message.get("content")
+            if content:
+                return content.strip()
+        
+        # If we get here, log the full response
+        print(f"Unexpected response format: {json.dumps(result, indent=2)}")
+        raise ValueError("Unexpected response format")
+
+    except Exception as e:
+        print(f"Error making Chutes API call: {e}")
+        raise

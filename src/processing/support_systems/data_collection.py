@@ -16,7 +16,7 @@ import yaml
 from .models import (
     DataSource, DataItem, DataSchema, ValidationResult, ProcessedData, CacheEntry
 )
-from ..utils.id_generator import generate_context_id
+from utils.id_generator import generate_context_id
 
 
 logger = logging.getLogger(__name__)
