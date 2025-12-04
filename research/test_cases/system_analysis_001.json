@@ -1,0 +1,34 @@
+{
+  "id": "system_analysis_001",
+  "category": "task_decomposition",
+  "difficulty": "medium",
+  "task": "Analyze the root causes of declining user engagement in a mobile gaming app. Propose data-driven solutions and implementation roadmap.",
+  "reasoning_requirements": [
+    "causal_analysis",
+    "data_interpretation",
+    "solution_design"
+  ],
+  "expected_components": [
+    "problem_identification",
+    "root_cause_analysis",
+    "data_requirements",
+    "solution_proposals",
+    "implementation_plan"
+  ],
+  "decomposition_steps": 4,
+  "success_criteria": "Thorough analysis with actionable solutions",
+  "generated_at": "2025-12-03T22:11:20.409184",
+  "test_framework_version": "1.0",
+  "evaluation_criteria": [
+    "correctness",
+    "reasoning_quality",
+    "completeness",
+    "coherence"
+  ],
+  "difficulty_calibration": "medium",
+  "estimated_time_required": 21,
+  "required_capabilities": [
+    "data_analysis",
+    "causal_reasoning"
+  ]
+}

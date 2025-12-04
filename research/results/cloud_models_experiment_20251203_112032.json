@@ -1,0 +1,183 @@
+{
+  "experiment_id": "cloud_models_20251203_112032",
+  "timestamp": "2025-12-03T11:20:32.615811",
+  "models_tested": [
+    "openai/gpt-oss-20b",
+    "zai-org/GLM-4.6"
+  ],
+  "test_cases": [
+    {
+      "id": "logic_puzzle_complex",
+      "category": "complex_reasoning",
+      "question": "In a small town, there are five houses in a row, each painted a different color: red, blue, green, yellow, and white. Each house is owned by a person with a different profession: doctor, teacher, engineer, artist, and baker. Each person has a different favorite fruit: apple, banana, cherry, date, and elderberry. Using the following clues, determine who owns the red house and what is their favorite fruit?\n\nClues:\n1. The doctor lives in the middle house.\n2. The artist lives next to the person who likes apples.\n3. The engineer lives in the green house.\n4. The teacher likes bananas.\n5. The baker lives in the first house.\n6. The person who likes cherries lives next to the white house.\n7. The red house is somewhere to the left of the blue house.\n8. The artist does not live in the yellow house.\n9. The person who likes dates lives next to the doctor.\n10. The person who likes elderberries lives in the last house."
+    },
+    {
+      "id": "math_reasoning_multi_step",
+      "category": "mathematical_reasoning",
+      "question": "A train travels from City A to City B at 60 mph and returns at 40 mph. What is the average speed for the entire round trip? Explain why the answer is not 50 mph."
+    },
+    {
+      "id": "evidence_eval_conflicting",
+      "category": "evidence_evaluation",
+      "question": "Evaluate whether this new drug should be approved based on: 1) Two large studies show statistically significant blood pressure reduction, 2) Two smaller studies show no significant effect, 3) Side effects include mild headaches in 5% of patients and dizziness in 2%, 4) The drug costs 3x more than existing treatments, 5) All studies were funded by the pharmaceutical company. Provide a structured analysis with claims and confidence scores."
+    }
+  ],
+  "results": [
+    {
+      "model": "openai/gpt-oss-20b",
+      "type": "large",
+      "approach": "direct",
+      "test_case_id": "logic_puzzle_complex",
+      "prompt": "Answer the following question to the best of your ability:\n\nIn a small town, there are five houses in a row, each painted a different color: red, blue, green, yellow, and white. Each house is owned by a person with a different profession: doctor, teacher, engineer, artist, and baker. Each person has a different favorite fruit: apple, banana, cherry, date, and elderberry. Using the following clues, determine who owns the red house and what is their favorite fruit?\n\nClues:\n1. The doctor lives in the middle house.\n2. The artist lives next to the person who likes apples.\n3. The engineer lives in the green house.\n4. The teacher likes bananas.\n5. The baker lives in the first house.\n6. The person who likes cherries lives next to the white house.\n7. The red house is somewhere to the left of the blue house.\n8. The artist does not live in the yellow house.\n9. The person who likes dates lives next to the doctor.\n10. The person who likes elderberries lives in the last house.\n\nProvide a clear, accurate, and complete answer.",
+      "response": "Error: object of type 'NoneType' has no len()",
+      "response_time": 0,
+      "response_length": 0,
+      "status": "error",
+      "error": "object of type 'NoneType' has no len()",
+      "timestamp": "2025-12-03T11:13:47.997829"
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "type": "large",
+      "approach": "direct",
+      "test_case_id": "math_reasoning_multi_step",
+      "prompt": "Answer the following question to the best of your ability:\n\nA train travels from City A to City B at 60 mph and returns at 40 mph. What is the average speed for the entire round trip? Explain why the answer is not 50 mph.\n\nProvide a clear, accurate, and complete answer.",
+      "response": "**Average speed for the round\u2011trip**\n\nLet the one\u2011way distance between City\u202fA and City\u202fB be \\(d\\) miles.\n\n| Leg of the trip | Speed (mph) | Time (h) |\n|-----------------|-------------|----------|\n| A \u2192 B | 60 | \\(t_1 = \\dfrac{d}{60}\\) |\n| B \u2192 A | 40 | \\(t_2 = \\dfrac{d}{40}\\) |\n\nTotal distance travelled:  \n\\[\nD_{\\text{total}} = d + d = 2d \\text{ miles}\n\\]\n\nTotal time spent:  \n\\[\nT_{\\text{total}} = t_1 + t_2 = \\frac{d}{60} + \\frac{d}{40}\n                  = d\\!\\left(\\frac{1}{60} + \\frac{1}{40}\\right)\n                  = d\\!\\left(\\frac{2}{120} + \\frac{3}{120}\\right)\n                  = d\\!\\left(\\frac{5}{120}\\right)\n                  = \\frac{d}{24}\\text{ hours}\n\\]\n\nAverage speed is total distance divided by total time:\n\n\\[\nv_{\\text{avg}} = \\frac{D_{\\text{total}}}{T_{\\text{total}}}\n               = \\frac{2d}{\\,d/24\\,}\n               = 2d \\times \\frac{24}{d}\n               = 48 \\text{ mph}\n\\]\n\nSo the train\u2019s average speed for the entire round trip is **48\u202fmph**.\n\n---\n\n### Why it isn\u2019t 50\u202fmph\n\nThe arithmetic mean of the two speeds is\n\n\\[\n\\frac{60 + 40}{2} = 50 \\text{ mph}.\n\\]\n\nBut the average speed for a trip where the same distance is covered at two different speeds is **not** the arithmetic mean of the speeds.  \nWhy?\n\n1. **Time spent at each speed differs.**  \n   The train travels the same distance at 60\u202fmph and at 40\u202fmph, but the time taken for each leg is different:  \n   \\[\n   t_1 = \\frac{d}{60} \\quad\\text{vs.}\\quad t_2 = \\frac{d}{40}.\n   \\]\n   The train spends *more* time traveling at the slower speed (40\u202fmph), pulling the overall average down.\n\n2. **Average speed is total distance \u00f7 total time.**  \n   Using the times above, the total time is \\(d/60 + d/40 = d/24\\).  \n   If we incorrectly used the arithmetic mean of the speeds, we would be assuming the train spent equal time at each speed, which is false.\n\n3. **Mathematically, the correct average is the harmonic mean.**  \n   For equal distances, the average speed \\(v_{\\text{avg}}\\) is the harmonic mean of the two speeds:\n   \\[\n   v_{\\text{avg}} = \\frac{2}{\\displaystyle\\frac{1}{60} + \\frac{1}{40}} = 48 \\text{ mph}.\n   \\]\n   The harmonic mean is always less than or equal to the arithmetic mean (with equality only when the two numbers are equal). Hence 48\u202fmph < 50\u202fmph.\n\n---\n\n**Bottom line:**  \nThe average speed for the round trip is **48\u202fmph**, not 50\u202fmph, because the train spends more time at the slower speed, and the correct average is the harmonic mean of the two speeds, not their arithmetic mean.",
+      "response_time": 4.902740001678467,
+      "response_length": 2489,
+      "status": "success",
+      "error": null,
+      "timestamp": "2025-12-03T11:13:53.915670"
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "type": "large",
+      "approach": "direct",
+      "test_case_id": "evidence_eval_conflicting",
+      "prompt": "Answer the following question to the best of your ability:\n\nEvaluate whether this new drug should be approved based on: 1) Two large studies show statistically significant blood pressure reduction, 2) Two smaller studies show no significant effect, 3) Side effects include mild headaches in 5% of patients and dizziness in 2%, 4) The drug costs 3x more than existing treatments, 5) All studies were funded by the pharmaceutical company. Provide a structured analysis with claims and confidence scores.\n\nProvide a clear, accurate, and complete answer.",
+      "response": "**Structured Evaluation of the New Antihypertensive Drug**\n\n| # | Claim | Evidence Basis | Confidence Score (0\u20131) | Rationale |\n|---|-------|----------------|------------------------|-----------|\n| 1 | **The drug likely produces a clinically meaningful reduction in blood pressure.** | Two large, randomized controlled trials (RCTs) show statistically significant BP lowering. | 0.65 | Large sample size and statistical significance suggest a true effect, but the magnitude of the reduction and its clinical relevance (e.g., \u226510\u202fmmHg systolic) are not specified. |\n| 2 | **The evidence is inconclusive because smaller studies found no effect.** | Two smaller RCTs/observational studies report no significant BP change. | 0.55 | Smaller studies may lack power; conflicting results raise uncertainty, but the weight of evidence still leans toward benefit. |\n| 3 | **Side\u2011effect profile is mild and acceptable.** | Reported adverse events: headaches 5\u202f%, dizziness 2\u202f%. | 0.70 | Incidence rates are low and non\u2011serious; however, long\u2011term safety data are missing. |\n| 4 | **The drug is substantially more expensive than existing therapies.** | Cost is 3\u00d7 that of current standard treatments. | 0.80 | Cost\u2011effectiveness is a key consideration; without evidence of superior efficacy or safety, the higher price is hard to justify. |\n| 5 | **Funding source introduces potential bias.** | All studies funded by the manufacturer. | 0.85 | Industry sponsorship is associated with a higher likelihood of favorable outcomes; independent replication is needed. |\n| 6 | **Approval should be deferred pending independent confirmation.** | Combination of limited evidence, potential bias, and high cost. | 0.80 | The balance of benefit, risk, and economic impact does not currently support approval. |\n\n---\n\n### 1. Evidence Summary\n\n| Study Type | Size | Outcome | Significance |\n|------------|------|---------|--------------|\n| Large RCT 1 | \u2265\u202f1,000 participants | Significant BP reduction | Yes |\n| Large RCT 2 | \u2265\u202f1,000 participants | Significant BP reduction | Yes |\n| Small RCT 1 | <\u202f200 participants | No significant BP change | No |\n| Small RCT 2 | <\u202f200 participants | No significant BP change | No |\n\n- **Magnitude of effect**: Not provided; unclear whether reductions translate into clinically meaningful risk reduction (e.g., lower stroke or MI rates).\n- **Consistency**: Two large trials agree; two small trials disagree\u2014suggests possible heterogeneity or insufficient power in the smaller studies.\n\n### 2. Risk\u2013Benefit Assessment\n\n| Aspect | Positive | Negative | Net Assessment |\n|--------|----------|----------|----------------|\n| **Efficacy** | Statistically significant BP lowering in large trials | Uncertain magnitude; conflicting small trials | Uncertain but leaning positive |\n| **Safety** | Mild headaches (5\u202f%), dizziness (2\u202f%) | No serious adverse events reported; long\u2011term safety unknown | Acceptable short\u2011term safety |\n| **Cost** | None | 3\u00d7 price of existing drugs | Unfavorable |\n\n- **Benefit**: Potential BP reduction may lower cardiovascular risk, but the actual benefit depends on the size of the reduction and durability.\n- **Risk**: Mild side effects are unlikely to outweigh benefits, but absence of long\u2011term data is a concern.\n- **Economic**: Higher cost could limit accessibility and impose burden on payers without clear added value.\n\n### 3. Conflict of Interest\n\n- All studies funded by the manufacturer.  \n- Industry sponsorship is associated with a higher likelihood of favorable results (meta\u2011analytic evidence).  \n- Independent replication is essential to confirm efficacy and safety.\n\n### 4. Recommendation\n\n**Deferred Approval Pending Independent Validation**\n\n- **Why**: The current evidence is mixed, the drug is substantially more expensive, and all data come from industry\u2011funded studies.  \n- **What is needed**:  \n  1. At least one independent, adequately powered RCT confirming BP reduction and demonstrating clinical outcomes (e.g., reduction in cardiovascular events).  \n  2. Long\u2011term safety data, especially regarding rare or cumulative adverse events.  \n  3. A cost\u2011effectiveness analysis comparing the new drug to existing therapies.\n\nIf such data become available and show a clear, clinically meaningful benefit that justifies the higher cost, approval could be reconsidered.\n\n---\n\n**Key Take\u2011away**: While the drug shows promise in large trials, the lack of independent confirmation, conflicting smaller studies, mild but unproven side\u2011effect profile, and high cost collectively argue against immediate approval. A cautious, evidence\u2011driven approach is warranted.",
+      "response_time": 5.844529390335083,
+      "response_length": 4610,
+      "status": "success",
+      "error": null,
+      "timestamp": "2025-12-03T11:14:00.762058"
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "type": "large",
+      "approach": "true_conjecture",
+      "test_case_id": "logic_puzzle_complex",
+      "prompt": "You are tasked with solving a complex problem using Conjecture's approach of breaking down the problem into smaller, manageable claims.\n\n**Problem:**\nIn a small town, there are five houses in a row, each painted a different color: red, blue, green, yellow, and white. Each house is owned by a person with a different profession: doctor, teacher, engineer, artist, and baker. Each person has a different favorite fruit: apple, banana, cherry, date, and elderberry. Using the following clues, determine who owns the red house and what is their favorite fruit?\n\nClues:\n1. The doctor lives in the middle house.\n2. The artist lives next to the person who likes apples.\n3. The engineer lives in the green house.\n4. The teacher likes bananas.\n5. The baker lives in the first house.\n6. The person who likes cherries lives next to the white house.\n7. The red house is somewhere to the left of the blue house.\n8. The artist does not live in the yellow house.\n9. The person who likes dates lives next to the doctor.\n10. The person who likes elderberries lives in the last house.\n\n**Instructions:**\n1. First, generate 3-7 specific claims about the problem in this exact format:\n   [c1 | claim content | / confidence]\n   [c2 | claim content | / confidence]\n   etc.\n\n2. Then, evaluate each claim and provide a final answer based on your analysis.\n\nFormat your response with:\n- Claims section (using the exact format above)\n- Analysis section (evaluating each claim)\n- Final Answer section (your conclusion)",
+      "response": "Error: object of type 'NoneType' has no len()",
+      "response_time": 0,
+      "response_length": 0,
+      "status": "error",
+      "error": "object of type 'NoneType' has no len()",
+      "timestamp": "2025-12-03T11:14:13.625945"
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "type": "large",
+      "approach": "true_conjecture",
+      "test_case_id": "math_reasoning_multi_step",
+      "prompt": "You are tasked with solving a complex problem using Conjecture's approach of breaking down the problem into smaller, manageable claims.\n\n**Problem:**\nA train travels from City A to City B at 60 mph and returns at 40 mph. What is the average speed for the entire round trip? Explain why the answer is not 50 mph.\n\n**Instructions:**\n1. First, generate 3-7 specific claims about the problem in this exact format:\n   [c1 | claim content | / confidence]\n   [c2 | claim content | / confidence]\n   etc.\n\n2. Then, evaluate each claim and provide a final answer based on your analysis.\n\nFormat your response with:\n- Claims section (using the exact format above)\n- Analysis section (evaluating each claim)\n- Final Answer section (your conclusion)",
+      "response": "**Claims**  \n[c1 | The average speed for the round trip is the harmonic mean of the two speeds, weighted by equal distances. | / 0.95]  \n[c2 | The average speed equals (2\u202f\u00d7\u202f60\u202f\u00d7\u202f40)\u202f/\u202f(60\u202f+\u202f40) = 48\u202fmph. | / 0.95]  \n[c3 | The average speed is not 50\u202fmph because 50\u202fmph would be the arithmetic mean of the speeds, which does not account for differing travel times. | / 0.90]  \n[c4 | If the distances are equal, the average speed is 48\u202fmph. | / 0.90]  \n[c5 | The average speed would be 50\u202fmph only if the times for each leg were equal, which they are not. | / 0.85]  \n\n---\n\n**Analysis**  \n\n| Claim | Evaluation | Reasoning |\n|-------|------------|-----------|\n| **c1** | \u2714\ufe0f | The harmonic mean is the correct way to average speeds when the distance for each leg is the same. It reflects that the slower speed takes longer time, pulling the overall average down. |\n| **c2** | \u2714\ufe0f | Plugging the numbers into the harmonic\u2011mean formula gives 48\u202fmph. The calculation is straightforward and matches standard textbook solutions. |\n| **c3** | \u2714\ufe0f | The arithmetic mean (60\u202f+\u202f40)/2 = 50\u202fmph ignores the fact that the train spends more time traveling at 40\u202fmph. Thus it overestimates the true average speed. |\n| **c4** | \u2714\ufe0f | Since the distance from A to B equals the distance from B to A, the harmonic\u2011mean argument applies, confirming 48\u202fmph. |\n| **c5** | \u2714\ufe0f | Equal travel times would require equal speeds, which is not the case here. Therefore the average cannot be 50\u202fmph. |\n\nAll claims are consistent and support the same conclusion.\n\n---\n\n**Final Answer**  \nThe average speed for the entire round trip is **48\u202fmph**.  \nIt is not 50\u202fmph because the average speed must be weighted by the time spent at each speed, not simply the arithmetic mean of the two speeds. When the distance is the same in both directions, the correct average is the harmonic mean:  \n\n\\[\nv_{\\text{avg}} = \\frac{2\\,v_1\\,v_2}{v_1+v_2}\n= \\frac{2 \\times 60 \\times 40}{60+40}\n= 48\\ \\text{mph}.\n\\]",
+      "response_time": 5.892931222915649,
+      "response_length": 1957,
+      "status": "success",
+      "error": null,
+      "timestamp": "2025-12-03T11:14:20.529562"
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "type": "large",
+      "approach": "true_conjecture",
+      "test_case_id": "evidence_eval_conflicting",
+      "prompt": "You are tasked with solving a complex problem using Conjecture's approach of breaking down the problem into smaller, manageable claims.\n\n**Problem:**\nEvaluate whether this new drug should be approved based on: 1) Two large studies show statistically significant blood pressure reduction, 2) Two smaller studies show no significant effect, 3) Side effects include mild headaches in 5% of patients and dizziness in 2%, 4) The drug costs 3x more than existing treatments, 5) All studies were funded by the pharmaceutical company. Provide a structured analysis with claims and confidence scores.\n\n**Instructions:**\n1. First, generate 3-7 specific claims about the problem in this exact format:\n   [c1 | claim content | / confidence]\n   [c2 | claim content | / confidence]\n   etc.\n\n2. Then, evaluate each claim and provide a final answer based on your analysis.\n\nFormat your response with:\n- Claims section (using the exact format above)\n- Analysis section (evaluating each claim)\n- Final Answer section (your conclusion)",
+      "response": "**Claims**  \n[c1 | The drug demonstrates a clinically meaningful reduction in blood pressure in large, well\u2011powered studies. | /0.80]  \n[c2 | The drug\u2019s efficacy is uncertain because smaller studies failed to show a significant effect. | /0.70]  \n[c3 | The side\u2011effect profile is mild, with headaches in 5\u202f% and dizziness in 2\u202f% of patients, and is unlikely to outweigh benefits. | /0.60]  \n[c4 | The drug is substantially more expensive (\u2248\u202f3\u00d7) than existing therapies, raising concerns about cost\u2011effectiveness. | /0.90]  \n[c5 | All published studies were funded by the manufacturer, introducing a high risk of publication and outcome bias. | /0.85]  \n[c6 | The drug meets current regulatory safety thresholds (no serious adverse events reported). | /0.70]  \n[c7 | Approval should be contingent on post\u2011marketing surveillance and a formal cost\u2011effectiveness analysis. | /0.60]  \n\n---\n\n**Analysis**\n\n| Claim | Evaluation |\n|-------|------------|\n| **c1** | The two large studies provide strong statistical evidence of blood\u2011pressure lowering. However, \u201cstatistically significant\u201d does not automatically mean \u201cclinically significant.\u201d The magnitude of the reduction (e.g., 5\u202fmmHg) and its impact on cardiovascular outcomes would need to be clarified. Confidence 0.80 reflects the robust sample size but leaves room for clinical relevance questions. |\n| **c2** | The smaller studies\u2019 null results introduce uncertainty. Small sample sizes can lack power, but the absence of effect in multiple independent studies suggests the drug\u2019s benefit may be modest or variable. Confidence 0.70 acknowledges this conflict. |\n| **c3** | Headache (5\u202f%) and dizziness (2\u202f%) are mild, non\u2011life\u2011threatening side effects. Their incidence is comparable to many antihypertensives. However, patient adherence could be affected. Confidence 0.60 reflects that while mild, the side\u2011effect profile is not a decisive barrier. |\n| **c4** | A three\u2011fold price premium is significant. Cost\u2011effectiveness analyses typically compare incremental cost\u2011effectiveness ratios (ICERs) to willingness\u2011to\u2011pay thresholds. Without evidence that the drug provides superior outcomes, the higher cost is a major deterrent. Confidence 0.90 reflects the strong economic concern. |\n| **c5** | Industry funding is a well\u2011documented source of bias, potentially inflating positive results. The fact that *all* studies were funded by the manufacturer heightens this risk. Confidence 0.85 underscores the high likelihood of bias. |\n| **c6** | No serious adverse events were reported, satisfying basic safety criteria. However, rare or long\u2011term effects may not have been captured. Confidence 0.70 reflects that safety is acceptable but not definitive. |\n| **c7** | Given the mixed efficacy evidence, high cost, and potential bias, a conditional approval strategy\u2014requiring post\u2011marketing data and formal cost\u2011effectiveness studies\u2014would be prudent. Confidence 0.60 reflects that this is a reasonable, but not guaranteed, policy path. |\n\n---\n\n**Final Answer**\n\nThe evidence indicates that the drug can lower blood pressure in large studies, but smaller trials and potential industry bias cast doubt on the consistency and magnitude of its benefit. Side effects are mild, yet the drug\u2019s price is markedly higher than existing options. Therefore, the drug should **not** receive unconditional approval. A prudent course would be a **conditional approval** that requires:\n\n1. **Post\u2011marketing surveillance** to confirm efficacy and safety in a broader population.  \n2. A **formal cost\u2011effectiveness analysis** comparing the drug to current standard therapies.  \n3. Transparent reporting of all study data, including negative results, to mitigate bias concerns.\n\nOnly if post\u2011marketing data demonstrate a clear, clinically meaningful benefit that justifies the higher cost, and if the drug\u2019s safety profile remains acceptable, should full approval be considered.",
+      "response_time": 8.242182970046997,
+      "response_length": 3904,
+      "status": "success",
+      "error": null,
+      "timestamp": "2025-12-03T11:14:29.774180"
+    },
+    {
+      "model": "zai-org/GLM-4.6",
+      "type": "sota",
+      "approach": "direct",
+      "test_case_id": "logic_puzzle_complex",
+      "prompt": "Answer the following question to the best of your ability:\n\nIn a small town, there are five houses in a row, each painted a different color: red, blue, green, yellow, and white. Each house is owned by a person with a different profession: doctor, teacher, engineer, artist, and baker. Each person has a different favorite fruit: apple, banana, cherry, date, and elderberry. Using the following clues, determine who owns the red house and what is their favorite fruit?\n\nClues:\n1. The doctor lives in the middle house.\n2. The artist lives next to the person who likes apples.\n3. The engineer lives in the green house.\n4. The teacher likes bananas.\n5. The baker lives in the first house.\n6. The person who likes cherries lives next to the white house.\n7. The red house is somewhere to the left of the blue house.\n8. The artist does not live in the yellow house.\n9. The person who likes dates lives next to the doctor.\n10. The person who likes elderberries lives in the last house.\n\nProvide a clear, accurate, and complete answer.",
+      "response": "Error: 429 Client Error: Too Many Requests for url: https://llm.chutes.ai/v1/chat/completions",
+      "response_time": 0,
+      "response_length": 0,
+      "status": "error",
+      "error": "429 Client Error: Too Many Requests for url: https://llm.chutes.ai/v1/chat/completions",
+      "timestamp": "2025-12-03T11:14:32.830139"
+    },
+    {
+      "model": "zai-org/GLM-4.6",
+      "type": "sota",
+      "approach": "direct",
+      "test_case_id": "math_reasoning_multi_step",
+      "prompt": "Answer the following question to the best of your ability:\n\nA train travels from City A to City B at 60 mph and returns at 40 mph. What is the average speed for the entire round trip? Explain why the answer is not 50 mph.\n\nProvide a clear, accurate, and complete answer.",
+      "response": "Error: 429 Client Error: Too Many Requests for url: https://llm.chutes.ai/v1/chat/completions",
+      "response_time": 0,
+      "response_length": 0,
+      "status": "error",
+      "error": "429 Client Error: Too Many Requests for url: https://llm.chutes.ai/v1/chat/completions",
+      "timestamp": "2025-12-03T11:14:36.488128"
+    },
+    {
+      "model": "zai-org/GLM-4.6",
+      "type": "sota",
+      "approach": "direct",
+      "test_case_id": "evidence_eval_conflicting",
+      "prompt": "Answer the following question to the best of your ability:\n\nEvaluate whether this new drug should be approved based on: 1) Two large studies show statistically significant blood pressure reduction, 2) Two smaller studies show no significant effect, 3) Side effects include mild headaches in 5% of patients and dizziness in 2%, 4) The drug costs 3x more than existing treatments, 5) All studies were funded by the pharmaceutical company. Provide a structured analysis with claims and confidence scores.\n\nProvide a clear, accurate, and complete answer.",
+      "response": "Error: 429 Client Error: Too Many Requests for url: https://llm.chutes.ai/v1/chat/completions",
+      "response_time": 0,
+      "response_length": 0,
+      "status": "error",
+      "error": "429 Client Error: Too Many Requests for url: https://llm.chutes.ai/v1/chat/completions",
+      "timestamp": "2025-12-03T11:14:38.573573"
+    },
+    {
+      "model": "zai-org/GLM-4.6",
+      "type": "sota",
+      "approach": "true_conjecture",
+      "test_case_id": "logic_puzzle_complex",
+      "prompt": "You are tasked with solving a complex problem using Conjecture's approach of breaking down the problem into smaller, manageable claims.\n\n**Problem:**\nIn a small town, there are five houses in a row, each painted a different color: red, blue, green, yellow, and white. Each house is owned by a person with a different profession: doctor, teacher, engineer, artist, and baker. Each person has a different favorite fruit: apple, banana, cherry, date, and elderberry. Using the following clues, determine who owns the red house and what is their favorite fruit?\n\nClues:\n1. The doctor lives in the middle house.\n2. The artist lives next to the person who likes apples.\n3. The engineer lives in the green house.\n4. The teacher likes bananas.\n5. The baker lives in the first house.\n6. The person who likes cherries lives next to the white house.\n7. The red house is somewhere to the left of the blue house.\n8. The artist does not live in the yellow house.\n9. The person who likes dates lives next to the doctor.\n10. The person who likes elderberries lives in the last house.\n\n**Instructions:**\n1. First, generate 3-7 specific claims about the problem in this exact format:\n   [c1 | claim content | / confidence]\n   [c2 | claim content | / confidence]\n   etc.\n\n2. Then, evaluate each claim and provide a final answer based on your analysis.\n\nFormat your response with:\n- Claims section (using the exact format above)\n- Analysis section (evaluating each claim)\n- Final Answer section (your conclusion)",
+      "response": "Error: object of type 'NoneType' has no len()",
+      "response_time": 0,
+      "response_length": 0,
+      "status": "error",
+      "error": "object of type 'NoneType' has no len()",
+      "timestamp": "2025-12-03T11:17:12.176108"
+    },
+    {
+      "model": "zai-org/GLM-4.6",
+      "type": "sota",
+      "approach": "true_conjecture",
+      "test_case_id": "math_reasoning_multi_step",
+      "prompt": "You are tasked with solving a complex problem using Conjecture's approach of breaking down the problem into smaller, manageable claims.\n\n**Problem:**\nA train travels from City A to City B at 60 mph and returns at 40 mph. What is the average speed for the entire round trip? Explain why the answer is not 50 mph.\n\n**Instructions:**\n1. First, generate 3-7 specific claims about the problem in this exact format:\n   [c1 | claim content | / confidence]\n   [c2 | claim content | / confidence]\n   etc.\n\n2. Then, evaluate each claim and provide a final answer based on your analysis.\n\nFormat your response with:\n- Claims section (using the exact format above)\n- Analysis section (evaluating each claim)\n- Final Answer section (your conclusion)",
+      "response": "Error: object of type 'NoneType' has no len()",
+      "response_time": 0,
+      "response_length": 0,
+      "status": "error",
+      "error": "object of type 'NoneType' has no len()",
+      "timestamp": "2025-12-03T11:20:23.970552"
+    },
+    {
+      "model": "zai-org/GLM-4.6",
+      "type": "sota",
+      "approach": "true_conjecture",
+      "test_case_id": "evidence_eval_conflicting",
+      "prompt": "You are tasked with solving a complex problem using Conjecture's approach of breaking down the problem into smaller, manageable claims.\n\n**Problem:**\nEvaluate whether this new drug should be approved based on: 1) Two large studies show statistically significant blood pressure reduction, 2) Two smaller studies show no significant effect, 3) Side effects include mild headaches in 5% of patients and dizziness in 2%, 4) The drug costs 3x more than existing treatments, 5) All studies were funded by the pharmaceutical company. Provide a structured analysis with claims and confidence scores.\n\n**Instructions:**\n1. First, generate 3-7 specific claims about the problem in this exact format:\n   [c1 | claim content | / confidence]\n   [c2 | claim content | / confidence]\n   etc.\n\n2. Then, evaluate each claim and provide a final answer based on your analysis.\n\nFormat your response with:\n- Claims section (using the exact format above)\n- Analysis section (evaluating each claim)\n- Final Answer section (your conclusion)",
+      "response": "Error: 429 Client Error: Too Many Requests for url: https://llm.chutes.ai/v1/chat/completions",
+      "response_time": 0,
+      "response_length": 0,
+      "status": "error",
+      "error": "429 Client Error: Too Many Requests for url: https://llm.chutes.ai/v1/chat/completions",
+      "timestamp": "2025-12-03T11:20:31.605931"
+    }
+  ]
+}

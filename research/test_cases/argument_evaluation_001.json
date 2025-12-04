@@ -1,0 +1,49 @@
+{
+  "id": "argument_evaluation_001",
+  "category": "claims_reasoning",
+  "difficulty": "medium",
+  "claims": [
+    {
+      "id": "p1",
+      "content": "Remote work increases employee productivity by 23% according to company internal metrics",
+      "confidence": 0.7,
+      "source": "company_study"
+    },
+    {
+      "id": "p2",
+      "content": "Remote work decreases team collaboration and innovation according to external research",
+      "confidence": 0.8,
+      "source": "academic_study"
+    },
+    {
+      "id": "p3",
+      "content": "Employee satisfaction increases by 40% with remote work flexibility",
+      "confidence": 0.9,
+      "source": "employee_survey"
+    },
+    {
+      "id": "p4",
+      "content": "Company overhead costs decrease by 35% with remote work",
+      "confidence": 0.8,
+      "source": "financial_analysis"
+    }
+  ],
+  "question": "Evaluate the overall case for remote work based on the mixed evidence. Provide a balanced recommendation with confidence scores for each aspect.",
+  "reasoning_requirements": [
+    "argument_synthesis",
+    "tradeoff_analysis",
+    "balanced_reasoning"
+  ],
+  "success_criteria": "Balanced evaluation acknowledging both benefits and drawbacks",
+  "generated_at": "2025-12-03T22:11:20.417005",
+  "test_framework_version": "1.0",
+  "evaluation_criteria": [
+    "correctness",
+    "confidence_calibration",
+    "reasoning_quality",
+    "coherence"
+  ],
+  "difficulty_calibration": "easy",
+  "estimated_time_required": 21,
+  "required_capabilities": []
+}

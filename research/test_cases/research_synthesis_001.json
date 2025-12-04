@@ -1,0 +1,30 @@
+{
+  "id": "research_synthesis_001",
+  "category": "relevant_context",
+  "difficulty": "hard",
+  "context": "\n                    [Background] Climate change adaptation strategies have become increasingly important as global temperatures rise. \n                    [Scientific Consensus] The IPCC reports indicate that immediate action is required to limit warming to 1.5°C.\n                    [Economic Impact] The World Bank estimates climate change could push 100 million people into poverty by 2030.\n                    [Technology Solutions] Renewable energy costs have decreased by 85% since 2010, making them competitive with fossil fuels.\n                    [Policy Framework] The Paris Agreement creates international accountability for emission reductions.\n                    [Implementation Challenges] Developing nations lack infrastructure and funding for rapid transition.\n                    ",
+  "question": "Given the context about climate change adaptation, develop a comprehensive strategy for a developing nation to balance economic growth with emission reduction targets over the next decade.",
+  "context_length": 800,
+  "key_claims_required": 6,
+  "reasoning_requirements": [
+    "policy_analysis",
+    "economic_planning",
+    "technology_assessment",
+    "international_cooperation"
+  ],
+  "success_criteria": "Balanced strategy addressing economic and environmental needs",
+  "generated_at": "2025-12-03T22:11:20.409704",
+  "test_framework_version": "1.0",
+  "evaluation_criteria": [
+    "correctness",
+    "completeness",
+    "efficiency",
+    "hallucination_reduction"
+  ],
+  "difficulty_calibration": "easy",
+  "estimated_time_required": 38,
+  "required_capabilities": [
+    "policy_reasoning",
+    "economic_modeling"
+  ]
+}

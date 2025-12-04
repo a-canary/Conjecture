@@ -1,6 +1,6 @@
 """
 Configuration for Conjecture
-JSON-based configuration with workspace detection
+JSON-based configuration with workspace, user, and default config files
 """
 
 import json
@@ -8,68 +8,74 @@ import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-# Load environment variables from .env files
-try:
-    from dotenv import load_dotenv
-    # Try to load .env from project root
-    project_root = Path(__file__).parent.parent.parent
 
-    # Load .env files in order of precedence
-    for env_file in [project_root / '.env']:
-        if env_file.exists():
-            load_dotenv(env_file)
-except ImportError:
-    # dotenv not available, use system environment variables only
-    pass
-
-
-def substitute_env_vars(config_dict):
+class ConfigHierarchy:
     """
-    Recursively substitute environment variables in configuration values
-    Supports ${VAR} and ${VAR:-default} syntax
+    Manages configuration file hierarchy: workspace → user → default
     """
-    import re
-
-    if isinstance(config_dict, dict):
-        return {k: substitute_env_vars(v) for k, v in config_dict.items()}
-    elif isinstance(config_dict, list):
-        return [substitute_env_vars(item) for item in config_dict]
-    elif isinstance(config_dict, str):
-        # Replace ${VAR:-default} patterns
-        def replace_var(match):
-            var_expr = match.group(1)
-            if ':-' in var_expr:
-                var_name, default_value = var_expr.split(':-', 1)
-                return os.getenv(var_name, default_value)
+    
+    def __init__(self):
+        # Define config paths in order of precedence
+        self.workspace_config = Path.cwd() / ".conjecture" / "config.json"
+        self.user_config = Path.home() / ".conjecture" / "config.json" 
+        self.default_config = Path(__file__).parent / "default_config.json"
+        
+    def load_configs(self) -> Dict[str, Any]:
+        """
+        Load configuration from workspace → user → default config files
+        Later configs override earlier ones
+        """
+        config = {}
+        
+        # Load default config first
+        if self.default_config.exists():
+            with open(self.default_config, 'r') as f:
+                config.update(json.load(f))
+        
+        # Load user config (overrides default)
+        if self.user_config.exists():
+            with open(self.user_config, 'r') as f:
+                user_config_data = json.load(f)
+                self._merge_configs(config, user_config_data)
+        
+        # Load workspace config (overrides user and default)
+        if self.workspace_config.exists():
+            with open(self.workspace_config, 'r') as f:
+                workspace_config_data = json.load(f)
+                self._merge_configs(config, workspace_config_data)
+        
+        return config
+    
+    def _merge_configs(self, base: Dict[str, Any], override: Dict[str, Any]):
+        """
+        Deep merge two config dictionaries
+        """
+        for key, value in override.items():
+            if key in base and isinstance(base[key], dict) and isinstance(value, dict):
+                self._merge_configs(base[key], value)
             else:
-                return os.getenv(var_expr, '')
-
-        # Handle both ${VAR} and ${VAR:-default} patterns
-        pattern = r'\$\{([^}]+)\}'
-        result = re.sub(pattern, replace_var, config_dict)
-
-        # Convert string boolean/numeric values to proper types
-        if result.lower() == 'true':
-            return True
-        elif result.lower() == 'false':
-            return False
-        elif result.isdigit():
-            return int(result)
-        elif result.replace('.', '').isdigit():
-            try:
-                return float(result)
-            except ValueError:
-                pass
-
-        return result
-    else:
-        return config_dict
+                base[key] = value
+    
+    def get_active_config_path(self) -> Path:
+        """Return the path of the active config file"""
+        if self.workspace_config.exists():
+            return self.workspace_config
+        elif self.user_config.exists():
+            return self.user_config
+        else:
+            return self.default_config
+    
+    def create_user_config(self, config_data: Dict[str, Any]):
+        """Create user config file"""
+        self.user_config.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.user_config, 'w') as f:
+            json.dump(config_data, f, indent=2)
 
 
 class Config:
     """
     Configuration class for Conjecture
-    JSON-based configuration with workspace detection and provider management
+    Uses workspace → user → default config file hierarchy
     """
 
     def __init__(self, config_path: Optional[Union[str, Path]] = None):
@@ -93,35 +99,19 @@ class Config:
 
         # === LLM Provider Configuration ===
         self.providers: List[Dict[str, Any]] = []
-        self.config_path = config_path or self._detect_config_path()
+        
+        # Initialize config hierarchy
+        self.config_hierarchy = ConfigHierarchy()
+        self.config_path = config_path or self.config_hierarchy.get_active_config_path()
 
         self._load_config()
         self._setup_data_directory()
 
-    def _detect_config_path(self) -> Path:
-        """Detect configuration path (workspace or home)"""
-        # Check for workspace config first
-        workspace_config = Path.cwd() / ".conjecture" / "config.json"
-        if workspace_config.exists():
-            self.workspace = Path.cwd().name
-            return workspace_config
-
-        # Fall back to home config
-        home_config = Path.home() / ".conjecture" / "config.json"
-        return home_config
-
     def _load_config(self):
-        """Load configuration from JSON file"""
+        """Load configuration from config file hierarchy"""
         try:
-            if not self.config_path.exists():
-                self._create_default_config()
-                return
-
-            with open(self.config_path, "r") as f:
-                config_data = json.load(f)
-
-            # Substitute environment variables
-            config_data = substitute_env_vars(config_data)
+            # Load configuration from hierarchy
+            config_data = self.config_hierarchy.load_configs()
 
             # Load providers
             self.providers = config_data.get("providers", [])
@@ -136,12 +126,17 @@ class Config:
             self.user = config_data.get("user", "user")
             self.team = config_data.get("team", "default")
 
+            # Determine if we're in a workspace
+            self.workspace = "default"
+            if self.config_hierarchy.workspace_config.exists():
+                self.workspace = Path.cwd().name
+
         except Exception as e:
             print(f"Error loading config: {e}")
             self._create_default_config()
 
     def _create_default_config(self):
-        """Create a default configuration file"""
+        """Create a default user configuration file"""
         default_config = {
             "providers": [
                 {"url": "http://localhost:11434", "api": "", "model": "llama2"}
@@ -156,11 +151,8 @@ class Config:
             "team": "default",
         }
 
-        # Create config directory if it doesn't exist
-        self.config_path.parent.mkdir(parents=True, exist_ok=True)
-
-        with open(self.config_path, "w") as f:
-            json.dump(default_config, f, indent=2)
+        # Create user config file
+        self.config_hierarchy.create_user_config(default_config)
 
         # Load the default config
         self.providers = default_config["providers"]
@@ -204,6 +196,9 @@ class Config:
             "data_dir": str(self.data_dir),
             "database_path": self.database_path,
             "debug": self.debug,
+            "user_config_exists": self.config_hierarchy.user_config.exists(),
+            "workspace_config_exists": self.config_hierarchy.workspace_config.exists(),
+            "default_config_exists": self.config_hierarchy.default_config.exists(),
         }
 
 

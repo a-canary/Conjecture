@@ -1,0 +1,35 @@
+{
+  "id": "complex_planning_001",
+  "category": "task_decomposition",
+  "difficulty": "hard",
+  "task": "Design a comprehensive research study to evaluate the effectiveness of AI-powered tutoring systems in K-12 mathematics education. Include methodology, participant selection, data collection, analysis methods, and potential limitations.",
+  "reasoning_requirements": [
+    "planning",
+    "methodology_design",
+    "educational_research"
+  ],
+  "expected_components": [
+    "research_questions",
+    "methodology",
+    "participants",
+    "data_collection",
+    "analysis_plan",
+    "limitations"
+  ],
+  "decomposition_steps": 5,
+  "success_criteria": "Comprehensive research design with all required components",
+  "generated_at": "2025-12-03T22:11:20.408662",
+  "test_framework_version": "1.0",
+  "evaluation_criteria": [
+    "correctness",
+    "reasoning_quality",
+    "completeness",
+    "coherence"
+  ],
+  "difficulty_calibration": "hard",
+  "estimated_time_required": 36,
+  "required_capabilities": [
+    "systematic_design",
+    "strategic_planning"
+  ]
+}

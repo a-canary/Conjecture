@@ -1,0 +1,18 @@
+{
+  "timestamp": "20251203_234716",
+  "total_comparisons": 0,
+  "models_tested": [
+    "lmstudio:ibm/granite-4-h-tiny",
+    "chutes:zai-org/GLM-4.6"
+  ],
+  "test_cases_used": [
+    "argument_evaluation_001.json",
+    "causal_reasoning_001.json",
+    "complex_planning_001.json",
+    "complex_reasoning_001.json",
+    "evidence_conflict_001.json",
+    "evidence_evaluation_001.json"
+  ],
+  "results": [],
+  "note": "REAL LLM CALLS ONLY - Direct vs Conjecture comparison, claim creation within Conjecture system only"
+}

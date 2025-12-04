@@ -1,0 +1,54 @@
+{
+  "id": "evidence_conflict_001",
+  "category": "claims_reasoning",
+  "difficulty": "hard",
+  "claims": [
+    {
+      "id": "c1",
+      "content": "Study A shows new drug reduces symptoms by 80% with 5% side effects",
+      "confidence": 0.9,
+      "source": "clinical_trial"
+    },
+    {
+      "id": "c2",
+      "content": "Study B shows new drug reduces symptoms by 60% with 15% side effects",
+      "confidence": 0.8,
+      "source": "independent_replication"
+    },
+    {
+      "id": "c3",
+      "content": "Study C shows placebo reduces symptoms by 30% with 2% side effects",
+      "confidence": 0.95,
+      "source": "meta_analysis"
+    },
+    {
+      "id": "c4",
+      "content": "FDA analysis shows manufacturing inconsistencies in 20% of drug batches",
+      "confidence": 0.7,
+      "source": "regulatory_report"
+    }
+  ],
+  "question": "Based on the conflicting evidence about the new drug, provide a recommendation with confidence scores for whether to approve it for general use. Explain your reasoning process.",
+  "reasoning_requirements": [
+    "evidence_synthesis",
+    "conflict_resolution",
+    "risk_assessment",
+    "confidence_calibration"
+  ],
+  "success_criteria": "Well-reasoned recommendation with clear confidence justification",
+  "generated_at": "2025-12-03T22:11:20.416419",
+  "test_framework_version": "1.0",
+  "evaluation_criteria": [
+    "correctness",
+    "confidence_calibration",
+    "reasoning_quality",
+    "coherence"
+  ],
+  "difficulty_calibration": "easy",
+  "estimated_time_required": 38,
+  "required_capabilities": [
+    "critical_thinking",
+    "evaluative_judgment",
+    "information_integration"
+  ]
+}

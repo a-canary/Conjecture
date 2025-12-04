@@ -1,0 +1,28 @@
+{
+  "id": "causal_reasoning_001",
+  "category": "model_parity",
+  "difficulty": "hard",
+  "task": "In a city, ice cream sales and drowning incidents both increase during summer months. Does this mean ice cream causes drowning? Analyze the causal relationship and explain confounding variables.",
+  "reasoning_requirements": [
+    "causal_inference",
+    "confounding_variable_identification",
+    "statistical_reasoning"
+  ],
+  "expected_answer": "No, ice cream does not cause drowning. This is a classic correlation-causation fallacy. The confounding variable is hot weather: high temperatures increase both ice cream consumption and swimming activities (leading to more drowning incidents). The relationship is correlation, not causation.",
+  "key_concepts": [
+    "correlation_vs_causation",
+    "confounding_variables",
+    "seasonal_effects"
+  ],
+  "success_criteria": "Correct causal analysis with identification of confounding variables",
+  "generated_at": "2025-12-03T22:11:20.415904",
+  "test_framework_version": "1.0",
+  "evaluation_criteria": [
+    "correctness",
+    "reasoning_quality",
+    "coherence"
+  ],
+  "difficulty_calibration": "easy",
+  "estimated_time_required": 36,
+  "required_capabilities": []
+}

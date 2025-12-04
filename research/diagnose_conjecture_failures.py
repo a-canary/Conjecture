@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-<arg_value>Diagnose True Conjecture Failure Patterns
+"""
+Diagnose True Conjecture Failure Patterns
 Analyze why True Conjecture has 50% failure rate
 """
 
@@ -117,24 +118,24 @@ def generate_diagnostic_prompt(test_case):
 
     prompt = f"""You are using Conjecture's claims-based reasoning system. Your task is to break down the problem into specific claims and evaluate each one.
 
-**Problem:**
+PROBLEM:
 {question}
 
-**CRITICAL INSTRUCTIONS:**
+CRITICAL INSTRUCTIONS:
 1. You MUST output claims in the EXACT format: [c1 | claim content | / 0.85]
 2. Each claim must have: ID, content, and confidence (0.0-1.0)
 3. Generate 3-5 claims that decompose the problem
 4. After the claims, provide your final solution
 
-**EXAMPLE FORMAT:**
+EXAMPLE FORMAT:
 [c1 | The doctor lives in house 3 based on clue 1 | / 0.95]
 [c2 | The baker lives in house 1 based on clue 5 | / 0.90]
 [c3 | The engineer's house is green based on clue 3 | / 0.85]
 
-**Final Solution:** [Your answer here]
+Final Solution: [Your answer here]
 
 Now solve the problem using this EXACT format:"""
-
+    
     return prompt
 
 def diagnose_failure_patterns():
@@ -150,38 +151,12 @@ def diagnose_failure_patterns():
     test_cases = [
         {
             'id': 'complex_reasoning_001',
-            'question': '''In a small town, there are five houses in a row, each painted a different color: red, blue, green, yellow, and white. Each house is owned by a person with a different profession: doctor, teacher, engineer, artist, and baker. Each person has a different favorite fruit: apple, banana, cherry, date, and elderberry. Using the following clues, determine who owns the red house and what is their favorite fruit?
-
-Clues:
-1. The doctor lives in the middle house.
-2. The artist lives next to the person who likes apples.
-3. The engineer lives in the green house.
-4. The teacher likes bananas.
-5. The baker lives in the first house.
-6. The person who likes cherries lives next to the white house.
-7. The red house is somewhere to the left of the blue house.
-8. The artist does not live in the yellow house.
-9. The person who likes dates lives next to the doctor.
-10. The person who likes elderberries lives in the last house.''',
+            'question': 'In a small town, there are five houses in a row, each painted a different color: red, blue, green, yellow, and white. Each house is owned by a person with a different profession: doctor, teacher, engineer, artist, and baker. Each person has a different favorite fruit: apple, banana, cherry, date, and elderberry. Using the following clues, determine who owns the red house and what is their favorite fruit?',
             'category': 'complex_reasoning'
         },
         {
             'id': 'logic_puzzle_20251202_212949',
-            'question': '''In a small town, there are five houses in a row, each painted a different color: red, green, blue, white, yellow. Each house is owned by a person with a different profession: artist, engineer, baker, doctor, teacher. Each person has a different favorite fruit: elderberry, cherry, date, apple, banana.
-
-Clues:
-1. The baker lives in the middle house.
-2. The artist lives in the first house.
-3. The person who likes bananas lives in the last house.
-4. The engineer lives in the green house.
-5. The teacher likes cherries.
-6. The person who likes dates lives next to the doctor.
-7. The red house is somewhere to the left of the blue house.
-8. The artist does not live in the yellow house.
-9. The person who likes elderberries lives next to the white house.
-10. The person who likes apples lives next to the baker.
-
-Who owns the green house and what is their favorite fruit?''',
+            'question': 'In a small town, there are five houses in a row, each painted a different color: red, green, blue, white, yellow. Each house is owned by a person with a different profession: artist, engineer, baker, doctor, teacher. Each person has a different favorite fruit: elderberry, cherry, date, apple, banana. Who owns the green house and what is their favorite fruit?',
             'category': 'complex_reasoning'
         }
     ]

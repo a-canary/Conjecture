@@ -10,129 +10,221 @@ from ...config.config import Config
 
 
 class Provider:
-    """Single provider class that handles all LLM APIs"""
+    """Single provider class that handles all LLM APIs from config file"""
 
     def __init__(self, config: Config):
         self.config = config
-        self.provider_configs = {
-            "chutes": {
-                "url": "https://llm.chutes.ai/v1/chat/completions",
-                "headers": {"Authorization": f"Bearer {config.provider_api_key}"},
-                "model": config.provider_model,
-            },
-            "lm_studio": {
-                "url": "http://localhost:1234/v1/chat/completions",
-                "headers": {},
-                "model": "local-model",
-            },
-            "openai": {
-                "url": "https://api.openai.com/v1/chat/completions",
-                "headers": {"Authorization": f"Bearer {config.provider_api_key}"},
-                "model": "gpt-3.5-turbo",
-            },
-            "anthropic": {
-                "url": "https://api.anthropic.com/v1/messages",
-                "headers": {"x-api-key": config.provider_api_key},
-                "model": "claude-3-haiku-20240307",
-            },
-        }
+        self.current_provider_index = 0
+        self.available_providers = []
+        
+        # Load providers from config
+        self._load_providers_from_config()
+
+    def _load_providers_from_config(self):
+        """Load provider configurations from the config file"""
+        provider_configs = self.config.get_providers()
+        
+        for provider_config in provider_configs:
+            provider_name = provider_config.get("name", "unknown")
+            provider_url = provider_config.get("url", "")
+            provider_api = provider_config.get("api", "")
+            provider_model = provider_config.get("model", "")
+            
+            # Skip if required fields are missing
+            if not provider_url or not provider_model:
+                continue
+            
+            # Build provider configuration
+            if provider_name == "chutes":
+                self.available_providers.append({
+                    "name": provider_name,
+                    "url": f"{provider_url}/chat/completions",
+                    "headers": {"Authorization": f"Bearer {provider_api}"},
+                    "model": provider_model,
+                    "has_api_key": bool(provider_api),
+                })
+            elif provider_name == "lm_studio":
+                self.available_providers.append({
+                    "name": provider_name,
+                    "url": f"{provider_url}/v1/chat/completions",
+                    "headers": {},
+                    "model": provider_model,
+                    "has_api_key": True,  # Local providers don't need API keys
+                })
+            elif provider_name == "openrouter":
+                self.available_providers.append({
+                    "name": provider_name,
+                    "url": f"{provider_url}/chat/completions",
+                    "headers": {"Authorization": f"Bearer {provider_api}"},
+                    "model": provider_model,
+                    "has_api_key": bool(provider_api),
+                })
+            elif provider_name == "openai":
+                self.available_providers.append({
+                    "name": provider_name,
+                    "url": f"{provider_url}/chat/completions",
+                    "headers": {"Authorization": f"Bearer {provider_api}"},
+                    "model": provider_model,
+                    "has_api_key": bool(provider_api),
+                })
+            elif provider_name == "anthropic":
+                self.available_providers.append({
+                    "name": provider_name,
+                    "url": f"{provider_url}/messages",
+                    "headers": {"x-api-key": provider_api, "anthropic-version": "2023-06-01"},
+                    "model": provider_model,
+                    "has_api_key": bool(provider_api),
+                })
+            elif provider_name == "ollama":
+                self.available_providers.append({
+                    "name": provider_name,
+                    "url": f"{provider_url}/api/generate",
+                    "headers": {},
+                    "model": provider_model,
+                    "has_api_key": True,
+                    "use_ollama_format": True,  # Special flag for Ollama format
+                })
+            else:
+                # Generic provider configuration
+                self.available_providers.append({
+                    "name": provider_name,
+                    "url": provider_url,
+                    "headers": {"Authorization": f"Bearer {provider_api}"} if provider_api else {},
+                    "model": provider_model,
+                    "has_api_key": bool(provider_api),
+                })
 
     def is_available(self) -> bool:
         """Check if any provider is available"""
-        for provider_name in self.provider_configs:
-            if self._test_provider(provider_name):
-                return True
-        return False
+        return len(self.available_providers) > 0
 
-    def _test_provider(self, provider_name: str) -> bool:
+    def _test_provider(self, provider_config: Dict[str, Any]) -> bool:
         """Test if a specific provider is available"""
-        config = self.provider_configs[provider_name]
         try:
-            # Simple health check - try a minimal request
-            response = requests.post(
-                config["url"],
-                headers=config["headers"],
-                json={
-                    "messages": [{"role": "user", "content": "test"}],
-                    "max_tokens": 1,
-                },
-                timeout=5,
-            )
-            return response.status_code in [
-                200,
-                201,
-                400,
-            ]  # 400 might mean bad format but service is up
+            url = provider_config["url"]
+            headers = provider_config.get("headers", {})
+            
+            # Simple test request - just check if the endpoint responds
+            response = requests.get(url.replace("/chat/completions", "/models"), 
+                                  headers=headers, timeout=5)
+            return response.status_code < 500
         except:
             return False
 
-    def process_request(self, prompt: str, **kwargs) -> Dict[str, Any]:
-        """Process request using first available provider"""
-        preferred = (
-            self.config.llm_provider.lower() if self.config.llm_provider else "chutes"
-        )
+    def _get_current_provider(self) -> Optional[Dict[str, Any]]:
+        """Get the current provider, cycling through if needed"""
+        if not self.available_providers:
+            return None
+            
+        # Try current provider
+        provider = self.available_providers[self.current_provider_index]
+        if self._test_provider(provider):
+            return provider
+        
+        # If not available, try the next one
+        for i in range(len(self.available_providers)):
+            if i != self.current_provider_index:
+                if self._test_provider(self.available_providers[i]):
+                    self.current_provider_index = i
+                    return self.available_providers[i]
+        
+        return None
 
-        # Try preferred provider first
-        if preferred in self.provider_configs:
-            result = self._call_provider(preferred, prompt, **kwargs)
-            if result["success"]:
-                return result
+    def generate(self, messages: list, model: str = None, **kwargs) -> Dict[str, Any]:
+        """Generate response using available provider"""
+        provider = self._get_current_provider()
+        if not provider:
+            raise Exception("No provider available")
+        
+        # Use provided model or provider's default
+        model_to_use = model or provider["model"]
+        
+        # Handle different API formats
+        if provider.get("use_ollama_format"):
+            return self._generate_ollama(messages, provider, model_to_use, **kwargs)
+        else:
+            return self._generate_openai_format(messages, provider, model_to_use, **kwargs)
 
-        # Try other providers
-        for provider_name in self.provider_configs:
-            if provider_name != preferred:
-                result = self._call_provider(provider_name, prompt, **kwargs)
-                if result["success"]:
-                    return result
+    def _generate_openai_format(self, messages: list, provider: Dict[str, Any], 
+                                model: str, **kwargs) -> Dict[str, Any]:
+        """Generate using OpenAI-compatible format"""
+        url = provider["url"]
+        headers = provider["headers"]
+        
+        # Default OpenAI request format
+        data = {
+            "model": model,
+            "messages": messages,
+            "max_tokens": kwargs.get("max_tokens", 1000),
+            "temperature": kwargs.get("temperature", 0.7),
+        }
+        
+        response = requests.post(url, json=data, headers=headers, timeout=30)
+        response.raise_for_status()
+        
+        result = response.json()
+        return {
+            "content": result["choices"][0]["message"]["content"],
+            "usage": result.get("usage", {}),
+            "provider": provider["name"]
+        }
 
-        return {"success": False, "content": "", "error": "No providers available"}
+    def _generate_ollama(self, messages: list, provider: Dict[str, Any], 
+                        model: str, **kwargs) -> Dict[str, Any]:
+        """Generate using Ollama format"""
+        url = provider["url"]
+        headers = provider["headers"]
+        
+        # Convert messages to prompt for Ollama
+        prompt = ""
+        for message in messages:
+            if message["role"] == "system":
+                prompt += f"System: {message['content']}\n\n"
+            elif message["role"] == "user":
+                prompt += f"User: {message['content']}\n\n"
+            elif message["role"] == "assistant":
+                prompt += f"Assistant: {message['content']}\n\n"
+        
+        prompt += "Assistant: "
+        
+        # Ollama request format
+        data = {
+            "model": model,
+            "prompt": prompt,
+            "stream": False,
+            "options": {
+                "temperature": kwargs.get("temperature", 0.7),
+                "num_predict": kwargs.get("max_tokens", 1000),
+            }
+        }
+        
+        response = requests.post(url, json=data, headers=headers, timeout=30)
+        response.raise_for_status()
+        
+        result = response.json()
+        return {
+            "content": result.get("response", ""),
+            "usage": {},  # Ollama doesn't provide detailed usage info
+            "provider": provider["name"]
+        }
 
-    def _call_provider(
-        self, provider_name: str, prompt: str, **kwargs
-    ) -> Dict[str, Any]:
-        """Call a specific provider"""
-        config = self.provider_configs[provider_name]
-
-        try:
-            # Standardize request format
-            if provider_name == "anthropic":
-                payload = {
-                    "messages": [{"role": "user", "content": prompt}],
-                    "max_tokens": kwargs.get("max_tokens", 2000),
-                    "model": config["model"],
+    def get_provider_info(self) -> Dict[str, Any]:
+        """Get information about available providers"""
+        return {
+            "available_providers": len(self.available_providers),
+            "current_provider": self.available_providers[self.current_provider_index]["name"] if self.available_providers else None,
+            "providers": [
+                {
+                    "name": p["name"],
+                    "url": p["url"],
+                    "model": p["model"],
+                    "has_api_key": p["has_api_key"]
                 }
-            else:
-                payload = {
-                    "messages": [{"role": "user", "content": prompt}],
-                    "max_tokens": kwargs.get("max_tokens", 2000),
-                    "model": config["model"],
-                    "temperature": kwargs.get("temperature", 0.7),
-                }
-
-            response = requests.post(
-                config["url"], headers=config["headers"], json=payload, timeout=30
-            )
-
-            if response.status_code == 200:
-                data = response.json()
-                # Extract content from different response formats
-                if provider_name == "anthropic":
-                    content = data["content"][0]["text"]
-                else:
-                    content = data["choices"][0]["message"]["content"]
-
-                return {"success": True, "content": content}
-            else:
-                return {
-                    "success": False,
-                    "content": "",
-                    "error": f"HTTP {response.status_code}",
-                }
-
-        except Exception as e:
-            return {"success": False, "content": "", "error": str(e)}
+                for p in self.available_providers
+            ]
+        }
 
 
-def create_provider(config: Optional[Config] = None) -> Provider:
-    """Factory function"""
-    return Provider(config or Config())
+def create_provider(config: Config) -> Provider:
+    """Create a provider instance from config"""
+    return Provider(config)

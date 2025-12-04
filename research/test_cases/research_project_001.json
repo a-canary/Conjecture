@@ -1,0 +1,34 @@
+{
+  "id": "research_project_001",
+  "category": "end_to_end_pipeline",
+  "difficulty": "hard",
+  "task": "Design and justify a research project to investigate the effectiveness of microlearning interventions for adult skill acquisition. Include literature review, methodology, expected outcomes, and implementation considerations.",
+  "pipeline_stages": [
+    "literature_review",
+    "research_design",
+    "methodology_development",
+    "implementation_planning",
+    "evaluation_framework"
+  ],
+  "reasoning_requirements": [
+    "research_design",
+    "educational_theory",
+    "experimental_methodology",
+    "project_management"
+  ],
+  "success_criteria": "Comprehensive research proposal with all required components and strong justification",
+  "generated_at": "2025-12-03T22:11:20.417565",
+  "test_framework_version": "1.0",
+  "evaluation_criteria": [
+    "correctness",
+    "completeness",
+    "reasoning_quality",
+    "coherence"
+  ],
+  "difficulty_calibration": "easy",
+  "estimated_time_required": 38,
+  "required_capabilities": [
+    "domain_knowledge",
+    "experimental_design"
+  ]
+}

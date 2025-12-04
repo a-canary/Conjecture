@@ -1,0 +1,24 @@
+{
+  "providers": [
+    {
+      "url": "http://localhost:11434",
+      "api": "",
+      "model": "llama2",
+      "name": "ollama"
+    },
+    {
+      "url": "http://localhost:1234",
+      "api": "",
+      "model": "ibm/granite-4-h-tiny",
+      "name": "lm_studio"
+    }
+  ],
+  "confidence_threshold": 0.95,
+  "confident_threshold": 0.8,
+  "max_context_size": 10,
+  "batch_size": 10,
+  "debug": false,
+  "database_path": "data/conjecture.db",
+  "user": "user",
+  "team": "default"
+}

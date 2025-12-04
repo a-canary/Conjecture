@@ -81,21 +81,32 @@ def get_backend(backend_type: str = "auto") -> BaseCLI:
         error_console.print(
             "[bold red]No LLM providers are properly configured[/bold red]"
         )
-        console.print("\n[bold yellow]Quick Setup:[/bold yellow]")
-        console.print("1. Create config: [cyan]mkdir -p ~/.conjecture[/cyan]")
-        console.print("2. Edit config: [cyan]nano ~/.conjecture/config.json[/cyan]")
-        console.print("3. Add providers to config.json")
-
-        console.print(f"\n[bold]Example config:[/bold]")
+        console.print("\n[bold yellow]Configuration Setup:[/bold yellow]")
+        
+        from config.config import ConfigHierarchy
+        hierarchy = ConfigHierarchy()
+        
+        console.print("1. [cyan]User config:[/cyan] ~/.conjecture/config.json")
+        console.print(f"   Status: {'✓ Exists' if hierarchy.user_config.exists() else '✗ Not found'}")
+        
+        console.print("2. [cyan]Workspace config:[/cyan] .conjecture/config.json")
+        console.print(f"   Status: {'✓ Exists' if hierarchy.workspace_config.exists() else '✗ Not found'}")
+        
+        console.print("\n[bold]Example config format:[/bold]")
         console.print("[cyan]{")
         console.print('[cyan]  "providers": [')
         console.print("[cyan]    {")
         console.print('[cyan]      "url": "http://localhost:11434",')
         console.print('[cyan]      "api": "",')
-        console.print('[cyan]      "model": "llama2"')
+        console.print('[cyan]      "model": "llama2",')
+        console.print('[cyan]      "name": "ollama"')
         console.print("[cyan]    }")
         console.print("[cyan]  ]")
         console.print("[cyan]}[/cyan]")
+        
+        console.print("\n[bold yellow]To create user config with API keys:[/bold yellow]")
+        console.print("[cyan]cp src/config/default_config.json ~/.conjecture/config.json[/cyan]")
+        console.print("[cyan]# Then edit ~/.conjecture/config.json to add your API keys[/cyan]")
 
         raise typer.Exit(1)
 

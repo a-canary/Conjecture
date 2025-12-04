@@ -1,0 +1,25 @@
+{
+  "id": "session_persistence_001",
+  "category": "cost_efficiency",
+  "difficulty": "medium",
+  "task": "Evaluate how claim persistence across sessions reduces cumulative token usage for recurring problem types.",
+  "metrics_to_track": [
+    "cumulative_tokens",
+    "session_reuse_rate",
+    "accuracy_consistency",
+    "knowledge_retention"
+  ],
+  "baseline_approach": "no_persistence",
+  "test_approach": "claim_persistence",
+  "success_criteria": "≥20% reduction in cumulative tokens over 5 sessions",
+  "generated_at": "2025-12-03T22:11:20.414352",
+  "test_framework_version": "1.0",
+  "evaluation_criteria": [
+    "efficiency",
+    "correctness",
+    "confidence_calibration"
+  ],
+  "difficulty_calibration": "easy",
+  "estimated_time_required": 15,
+  "required_capabilities": []
+}

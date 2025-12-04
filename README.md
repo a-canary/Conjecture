@@ -13,6 +13,13 @@ Conjecture enables you to:
 
 ## 🚀 Quick Start
 
+### Migration from Environment Variables (if upgrading)
+If you have an existing installation with environment variables:
+```bash
+# Migrate your existing configuration to JSON config files
+python scripts/migrate_to_config.py
+```
+
 ### 1. Installation
 ```bash
 # Clone the repository
@@ -24,39 +31,71 @@ pip install -r requirements.txt
 ```
 
 ### 2. Configuration
+Conjecture uses a hierarchical configuration system without environment variables:
+
+#### User Configuration (recommended for API keys)
 ```bash
-# Create configuration directory (if it doesn't exist)
+# Create user config directory
 mkdir -p ~/.conjecture
 
-# Edit the configuration file
+# Copy default config to user config
+cp src/config/default_config.json ~/.conjecture/config.json
+
+# Edit to add your API keys
 nano ~/.conjecture/config.json
 ```
 
-Example `~/.conjecture/config.json`:
+#### Workspace Configuration (project-specific)
+```bash
+# Create workspace config in project directory
+mkdir -p .conjecture
+cp src/config/default_config.json .conjecture/config.json
+
+# Edit for project-specific settings
+nano .conjecture/config.json
+```
+
+Example `~/.conjecture/config.json` or `.conjecture/config.json`:
 ```json
 {
   "providers": [
     {
       "url": "http://localhost:11434",
       "api": "",
-      "model": "llama2"
+      "model": "llama2",
+      "name": "ollama"
+    },
+    {
+      "url": "https://llm.chutes.ai/v1",
+      "api": "cpk_your-chutes-api-key-here",
+      "model": "zai-org/GLM-4.6-FP8",
+      "name": "chutes"
     },
     {
       "url": "https://openrouter.ai/api/v1",
       "api": "sk-or-your-openrouter-key-here",
-      "model": "openai/gpt-3.5-turbo"
+      "model": "openai/gpt-3.5-turbo",
+      "name": "openrouter"
     }
-  ]
+  ],
+  "confidence_threshold": 0.95,
+  "max_context_size": 10,
+  "debug": false,
+  "database_path": "data/conjecture.db",
+  "user": "user",
+  "team": "default"
 }
 ```
+
+**Configuration Priority**: Workspace config → User config → Default config
 
 **For local use (recommended):**
 - Install Ollama from https://ollama.ai/
 - Use the default configuration (localhost:11434)
 
 **For cloud use:**
-- Get API key from your provider
-- Add provider to config.json with url, api key, and model
+- Add your API keys to `~/.conjecture/config.json`
+- Configure providers with their URLs, API keys, and models
 
 ### 3. Run Conjecture
 ```bash

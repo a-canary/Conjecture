@@ -1,0 +1,35 @@
+{
+  "id": "policy_analysis_001",
+  "category": "end_to_end_pipeline",
+  "difficulty": "hard",
+  "task": "Analyze the potential impact of implementing a 4-day work week across different industries. Consider economic, social, and health implications with evidence-based recommendations.",
+  "pipeline_stages": [
+    "stakeholder_analysis",
+    "economic_impact",
+    "social_impact",
+    "health_impact",
+    "policy_recommendations"
+  ],
+  "reasoning_requirements": [
+    "policy_analysis",
+    "economic_modeling",
+    "social_impact_assessment",
+    "evidence_synthesis"
+  ],
+  "success_criteria": "Comprehensive analysis with balanced, evidence-based recommendations",
+  "generated_at": "2025-12-03T22:11:20.418625",
+  "test_framework_version": "1.0",
+  "evaluation_criteria": [
+    "correctness",
+    "completeness",
+    "reasoning_quality",
+    "coherence"
+  ],
+  "difficulty_calibration": "easy",
+  "estimated_time_required": 38,
+  "required_capabilities": [
+    "information_integration",
+    "policy_reasoning",
+    "ethical_reasoning"
+  ]
+}

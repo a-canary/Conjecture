@@ -1,0 +1,38 @@
+{
+  "providers": [
+    {
+      "url": "http://localhost:1234",
+      "api_key": "",
+      "model": "ibm/granite-4-h-tiny"
+    },
+    {
+      "url": "http://localhost:1234",
+      "api_key": "",
+      "model": "glm-z1-9b-0414"
+    }
+  ],
+  "judge_model": "chutes:zai-org/GLM-4.6",
+  "experiments": {
+    "hypothesis_validation": true,
+    "model_comparison": true,
+    "baseline_comparison": true,
+    "generate_test_cases": true
+  },
+  "output": {
+    "save_results": true,
+    "generate_visualizations": true,
+    "create_reports": true
+  },
+  "test_settings": {
+    "models_to_compare": [
+      "ibm/granite-4-h-tiny",
+      "glm-z1-9b-0414"
+    ],
+    "approaches": [
+      "direct",
+      "true_conjecture"
+    ],
+    "test_cases_per_category": 3,
+    "max_runtime_minutes": 60
+  }
+}

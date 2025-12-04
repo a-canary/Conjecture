@@ -1,0 +1,31 @@
+{
+  "id": "reasoning_paradox_001",
+  "category": "model_parity",
+  "difficulty": "hard",
+  "task": "A bat and ball cost $1.10. The bat costs $1.00 more than the ball. How much does the ball cost? Explain the common error and why it occurs.",
+  "reasoning_requirements": [
+    "mathematical_reasoning",
+    "cognitive_bias_identification",
+    "error_explanation"
+  ],
+  "expected_answer": "The ball costs $0.05. Common error: People intuitively say $0.10 because they incorrectly process '$1.00 more than' as 'the bat costs $1.00'. The correct equation is: ball + (ball + $1.00) = $1.10, so 2×ball + $1.00 = $1.10, therefore ball = $0.05.",
+  "common_errors": [
+    "$0.10",
+    "$0.50",
+    "$1.00"
+  ],
+  "success_criteria": "Correct answer with clear explanation of the cognitive bias",
+  "generated_at": "2025-12-03T22:11:20.414871",
+  "test_framework_version": "1.0",
+  "evaluation_criteria": [
+    "correctness",
+    "reasoning_quality",
+    "coherence"
+  ],
+  "difficulty_calibration": "easy",
+  "estimated_time_required": 36,
+  "required_capabilities": [
+    "metacognitive_reasoning",
+    "quantitative_reasoning"
+  ]
+}

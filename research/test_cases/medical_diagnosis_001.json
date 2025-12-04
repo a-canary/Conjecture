@@ -1,0 +1,29 @@
+{
+  "id": "medical_diagnosis_001",
+  "category": "relevant_context",
+  "difficulty": "hard",
+  "context": "\n                    [Patient History] 45-year-old male, software engineer, sedentary lifestyle, BMI 31.\n                    [Symptoms] Chest pain during exertion, shortness of breath, fatigue for 3 months.\n                    [Vitals] BP 145/95, HR 88, Temperature 98.6°F, SpO2 96%.\n                    [Lab Results] Total cholesterol 245, LDL 165, HDL 32, Triglycerides 280.\n                    [Family History] Father had heart attack at 52, mother has type 2 diabetes.\n                    [Risk Factors] Smoking (1 pack/day, 20 years), stress, high-stress job.\n                    [Previous Tests] ECG shows normal sinus rhythm, stress test pending.\n                    ",
+  "question": "Based on the comprehensive patient context, provide a differential diagnosis with confidence scores and recommend specific diagnostic tests to confirm or rule out each possibility.",
+  "context_length": 600,
+  "key_claims_required": 8,
+  "reasoning_requirements": [
+    "medical_reasoning",
+    "differential_diagnosis",
+    "risk_assessment",
+    "diagnostic_planning"
+  ],
+  "success_criteria": "Accurate differential diagnosis with appropriate test recommendations",
+  "generated_at": "2025-12-03T22:11:20.411259",
+  "test_framework_version": "1.0",
+  "evaluation_criteria": [
+    "correctness",
+    "completeness",
+    "efficiency",
+    "hallucination_reduction"
+  ],
+  "difficulty_calibration": "easy",
+  "estimated_time_required": 38,
+  "required_capabilities": [
+    "evaluative_judgment"
+  ]
+}
