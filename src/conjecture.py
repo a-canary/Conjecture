@@ -59,7 +59,11 @@ class Conjecture:
         self.tool_creator = DynamicToolCreator(
             llm_bridge=self.llm_bridge, tools_dir="tools"
         )
-
+        
+        # Initialize enhanced template manager for XML optimization
+        from .processing.llm_prompts.xml_optimized_templates import XMLOptimizedTemplateManager
+        self.enhanced_template_manager = XMLOptimizedTemplateManager()
+        
         # Service state
         self._services_started = False
 
@@ -274,7 +278,7 @@ class Conjecture:
     async def _generate_initial_claims(
         self, query: str, max_claims: int
     ) -> List[Claim]:
-        """Generate initial claims using LLM with context awareness"""
+        """Generate initial claims using LLM with XML-optimized prompts"""
         try:
             # OPTIMIZATION: Parallel context collection
             context_start = time.time()
@@ -287,44 +291,47 @@ class Conjecture:
             context_time = time.time() - context_start
             self._performance_stats["context_collection_time"].append(context_time)
 
-            # Build context string using enhanced template manager
-            context_claims = await self.enhanced_template_manager.get_context_for_task(
-                query, {"task": "exploration"}, max_skills=3, max_samples=5
-            )
+            # Build context string from collected claims
+            context_string = ""
+            if context_claims:
+                context_parts = []
+                for claim in context_claims:
+                    context_parts.append(f"- {claim.content} (confidence: {claim.confidence:.2f})")
+                context_string = "\n".join(context_parts)
+            else:
+                context_string = "No relevant context available."
             
-            # Build context string with XML optimization
-            context_string = self.enhanced_template_manager.build_context_string(context_claims)
+            # Get enhanced XML template for claim creation
+            xml_template = self.enhanced_template_manager.get_template("research_enhanced_xml")
             
-            prompt_template = create_prompt_template_for_type(ResponseSchemaType.RESEARCH)
-            prompt = f"""Research and analyze the topic: "{query}"
+            if not xml_template:
+                # Fallback to basic prompt if XML template not available
+                prompt = f"""Generate up to {max_claims} high-quality claims about: {query}
 
+Requirements:
+- Use XML format: <claim type="[fact|concept|example|goal|reference|hypothesis]" confidence="[0.0-1.0]">content</claim>
+- Include clear, specific statements
+- Provide realistic confidence scores
+- Cover different aspects: facts, concepts, examples, goals
+
+Context:
 {context_string}
 
-{prompt_template}
-
-## YOUR RESEARCH TASK:
-Generate comprehensive claims about this topic. Focus on:
-1. Factual accuracy and verifiable information
-2. Key concepts and definitions
-3. Important relationships and dependencies
-4. Practical applications and examples
-5. Current state and future directions
-
-Requirements for each claim:
-- Use claim IDs in format 'c1', 'c2', etc.
-- Include clear, specific statements
-- Provide confidence scores (0.0-1.0)
-- Use appropriate claim types: fact, concept, example, goal, reference, assertion, thesis, hypothesis, question, task
-- Focus on factual accuracy and verifiable information
-- Cover key concepts, relationships, and applications
-
-Set the research_summary field to summarize your findings.
-Include any sources used in the sources field.
-Describe your methodology in the methodology field.
-
-Generate up to {max_claims} high-quality claims using this JSON frontmatter format.
-
-After the JSON frontmatter, you can include additional explanation of your research methodology and findings."""
+Generate claims using this XML structure:
+<claims>
+  <claim type="fact" confidence="0.9">Your factual claim here</claim>
+  <claim type="concept" confidence="0.8">Your conceptual claim here</claim>
+  <!-- Add more claims as needed -->
+</claims>"""
+            else:
+                # Use XML template with proper variable substitution
+                prompt = xml_template.template_content.format(
+                    user_query=query,
+                    relevant_context=context_string
+                )
+                
+                # Add specific claim count instruction
+                prompt += f"\n\nGenerate exactly {max_claims} high-quality claims using the XML format specified above."
 
             llm_request = LLMRequest(
                 prompt=prompt, max_tokens=3000, temperature=0.7, task_type="explore"
@@ -802,19 +809,19 @@ SUBTASK: {subtask}
 RELEVANT CONTEXT:
 {context_string}
 
-Generate 3-5 specific, evidence-based claims that address this subtask. For each claim:
-- Use claim IDs in format 'c1', 'c2', etc.
-- Include clear, specific statements
-- Provide confidence scores (0.0-1.0)
-- Use appropriate claim types: fact, concept, example, goal, reference, assertion
-- Focus on accuracy and verifiability
+            Generate 3-5 specific, evidence-based claims that address this subtask. For each claim:
+            - Use claim IDs in format 'c1', 'c2', etc.
+            - Include clear, specific statements
+            - Provide confidence scores (0.0-1.0)
+            - Use appropriate claim types: fact, concept, example, goal, reference, assertion
+            - Focus on accuracy and verifiability
 
-Format each claim as:
-[cID] [Type] [Confidence]: Claim statement
+            Format each claim as:
+            [cID] [Type] [Confidence]: Claim statement
 
-Example:
-[c1] [fact] [0.9]: The Earth's average temperature has increased by 1.1°C since pre-industrial times.
-[c2] [concept] [0.8]: Climate change refers to long-term shifts in global weather patterns."""
+            Example:
+            [c1] [fact] [0.9]: The Earth's average temperature has increased by 1.1C since pre-industrial times.
+            [c2] [concept] [0.8]: Climate change refers to long-term shifts in global weather patterns."""
 
             llm_request = LLMRequest(
                 prompt=prompt,

@@ -36,8 +36,8 @@ class UnifiedClaimParser:
     """
     Unified parser that handles multiple claim formats and converts them to standard format.
     
-    Priority order for parsing:
-    1. Bracket format → XML format → Structured format → Freeform
+    Priority order for parsing (updated for XML optimization):
+    1. JSON frontmatter → XML format → Bracket format → Structured format → Freeform
     """
     
     def __init__(self):
@@ -97,10 +97,10 @@ class UnifiedClaimParser:
         # Fallback to legacy text formats
         parsed_claims = []
         
-        # Try each format in order of preference
+        # Try each format in order of preference (XML prioritized for optimization)
         for format_name, parser_func in [
+            ('xml', self._parse_xml_format),  # Prioritize XML for experiment
             ('bracket', self._parse_bracket_format),
-            ('xml', self._parse_xml_format),
             ('structured', self._parse_structured_format),
             ('freeform', self._parse_freeform_format)
         ]:
@@ -160,28 +160,82 @@ class UnifiedClaimParser:
         """Parse XML format: <claim type="" confidence="">content</claim>"""
         claims = []
         
-        matches = re.findall(self.xml_pattern, text, re.MULTILINE | re.DOTALL)
-        for match in matches:
-            try:
-                claim_type, confidence_str, content = match
-                confidence = float(confidence_str)
-                
-                if self._validate_confidence(confidence):
-                    # Generate ID since XML format doesn't include it
-                    claim_id = f"c{int(time.time() * 1000) % 10000000:07d}"
+        # Enhanced XML pattern to handle multiline content and optional attributes
+        enhanced_xml_patterns = [
+            # Standard XML with multiline content
+            r'<claim\s+type="([^"]*)"\s+confidence="([^"]*)"[^>]*>(.*?)</claim>',
+            # XML with id attribute
+            r'<claim\s+id="([^"]*)"\s+type="([^"]*)"\s+confidence="([^"]*)"[^>]*>(.*?)</claim>',
+            # XML with different attribute order
+            r'<claim\s+confidence="([^"]*)"\s+type="([^"]*)"[^>]*>(.*?)</claim>',
+            # Simplified XML format
+            r'<claim[^>]*type="([^"]*)"[^>]*confidence="([^"]*)"[^>]*>(.*?)</claim>',
+        ]
+        
+        claim_counter = 1
+        
+        for pattern in enhanced_xml_patterns:
+            matches = re.findall(pattern, text, re.MULTILINE | re.DOTALL)
+            for match in matches:
+                try:
+                    if len(match) == 4:  # Pattern with id attribute
+                        claim_id, claim_type, confidence_str, content = match
+                        if not claim_id or claim_id.strip() == "":
+                            claim_id = f"c{claim_counter:03d}"
+                    else:  # Standard pattern
+                        claim_type, confidence_str, content = match
+                        claim_id = f"c{claim_counter:03d}"
                     
-                    claim = ParsedClaim(
-                        id=claim_id,
-                        content=content.strip(),
-                        confidence=confidence,
-                        claim_type=claim_type.strip() if claim_type else None,
-                        raw_format="xml",
-                        raw_text=f'<claim type="{claim_type}" confidence="{confidence}">{content}</claim>'
-                    )
-                    claims.append(claim)
-            except (ValueError, IndexError) as e:
-                logger.debug(f"Failed to parse XML claim: {e}")
-                continue
+                    confidence = float(confidence_str)
+                    
+                    if self._validate_confidence(confidence):
+                        # Clean up content - remove extra whitespace and XML tags if present
+                        content = content.strip()
+                        # Remove any nested XML tags that might be in the content
+                        content = re.sub(r'<[^>]+>', '', content)
+                        content = re.sub(r'\s+', ' ', content)
+                        
+                        claim = ParsedClaim(
+                            id=claim_id,
+                            content=content,
+                            confidence=confidence,
+                            claim_type=claim_type.strip() if claim_type else None,
+                            raw_format="xml",
+                            raw_text=f'<claim type="{claim_type}" confidence="{confidence}">{content[:100]}...</claim>'
+                        )
+                        claims.append(claim)
+                        claim_counter += 1
+                except (ValueError, IndexError) as e:
+                    logger.debug(f"Failed to parse XML claim: {e}")
+                    continue
+        
+        # If no claims found with enhanced patterns, try the original pattern as fallback
+        if not claims:
+            matches = re.findall(self.xml_pattern, text, re.MULTILINE | re.DOTALL)
+            for match in matches:
+                try:
+                    claim_type, confidence_str, content = match
+                    confidence = float(confidence_str)
+                    
+                    if self._validate_confidence(confidence):
+                        claim_id = f"c{claim_counter:03d}"
+                        content = content.strip()
+                        content = re.sub(r'<[^>]+>', '', content)
+                        content = re.sub(r'\s+', ' ', content)
+                        
+                        claim = ParsedClaim(
+                            id=claim_id,
+                            content=content,
+                            confidence=confidence,
+                            claim_type=claim_type.strip() if claim_type else None,
+                            raw_format="xml",
+                            raw_text=f'<claim type="{claim_type}" confidence="{confidence}">{content[:100]}...</claim>'
+                        )
+                        claims.append(claim)
+                        claim_counter += 1
+                except (ValueError, IndexError) as e:
+                    logger.debug(f"Failed to parse XML claim: {e}")
+                    continue
         
         return claims
     
@@ -284,17 +338,35 @@ class UnifiedClaimParser:
         return 0.0 <= confidence <= 1.0
     
     def _convert_to_standard_format(self, parsed_claim: ParsedClaim) -> Optional[Claim]:
-        """Convert parsed claim to standard Claim object with bracket format"""
+        """Convert parsed claim to standard Claim object with enhanced type mapping"""
         try:
-            # Determine claim type
+            # Enhanced claim type mapping for XML optimization
             claim_type = ClaimType.CONCEPT  # Default
             if parsed_claim.claim_type:
                 try:
-                    # Try to parse the claim type
-                    claim_type = ClaimType(parsed_claim.claim_type.lower())
-                except ValueError:
+                    # Normalize claim type string
+                    claim_type_str = parsed_claim.claim_type.lower().strip()
+                    
+                    # Enhanced type mapping
+                    type_mapping = {
+                        'fact': ClaimType.FACT,
+                        'concept': ClaimType.CONCEPT,
+                        'example': ClaimType.EXAMPLE,
+                        'goal': ClaimType.GOAL,
+                        'reference': ClaimType.REFERENCE,
+                        'hypothesis': ClaimType.HYPOTHESIS,
+                        'assertion': ClaimType.ASSERTION,
+                        'thesis': ClaimType.THESIS,
+                        'question': ClaimType.QUESTION,
+                        'task': ClaimType.TASK,
+                    }
+                    
+                    claim_type = type_mapping.get(claim_type_str, ClaimType.CONCEPT)
+                    
+                except (ValueError, AttributeError):
                     # Fall back to concept if type is invalid
                     claim_type = ClaimType.CONCEPT
+                    logger.debug(f"Unknown claim type '{parsed_claim.claim_type}', using CONCEPT")
             
             # Create claim with standard formatting
             claim = Claim(
@@ -304,7 +376,7 @@ class UnifiedClaimParser:
                 type=[claim_type],
                 state=ClaimState.EXPLORE,
                 created=datetime.utcnow(),
-                tags=[f"parsed_{parsed_claim.raw_format}", "auto_generated"]
+                tags=[f"parsed_{parsed_claim.raw_format}", "auto_generated", "xml_optimized"]
             )
             
             return claim
