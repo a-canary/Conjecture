@@ -286,7 +286,7 @@ Evidence: {"Available" if claim.evidence else "None"}
 
         return claims
 
-    @with_enhanced_retry(max_attempts=5, base_delay=10.0, max_delay=600.0)
+    @with_enhanced_retry()
     def generate_response(
         self, prompt: str, config: Optional[GenerationConfig] = None
     ) -> LLMProcessingResult:
@@ -332,7 +332,7 @@ Evidence: {"Available" if claim.evidence else "None"}
                 model_used=self.model_name,
             )
 
-    @with_enhanced_retry(max_attempts=5, base_delay=10.0, max_delay=600.0)
+    @with_enhanced_retry()
     def process_claims(
         self,
         claims: List[Claim],

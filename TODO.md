@@ -74,7 +74,8 @@
   - refactor upstream LLMs prompts and responses to be xml format, should increase tool call and claim creation success rate. 
   - adjust the upstream prompt to increase claim creation and more thorough though process.
   - further prime the conjecture database by evaluating "What are best practices for fact checking?", "What are best practices for programming?", "What is scientific method?", "What are steps of critical thinking?". Once evaluated these will create valuable claims to help models reason.
-  - if all models+approaches score 100% on a type of test, reduce it's test count to 1 to speed up testing, but stull catch bad regressions.
+  - if all models+approaches score 100% on a type of test, reduce it's test count to 1 to speed up testing, but still catch bad regressions. And consider introducing a harder type of tests
+  - take small steps to reduce complexity of project and reverify results. repeat multiple times
 
 ### 4. XML Format Optimization (Priority: COMPLETED)
 - [x] **Experiment 1: XML Format Optimization** - COMPLETE SUCCESS ✅

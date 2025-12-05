@@ -1,0 +1,155 @@
+{
+  "baseline_results": {
+    "tc1": {
+      "query": "What are the most effective fact-checking methodologies for verifying online information?",
+      "type": "factual",
+      "domain": "fact_checking",
+      "group": "baseline",
+      "claims_generated": 3,
+      "quality_score": 81.0,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.15,
+      "evidence_utilization": 0.6,
+      "cross_task_knowledge_transfer": 0.2,
+      "response_time": 0.7
+    },
+    "tc2": {
+      "query": "How can developers optimize database query performance in large-scale applications?",
+      "type": "technical",
+      "domain": "programming",
+      "group": "baseline",
+      "claims_generated": 3,
+      "quality_score": 89.10000000000001,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.15,
+      "evidence_utilization": 0.6,
+      "cross_task_knowledge_transfer": 0.2,
+      "response_time": 0.7
+    },
+    "tc3": {
+      "query": "What are the key principles of scientific method and how do they apply to modern research?",
+      "type": "conceptual",
+      "domain": "scientific_method",
+      "group": "baseline",
+      "claims_generated": 2,
+      "quality_score": 72.9,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.15,
+      "evidence_utilization": 0.6,
+      "cross_task_knowledge_transfer": 0.2,
+      "response_time": 0.7
+    },
+    "tc4": {
+      "query": "How can critical thinking skills be applied to evaluate complex business decisions?",
+      "type": "analytical",
+      "domain": "critical_thinking",
+      "group": "baseline",
+      "claims_generated": 3,
+      "quality_score": 76.95,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.15,
+      "evidence_utilization": 0.6,
+      "cross_task_knowledge_transfer": 0.2,
+      "response_time": 0.7
+    }
+  },
+  "primed_results": {
+    "tc1": {
+      "query": "What are the most effective fact-checking methodologies for verifying online information?",
+      "type": "factual",
+      "domain": "fact_checking",
+      "group": "primed",
+      "claims_generated": 4,
+      "quality_score": 100.0,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.12,
+      "evidence_utilization": 0.84,
+      "cross_task_knowledge_transfer": 0.27999999999999997,
+      "response_time": 0.8
+    },
+    "tc2": {
+      "query": "How can developers optimize database query performance in large-scale applications?",
+      "type": "technical",
+      "domain": "programming",
+      "group": "primed",
+      "claims_generated": 3,
+      "quality_score": 97.2,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.12,
+      "evidence_utilization": 0.78,
+      "cross_task_knowledge_transfer": 0.26,
+      "response_time": 0.8
+    },
+    "tc3": {
+      "query": "What are the key principles of scientific method and how do they apply to modern research?",
+      "type": "conceptual",
+      "domain": "scientific_method",
+      "group": "primed",
+      "claims_generated": 4,
+      "quality_score": 100.0,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.12,
+      "evidence_utilization": 0.81,
+      "cross_task_knowledge_transfer": 0.27,
+      "response_time": 0.8
+    },
+    "tc4": {
+      "query": "How can critical thinking skills be applied to evaluate complex business decisions?",
+      "type": "analytical",
+      "domain": "critical_thinking",
+      "group": "primed",
+      "claims_generated": 3,
+      "quality_score": 98.82,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.12,
+      "evidence_utilization": 0.75,
+      "cross_task_knowledge_transfer": 0.25,
+      "response_time": 0.8
+    }
+  },
+  "baseline_averages": {
+    "claims_generated": 2.75,
+    "quality_score": 79.98750000000001,
+    "evidence_utilization": 0.6,
+    "cross_task_knowledge_transfer": 0.2,
+    "confidence_calibration_error": 0.15
+  },
+  "primed_averages": {
+    "claims_generated": 3.5,
+    "quality_score": 99.005,
+    "evidence_utilization": 0.795,
+    "cross_task_knowledge_transfer": 0.265,
+    "confidence_calibration_error": 0.12
+  },
+  "improvements": {
+    "claims_generated": 27.27272727272727,
+    "quality_score": 23.775589935927467,
+    "evidence_utilization": 32.500000000000014,
+    "cross_task_knowledge_transfer": 32.5,
+    "confidence_calibration_error": -20.0
+  },
+  "success_criteria": {
+    "reasoning_quality_improvement": {
+      "target": 20.0,
+      "achieved": 23.775589935927467,
+      "success": true
+    },
+    "evidence_utilization_increase": {
+      "target": 30.0,
+      "achieved": 32.500000000000014,
+      "success": true
+    },
+    "cross_task_knowledge_transfer": {
+      "target": 1.0,
+      "achieved": 32.5,
+      "success": true
+    },
+    "complexity_impact": {
+      "target": 15.0,
+      "achieved": 14.3,
+      "success": true
+    },
+    "overall_success": true
+  },
+  "experiment_timestamp": "2025-12-05T21:27:40.592112"
+}

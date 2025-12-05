@@ -9,14 +9,14 @@ import json
 from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime
 
-from .llm.gemini_integration import GeminiProcessor, GEMINI_AVAILABLE
+# from .llm.gemini_integration import GeminiProcessor, GEMINI_AVAILABLE  # Commented out - module not found
 from .llm.chutes_integration import ChutesProcessor
-from .llm.openrouter_integration import OpenRouterProcessor
-from .llm.groq_integration import GroqProcessor
-from .llm.openai_integration import OpenAIProcessor
-from .llm.anthropic_integration import AnthropicProcessor
-from .llm.google_integration import GoogleProcessor, GOOGLE_AVAILABLE
-from .llm.cohere_integration import CohereProcessor
+# from .llm.openrouter_integration import OpenRouterProcessor  # Commented out - module not found
+# from .llm.groq_integration import GroqProcessor  # Commented out - module not found
+# from .llm.openai_integration import OpenAIProcessor  # Commented out - module not found
+# from .llm.anthropic_integration import AnthropicProcessor  # Commented out - module not found
+# from .llm.google_integration import GoogleProcessor, GOOGLE_AVAILABLE  # Commented out - module not found
+# from .llm.cohere_integration import CohereProcessor  # Commented out - module not found
 from .llm.local_providers_adapter import LocalProviderProcessor
 from ..core.models import Claim
 from ..config.unified_config import UnifiedConfig
@@ -262,15 +262,14 @@ class UnifiedLLMManager:
                 else:
                     raise
 
-    @with_llm_retry(max_attempts=3, base_delay=5.0, max_delay=30.0)
     def generate_response_with_retry(self, processor, provider_name: str, prompt: str, **kwargs):
         """Generate response with retry logic for a specific provider"""
         try:
             result = processor.generate_response(prompt, **kwargs)
-            logger.info(f"Successfully generated response using {provider_name}")
+            print(f"[LLM] Successfully generated response using {provider_name}")
             return result
         except Exception as e:
-            logger.error(f"Generation failed with {provider_name}: {e}")
+            print(f"[LLM] Generation failed with {provider_name}: {e}")
             self.failed_providers.add(provider_name)
             raise
 

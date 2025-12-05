@@ -1,0 +1,51 @@
+{
+  "test_claims_created": 25,
+  "total_content_characters": 4750,
+  "average_claim_length": 190.0,
+  "average_confidence": 0.7699999999999997,
+  "context_sizes_tested": [
+    5,
+    10,
+    15,
+    20,
+    25
+  ],
+  "performance_results": {
+    "5": {
+      "claims_processed": 5,
+      "processing_time_ms": 0.0,
+      "success": false,
+      "error": "No LLM processor available",
+      "content_length": 350
+    },
+    "10": {
+      "claims_processed": 10,
+      "processing_time_ms": 0.0,
+      "success": false,
+      "error": "No LLM processor available",
+      "content_length": 700
+    },
+    "15": {
+      "claims_processed": 15,
+      "processing_time_ms": 0.0,
+      "success": false,
+      "error": "No LLM processor available",
+      "content_length": 1745
+    },
+    "20": {
+      "claims_processed": 20,
+      "processing_time_ms": 0.0,
+      "success": false,
+      "error": "No LLM processor available",
+      "content_length": 2790
+    },
+    "25": {
+      "claims_processed": 25,
+      "processing_time_ms": 0.0,
+      "success": false,
+      "error": "No LLM processor available",
+      "content_length": 4750
+    }
+  },
+  "test_timestamp": 1764975244.5734794
+}

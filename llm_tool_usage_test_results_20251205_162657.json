@@ -1,0 +1,691 @@
+{
+  "test_run": {
+    "timestamp": "2025-12-05T21:26:45.300807",
+    "framework_version": "1.0.0",
+    "total_providers": 3,
+    "total_test_cases": 5
+  },
+  "provider_results": {
+    "lms/granite-4-h-tiny": {
+      "provider": "lms/granite-4-h-tiny",
+      "test_cases": {
+        "basic_search": {
+          "provider": "lms/granite-4-h-tiny",
+          "test_case": "basic_search",
+          "description": "Basic search query",
+          "prompt": "Please search for information about Python programming tutorials using the webSearch tool.",
+          "timestamp": "2025-12-05T21:26:45.300807",
+          "success": true,
+          "tool_call_detected": true,
+          "tool_name_correct": true,
+          "parameters_correct": true,
+          "tool_execution_success": true,
+          "response_time": 0.7021799087524414,
+          "llm_response": "<tool_calls><invoke name=\"webSearch\"><parameter name=\"query\">Python programming tutorial</parameter></invoke></tool_calls>",
+          "parsed_tool_calls": [
+            {
+              "name": "webSearch",
+              "parameters": {
+                "query": "Python programming tutorial"
+              },
+              "call_id": null
+            }
+          ],
+          "execution_results": [
+            [
+              {
+                "title": "Mock Result 1 for \"Python programming tutorial\"",
+                "url": "https://example.com/result1",
+                "snippet": "This is a mock search result for the query: Python programming tutorial",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 2 for \"Python programming tutorial\"",
+                "url": "https://example.com/result2",
+                "snippet": "This is a mock search result for the query: Python programming tutorial",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 3 for \"Python programming tutorial\"",
+                "url": "https://example.com/result3",
+                "snippet": "This is a mock search result for the query: Python programming tutorial",
+                "type": "web_result",
+                "source": "mock"
+              }
+            ]
+          ],
+          "errors": [],
+          "validation_details": {
+            "valid": true,
+            "missing_params": [],
+            "extra_params": [],
+            "incorrect_values": {},
+            "details": {
+              "query": "Good match: Python programming tutorial"
+            }
+          }
+        },
+        "parameterized_search": {
+          "provider": "lms/granite-4-h-tiny",
+          "test_case": "parameterized_search",
+          "description": "Parameterized search with max_results",
+          "prompt": "Search for \"machine learning frameworks\" and limit the results to 5 items using webSearch.",
+          "timestamp": "2025-12-05T21:26:46.002987",
+          "success": false,
+          "tool_call_detected": true,
+          "tool_name_correct": true,
+          "parameters_correct": false,
+          "tool_execution_success": true,
+          "response_time": 0.7141337394714355,
+          "llm_response": "<tool_calls><invoke name=\"webSearch\"><parameter name=\"query\">machine learning frameworks</parameter><parameter name=\"max_results\">5</parameter></invoke></tool_calls>",
+          "parsed_tool_calls": [
+            {
+              "name": "webSearch",
+              "parameters": {
+                "query": "machine learning frameworks",
+                "max_results": "5"
+              },
+              "call_id": null
+            }
+          ],
+          "execution_results": [
+            [
+              {
+                "title": "Mock Result 1 for \"machine learning frameworks\"",
+                "url": "https://example.com/result1",
+                "snippet": "This is a mock search result for the query: machine learning frameworks",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 2 for \"machine learning frameworks\"",
+                "url": "https://example.com/result2",
+                "snippet": "This is a mock search result for the query: machine learning frameworks",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 3 for \"machine learning frameworks\"",
+                "url": "https://example.com/result3",
+                "snippet": "This is a mock search result for the query: machine learning frameworks",
+                "type": "web_result",
+                "source": "mock"
+              }
+            ]
+          ],
+          "errors": [],
+          "validation_details": {
+            "valid": false,
+            "missing_params": [],
+            "extra_params": [],
+            "incorrect_values": {
+              "max_results": "Expected: 5, Got: 5"
+            },
+            "details": {
+              "query": "Good match: machine learning frameworks"
+            }
+          }
+        },
+        "complex_query": {
+          "provider": "lms/granite-4-h-tiny",
+          "test_case": "complex_query",
+          "description": "Complex query with multiple terms",
+          "prompt": "Find information about Rust programming language async await patterns using webSearch.",
+          "timestamp": "2025-12-05T21:26:46.717121",
+          "success": true,
+          "tool_call_detected": true,
+          "tool_name_correct": true,
+          "parameters_correct": true,
+          "tool_execution_success": true,
+          "response_time": 0.7134876251220703,
+          "llm_response": "<tool_calls><invoke name=\"webSearch\"><parameter name=\"query\">Rust programming language async await patterns</parameter></invoke></tool_calls>",
+          "parsed_tool_calls": [
+            {
+              "name": "webSearch",
+              "parameters": {
+                "query": "Rust programming language async await patterns"
+              },
+              "call_id": null
+            }
+          ],
+          "execution_results": [
+            [
+              {
+                "title": "Mock Result 1 for \"Rust programming language async await patterns\"",
+                "url": "https://example.com/result1",
+                "snippet": "This is a mock search result for the query: Rust programming language async await patterns",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 2 for \"Rust programming language async await patterns\"",
+                "url": "https://example.com/result2",
+                "snippet": "This is a mock search result for the query: Rust programming language async await patterns",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 3 for \"Rust programming language async await patterns\"",
+                "url": "https://example.com/result3",
+                "snippet": "This is a mock search result for the query: Rust programming language async await patterns",
+                "type": "web_result",
+                "source": "mock"
+              }
+            ]
+          ],
+          "errors": [],
+          "validation_details": {
+            "valid": true,
+            "missing_params": [],
+            "extra_params": [],
+            "incorrect_values": {},
+            "details": {
+              "query": "Good match: Rust programming language async await patterns"
+            }
+          }
+        },
+        "empty_query": {
+          "provider": "lms/granite-4-h-tiny",
+          "test_case": "empty_query",
+          "description": "Edge case - empty query",
+          "prompt": "Use webSearch with an empty query string.",
+          "timestamp": "2025-12-05T21:26:47.430608",
+          "success": false,
+          "tool_call_detected": true,
+          "tool_name_correct": true,
+          "parameters_correct": false,
+          "tool_execution_success": false,
+          "response_time": 0.7135188579559326,
+          "llm_response": "<tool_calls><invoke name=\"webSearch\"><parameter name=\"query\"></parameter></invoke></tool_calls>",
+          "parsed_tool_calls": [
+            {
+              "name": "webSearch",
+              "parameters": {},
+              "call_id": null
+            }
+          ],
+          "execution_results": [],
+          "errors": [
+            "Test execution error: mock_web_search() missing 1 required positional argument: 'query'"
+          ],
+          "validation_details": {
+            "valid": false,
+            "missing_params": [],
+            "extra_params": [],
+            "incorrect_values": {
+              "query": "Expected empty, got: None"
+            },
+            "details": {}
+          }
+        },
+        "special_characters": {
+          "provider": "lms/granite-4-h-tiny",
+          "test_case": "special_characters",
+          "description": "Edge case - special characters",
+          "prompt": "Search for \"C++ templates & STL containers (vector, map) - tutorial\" using webSearch.",
+          "timestamp": "2025-12-05T21:26:48.144127",
+          "success": false,
+          "tool_call_detected": false,
+          "tool_name_correct": false,
+          "parameters_correct": false,
+          "tool_execution_success": false,
+          "response_time": 0.7048375606536865,
+          "llm_response": "<tool_calls><invoke name=\"webSearch\"><parameter name=\"query\">C++ templates & STL containers</parameter></invoke></tool_calls>",
+          "parsed_tool_calls": [],
+          "execution_results": [],
+          "errors": [],
+          "validation_details": {}
+        }
+      },
+      "overall_metrics": {
+        "total_tests": 5,
+        "successful_tests": 2,
+        "failed_tests": 3,
+        "tool_call_detection_rate": 0.8,
+        "correct_tool_name_rate": 0.8,
+        "correct_parameters_rate": 0.4,
+        "tool_execution_success_rate": 0.6,
+        "average_response_time": 0.7096315383911133,
+        "total_time": 3.5481576919555664
+      },
+      "errors": []
+    },
+    "zai/GLM-4.6": {
+      "provider": "zai/GLM-4.6",
+      "test_cases": {
+        "basic_search": {
+          "provider": "zai/GLM-4.6",
+          "test_case": "basic_search",
+          "description": "Basic search query",
+          "prompt": "Please search for information about Python programming tutorials using the webSearch tool.",
+          "timestamp": "2025-12-05T21:26:48.848965",
+          "success": false,
+          "tool_call_detected": false,
+          "tool_name_correct": false,
+          "parameters_correct": false,
+          "tool_execution_success": false,
+          "response_time": 0.9026687145233154,
+          "llm_response": "{\"tool_calls\": [{\"name\": \"webSearch\", \"parameters\": {\"query\": \"Python programming tutorial\"}}]}",
+          "parsed_tool_calls": [],
+          "execution_results": [],
+          "errors": [],
+          "validation_details": {}
+        },
+        "parameterized_search": {
+          "provider": "zai/GLM-4.6",
+          "test_case": "parameterized_search",
+          "description": "Parameterized search with max_results",
+          "prompt": "Search for \"machine learning frameworks\" and limit the results to 5 items using webSearch.",
+          "timestamp": "2025-12-05T21:26:49.751634",
+          "success": false,
+          "tool_call_detected": false,
+          "tool_name_correct": false,
+          "parameters_correct": false,
+          "tool_execution_success": false,
+          "response_time": 0.9135439395904541,
+          "llm_response": "{\"tool_calls\": [{\"name\": \"webSearch\", \"parameters\": {\"query\": \"machine learning frameworks\", \"max_results\": 5}}]}",
+          "parsed_tool_calls": [],
+          "execution_results": [],
+          "errors": [],
+          "validation_details": {}
+        },
+        "complex_query": {
+          "provider": "zai/GLM-4.6",
+          "test_case": "complex_query",
+          "description": "Complex query with multiple terms",
+          "prompt": "Find information about Rust programming language async await patterns using webSearch.",
+          "timestamp": "2025-12-05T21:26:50.665178",
+          "success": false,
+          "tool_call_detected": false,
+          "tool_name_correct": false,
+          "parameters_correct": false,
+          "tool_execution_success": false,
+          "response_time": 0.91550612449646,
+          "llm_response": "{\"tool_calls\": [{\"name\": \"webSearch\", \"parameters\": {\"query\": \"Rust programming language async await patterns\"}}]}",
+          "parsed_tool_calls": [],
+          "execution_results": [],
+          "errors": [],
+          "validation_details": {}
+        },
+        "empty_query": {
+          "provider": "zai/GLM-4.6",
+          "test_case": "empty_query",
+          "description": "Edge case - empty query",
+          "prompt": "Use webSearch with an empty query string.",
+          "timestamp": "2025-12-05T21:26:51.580684",
+          "success": false,
+          "tool_call_detected": false,
+          "tool_name_correct": false,
+          "parameters_correct": false,
+          "tool_execution_success": false,
+          "response_time": 0.9033501148223877,
+          "llm_response": "{\"tool_calls\": [{\"name\": \"webSearch\", \"parameters\": {\"query\": \"\"}}]}",
+          "parsed_tool_calls": [],
+          "execution_results": [],
+          "errors": [],
+          "validation_details": {}
+        },
+        "special_characters": {
+          "provider": "zai/GLM-4.6",
+          "test_case": "special_characters",
+          "description": "Edge case - special characters",
+          "prompt": "Search for \"C++ templates & STL containers (vector, map) - tutorial\" using webSearch.",
+          "timestamp": "2025-12-05T21:26:52.484034",
+          "success": false,
+          "tool_call_detected": false,
+          "tool_name_correct": false,
+          "parameters_correct": false,
+          "tool_execution_success": false,
+          "response_time": 0.9120550155639648,
+          "llm_response": "{\"tool_calls\": [{\"name\": \"webSearch\", \"parameters\": {\"query\": \"C++ templates & STL containers (vector, map) - tutorial\"}}]}",
+          "parsed_tool_calls": [],
+          "execution_results": [],
+          "errors": [],
+          "validation_details": {}
+        }
+      },
+      "overall_metrics": {
+        "total_tests": 5,
+        "successful_tests": 0,
+        "failed_tests": 5,
+        "tool_call_detection_rate": 0.0,
+        "correct_tool_name_rate": 0.0,
+        "correct_parameters_rate": 0.0,
+        "tool_execution_success_rate": 0.0,
+        "average_response_time": 0.9094247817993164,
+        "total_time": 4.547123908996582
+      },
+      "errors": []
+    },
+    "openrouter/gpt-oss-20b": {
+      "provider": "openrouter/gpt-oss-20b",
+      "test_cases": {
+        "basic_search": {
+          "provider": "openrouter/gpt-oss-20b",
+          "test_case": "basic_search",
+          "description": "Basic search query",
+          "prompt": "Please search for information about Python programming tutorials using the webSearch tool.",
+          "timestamp": "2025-12-05T21:26:53.396089",
+          "success": true,
+          "tool_call_detected": true,
+          "tool_name_correct": true,
+          "parameters_correct": true,
+          "tool_execution_success": true,
+          "response_time": 0.9032323360443115,
+          "llm_response": "```tool_call\nname: webSearch\nparameters: {\"query\": \"Python programming tutorial\"}\n```",
+          "parsed_tool_calls": [
+            {
+              "name": "webSearch",
+              "parameters": {
+                "query": "Python programming tutorial"
+              },
+              "call_id": null
+            }
+          ],
+          "execution_results": [
+            [
+              {
+                "title": "Mock Result 1 for \"Python programming tutorial\"",
+                "url": "https://example.com/result1",
+                "snippet": "This is a mock search result for the query: Python programming tutorial",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 2 for \"Python programming tutorial\"",
+                "url": "https://example.com/result2",
+                "snippet": "This is a mock search result for the query: Python programming tutorial",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 3 for \"Python programming tutorial\"",
+                "url": "https://example.com/result3",
+                "snippet": "This is a mock search result for the query: Python programming tutorial",
+                "type": "web_result",
+                "source": "mock"
+              }
+            ]
+          ],
+          "errors": [],
+          "validation_details": {
+            "valid": true,
+            "missing_params": [],
+            "extra_params": [],
+            "incorrect_values": {},
+            "details": {
+              "query": "Good match: Python programming tutorial"
+            }
+          }
+        },
+        "parameterized_search": {
+          "provider": "openrouter/gpt-oss-20b",
+          "test_case": "parameterized_search",
+          "description": "Parameterized search with max_results",
+          "prompt": "Search for \"machine learning frameworks\" and limit the results to 5 items using webSearch.",
+          "timestamp": "2025-12-05T21:26:54.299321",
+          "success": true,
+          "tool_call_detected": true,
+          "tool_name_correct": true,
+          "parameters_correct": true,
+          "tool_execution_success": true,
+          "response_time": 0.9124066829681396,
+          "llm_response": "```tool_call\nname: webSearch\nparameters: {\"query\": \"machine learning frameworks\", \"max_results\": 5}\n```",
+          "parsed_tool_calls": [
+            {
+              "name": "webSearch",
+              "parameters": {
+                "query": "machine learning frameworks",
+                "max_results": 5
+              },
+              "call_id": null
+            }
+          ],
+          "execution_results": [
+            [
+              {
+                "title": "Mock Result 1 for \"machine learning frameworks\"",
+                "url": "https://example.com/result1",
+                "snippet": "This is a mock search result for the query: machine learning frameworks",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 2 for \"machine learning frameworks\"",
+                "url": "https://example.com/result2",
+                "snippet": "This is a mock search result for the query: machine learning frameworks",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 3 for \"machine learning frameworks\"",
+                "url": "https://example.com/result3",
+                "snippet": "This is a mock search result for the query: machine learning frameworks",
+                "type": "web_result",
+                "source": "mock"
+              }
+            ]
+          ],
+          "errors": [],
+          "validation_details": {
+            "valid": true,
+            "missing_params": [],
+            "extra_params": [],
+            "incorrect_values": {},
+            "details": {
+              "query": "Good match: machine learning frameworks",
+              "max_results": "Exact match"
+            }
+          }
+        },
+        "complex_query": {
+          "provider": "openrouter/gpt-oss-20b",
+          "test_case": "complex_query",
+          "description": "Complex query with multiple terms",
+          "prompt": "Find information about Rust programming language async await patterns using webSearch.",
+          "timestamp": "2025-12-05T21:26:55.211728",
+          "success": true,
+          "tool_call_detected": true,
+          "tool_name_correct": true,
+          "parameters_correct": true,
+          "tool_execution_success": true,
+          "response_time": 0.909104585647583,
+          "llm_response": "```tool_call\nname: webSearch\nparameters: {\"query\": \"Rust programming language async await patterns\"}\n```",
+          "parsed_tool_calls": [
+            {
+              "name": "webSearch",
+              "parameters": {
+                "query": "Rust programming language async await patterns"
+              },
+              "call_id": null
+            }
+          ],
+          "execution_results": [
+            [
+              {
+                "title": "Mock Result 1 for \"Rust programming language async await patterns\"",
+                "url": "https://example.com/result1",
+                "snippet": "This is a mock search result for the query: Rust programming language async await patterns",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 2 for \"Rust programming language async await patterns\"",
+                "url": "https://example.com/result2",
+                "snippet": "This is a mock search result for the query: Rust programming language async await patterns",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 3 for \"Rust programming language async await patterns\"",
+                "url": "https://example.com/result3",
+                "snippet": "This is a mock search result for the query: Rust programming language async await patterns",
+                "type": "web_result",
+                "source": "mock"
+              }
+            ]
+          ],
+          "errors": [],
+          "validation_details": {
+            "valid": true,
+            "missing_params": [],
+            "extra_params": [],
+            "incorrect_values": {},
+            "details": {
+              "query": "Good match: Rust programming language async await patterns"
+            }
+          }
+        },
+        "empty_query": {
+          "provider": "openrouter/gpt-oss-20b",
+          "test_case": "empty_query",
+          "description": "Edge case - empty query",
+          "prompt": "Use webSearch with an empty query string.",
+          "timestamp": "2025-12-05T21:26:56.120832",
+          "success": true,
+          "tool_call_detected": true,
+          "tool_name_correct": true,
+          "parameters_correct": true,
+          "tool_execution_success": true,
+          "response_time": 0.9119067192077637,
+          "llm_response": "```tool_call\nname: webSearch\nparameters: {\"query\": \"\"}\n```",
+          "parsed_tool_calls": [
+            {
+              "name": "webSearch",
+              "parameters": {
+                "query": ""
+              },
+              "call_id": null
+            }
+          ],
+          "execution_results": [
+            [
+              {
+                "title": "Error",
+                "url": "",
+                "snippet": "Query cannot be empty",
+                "type": "error",
+                "source": "validation"
+              }
+            ]
+          ],
+          "errors": [],
+          "validation_details": {
+            "valid": true,
+            "missing_params": [],
+            "extra_params": [],
+            "incorrect_values": {},
+            "details": {
+              "query": "Correctly empty"
+            }
+          }
+        },
+        "special_characters": {
+          "provider": "openrouter/gpt-oss-20b",
+          "test_case": "special_characters",
+          "description": "Edge case - special characters",
+          "prompt": "Search for \"C++ templates & STL containers (vector, map) - tutorial\" using webSearch.",
+          "timestamp": "2025-12-05T21:26:57.032739",
+          "success": true,
+          "tool_call_detected": true,
+          "tool_name_correct": true,
+          "parameters_correct": true,
+          "tool_execution_success": true,
+          "response_time": 0.9125893115997314,
+          "llm_response": "```tool_call\nname: webSearch\nparameters: {\"query\": \"C++ templates & STL containers (vector, map) - tutorial\"}\n```",
+          "parsed_tool_calls": [
+            {
+              "name": "webSearch",
+              "parameters": {
+                "query": "C++ templates & STL containers (vector, map) - tutorial"
+              },
+              "call_id": null
+            }
+          ],
+          "execution_results": [
+            [
+              {
+                "title": "Mock Result 1 for \"C++ templates & STL containers (vector, map) - tutorial\"",
+                "url": "https://example.com/result1",
+                "snippet": "This is a mock search result for the query: C++ templates & STL containers (vector, map) - tutorial",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 2 for \"C++ templates & STL containers (vector, map) - tutorial\"",
+                "url": "https://example.com/result2",
+                "snippet": "This is a mock search result for the query: C++ templates & STL containers (vector, map) - tutorial",
+                "type": "web_result",
+                "source": "mock"
+              },
+              {
+                "title": "Mock Result 3 for \"C++ templates & STL containers (vector, map) - tutorial\"",
+                "url": "https://example.com/result3",
+                "snippet": "This is a mock search result for the query: C++ templates & STL containers (vector, map) - tutorial",
+                "type": "web_result",
+                "source": "mock"
+              }
+            ]
+          ],
+          "errors": [],
+          "validation_details": {
+            "valid": true,
+            "missing_params": [],
+            "extra_params": [],
+            "incorrect_values": {},
+            "details": {
+              "query": "Good match: C++ templates & STL containers (vector, map) - tutorial"
+            }
+          }
+        }
+      },
+      "overall_metrics": {
+        "total_tests": 5,
+        "successful_tests": 5,
+        "failed_tests": 0,
+        "tool_call_detection_rate": 1.0,
+        "correct_tool_name_rate": 1.0,
+        "correct_parameters_rate": 1.0,
+        "tool_execution_success_rate": 1.0,
+        "average_response_time": 0.9098479270935058,
+        "total_time": 4.549239635467529
+      },
+      "errors": []
+    }
+  },
+  "summary": {
+    "overall_success_rate": 0.4666666666666667,
+    "total_tests_run": 15,
+    "total_successful_tests": 7,
+    "provider_rankings": [
+      {
+        "provider": "openrouter/gpt-oss-20b",
+        "success_rate": 1.0,
+        "avg_response_time": 0.9098479270935058
+      },
+      {
+        "provider": "lms/granite-4-h-tiny",
+        "success_rate": 0.4,
+        "avg_response_time": 0.7096315383911133
+      },
+      {
+        "provider": "zai/GLM-4.6",
+        "success_rate": 0.0,
+        "avg_response_time": 0.9094247817993164
+      }
+    ],
+    "best_provider": "openrouter/gpt-oss-20b",
+    "worst_provider": "zai/GLM-4.6",
+    "common_failures": {
+      "wrong_parameters": 2,
+      "no_tool_call": 6
+    },
+    "performance_metrics": {
+      "fastest_provider": "lms/granite-4-h-tiny",
+      "slowest_provider": "openrouter/gpt-oss-20b",
+      "average_response_time": 0.8429680824279785
+    }
+  }
+}
