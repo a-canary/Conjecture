@@ -21,6 +21,8 @@ class XMLOptimizedTemplateManager:
         """Initialize XML template manager"""
         self.templates = {
             "research_xml": self._create_research_template_xml(),
+            "research_enhanced_xml": self._create_enhanced_research_template_xml(),
+            "research_enhanced_xml": self._create_enhanced_research_template_xml(),
             "analysis_xml": self._create_analysis_template_xml(),
             "validation_xml": self._create_validation_template_xml(),
             "synthesis_xml": self._create_synthesis_template_xml(),
@@ -115,8 +117,193 @@ Describe your methodology in the methodology field.
             ]
         )
     
+    def _create_enhanced_research_template_xml(self) -> PromptTemplate:
+        """Create enhanced XML-optimized research template with better claim structure"""
+        return PromptTemplate(
+            id="research_enhanced_xml",
+            name="Enhanced XML Research Template",
+            description="XML-optimized template with enhanced claim structure for better LLM performance",
+            template_type=PromptTemplateType.RESEARCH,
+            template_content='''You are Conjecture, an advanced AI reasoning system that creates structured claims using XML format. Your task is to conduct thorough research analysis.
+
+<research_task>
+{{user_query}}
+</research_task>
+
+<available_context>
+{{relevant_context}}
+</available_context>
+
+ANALYSIS APPROACH:
+1. Multi-Perspective Research
+   - Examine the topic from multiple angles
+   - Consider different methodologies and viewpoints
+   - Identify areas of consensus and debate
+
+2. Evidence-Based Investigation
+   - Prioritize verifiable facts over opinions
+   - Look for empirical data and expert sources
+   - Distinguish between established knowledge and speculation
+
+3. Structured Synthesis
+   - Organize findings in logical hierarchy
+   - Identify patterns, relationships, and connections
+   - Highlight knowledge gaps and uncertainties
+
+4. Quality Control
+   - Verify information accuracy through cross-checking
+   - Assess source credibility and potential biases
+   - Note limitations and confidence levels
+
+CLAIM CREATION REQUIREMENTS:
+- Use this EXACT XML format for each claim:
+<claim type="[fact|concept|example|goal|reference|hypothesis]" confidence="[0.0-1.0]">
+<content>Your clear, specific claim content here</content>
+<support>Supporting evidence or reasoning</support>
+<uncertainty>Any limitations or confidence notes</uncertainty>
+</claim>
+
+- Claim Types:
+  * fact: Verifiable statements with high confidence (0.8-1.0)
+  * concept: Explanatory claims with moderate confidence (0.6-0.9)
+  * example: Illustrative cases with lower confidence (0.4-0.7)
+  * goal: Objectives or recommendations (0.7-0.9)
+  * reference: Citations of external sources (0.8-1.0)
+  * hypothesis: Speculative claims requiring validation (0.3-0.6)
+
+- Generate 5-10 high-quality claims covering different aspects
+- Include <support> tags with evidence or reasoning
+- Use <uncertainty> for speculative claims
+- Assign realistic confidence scores
+
+Available Context:
+{{relevant_context}}
+
+<research_summary>
+Provide a comprehensive summary of your research approach and key findings in this XML structure:
+<research_methodology>
+Your step-by-step research process
+</research_methodology>
+<key_findings>
+Main discoveries and insights
+</key_findings>
+<sources>
+Important sources consulted
+</sources>
+<confidence_assessment>
+Overall confidence in findings and limitations
+</confidence_assessment>
+</research_summary>''',
+            variables=[
+                {
+                    'name': 'user_query', 
+                    'type': 'string', 
+                    'required': True, 
+                    'description': 'User research query'
+                },
+                {
+                    'name': 'relevant_context', 
+                    'type': 'string', 
+                    'required': False, 
+                    'description': 'Relevant context information'
+                }
+            ]
+        )
+    
+    def _create_enhanced_research_template_xml(self) -> PromptTemplate:
+        """Create enhanced XML-optimized research template with better claim structure"""
+        return PromptTemplate(
+            id="research_enhanced_xml",
+            name="Enhanced XML Research Template",
+            description="XML-optimized template with enhanced claim structure for better LLM performance",
+            template_type=PromptTemplateType.RESEARCH,
+            template_content='''You are Conjecture, an advanced AI reasoning system that creates structured claims using XML format. Your task is to conduct thorough research analysis.
+
+<research_task>
+{user_query}
+</research_task>
+
+<available_context>
+{relevant_context}
+</available_context>
+
+ANALYSIS APPROACH:
+1. Multi-Perspective Research
+   - Examine topic from multiple angles
+   - Consider different methodologies and viewpoints
+   - Identify areas of consensus and debate
+
+2. Evidence-Based Investigation
+   - Prioritize verifiable facts over opinions
+   - Look for empirical data and expert sources
+   - Distinguish between established knowledge and speculation
+
+3. Structured Synthesis
+   - Organize findings in logical hierarchy
+   - Identify patterns, relationships, and connections
+   - Highlight knowledge gaps and uncertainties
+
+4. Quality Control
+   - Verify information accuracy through cross-checking
+   - Assess source credibility and potential biases
+   - Note limitations and confidence levels
+
+CLAIM CREATION REQUIREMENTS:
+- Use this EXACT XML format for each claim:
+<claim type="[fact|concept|example|goal|reference|hypothesis]" confidence="[0.0-1.0]">
+<content>Your clear, specific claim content here</content>
+<support>Supporting evidence or reasoning</support>
+<uncertainty>Any limitations or confidence notes</uncertainty>
+</claim>
+
+- Claim Types:
+  * fact: Verifiable statements with high confidence (0.8-1.0)
+  * concept: Explanatory claims with moderate confidence (0.6-0.9)
+  * example: Illustrative cases with lower confidence (0.4-0.7)
+  * goal: Objectives or recommendations (0.7-0.9)
+  * reference: Citations of external sources (0.8-1.0)
+  * hypothesis: Speculative claims requiring validation (0.3-0.6)
+
+- Generate 5-10 high-quality claims covering different aspects
+- Include <support> tags with evidence or reasoning
+- Use <uncertainty> for speculative claims
+- Assign realistic confidence scores
+
+Available Context:
+{relevant_context}
+
+<research_summary>
+Provide a comprehensive summary of your research approach and key findings in this XML structure:
+<research_methodology>
+Your step-by-step research process
+</research_methodology>
+<key_findings>
+Main discoveries and insights
+</key_findings>
+<sources>
+Important sources consulted
+</sources>
+<confidence_assessment>
+Overall confidence in findings and limitations
+</confidence_assessment>
+</research_summary>''',
+            variables=[
+                {
+                    'name': 'user_query', 
+                    'type': 'string', 
+                    'required': True, 
+                    'description': 'User research query'
+                },
+                {
+                    'name': 'relevant_context', 
+                    'type': 'string', 
+                    'required': False, 
+                    'description': 'Relevant context information'
+                }
+            ]
+        )
+    
     def _create_analysis_template_xml(self) -> PromptTemplate:
-        """Create XML-optimized analysis template"""
         return PromptTemplate(
             id="analysis_xml",
             name="XML Analysis Template",
