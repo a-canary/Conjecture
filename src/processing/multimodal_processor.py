@@ -11,6 +11,7 @@ from enum import Enum
 
 from ..core.models import Claim, ClaimType, ClaimState
 from ..utils.logging import get_logger
+from .enhanced_claim_synthesis import AdvancedClaimSynthesizer
 
 logger = get_logger(__name__)
 
@@ -310,7 +311,7 @@ class MultiModalProcessor:
         self.vision_processor = MockVisionProcessor()
         self.document_processor = MockDocumentProcessor()
         self.cross_modal_reasoner = MockCrossModalReasoner()
-        self.claim_synthesizer = MockMultiModalClaimSynthesizer()
+        self.claim_synthesizer = AdvancedClaimSynthesizer()
         
         self.processing_stats = {
             "multimodal_requests_processed": 0,
@@ -376,7 +377,7 @@ class MultiModalProcessor:
             )
             
             # Generate multi-modal claims
-            claims = await self.claim_synthesizer.create_claims(evidence)
+            claims = await self.claim_synthesizer.synthesize_claims(evidence)
             
             processing_time = (time.time() - start_time) * 1000
             
