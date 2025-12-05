@@ -1,0 +1,158 @@
+{
+  "experiment_id": "xml_optimization_comprehensive_20251205_152433",
+  "timestamp": "2025-12-05T15:24:33.777340",
+  "baseline_compliance": 0.47368421052631576,
+  "xml_compliance": 1.0,
+  "improvement": 0.5263157894736843,
+  "improvement_percentage": 111.11111111111114,
+  "target_achieved": true,
+  "statistical_significance": "\u2705 Statistically significant (t=4.47, p<0.05)",
+  "model_results": {
+    "ibm/granite-4-h-tiny": {
+      "baseline": {
+        "tests": 5,
+        "compliance_scores": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "claims_generated": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "avg_response_time": 6.06
+      },
+      "xml_optimized": {
+        "tests": 5,
+        "compliance_scores": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "claims_generated": [
+          8,
+          8,
+          14,
+          8,
+          8
+        ],
+        "avg_response_time": 5.1
+      }
+    },
+    "glm-z1-9b-0414": {
+      "baseline": {
+        "tests": 5,
+        "compliance_scores": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "claims_generated": [
+          5,
+          0,
+          0,
+          0,
+          5
+        ],
+        "avg_response_time": 19.88
+      },
+      "xml_optimized": {
+        "tests": 5,
+        "compliance_scores": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "claims_generated": [
+          28,
+          12,
+          14,
+          24,
+          8
+        ],
+        "avg_response_time": 35.26
+      }
+    },
+    "qwen3-4b-thinking-2507": {
+      "baseline": {
+        "tests": 5,
+        "compliance_scores": [
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "claims_generated": [
+          11,
+          16,
+          7,
+          0,
+          0
+        ],
+        "avg_response_time": 23.76
+      },
+      "xml_optimized": {
+        "tests": 5,
+        "compliance_scores": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "claims_generated": [
+          12,
+          30,
+          12,
+          32,
+          10
+        ],
+        "avg_response_time": 25.24
+      }
+    },
+    "zai-org/GLM-4.6": {
+      "baseline": {
+        "tests": 4,
+        "compliance_scores": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "claims_generated": [
+          5,
+          7,
+          1,
+          5
+        ],
+        "avg_response_time": 102.25
+      },
+      "xml_optimized": {
+        "tests": 3,
+        "compliance_scores": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "claims_generated": [
+          10,
+          14,
+          12
+        ],
+        "avg_response_time": 74.67
+      }
+    }
+  }
+}

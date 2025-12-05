@@ -1,0 +1,1565 @@
+[
+  {
+    "id": "evidence_eval_001",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "evidence_eval_002",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "scenario": "A company claims their new battery lasts 50% longer than competitors",
+    "evidence": [
+      {
+        "source": "Independent Lab Test",
+        "finding": "45% longer battery life",
+        "confidence": 0.85
+      },
+      {
+        "source": "User Reviews",
+        "finding": "30% longer battery life reported",
+        "confidence": 0.6
+      },
+      {
+        "source": "Competitor Analysis",
+        "finding": "Only 15% improvement",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Assess the battery claim using conflicting evidence."
+  },
+  {
+    "id": "evidence_eval_003",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "evidence_eval_004",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "scenario": "A company claims their new battery lasts 50% longer than competitors",
+    "evidence": [
+      {
+        "source": "Independent Lab Test",
+        "finding": "45% longer battery life",
+        "confidence": 0.85
+      },
+      {
+        "source": "User Reviews",
+        "finding": "30% longer battery life reported",
+        "confidence": 0.6
+      },
+      {
+        "source": "Competitor Analysis",
+        "finding": "Only 15% improvement",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Assess the battery claim using conflicting evidence."
+  },
+  {
+    "id": "evidence_eval_005",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "evidence_eval_006",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "scenario": "A company claims their new battery lasts 50% longer than competitors",
+    "evidence": [
+      {
+        "source": "Independent Lab Test",
+        "finding": "45% longer battery life",
+        "confidence": 0.85
+      },
+      {
+        "source": "User Reviews",
+        "finding": "30% longer battery life reported",
+        "confidence": 0.6
+      },
+      {
+        "source": "Competitor Analysis",
+        "finding": "Only 15% improvement",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Assess the battery claim using conflicting evidence."
+  },
+  {
+    "id": "evidence_eval_007",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "evidence_eval_008",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "scenario": "A company claims their new battery lasts 50% longer than competitors",
+    "evidence": [
+      {
+        "source": "Independent Lab Test",
+        "finding": "45% longer battery life",
+        "confidence": 0.85
+      },
+      {
+        "source": "User Reviews",
+        "finding": "30% longer battery life reported",
+        "confidence": 0.6
+      },
+      {
+        "source": "Competitor Analysis",
+        "finding": "Only 15% improvement",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Assess the battery claim using conflicting evidence."
+  },
+  {
+    "id": "evidence_eval_009",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "evidence_eval_010",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "scenario": "A company claims their new battery lasts 50% longer than competitors",
+    "evidence": [
+      {
+        "source": "Independent Lab Test",
+        "finding": "45% longer battery life",
+        "confidence": 0.85
+      },
+      {
+        "source": "User Reviews",
+        "finding": "30% longer battery life reported",
+        "confidence": 0.6
+      },
+      {
+        "source": "Competitor Analysis",
+        "finding": "Only 15% improvement",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Assess the battery claim using conflicting evidence."
+  },
+  {
+    "id": "evidence_eval_011",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "evidence_eval_012",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "scenario": "A company claims their new battery lasts 50% longer than competitors",
+    "evidence": [
+      {
+        "source": "Independent Lab Test",
+        "finding": "45% longer battery life",
+        "confidence": 0.85
+      },
+      {
+        "source": "User Reviews",
+        "finding": "30% longer battery life reported",
+        "confidence": 0.6
+      },
+      {
+        "source": "Competitor Analysis",
+        "finding": "Only 15% improvement",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Assess the battery claim using conflicting evidence."
+  },
+  {
+    "id": "evidence_eval_013",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "evidence_eval_014",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "scenario": "A company claims their new battery lasts 50% longer than competitors",
+    "evidence": [
+      {
+        "source": "Independent Lab Test",
+        "finding": "45% longer battery life",
+        "confidence": 0.85
+      },
+      {
+        "source": "User Reviews",
+        "finding": "30% longer battery life reported",
+        "confidence": 0.6
+      },
+      {
+        "source": "Competitor Analysis",
+        "finding": "Only 15% improvement",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Assess the battery claim using conflicting evidence."
+  },
+  {
+    "id": "evidence_eval_015",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "evidence_eval_016",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "scenario": "A company claims their new battery lasts 50% longer than competitors",
+    "evidence": [
+      {
+        "source": "Independent Lab Test",
+        "finding": "45% longer battery life",
+        "confidence": 0.85
+      },
+      {
+        "source": "User Reviews",
+        "finding": "30% longer battery life reported",
+        "confidence": 0.6
+      },
+      {
+        "source": "Competitor Analysis",
+        "finding": "Only 15% improvement",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Assess the battery claim using conflicting evidence."
+  },
+  {
+    "id": "evidence_eval_017",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "evidence_eval_018",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "scenario": "A company claims their new battery lasts 50% longer than competitors",
+    "evidence": [
+      {
+        "source": "Independent Lab Test",
+        "finding": "45% longer battery life",
+        "confidence": 0.85
+      },
+      {
+        "source": "User Reviews",
+        "finding": "30% longer battery life reported",
+        "confidence": 0.6
+      },
+      {
+        "source": "Competitor Analysis",
+        "finding": "Only 15% improvement",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Assess the battery claim using conflicting evidence."
+  },
+  {
+    "id": "evidence_eval_019",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "evidence_eval_020",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "scenario": "A company claims their new battery lasts 50% longer than competitors",
+    "evidence": [
+      {
+        "source": "Independent Lab Test",
+        "finding": "45% longer battery life",
+        "confidence": 0.85
+      },
+      {
+        "source": "User Reviews",
+        "finding": "30% longer battery life reported",
+        "confidence": 0.6
+      },
+      {
+        "source": "Competitor Analysis",
+        "finding": "Only 15% improvement",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Assess the battery claim using conflicting evidence."
+  },
+  {
+    "id": "evidence_eval_021",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "evidence_eval_022",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "scenario": "A company claims their new battery lasts 50% longer than competitors",
+    "evidence": [
+      {
+        "source": "Independent Lab Test",
+        "finding": "45% longer battery life",
+        "confidence": 0.85
+      },
+      {
+        "source": "User Reviews",
+        "finding": "30% longer battery life reported",
+        "confidence": 0.6
+      },
+      {
+        "source": "Competitor Analysis",
+        "finding": "Only 15% improvement",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Assess the battery claim using conflicting evidence."
+  },
+  {
+    "id": "evidence_eval_023",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "evidence_eval_024",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "scenario": "A company claims their new battery lasts 50% longer than competitors",
+    "evidence": [
+      {
+        "source": "Independent Lab Test",
+        "finding": "45% longer battery life",
+        "confidence": 0.85
+      },
+      {
+        "source": "User Reviews",
+        "finding": "30% longer battery life reported",
+        "confidence": 0.6
+      },
+      {
+        "source": "Competitor Analysis",
+        "finding": "Only 15% improvement",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Assess the battery claim using conflicting evidence."
+  },
+  {
+    "id": "evidence_eval_025",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "scenario": "A new study claims that meditation reduces stress by 40%",
+    "evidence": [
+      {
+        "source": "Study A",
+        "finding": "Meditation reduces cortisol levels by 25%",
+        "confidence": 0.8
+      },
+      {
+        "source": "Study B",
+        "finding": "No significant stress reduction from meditation",
+        "confidence": 0.6
+      },
+      {
+        "source": "Study C",
+        "finding": "Meditation reduces self-reported stress by 35%",
+        "confidence": 0.7
+      }
+    ],
+    "task": "Evaluate claim about meditation and stress reduction using provided evidence."
+  },
+  {
+    "id": "argument_analysis_001",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "argument_analysis_002",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "argument": "Remote work is more productive than office work for most knowledge workers",
+    "premises": [
+      "Fewer office distractions increase focus",
+      "Flexible schedules improve work-life balance",
+      "Reduced commute time increases productivity"
+    ],
+    "counterarguments": [
+      "Spontaneous collaboration decreases",
+      "Team cohesion may suffer",
+      "Home environment distractions increase"
+    ],
+    "task": "Evaluate the remote work productivity argument."
+  },
+  {
+    "id": "argument_analysis_003",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "argument_analysis_004",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "argument": "Remote work is more productive than office work for most knowledge workers",
+    "premises": [
+      "Fewer office distractions increase focus",
+      "Flexible schedules improve work-life balance",
+      "Reduced commute time increases productivity"
+    ],
+    "counterarguments": [
+      "Spontaneous collaboration decreases",
+      "Team cohesion may suffer",
+      "Home environment distractions increase"
+    ],
+    "task": "Evaluate the remote work productivity argument."
+  },
+  {
+    "id": "argument_analysis_005",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "argument_analysis_006",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "argument": "Remote work is more productive than office work for most knowledge workers",
+    "premises": [
+      "Fewer office distractions increase focus",
+      "Flexible schedules improve work-life balance",
+      "Reduced commute time increases productivity"
+    ],
+    "counterarguments": [
+      "Spontaneous collaboration decreases",
+      "Team cohesion may suffer",
+      "Home environment distractions increase"
+    ],
+    "task": "Evaluate the remote work productivity argument."
+  },
+  {
+    "id": "argument_analysis_007",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "argument_analysis_008",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "argument": "Remote work is more productive than office work for most knowledge workers",
+    "premises": [
+      "Fewer office distractions increase focus",
+      "Flexible schedules improve work-life balance",
+      "Reduced commute time increases productivity"
+    ],
+    "counterarguments": [
+      "Spontaneous collaboration decreases",
+      "Team cohesion may suffer",
+      "Home environment distractions increase"
+    ],
+    "task": "Evaluate the remote work productivity argument."
+  },
+  {
+    "id": "argument_analysis_009",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "argument_analysis_010",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "argument": "Remote work is more productive than office work for most knowledge workers",
+    "premises": [
+      "Fewer office distractions increase focus",
+      "Flexible schedules improve work-life balance",
+      "Reduced commute time increases productivity"
+    ],
+    "counterarguments": [
+      "Spontaneous collaboration decreases",
+      "Team cohesion may suffer",
+      "Home environment distractions increase"
+    ],
+    "task": "Evaluate the remote work productivity argument."
+  },
+  {
+    "id": "argument_analysis_011",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "argument_analysis_012",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "argument": "Remote work is more productive than office work for most knowledge workers",
+    "premises": [
+      "Fewer office distractions increase focus",
+      "Flexible schedules improve work-life balance",
+      "Reduced commute time increases productivity"
+    ],
+    "counterarguments": [
+      "Spontaneous collaboration decreases",
+      "Team cohesion may suffer",
+      "Home environment distractions increase"
+    ],
+    "task": "Evaluate the remote work productivity argument."
+  },
+  {
+    "id": "argument_analysis_013",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "argument_analysis_014",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "argument": "Remote work is more productive than office work for most knowledge workers",
+    "premises": [
+      "Fewer office distractions increase focus",
+      "Flexible schedules improve work-life balance",
+      "Reduced commute time increases productivity"
+    ],
+    "counterarguments": [
+      "Spontaneous collaboration decreases",
+      "Team cohesion may suffer",
+      "Home environment distractions increase"
+    ],
+    "task": "Evaluate the remote work productivity argument."
+  },
+  {
+    "id": "argument_analysis_015",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "argument_analysis_016",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "argument": "Remote work is more productive than office work for most knowledge workers",
+    "premises": [
+      "Fewer office distractions increase focus",
+      "Flexible schedules improve work-life balance",
+      "Reduced commute time increases productivity"
+    ],
+    "counterarguments": [
+      "Spontaneous collaboration decreases",
+      "Team cohesion may suffer",
+      "Home environment distractions increase"
+    ],
+    "task": "Evaluate the remote work productivity argument."
+  },
+  {
+    "id": "argument_analysis_017",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "argument_analysis_018",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "argument": "Remote work is more productive than office work for most knowledge workers",
+    "premises": [
+      "Fewer office distractions increase focus",
+      "Flexible schedules improve work-life balance",
+      "Reduced commute time increases productivity"
+    ],
+    "counterarguments": [
+      "Spontaneous collaboration decreases",
+      "Team cohesion may suffer",
+      "Home environment distractions increase"
+    ],
+    "task": "Evaluate the remote work productivity argument."
+  },
+  {
+    "id": "argument_analysis_019",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "argument_analysis_020",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "argument": "Remote work is more productive than office work for most knowledge workers",
+    "premises": [
+      "Fewer office distractions increase focus",
+      "Flexible schedules improve work-life balance",
+      "Reduced commute time increases productivity"
+    ],
+    "counterarguments": [
+      "Spontaneous collaboration decreases",
+      "Team cohesion may suffer",
+      "Home environment distractions increase"
+    ],
+    "task": "Evaluate the remote work productivity argument."
+  },
+  {
+    "id": "argument_analysis_021",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "argument_analysis_022",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "argument": "Remote work is more productive than office work for most knowledge workers",
+    "premises": [
+      "Fewer office distractions increase focus",
+      "Flexible schedules improve work-life balance",
+      "Reduced commute time increases productivity"
+    ],
+    "counterarguments": [
+      "Spontaneous collaboration decreases",
+      "Team cohesion may suffer",
+      "Home environment distractions increase"
+    ],
+    "task": "Evaluate the remote work productivity argument."
+  },
+  {
+    "id": "argument_analysis_023",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "argument_analysis_024",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "argument": "Remote work is more productive than office work for most knowledge workers",
+    "premises": [
+      "Fewer office distractions increase focus",
+      "Flexible schedules improve work-life balance",
+      "Reduced commute time increases productivity"
+    ],
+    "counterarguments": [
+      "Spontaneous collaboration decreases",
+      "Team cohesion may suffer",
+      "Home environment distractions increase"
+    ],
+    "task": "Evaluate the remote work productivity argument."
+  },
+  {
+    "id": "argument_analysis_025",
+    "category": "claims_based_reasoning",
+    "difficulty": "medium",
+    "argument": "Universal Basic Income (UBI) will eliminate poverty and boost economic growth",
+    "premises": [
+      "UBI provides financial security to all citizens",
+      "Financial security reduces stress and improves health outcomes",
+      "People with basic needs met are more productive"
+    ],
+    "counterarguments": [
+      "UBI is too expensive to implement",
+      "It may reduce work incentives",
+      "Inflation could offset the benefits"
+    ],
+    "task": "Analyze the UBI argument using claims-based reasoning."
+  },
+  {
+    "id": "scientific_claim_001",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  },
+  {
+    "id": "scientific_claim_002",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Intermittent fasting extends lifespan by reducing cellular damage",
+    "research_data": {
+      "study_design": "Animal study with human observational data",
+      "duration": "2 years (animals), 5 years (human observation)",
+      "outcomes": {
+        "animals": {
+          "lifespan_extension": 15,
+          "p_value": 0.001
+        },
+        "humans": {
+          "biomarker_improvement": 20,
+          "p_value": 0.08
+        }
+      }
+    },
+    "task": "Assess the intermittent fasting lifespan claim."
+  },
+  {
+    "id": "scientific_claim_003",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  },
+  {
+    "id": "scientific_claim_004",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Intermittent fasting extends lifespan by reducing cellular damage",
+    "research_data": {
+      "study_design": "Animal study with human observational data",
+      "duration": "2 years (animals), 5 years (human observation)",
+      "outcomes": {
+        "animals": {
+          "lifespan_extension": 15,
+          "p_value": 0.001
+        },
+        "humans": {
+          "biomarker_improvement": 20,
+          "p_value": 0.08
+        }
+      }
+    },
+    "task": "Assess the intermittent fasting lifespan claim."
+  },
+  {
+    "id": "scientific_claim_005",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  },
+  {
+    "id": "scientific_claim_006",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Intermittent fasting extends lifespan by reducing cellular damage",
+    "research_data": {
+      "study_design": "Animal study with human observational data",
+      "duration": "2 years (animals), 5 years (human observation)",
+      "outcomes": {
+        "animals": {
+          "lifespan_extension": 15,
+          "p_value": 0.001
+        },
+        "humans": {
+          "biomarker_improvement": 20,
+          "p_value": 0.08
+        }
+      }
+    },
+    "task": "Assess the intermittent fasting lifespan claim."
+  },
+  {
+    "id": "scientific_claim_007",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  },
+  {
+    "id": "scientific_claim_008",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Intermittent fasting extends lifespan by reducing cellular damage",
+    "research_data": {
+      "study_design": "Animal study with human observational data",
+      "duration": "2 years (animals), 5 years (human observation)",
+      "outcomes": {
+        "animals": {
+          "lifespan_extension": 15,
+          "p_value": 0.001
+        },
+        "humans": {
+          "biomarker_improvement": 20,
+          "p_value": 0.08
+        }
+      }
+    },
+    "task": "Assess the intermittent fasting lifespan claim."
+  },
+  {
+    "id": "scientific_claim_009",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  },
+  {
+    "id": "scientific_claim_010",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Intermittent fasting extends lifespan by reducing cellular damage",
+    "research_data": {
+      "study_design": "Animal study with human observational data",
+      "duration": "2 years (animals), 5 years (human observation)",
+      "outcomes": {
+        "animals": {
+          "lifespan_extension": 15,
+          "p_value": 0.001
+        },
+        "humans": {
+          "biomarker_improvement": 20,
+          "p_value": 0.08
+        }
+      }
+    },
+    "task": "Assess the intermittent fasting lifespan claim."
+  },
+  {
+    "id": "scientific_claim_011",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  },
+  {
+    "id": "scientific_claim_012",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Intermittent fasting extends lifespan by reducing cellular damage",
+    "research_data": {
+      "study_design": "Animal study with human observational data",
+      "duration": "2 years (animals), 5 years (human observation)",
+      "outcomes": {
+        "animals": {
+          "lifespan_extension": 15,
+          "p_value": 0.001
+        },
+        "humans": {
+          "biomarker_improvement": 20,
+          "p_value": 0.08
+        }
+      }
+    },
+    "task": "Assess the intermittent fasting lifespan claim."
+  },
+  {
+    "id": "scientific_claim_013",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  },
+  {
+    "id": "scientific_claim_014",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Intermittent fasting extends lifespan by reducing cellular damage",
+    "research_data": {
+      "study_design": "Animal study with human observational data",
+      "duration": "2 years (animals), 5 years (human observation)",
+      "outcomes": {
+        "animals": {
+          "lifespan_extension": 15,
+          "p_value": 0.001
+        },
+        "humans": {
+          "biomarker_improvement": 20,
+          "p_value": 0.08
+        }
+      }
+    },
+    "task": "Assess the intermittent fasting lifespan claim."
+  },
+  {
+    "id": "scientific_claim_015",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  },
+  {
+    "id": "scientific_claim_016",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Intermittent fasting extends lifespan by reducing cellular damage",
+    "research_data": {
+      "study_design": "Animal study with human observational data",
+      "duration": "2 years (animals), 5 years (human observation)",
+      "outcomes": {
+        "animals": {
+          "lifespan_extension": 15,
+          "p_value": 0.001
+        },
+        "humans": {
+          "biomarker_improvement": 20,
+          "p_value": 0.08
+        }
+      }
+    },
+    "task": "Assess the intermittent fasting lifespan claim."
+  },
+  {
+    "id": "scientific_claim_017",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  },
+  {
+    "id": "scientific_claim_018",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Intermittent fasting extends lifespan by reducing cellular damage",
+    "research_data": {
+      "study_design": "Animal study with human observational data",
+      "duration": "2 years (animals), 5 years (human observation)",
+      "outcomes": {
+        "animals": {
+          "lifespan_extension": 15,
+          "p_value": 0.001
+        },
+        "humans": {
+          "biomarker_improvement": 20,
+          "p_value": 0.08
+        }
+      }
+    },
+    "task": "Assess the intermittent fasting lifespan claim."
+  },
+  {
+    "id": "scientific_claim_019",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  },
+  {
+    "id": "scientific_claim_020",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Intermittent fasting extends lifespan by reducing cellular damage",
+    "research_data": {
+      "study_design": "Animal study with human observational data",
+      "duration": "2 years (animals), 5 years (human observation)",
+      "outcomes": {
+        "animals": {
+          "lifespan_extension": 15,
+          "p_value": 0.001
+        },
+        "humans": {
+          "biomarker_improvement": 20,
+          "p_value": 0.08
+        }
+      }
+    },
+    "task": "Assess the intermittent fasting lifespan claim."
+  },
+  {
+    "id": "scientific_claim_021",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  },
+  {
+    "id": "scientific_claim_022",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Intermittent fasting extends lifespan by reducing cellular damage",
+    "research_data": {
+      "study_design": "Animal study with human observational data",
+      "duration": "2 years (animals), 5 years (human observation)",
+      "outcomes": {
+        "animals": {
+          "lifespan_extension": 15,
+          "p_value": 0.001
+        },
+        "humans": {
+          "biomarker_improvement": 20,
+          "p_value": 0.08
+        }
+      }
+    },
+    "task": "Assess the intermittent fasting lifespan claim."
+  },
+  {
+    "id": "scientific_claim_023",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  },
+  {
+    "id": "scientific_claim_024",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Intermittent fasting extends lifespan by reducing cellular damage",
+    "research_data": {
+      "study_design": "Animal study with human observational data",
+      "duration": "2 years (animals), 5 years (human observation)",
+      "outcomes": {
+        "animals": {
+          "lifespan_extension": 15,
+          "p_value": 0.001
+        },
+        "humans": {
+          "biomarker_improvement": 20,
+          "p_value": 0.08
+        }
+      }
+    },
+    "task": "Assess the intermittent fasting lifespan claim."
+  },
+  {
+    "id": "scientific_claim_025",
+    "category": "claims_based_reasoning",
+    "difficulty": "hard",
+    "claim": "Regular consumption of blueberries improves cognitive function in adults",
+    "research_data": {
+      "study_design": "Randomized controlled trial",
+      "duration": "12 weeks",
+      "sample_size": 200,
+      "outcomes": {
+        "treatment_group": {
+          "improvement": 15,
+          "p_value": 0.02
+        },
+        "control_group": {
+          "improvement": 5,
+          "p_value": 0.15
+        }
+      }
+    },
+    "task": "Evaluate scientific claim about blueberries and cognitive function."
+  }
+]

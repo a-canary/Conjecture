@@ -1,0 +1,34 @@
+[
+  {
+    "model": "openrouter/gpt-oss-20b:openai/gpt-oss-20b",
+    "harness": "router",
+    "test_timestamp": "2025-12-05T06:24:47.184654",
+    "total_tests": 2,
+    "successful_tests": 2,
+    "success_rate": 1.0,
+    "average_response_time": 1.9918444156646729,
+    "total_tokens_used": 302,
+    "test_results": [
+      {
+        "success": true,
+        "response_time": 3.26288104057312,
+        "model": "openrouter/gpt-oss-20b:openai/gpt-oss-20b",
+        "tokens_used": 119,
+        "response_length": 11,
+        "provider": "openrouter/gpt-oss-20b",
+        "test_timestamp": "2025-12-05T06:24:46.463846"
+      },
+      {
+        "success": true,
+        "response_time": 0.7208077907562256,
+        "model": "openrouter/gpt-oss-20b:openai/gpt-oss-20b",
+        "reasoning_detected": true,
+        "correct_answer": true,
+        "tokens_used": 183,
+        "test_type": "reasoning",
+        "test_timestamp": "2025-12-05T06:24:47.184654"
+      }
+    ],
+    "status": "PASS"
+  }
+]

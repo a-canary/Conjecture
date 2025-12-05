@@ -1,0 +1,212 @@
+{
+  "experiment_metadata": {
+    "experiment_id": "end_to_end_20251204_182000",
+    "hypothesis": "Full pipeline shows 25%+ improvement over baseline for tiny models on complex tasks",
+    "start_time": "2025-12-04T18:20:00.573662",
+    "end_time": null,
+    "config": {
+      "sample_size": 10,
+      "target_improvement": 0.25,
+      "alpha_level": 0.05,
+      "tiny_model": "ibm/granite-4-h-tiny",
+      "judge_model": "zai-org/GLM-4.6",
+      "output_dir": "experiments/results"
+    }
+  },
+  "test_cases_summary": {
+    "total_test_cases": 10,
+    "successful_baseline": 10,
+    "successful_full_pipeline": 10
+  },
+  "performance_metrics": {
+    "baseline_results": [
+      {
+        "test_case_id": "argument_evaluation_001",
+        "approach": "baseline",
+        "response": "Direct answer to: Evaluate the overall case for remote work based on the mixed evidence. Provide a balanced recommenda... [Baseline approach - direct processing]",
+        "execution_time": 0.5131950378417969,
+        "token_usage": 24,
+        "evaluation_score": 0.49,
+        "error_message": null
+      },
+      {
+        "test_case_id": "causal_reasoning_001",
+        "approach": "baseline",
+        "response": "Direct answer to: In a city, ice cream sales and drowning incidents both increase during summer months. Does this mean... [Baseline approach - direct processing]",
+        "execution_time": 0.5127239227294922,
+        "token_usage": 25,
+        "evaluation_score": 0.49,
+        "error_message": null
+      },
+      {
+        "test_case_id": "complex_planning_001",
+        "approach": "baseline",
+        "response": "Direct answer to: Design a comprehensive research study to evaluate the effectiveness of AI-powered tutoring systems i... [Baseline approach - direct processing]",
+        "execution_time": 0.5100700855255127,
+        "token_usage": 22,
+        "evaluation_score": 0.5,
+        "error_message": null
+      },
+      {
+        "test_case_id": "complex_reasoning_001",
+        "approach": "baseline",
+        "response": "Direct answer to: In a small town, there are five houses in a row, each painted a different color: red, blue, green, y... [Baseline approach - direct processing]",
+        "execution_time": 0.5128235816955566,
+        "token_usage": 28,
+        "evaluation_score": 0.49,
+        "error_message": null
+      },
+      {
+        "test_case_id": "context_qa_20251204_181540",
+        "approach": "baseline",
+        "response": "Direct answer to: Based on the text, what were the four main areas of achievement during the Renaissance, and how did ... [Baseline approach - direct processing]",
+        "execution_time": 0.5103223323822021,
+        "token_usage": 27,
+        "evaluation_score": 0.51,
+        "error_message": null
+      },
+      {
+        "test_case_id": "context_qa_20251204_181550",
+        "approach": "baseline",
+        "response": "Direct answer to: Based on the text, what were the four main areas of achievement during the Renaissance, and how did ... [Baseline approach - direct processing]",
+        "execution_time": 0.5106441974639893,
+        "token_usage": 27,
+        "evaluation_score": 0.49,
+        "error_message": null
+      },
+      {
+        "test_case_id": "context_qa_20251204_181610",
+        "approach": "baseline",
+        "response": "Direct answer to: Based on the text, what were the four main areas of achievement during the Renaissance, and how did ... [Baseline approach - direct processing]",
+        "execution_time": 0.5129697322845459,
+        "token_usage": 27,
+        "evaluation_score": 0.51,
+        "error_message": null
+      },
+      {
+        "test_case_id": "context_science_20251204_181540",
+        "approach": "baseline",
+        "response": "Direct answer to: Based on the text, what are the primary greenhouse gases contributing to climate change, and what ar... [Baseline approach - direct processing]",
+        "execution_time": 0.5101914405822754,
+        "token_usage": 25,
+        "evaluation_score": 0.48000000000000004,
+        "error_message": null
+      },
+      {
+        "test_case_id": "context_science_20251204_181550",
+        "approach": "baseline",
+        "response": "Direct answer to: Based on the text, what are the primary greenhouse gases contributing to climate change, and what ar... [Baseline approach - direct processing]",
+        "execution_time": 0.5102794170379639,
+        "token_usage": 25,
+        "evaluation_score": 0.46,
+        "error_message": null
+      },
+      {
+        "test_case_id": "context_science_20251204_181610",
+        "approach": "baseline",
+        "response": "Direct answer to: Based on the text, what are the primary greenhouse gases contributing to climate change, and what ar... [Baseline approach - direct processing]",
+        "execution_time": 0.5116095542907715,
+        "token_usage": 25,
+        "evaluation_score": 0.44,
+        "error_message": null
+      }
+    ],
+    "full_pipeline_results": [
+      {
+        "test_case_id": "argument_evaluation_001",
+        "approach": "full_pipeline",
+        "response": "Comprehensive analysis of: Evaluate the overall case for remote work based on the mixed evidence. Provide a balanced recommenda...\n\n[Full Pipeline Processing]\n1. Task Decomposition: Problem broken into manageable components\n2. Context Collection: Relevant information gathered and organized\n3. Claims Evaluation: Multiple claims generated and evaluated\n4. Final Synthesis: Comprehensive answer with supporting evidence\n\n[Answer] This represents the full Conjecture pipeline approach with all optimizations.",
+        "execution_time": 1.2415680885314941,
+        "token_usage": 65,
+        "evaluation_score": 0.64,
+        "error_message": null
+      },
+      {
+        "test_case_id": "causal_reasoning_001",
+        "approach": "full_pipeline",
+        "response": "Comprehensive analysis of: In a city, ice cream sales and drowning incidents both increase during summer months. Does this mean...\n\n[Full Pipeline Processing]\n1. Task Decomposition: Problem broken into manageable components\n2. Context Collection: Relevant information gathered and organized\n3. Claims Evaluation: Multiple claims generated and evaluated\n4. Final Synthesis: Comprehensive answer with supporting evidence\n\n[Answer] This represents the full Conjecture pipeline approach with all optimizations.",
+        "execution_time": 1.232240915298462,
+        "token_usage": 66,
+        "evaluation_score": 0.79,
+        "error_message": null
+      },
+      {
+        "test_case_id": "complex_planning_001",
+        "approach": "full_pipeline",
+        "response": "Comprehensive analysis of: Design a comprehensive research study to evaluate the effectiveness of AI-powered tutoring systems i...\n\n[Full Pipeline Processing]\n1. Task Decomposition: Problem broken into manageable components\n2. Context Collection: Relevant information gathered and organized\n3. Claims Evaluation: Multiple claims generated and evaluated\n4. Final Synthesis: Comprehensive answer with supporting evidence\n\n[Answer] This represents the full Conjecture pipeline approach with all optimizations.",
+        "execution_time": 1.2385435104370117,
+        "token_usage": 63,
+        "evaluation_score": 0.75,
+        "error_message": null
+      },
+      {
+        "test_case_id": "complex_reasoning_001",
+        "approach": "full_pipeline",
+        "response": "Comprehensive analysis of: In a small town, there are five houses in a row, each painted a different color: red, blue, green, y...\n\n[Full Pipeline Processing]\n1. Task Decomposition: Problem broken into manageable components\n2. Context Collection: Relevant information gathered and organized\n3. Claims Evaluation: Multiple claims generated and evaluated\n4. Final Synthesis: Comprehensive answer with supporting evidence\n\n[Answer] This represents the full Conjecture pipeline approach with all optimizations.",
+        "execution_time": 1.2403838634490967,
+        "token_usage": 69,
+        "evaluation_score": 0.79,
+        "error_message": null
+      },
+      {
+        "test_case_id": "context_qa_20251204_181540",
+        "approach": "full_pipeline",
+        "response": "Comprehensive analysis of: Based on the text, what were the four main areas of achievement during the Renaissance, and how did ...\n\n[Full Pipeline Processing]\n1. Task Decomposition: Problem broken into manageable components\n2. Context Collection: Relevant information gathered and organized\n3. Claims Evaluation: Multiple claims generated and evaluated\n4. Final Synthesis: Comprehensive answer with supporting evidence\n\n[Answer] This represents the full Conjecture pipeline approach with all optimizations.",
+        "execution_time": 1.2404351234436035,
+        "token_usage": 68,
+        "evaluation_score": 0.6599999999999999,
+        "error_message": null
+      },
+      {
+        "test_case_id": "context_qa_20251204_181550",
+        "approach": "full_pipeline",
+        "response": "Comprehensive analysis of: Based on the text, what were the four main areas of achievement during the Renaissance, and how did ...\n\n[Full Pipeline Processing]\n1. Task Decomposition: Problem broken into manageable components\n2. Context Collection: Relevant information gathered and organized\n3. Claims Evaluation: Multiple claims generated and evaluated\n4. Final Synthesis: Comprehensive answer with supporting evidence\n\n[Answer] This represents the full Conjecture pipeline approach with all optimizations.",
+        "execution_time": 1.2401878833770752,
+        "token_usage": 68,
+        "evaluation_score": 0.79,
+        "error_message": null
+      },
+      {
+        "test_case_id": "context_qa_20251204_181610",
+        "approach": "full_pipeline",
+        "response": "Comprehensive analysis of: Based on the text, what were the four main areas of achievement during the Renaissance, and how did ...\n\n[Full Pipeline Processing]\n1. Task Decomposition: Problem broken into manageable components\n2. Context Collection: Relevant information gathered and organized\n3. Claims Evaluation: Multiple claims generated and evaluated\n4. Final Synthesis: Comprehensive answer with supporting evidence\n\n[Answer] This represents the full Conjecture pipeline approach with all optimizations.",
+        "execution_time": 1.2406456470489502,
+        "token_usage": 68,
+        "evaluation_score": 0.8099999999999999,
+        "error_message": null
+      },
+      {
+        "test_case_id": "context_science_20251204_181540",
+        "approach": "full_pipeline",
+        "response": "Comprehensive analysis of: Based on the text, what are the primary greenhouse gases contributing to climate change, and what ar...\n\n[Full Pipeline Processing]\n1. Task Decomposition: Problem broken into manageable components\n2. Context Collection: Relevant information gathered and organized\n3. Claims Evaluation: Multiple claims generated and evaluated\n4. Final Synthesis: Comprehensive answer with supporting evidence\n\n[Answer] This represents the full Conjecture pipeline approach with all optimizations.",
+        "execution_time": 1.23539400100708,
+        "token_usage": 66,
+        "evaluation_score": 0.83,
+        "error_message": null
+      },
+      {
+        "test_case_id": "context_science_20251204_181550",
+        "approach": "full_pipeline",
+        "response": "Comprehensive analysis of: Based on the text, what are the primary greenhouse gases contributing to climate change, and what ar...\n\n[Full Pipeline Processing]\n1. Task Decomposition: Problem broken into manageable components\n2. Context Collection: Relevant information gathered and organized\n3. Claims Evaluation: Multiple claims generated and evaluated\n4. Final Synthesis: Comprehensive answer with supporting evidence\n\n[Answer] This represents the full Conjecture pipeline approach with all optimizations.",
+        "execution_time": 1.2364351749420166,
+        "token_usage": 66,
+        "evaluation_score": 0.6599999999999999,
+        "error_message": null
+      },
+      {
+        "test_case_id": "context_science_20251204_181610",
+        "approach": "full_pipeline",
+        "response": "Comprehensive analysis of: Based on the text, what are the primary greenhouse gases contributing to climate change, and what ar...\n\n[Full Pipeline Processing]\n1. Task Decomposition: Problem broken into manageable components\n2. Context Collection: Relevant information gathered and organized\n3. Claims Evaluation: Multiple claims generated and evaluated\n4. Final Synthesis: Comprehensive answer with supporting evidence\n\n[Answer] This represents the full Conjecture pipeline approach with all optimizations.",
+        "execution_time": 1.240565538406372,
+        "token_usage": 66,
+        "evaluation_score": 0.69,
+        "error_message": null
+      }
+    ]
+  },
+  "conclusion": {
+    "improvement_percentage": 0.5246913580246914,
+    "target_improvement": 0.25,
+    "hypothesis_validated": true
+  }
+}

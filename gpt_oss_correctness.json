@@ -1,0 +1,50 @@
+[
+  {
+    "model": "openrouter/gpt-oss-20b:openai/gpt-oss-20b",
+    "harness": "router",
+    "test_timestamp": "2025-12-05T06:35:37.534651",
+    "total_tests": 3,
+    "correct_tests": 2,
+    "incorrect_tests": 1,
+    "correctness_rate": 0.6666666666666666,
+    "success_rate": 1.0,
+    "average_response_time": 2.3952653408050537,
+    "total_tokens_used": 435,
+    "test_results": [
+      {
+        "success": true,
+        "response_time": 1.585378885269165,
+        "model": "openrouter/gpt-oss-20b:openai/gpt-oss-20b",
+        "tokens_used": 115,
+        "response_content": "42",
+        "is_correct": true,
+        "test_type": "math_basic",
+        "expected_answer": "42",
+        "test_timestamp": "2025-12-05T06:35:31.934234"
+      },
+      {
+        "success": true,
+        "response_time": 2.9475975036621094,
+        "model": "openrouter/gpt-oss-20b:openai/gpt-oss-20b",
+        "tokens_used": 195,
+        "response_content": "",
+        "is_correct": false,
+        "test_type": "logical_reasoning",
+        "expected_answer": "Yes with explanation about subset logic",
+        "test_timestamp": "2025-12-05T06:35:34.881832"
+      },
+      {
+        "success": true,
+        "response_time": 2.6528196334838867,
+        "model": "openrouter/gpt-oss-20b:openai/gpt-oss-20b",
+        "tokens_used": 125,
+        "response_content": "Paris",
+        "is_correct": true,
+        "test_type": "factual_knowledge",
+        "expected_answer": "Paris",
+        "test_timestamp": "2025-12-05T06:35:37.534651"
+      }
+    ],
+    "status": "FAIL"
+  }
+]

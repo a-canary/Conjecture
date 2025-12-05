@@ -1,0 +1,72 @@
+[
+  {
+    "id": "task_decomp_001",
+    "category": "task_decomposition",
+    "difficulty": "medium",
+    "task": "You are tasked with: Launch a new mobile app for food delivery in a competitive market. Break this down into manageable phases and provide a comprehensive solution plan.",
+    "scenario": "Launch a new mobile app for food delivery in a competitive market"
+  },
+  {
+    "id": "task_decomp_002",
+    "category": "task_decomposition",
+    "difficulty": "hard",
+    "task": "You are tasked with: Organize an international conference with 1000+ attendees. Break this down into manageable phases and provide a comprehensive solution plan.",
+    "scenario": "Organize an international conference with 1000+ attendees"
+  },
+  {
+    "id": "task_decomp_003",
+    "category": "task_decomposition",
+    "difficulty": "hard",
+    "task": "You are tasked with: Develop a comprehensive employee training program for a Fortune 500 company. Break this down into manageable phases and provide a comprehensive solution plan.",
+    "scenario": "Develop a comprehensive employee training program for a Fortune 500 company"
+  },
+  {
+    "id": "task_decomp_004",
+    "category": "task_decomposition",
+    "difficulty": "medium",
+    "task": "You are tasked with: Implement a city-wide recycling program to reduce waste by 40%. Break this down into manageable phases and provide a comprehensive solution plan.",
+    "scenario": "Implement a city-wide recycling program to reduce waste by 40%"
+  },
+  {
+    "id": "task_decomp_005",
+    "category": "task_decomposition",
+    "difficulty": "hard",
+    "task": "You are tasked with: Design and build a community garden for urban food security. Break this down into manageable phases and provide a comprehensive solution plan.",
+    "scenario": "Design and build a community garden for urban food security"
+  },
+  {
+    "id": "task_decomp_006",
+    "category": "task_decomposition",
+    "difficulty": "hard",
+    "task": "You are tasked with: Create a disaster response plan for coastal flooding. Break this down into manageable phases and provide a comprehensive solution plan.",
+    "scenario": "Create a disaster response plan for coastal flooding"
+  },
+  {
+    "id": "task_decomp_007",
+    "category": "task_decomposition",
+    "difficulty": "medium",
+    "task": "You are tasked with: Establish a startup incubator for tech entrepreneurs. Break this down into manageable phases and provide a comprehensive solution plan.",
+    "scenario": "Establish a startup incubator for tech entrepreneurs"
+  },
+  {
+    "id": "task_decomp_008",
+    "category": "task_decomposition",
+    "difficulty": "hard",
+    "task": "You are tasked with: Plan a digital transformation initiative for a traditional retail company. Break this down into manageable phases and provide a comprehensive solution plan.",
+    "scenario": "Plan a digital transformation initiative for a traditional retail company"
+  },
+  {
+    "id": "task_decomp_009",
+    "category": "task_decomposition",
+    "difficulty": "hard",
+    "task": "You are tasked with: Design a system to reduce customer churn by 25% in 6 months. Break this down into manageable phases and provide a comprehensive solution plan.",
+    "scenario": "Design a system to reduce customer churn by 25% in 6 months"
+  },
+  {
+    "id": "task_decomp_010",
+    "category": "task_decomposition",
+    "difficulty": "medium",
+    "task": "You are tasked with: Optimize supply chain operations to reduce costs by 15% while maintaining quality. Break this down into manageable phases and provide a comprehensive solution plan.",
+    "scenario": "Optimize supply chain operations to reduce costs by 15% while maintaining quality"
+  }
+]
