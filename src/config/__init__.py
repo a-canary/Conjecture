@@ -1,48 +1,59 @@
 """
-Conjecture: Simplified configuration package
-Now with unified configuration validation
+Conjecture: Unified configuration package
+Consolidated configuration system with single source of truth
 """
 
 # Unified configuration imports
-from .config import (
-    Config,
+from .unified_config import (
+    UnifiedConfig,
     get_config,
-    validate_config as simple_validate_config,
+    validate_config,
+    reload_config
 )
 
-# Simplified configuration - only use what actually exists
-# Note: Unified validator components are not fully implemented yet
-# Using simple config for now
+# Pydantic-based models and validation
+from .settings_models import (
+    ProviderConfig,
+    ConjectureSettings,
+    DatabaseSettings,
+    LLMSettings,
+    ProcessingSettings,
+    DirtyFlagSettings,
+    LoggingSettings,
+    WorkspaceSettings
+)
 
-# Backward compatibility layer (archived)
-# from .backward_compatibility import (
-#     SimpleProviderValidator,
-#     IndividualEnvValidator,
-#     UnifiedProviderValidator,
-#     SimpleValidator,
-#     show_migration_suggestions,
-#     check_api_usage,
-# )
+from .pydantic_config import (
+    PydanticConfig,
+    get_pydantic_config,
+    reload_pydantic_config,
+    validate_pydantic_config
+)
 
-# Migration utilities (commented out to avoid circular imports)
-# from .migration_utils import (
-#     ConfigMigrator,
-#     analyze_migration,
-#     execute_migration,
-# )
-
-
-# Default validate_config function uses simple validator
-def validate_config(env_file: str = ".env"):
-    """Validate configuration using simple validator"""
-    return simple_validate_config(env_file)
-
+# Backward compatibility aliases
+Config = UnifiedConfig  # Alias for existing code
 
 __all__ = [
-    # Core
-    "Config",
+    # Core unified configuration
+    "UnifiedConfig",
+    "Config",  # Backward compatibility
     "get_config",
-    "simple_validate_config",
-    # Simple validation
     "validate_config",
+    "reload_config",
+    
+    # Pydantic models
+    "ProviderConfig",
+    "ConjectureSettings",
+    "DatabaseSettings",
+    "LLMSettings",
+    "ProcessingSettings",
+    "DirtyFlagSettings",
+    "LoggingSettings",
+    "WorkspaceSettings",
+    
+    # Pydantic config system
+    "PydanticConfig",
+    "get_pydantic_config",
+    "reload_pydantic_config",
+    "validate_pydantic_config",
 ]

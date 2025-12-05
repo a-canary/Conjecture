@@ -1,0 +1,17 @@
+{
+  "id": "evidence_eval_20251204_174521",
+  "category": "claims_reasoning",
+  "difficulty": "medium",
+  "description": "Evaluate conflicting evidence and make reasoned judgment",
+  "question": "A pharmaceutical company is testing a new drug for treating hypertension. They present the following evidence from their clinical trials. Evaluate the evidence and determine whether the drug should be approved for market use.\n\nEvidence presented:\n1. Study A (n=1000): 15% reduction in blood pressure, p=0.03, funded by the company\n2. Study B (n=500): 8% reduction in blood pressure, p=0.12, not statistically significant, funded by the company\n3. Study C (n=2000): 12% reduction in blood pressure, p=0.01, independent research\n4. Study D (n=300): 18% reduction in blood pressure, p=0.08, not statistically significant, independent research\n5. Side effects: 5% experienced mild headaches, 2% experienced dizziness\n6. Cost: 3x more expensive than existing treatments\n7. Long-term effects: Unknown (studies only 6 months duration)\n8. Mechanism of action: Well-understood and plausible",
+  "ground_truth": "Based on the evidence, the drug should NOT be approved for market use at this time, though it shows promise and warrants further investigation.\n\nReasoning:\nPositive evidence:\n- Two studies (A and C) show statistically significant blood pressure reductions\n- Study C is independent and large (n=2000), lending credibility\n- Mechanism of action is well-understood\n- Side effects are relatively mild\n\nConcerns:\n- Mixed results across studies (B and D not statistically significant)\n- Potential funding bias in company-sponsored studies\n- Small effect size (8-18% reduction)\n- Significantly higher cost than existing treatments\n- Unknown long-term effects\n- Short study duration (6 months)\n\nRecommendation: Require larger, longer-term independent studies before approval. The current evidence is insufficient to justify the higher cost and unknown risks.",
+  "expected_approach": "evidence_weighting",
+  "metadata": {
+    "type": "evidence_evaluation",
+    "requires_critical_thinking": true,
+    "conflicting_evidence": true,
+    "risk_assessment": true,
+    "estimated_time_minutes": 15,
+    "claims_based_approach_beneficial": true
+  }
+}

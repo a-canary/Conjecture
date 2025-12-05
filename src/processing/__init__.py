@@ -1,27 +1,22 @@
 """
-Conjecture Processing Package
-
-This package provides the processing functionality for the Conjecture project,
-including tool execution, response parsing, and example generation.
-
-Components:
-- ResponseParser: Parses LLM responses for structured tool calls
-- ToolExecutor: Safe execution engine with resource limits
-- ExampleGenerator: Automatic example generation from successful executions
-
-Usage:
-    from src.processing import ResponseParser, ToolExecutor
-
-    # Parse LLM response
-    parser = ResponseParser()
-    parsed = parser.parse_response(llm_response)
-
-    # Execute tool calls
-    executor = ToolExecutor()
-    for tool_call in parsed.tool_calls:
-        result = await executor.execute_tool_call(tool_call)
+Simplified Conjecture Processing Package
+Unified processing system with OpenAI-compatible providers only
 """
 
+# Core simplified processing components
+from .simplified_llm_manager import (
+    SimplifiedLLMManager,
+    get_simplified_llm_manager
+)
+
+from .unified_bridge import (
+    UnifiedLLMBridge,
+    get_unified_bridge,
+    LLMRequest,
+    LLMResponse
+)
+
+# Legacy components (maintained for backward compatibility)
 try:
     from .response_parser import ResponseParser
     from .tool_executor import ToolExecutor, ExecutionLimits, SafeExecutor
@@ -35,17 +30,23 @@ except ImportError:
     ExampleGenerator = None
     ExampleQualityAssessor = None
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "Conjecture Team"
 
 __all__ = [
-    # Main components
+    # Simplified components
+    "SimplifiedLLMManager",
+    "get_simplified_llm_manager",
+    "UnifiedLLMBridge", 
+    "get_unified_bridge",
+    "LLMRequest",
+    "LLMResponse",
+    
+    # Legacy components (backward compatibility)
     "ResponseParser",
     "ToolExecutor",
-    "ExampleGenerator",
-
-    # Supporting classes
     "ExecutionLimits",
     "SafeExecutor",
+    "ExampleGenerator",
     "ExampleQualityAssessor",
 ]

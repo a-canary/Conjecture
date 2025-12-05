@@ -1,0 +1,24 @@
+{
+  "providers": {
+    "llm_local_router": {
+      "url": "http://localhost:5677",
+      "api": "",
+      "model": "auto",
+      "name": "llm_local_router"
+    }
+  },
+  "router_settings": {
+    "enabled": true,
+    "primary_provider": "llm_local_router",
+    "fallback_to_direct": false,
+    "router_health_check_interval": 30,
+    "router_timeout": 30
+  },
+  "confidence_threshold": 0.95,
+  "confident_threshold": 0.8,
+  "max_context_size": 10000,
+  "batch_size": 10,
+  "database_path": "data/conjecture.db",
+  "user": "researcher",
+  "team": "ai-lab"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "math_geometry_20251204_181518",
+  "category": "mathematical_reasoning",
+  "difficulty": "hard",
+  "description": "Multi-step geometry problem with area and perimeter",
+  "question": "A rectangular garden has a length of 49 meters and a width of 17 meters. If you want to build a fence around the garden and cover the entire area with grass sod that costs $3 per square meter, what is the total cost for the sod and how many meters of fencing do you need?",
+  "ground_truth": "The total cost for sod is $2,499.00 and you need 132 meters of fencing.\n\nSolution:\nArea = length \u00d7 width = 49 \u00d7 17 = 833 square meters\nSod cost = 833 \u00d7 $3 = $2,499.00\nPerimeter = 2 \u00d7 (length + width) = 2 \u00d7 (49 + 17) = 132 meters",
+  "expected_approach": "step_by_step",
+  "metadata": {
+    "type": "geometry",
+    "requires_area_calculation": true,
+    "requires_perimeter_calculation": true,
+    "multiple_steps": true,
+    "estimated_time_minutes": 12,
+    "claims_based_approach_beneficial": true
+  }
+}

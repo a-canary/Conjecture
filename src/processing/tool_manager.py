@@ -14,7 +14,7 @@ import logging
 import hashlib
 
 from ..core.models import Claim, ClaimState
-from .bridge import LLMBridge, LLMRequest
+from .unified_bridge import UnifiedLLMBridge as LLMBridge, LLMRequest
 
 # Try to import core tools, but handle gracefully if not available
 try:

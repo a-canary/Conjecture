@@ -1,0 +1,16 @@
+{
+  "id": "family_puzzle_20251204_181610",
+  "category": "complex_reasoning",
+  "difficulty": "medium",
+  "description": "Family relationships logic puzzle with ages",
+  "question": "A family has five members: father, mother, son, daughter, grandmother. Each member has a different age. Use these clues to determine each person's age:\n\n1. The father is older than the mother\n2. The grandmother is the oldest\n3. The son is younger than the daughter\n4. The mother is 35 years old\n5. The age difference between father and son is 10 years\n\nWhat is the daughter's age?",
+  "ground_truth": "The daughter is 25 years old.\n\nSolution:\n- Grandmother: 45 years old (oldest)\n- Father: 35 years old\n- Mother: 35 years old\n- Daughter: 25 years old\n- Son: 30 years old (youngest)",
+  "expected_approach": "break_down_problem",
+  "metadata": {
+    "type": "logic_puzzle",
+    "requires_deduction": true,
+    "multiple_constraints": true,
+    "estimated_time_minutes": 10,
+    "claims_based_approach_beneficial": true
+  }
+}

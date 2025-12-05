@@ -1,23 +1,11 @@
 """
-LLM Processing Package for Conjecture
-Provides LLM integration capabilities with multiple providers
+Simplified LLM Processing Package for Conjecture
+Provides unified OpenAI-compatible provider integration
 """
 
-try:
-    from .gemini_integration import GeminiProcessor, GEMINI_AVAILABLE
-except ImportError:
-    GeminiProcessor = None
-    GEMINI_AVAILABLE = False
-
-try:
-    from .chutes_integration import ChutesProcessor
-except ImportError:
-    ChutesProcessor = None
-
-try:
-    from .llm_manager import LLMManager
-except ImportError:
-    LLMManager = None
+from .openai_compatible_provider import OpenAICompatibleProcessor, create_openai_compatible_processor
+from .common import GenerationConfig, LLMProcessingResult
+from .error_handling import LLMErrorHandler, RetryConfig
 
 try:
     from .llm_evaluation_framework import LLMEvaluator, LLMEvaluationResult
@@ -26,10 +14,12 @@ except ImportError:
     LLMEvaluationResult = None
 
 __all__ = [
-    "GeminiProcessor",
-    "ChutesProcessor",
-    "LLMManager",
-    "GEMINI_AVAILABLE", 
+    "OpenAICompatibleProcessor",
+    "create_openai_compatible_processor", 
+    "GenerationConfig",
+    "LLMProcessingResult",
+    "LLMErrorHandler",
+    "RetryConfig",
     "LLMEvaluator",
     "LLMEvaluationResult"
 ]

@@ -1,0 +1,336 @@
+[
+  {
+    "id": "coding_agent_001",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Create a Python function that validates email addresses using regular expressions and provides detailed error messages for invalid formats.",
+    "specification": "Write a Python function `validate_email(email: str) -> tuple[bool, str]` that returns (is_valid, error_message). The function should check for: proper local part format, valid domain, no consecutive dots, proper @ symbol placement, and common TLD validation. Provide specific error messages for each type of failure.",
+    "reasoning_requirements": ["programming_logic", "regex_patterns", "error_handling", "input_validation"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "test_cases": [
+      {"input": "user@example.com", "expected": [true, ""]},
+      {"input": "user.name@domain.co.uk", "expected": [true, ""]},
+      {"input": "invalid-email", "expected": [false, "Missing @ symbol"]},
+      {"input": "user..name@example.com", "expected": [false, "Consecutive dots not allowed"]}
+    ]
+  },
+  {
+    "id": "coding_agent_002",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Design and implement a REST API for a task management system with authentication, CRUD operations, and rate limiting.",
+    "specification": "Create a Flask-based REST API with endpoints for: user registration/login, task CRUD (create, read, update, delete), task assignment, and progress tracking. Include JWT authentication, input validation, rate limiting (100 requests/minute), and comprehensive error handling. Use SQLAlchemy for database operations.",
+    "reasoning_requirements": ["system_design", "api_design", "authentication", "database_design", "security"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "components": ["flask", "sqlalchemy", "jwt", "rate_limiting"]
+  },
+  {
+    "id": "coding_agent_003",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Implement a binary search tree with insert, delete, and search operations, including balancing functionality.",
+    "specification": "Create a BST class in Python with methods: insert(value), delete(value), search(value), inorder_traversal(), and balance(). The tree should automatically rebalance using AVL rotations when height difference exceeds 1. Include comprehensive error handling and unit tests.",
+    "reasoning_requirements": ["data_structures", "algorithm_design", "tree_balancing", "error_handling"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "test_cases": [
+      {"operations": ["insert(5)", "insert(3)", "insert(7)", "search(3)"], "expected": "found"},
+      {"operations": ["insert(10)", "insert(5)", "insert(15)", "delete(5)", "search(5)"], "expected": "not_found"}
+    ]
+  },
+  {
+    "id": "coding_agent_004",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Create a web scraper that extracts product information from e-commerce sites while handling anti-bot measures.",
+    "specification": "Build a Python scraper using Selenium/BeautifulSoup that can navigate product pages, extract name, price, rating, and availability. Handle JavaScript-rendered content, CAPTCHAs, rate limits, and IP rotation. Include proxy support and user-agent rotation. Store results in JSON/CSV format.",
+    "reasoning_requirements": ["web_scraping", "anti_bot_evasion", "data_extraction", "error_handling", "rate_limiting"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "libraries": ["selenium", "beautifulsoup4", "requests", "fake_useragent"]
+  },
+  {
+    "id": "coding_agent_005",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Debug and fix a memory leak in a Python data processing application.",
+    "buggy_code": "def process_large_dataset(file_path):\n    data = []\n    with open(file_path, 'r') as f:\n        for line in f:\n            data.append(process_line(line))\n    return analyze_data(data)\n\ndef process_line(line):\n    # Complex processing that creates new objects\n    return DataObject(line.strip().split(','))\n\ndef analyze_data(data):\n    results = []\n    for item in data:\n        results.append(complex_analysis(item))\n    return results",
+    "error_description": "Memory usage increases linearly with file size, objects never garbage collected, potential file handle leaks",
+    "task": "Identify memory leaks, fix them, and optimize for processing large files (100MB+). Add memory monitoring and proper resource cleanup.",
+    "reasoning_requirements": ["debugging", "memory_management", "performance_optimization", "resource_cleanup"],
+    "expected_answer_type": "debugging_solution",
+    "language": "python"
+  },
+  {
+    "id": "coding_agent_006",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Design a microservices architecture for a real-time chat application with WebSocket support.",
+    "specification": "Design and implement microservices for: authentication, chat message routing, presence management, and message history. Use WebSocket for real-time communication, Redis for pub/sub, PostgreSQL for persistence, and Docker for containerization. Include service discovery, load balancing, and circuit breakers.",
+    "reasoning_requirements": ["microservices_design", "websocket_implementation", "message_routing", "scalability", "fault_tolerance"],
+    "expected_answer_type": "architecture_solution",
+    "language": "multiple",
+    "technologies": ["node.js", "python", "redis", "postgresql", "docker", "kubernetes"]
+  },
+  {
+    "id": "coding_agent_007",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Implement a caching layer for a database query system with TTL and cache invalidation.",
+    "specification": "Create a Python caching system that sits between application and database. Support multiple cache backends (Redis, Memcached, in-memory), implement TTL with sliding expiration, cache invalidation on data updates, and cache warming strategies. Include metrics and monitoring.",
+    "reasoning_requirements": ["caching_strategies", "performance_optimization", "cache_invalidation", "monitoring"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "patterns": ["decorator_pattern", "strategy_pattern", "observer_pattern"]
+  },
+  {
+    "id": "coding_agent_008",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Build a machine learning pipeline for text classification with model training and evaluation.",
+    "specification": "Create an end-to-end ML pipeline using scikit-learn/TensorFlow. Include data preprocessing, feature extraction, model training (multiple algorithms), cross-validation, hyperparameter tuning, and performance evaluation. Add model versioning and A/B testing capabilities.",
+    "reasoning_requirements": ["ml_pipeline", "feature_engineering", "model_selection", "evaluation_metrics", "experiment_tracking"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "libraries": ["scikit-learn", "pandas", "numpy", "mlflow"]
+  },
+  {
+    "id": "coding_agent_009",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Create a configuration management system with environment-specific settings and validation.",
+    "specification": "Build a Python config system that supports YAML/JSON files, environment variable overrides, schema validation, and nested configuration merging. Include encryption for sensitive values, configuration hot-reloading, and comprehensive error reporting.",
+    "reasoning_requirements": ["configuration_management", "validation", "security", "environment_handling"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "features": ["schema_validation", "encryption", "hot_reload", "environment_override"]
+  },
+  {
+    "id": "coding_agent_010",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Implement a distributed task queue system with worker pools and job prioritization.",
+    "specification": "Create a task queue system using Celery/RabbitMQ. Support multiple priority levels, delayed execution, retry logic with exponential backoff, dead letter queues, and worker health monitoring. Include job dependencies and batch processing capabilities.",
+    "reasoning_requirements": ["distributed_systems", "queue_management", "prioritization", "error_handling", "monitoring"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "technologies": ["celery", "rabbitmq", "redis"]
+  },
+  {
+    "id": "coding_agent_011",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Write a JavaScript function that implements debouncing for search input with caching.",
+    "specification": "Create a JavaScript function `debounceSearch(func, delay)` that returns a debounced version. Include search result caching, keyboard event handling, and proper cleanup. Support both immediate and delayed execution modes.",
+    "reasoning_requirements": ["javascript_patterns", "event_handling", "performance_optimization", "caching"],
+    "expected_answer_type": "code_solution",
+    "language": "javascript",
+    "use_case": "search_input_optimization"
+  },
+  {
+    "id": "coding_agent_012",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Design and implement a blockchain-based voting system with smart contracts.",
+    "specification": "Create Ethereum smart contracts for a secure voting system. Include voter registration, proposal creation, voting mechanisms, and result tallying. Implement delegation, time-locked voting, and protection against Sybil attacks. Add frontend for interaction.",
+    "reasoning_requirements": ["blockchain_development", "smart_contracts", "security", "cryptography", "dapp_development"],
+    "expected_answer_type": "code_solution",
+    "language": "solidity",
+    "technologies": ["ethereum", "web3.js", "react"]
+  },
+  {
+    "id": "coding_agent_013",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Create a data visualization dashboard using D3.js with real-time updates.",
+    "specification": "Build an interactive dashboard using D3.js that displays multiple chart types (line, bar, pie, scatter). Support real-time data updates via WebSocket, responsive design, and user interactions (zoom, filter, drill-down). Include export functionality.",
+    "reasoning_requirements": ["data_visualization", "real_time_updates", "interactive_design", "responsive_layout"],
+    "expected_answer_type": "code_solution",
+    "language": "javascript",
+    "libraries": ["d3.js", "websocket", "css"]
+  },
+  {
+    "id": "coding_agent_014",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Implement a natural language processing system for sentiment analysis with custom models.",
+    "specification": "Create an NLP pipeline for sentiment analysis using Python. Include text preprocessing (tokenization, stemming, stop-word removal), feature extraction (TF-IDF, word embeddings), model training (SVM, neural networks), and evaluation. Handle multiple languages and domain adaptation.",
+    "reasoning_requirements": ["nlp_processing", "feature_extraction", "machine_learning", "multilingual_support"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "libraries": ["nltk", "scikit-learn", "tensorflow", "spacy"]
+  },
+  {
+    "id": "coding_agent_015",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Build a file upload service with virus scanning and thumbnail generation.",
+    "specification": "Create a file upload service in Node.js/Express that supports multiple file types, implements virus scanning using ClamAV, generates thumbnails for images/videos, stores files in cloud storage (S3), and provides a REST API for file management.",
+    "reasoning_requirements": ["file_handling", "security_scanning", "image_processing", "cloud_integration"],
+    "expected_answer_type": "code_solution",
+    "language": "javascript",
+    "technologies": ["node.js", "express", "clamav", "aws-sdk", "sharp"]
+  },
+  {
+    "id": "coding_agent_016",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Design a GraphQL API with subscription support for real-time data.",
+    "specification": "Create a GraphQL API using Apollo Server that supports queries, mutations, and subscriptions. Implement real-time data updates via GraphQL subscriptions, authentication middleware, rate limiting, and database integration with PostgreSQL. Include schema stitching.",
+    "reasoning_requirements": ["graphql_design", "real_time_subscriptions", "schema_design", "authentication"],
+    "expected_answer_type": "code_solution",
+    "language": "javascript",
+    "technologies": ["apollo-server", "graphql", "postgresql", "redis"]
+  },
+  {
+    "id": "coding_agent_017",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Implement a priority queue with multiple priority levels and heap-based operations.",
+    "specification": "Create a priority queue data structure in Python that supports multiple priority levels, dynamic priority updates, heap-based implementation for O(log n) operations, and bulk operations. Include thread-safety and performance monitoring.",
+    "reasoning_requirements": ["data_structures", "heap_algorithms", "concurrency", "performance_optimization"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "concepts": ["heap", "priority_queue", "thread_safety"]
+  },
+  {
+    "id": "coding_agent_018",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Create a mobile app for expense tracking with offline support and synchronization.",
+    "specification": "Build a React Native app for expense tracking with offline-first design, local SQLite storage, cloud synchronization, receipt OCR, category-based budgeting, and multi-currency support. Include biometric authentication and data export.",
+    "reasoning_requirements": ["mobile_development", "offline_first", "data_synchronization", "ocr_integration", "biometric_auth"],
+    "expected_answer_type": "code_solution",
+    "language": "javascript",
+    "technologies": ["react-native", "sqlite", "firebase", "ml-kit-ocr"]
+  },
+  {
+    "id": "coding_agent_019",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Write a SQL query optimizer that suggests index improvements for slow queries.",
+    "specification": "Create a Python tool that analyzes SQL queries, identifies missing indexes, suggests optimal index strategies, and provides performance improvement estimates. Support multiple database engines (PostgreSQL, MySQL, SQL Server) and explain plan analysis.",
+    "reasoning_requirements": ["sql_optimization", "index_analysis", "performance_tuning", "database_internals"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "databases": ["postgresql", "mysql", "sql_server"]
+  },
+  {
+    "id": "coding_agent_020",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Implement a distributed logging system with aggregation and search capabilities.",
+    "specification": "Create a distributed logging system using ELK stack (Elasticsearch, Logstash, Kibana). Support log collection from multiple services, real-time aggregation, full-text search, alerting on error patterns, and dashboard visualization.",
+    "reasoning_requirements": ["distributed_logging", "log_aggregation", "search_capabilities", "monitoring", "alerting"],
+    "expected_answer_type": "architecture_solution",
+    "technologies": ["elasticsearch", "logstash", "kibana", "docker", "kubernetes"]
+  },
+  {
+    "id": "coding_agent_021",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Create a Python decorator for retry logic with exponential backoff and circuit breaking.",
+    "specification": "Implement a decorator `@retry_with_backoff` that supports configurable retry attempts, exponential backoff delays, jitter for thundering herd prevention, circuit breaker pattern, and comprehensive logging of retry attempts.",
+    "reasoning_requirements": ["decorator_patterns", "error_handling", "circuit_breaker", "resilience_patterns"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "patterns": ["decorator", "circuit_breaker", "exponential_backoff"]
+  },
+  {
+    "id": "coding_agent_022",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Build a video streaming service with adaptive bitrate and CDN integration.",
+    "specification": "Create a video streaming service using HLS/DASH that supports adaptive bitrate based on network conditions, CDN integration for global distribution, DRM protection, and analytics. Include transcoding pipeline and thumbnail generation.",
+    "reasoning_requirements": ["video_streaming", "adaptive_bitrate", "cdn_integration", "drm", "transcoding"],
+    "expected_answer_type": "architecture_solution",
+    "technologies": ["ffmpeg", "hls", "dash", "cloudflare", "aws-cloudfront"]
+  },
+  {
+    "id": "coding_agent_023",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Implement a graph algorithm library with shortest path and minimum spanning tree.",
+    "specification": "Create a Python graph library supporting directed/undirected graphs, weighted edges, Dijkstra's algorithm for shortest paths, Kruskal's algorithm for MST, and visualization. Include comprehensive unit tests and performance benchmarks.",
+    "reasoning_requirements": ["graph_algorithms", "shortest_path", "minimum_spanning_tree", "data_structures"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "algorithms": ["dijkstra", "kruskal", "bfs", "dfs"]
+  },
+  {
+    "id": "coding_agent_024",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Design an IoT data processing pipeline with real-time analytics and anomaly detection.",
+    "specification": "Create an IoT data pipeline using Apache Kafka/Pulsar for streaming, Apache Flink for real-time processing, machine learning for anomaly detection, and dashboard for visualization. Support device management and alerting.",
+    "reasoning_requirements": ["iot_architecture", "stream_processing", "anomaly_detection", "real_time_analytics"],
+    "expected_answer_type": "architecture_solution",
+    "technologies": ["kafka", "apache-flink", "tensorflow", "grafana", "influxdb"]
+  },
+  {
+    "id": "coding_agent_025",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Write a CSS-in-JS library for component styling with theme support.",
+    "specification": "Create a CSS-in-JS library that supports component-based styling, theme switching (light/dark/custom), CSS-in-JS syntax, style isolation, and performance optimization. Include TypeScript definitions and comprehensive docs.",
+    "reasoning_requirements": ["css_in_js", "component_styling", "theme_system", "performance_optimization"],
+    "expected_answer_type": "code_solution",
+    "language": "javascript",
+    "features": ["typescript_support", "theme_switching", "component_isolation"]
+  },
+  {
+    "id": "coding_agent_026",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Implement a peer-to-peer file sharing system with encryption and discovery.",
+    "specification": "Create a P2P file sharing system using WebRTC for direct connections, encryption for file security, distributed hash table for discovery, and resume support. Include NAT traversal and bandwidth optimization.",
+    "reasoning_requirements": ["p2p_networking", "encryption", "distributed_hash_table", "nat_traversal", "webrtc"],
+    "expected_answer_type": "code_solution",
+    "language": "javascript",
+    "technologies": ["webrtc", "webcrypto", "torrent", "udp"]
+  },
+  {
+    "id": "coding_agent_027",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Create a Redis-based session store with clustering and failover.",
+    "specification": "Implement a session store using Redis with clustering support, automatic failover, session persistence, and cleanup. Include security features, session analytics, and admin interface.",
+    "reasoning_requirements": ["redis_clustering", "session_management", "failover_mechanisms", "security"],
+    "expected_answer_type": "code_solution",
+    "language": "python",
+    "technologies": ["redis", "redis-cluster", "sentinel"]
+  },
+  {
+    "id": "coding_agent_028",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Build a machine learning model serving system with A/B testing and monitoring.",
+    "specification": "Create an ML model serving system using TensorFlow Serving/KFServing. Support multiple model versions, A/B testing for model comparison, real-time monitoring, automatic rollback, and canary deployments.",
+    "reasoning_requirements": ["model_serving", "ab_testing", "monitoring", "canary_deployments", "ml_ops"],
+    "expected_answer_type": "architecture_solution",
+    "technologies": ["tensorflow-serving", "kubeflow", "prometheus", "grafana", "kubernetes"]
+  },
+  {
+    "id": "coding_agent_029",
+    "category": "coding_tasks",
+    "difficulty": "medium",
+    "task": "Implement a JavaScript promise utility library with timeout and cancellation.",
+    "specification": "Create a promise utility library supporting timeout, cancellation tokens, promise composition (all, race, any), retry logic, and comprehensive error handling. Include TypeScript definitions and tree-shaking support.",
+    "reasoning_requirements": ["promise_patterns", "async_programming", "cancellation_tokens", "error_handling"],
+    "expected_answer_type": "code_solution",
+    "language": "javascript",
+    "features": ["typescript", "tree_shaking", "cancellation"]
+  },
+  {
+    "id": "coding_agent_030",
+    "category": "coding_tasks",
+    "difficulty": "hard",
+    "task": "Design a serverless function orchestration system with workflow management.",
+    "specification": "Create a serverless workflow system using AWS Step Functions/Temporal. Support complex workflows, parallel execution, error handling, retries, and human-in-the-loop tasks. Include visualization and monitoring.",
+    "reasoning_requirements": ["serverless_architecture", "workflow_orchestration", "parallel_execution", "error_handling"],
+    "expected_answer_type": "architecture_solution",
+    "technologies": ["aws-step-functions", "temporal", "aws-lambda", "dynamodb"]
+  }
+]

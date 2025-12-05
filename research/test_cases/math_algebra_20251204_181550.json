@@ -1,0 +1,17 @@
+{
+  "id": "math_algebra_20251204_181550",
+  "category": "mathematical_reasoning",
+  "difficulty": "medium",
+  "description": "Multi-step mathematical problem with algebraic reasoning",
+  "question": "A farmer has a rectangular field that is 71 meters longer than it is wide. The farmer wants to divide the field into two equal rectangular sections by building a fence parallel to the width. If the total area of the field is 20,496 square meters and the fence costs $20 per meter, what is the total cost of the dividing fence?",
+  "ground_truth": "The total cost of the dividing fence is $1,680.00.\n\nSolution:\nLet width = w meters, then length = w + 71 meters\nArea = w \u00d7 (w + 71) = 20496\nw\u00b2 + 71w - 20496 = 0\nUsing quadratic formula: w = [-71 \u00b1 \u221a(71\u00b2 + 4\u00d720496)]/2\nw = 112 meters\n\nDividing fence length = width = 112 meters\nCost = 112 \u00d7 $15 = $1,680.00",
+  "expected_approach": "step_by_step",
+  "metadata": {
+    "type": "algebra",
+    "requires_quadratic_formula": true,
+    "multiple_steps": true,
+    "unit_conversion": false,
+    "estimated_time_minutes": 10,
+    "claims_based_approach_beneficial": true
+  }
+}

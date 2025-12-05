@@ -1,0 +1,39 @@
+{
+  "providers": [
+    {
+      "name": "lm_studio",
+      "url": "http://localhost:1234",
+      "api": "",
+      "model": "ibm/granite-4-h-tiny",
+      "priority": 1
+    },
+    {
+      "name": "openai",
+      "url": "https://api.openai.com/v1",
+      "api": "your-openai-api-key-here",
+      "model": "gpt-3.5-turbo",
+      "priority": 2
+    },
+    {
+      "name": "openrouter",
+      "url": "https://openrouter.ai/api/v1",
+      "api": "your-openrouter-api-key-here",
+      "model": "openai/gpt-3.5-turbo",
+      "priority": 3
+    },
+    {
+      "name": "chutes",
+      "url": "https://llm.chutes.ai/v1",
+      "api": "your-chutes-api-key-here",
+      "model": "zai-org/GLM-4.6",
+      "priority": 4
+    }
+  ],
+  "confidence_threshold": 0.95,
+  "max_context_size": 10000,
+  "batch_size": 10,
+  "database_path": "data/conjecture.db",
+  "user": "user",
+  "team": "default",
+  "debug": false
+}

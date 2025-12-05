@@ -172,9 +172,11 @@ class InstructionSupportProcessor:
             raise RuntimeError(f"LLM processing failed: {str(e)}")
 
     def _create_instruction_prompt(self, context: str, user_request: str) -> str:
-        """Create a prompt for LLM to identify instruction claims"""
-        prompt = f"""
-You are an expert at identifying instructional content and guidance within claim networks.
+        """Create a prompt for LLM to identify instruction claims using JSON frontmatter"""
+        from ..processing.json_schemas import ResponseSchemaType, create_prompt_template_for_type
+        
+        prompt_template = create_prompt_template_for_type(ResponseSchemaType.INSTRUCTION_SUPPORT)
+        prompt = f"""You are an expert at identifying instructional content and guidance within claim networks.
 
 TASK: Analyze the provided claim context and identify any claims that serve as instructions, guidance, or methodological support for other claims.
 
@@ -184,7 +186,9 @@ CONTEXT:
 USER REQUEST:
 {user_request}
 
-INSTRUCTIONS:
+{prompt_template}
+
+## YOUR INSTRUCTION IDENTIFICATION TASK:
 1. Carefully read through all claims in the context
 2. Identify claims that provide:
    - Step-by-step guidance or procedures
@@ -196,8 +200,16 @@ INSTRUCTIONS:
    - Extract the complete claim content
    - Assess confidence (0.0-1.0) that it's instructional
    - Identify which target claims it supports
-4. Format your response as JSON:
+   - Include in the instruction_claims array with type "instruction"
+4. For each support relationship:
+   - Include in the relationships array with instruction_claim_id and target_claim_id
+5. Provide a comprehensive analysis_summary
 
+Format your response using the JSON frontmatter format specified above.
+
+After the JSON frontmatter, you can include additional explanation of your reasoning for identifying instructional content.
+
+Example response format:
 {{
     "instruction_claims": [
         {{

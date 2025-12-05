@@ -23,12 +23,23 @@
       "api": "sk-your-openai-key-here",
       "model": "gpt-3.5-turbo",
       "name": "openai"
+    },
+    {
+      "url": "http://localhost:1234/v1",
+      "api": "",
+      "model": "ibm/granite-4-h-tiny",
+      "name": "lm_studio",
+      "priority": 1,
+      "is_local": true,
+      "description": "IBM Granite Tiny model for SOTA reasoning research",
+      "max_tokens": 512,
+      "temperature": 0.3
     }
   ],
-  "confidence_threshold": 0.95,
-  "confident_threshold": 0.8,
-  "max_context_size": 10,
-  "batch_size": 10,
+  "confidence_threshold": 0.90,
+  "confident_threshold": 0.75,
+  "max_context_size": 5,
+  "batch_size": 3,
   "debug": false,
   "database_path": "data/conjecture.db",
   "user": "user",

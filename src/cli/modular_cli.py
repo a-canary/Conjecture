@@ -83,7 +83,7 @@ def get_backend(backend_type: str = "auto") -> BaseCLI:
         )
         console.print("\n[bold yellow]Configuration Setup:[/bold yellow]")
         
-        from config.config import ConfigHierarchy
+        from src.config.config import ConfigHierarchy
         hierarchy = ConfigHierarchy()
         
         console.print("1. [cyan]User config:[/cyan] ~/.conjecture/config.json")

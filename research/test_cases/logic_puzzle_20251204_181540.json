@@ -1,0 +1,17 @@
+{
+  "id": "logic_puzzle_20251204_181540",
+  "category": "complex_reasoning",
+  "difficulty": "hard",
+  "description": "Multi-step logical reasoning with conditional statements",
+  "question": "In a small town, there are five houses in a row, each painted a different color: blue, red, green, yellow, white. Each house is owned by a person with a different profession: artist, engineer, doctor, baker, teacher. Each person has a different favorite fruit: banana, elderberry, apple, date, cherry. Using the following clues, determine who owns the red house and what is their favorite fruit?\n\nClues:\n1. The doctor lives in the middle house.\n2. The artist lives in the first house.\n3. The person who likes cherrys lives in the last house.\n4. The engineer lives in the red house.\n5. The teacher likes cherrys.",
+  "ground_truth": "The engineer owns the red house and their favorite fruit is elderberry.",
+  "expected_approach": "break_down_problem",
+  "metadata": {
+    "type": "logic_puzzle",
+    "requires_deduction": true,
+    "multiple_constraints": true,
+    "spatial_reasoning": true,
+    "estimated_time_minutes": 15,
+    "claims_based_approach_beneficial": true
+  }
+}

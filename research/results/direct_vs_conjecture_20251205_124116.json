@@ -1,0 +1,13 @@
+{
+  "timestamp": "20251205_124116",
+  "total_comparisons": 0,
+  "models_tested": [
+    "lmstudio:ibm/granite-4-h-tiny",
+    "chutes:zai-org/GLM-4.6"
+  ],
+  "test_cases_used": [
+    "minimal_test.json"
+  ],
+  "results": [],
+  "note": "REAL LLM CALLS ONLY - Direct vs Conjecture comparison, claim creation within Conjecture system only"
+}

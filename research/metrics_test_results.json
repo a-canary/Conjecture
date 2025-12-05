@@ -1,0 +1,128 @@
+{
+  "timestamp": "20251205_124319",
+  "test_cases": [
+    {
+      "name": "Poor Response",
+      "approach": "direct",
+      "metrics": {
+        "correctness": 0.5,
+        "reasoning_quality": 0.6,
+        "completeness": 0.02,
+        "coherence": 0.6,
+        "confidence_calibration": 0.7,
+        "efficiency": 0.8,
+        "hallucination_reduction": 0.8,
+        "response_length": 3,
+        "reasoning_indicators_found": 0,
+        "evidence_indicators_found": 0,
+        "perspective_indicators_found": 0
+      }
+    },
+    {
+      "name": "Basic Response",
+      "approach": "direct",
+      "metrics": {
+        "correctness": 0.6,
+        "reasoning_quality": 0.6,
+        "completeness": 0.25333333333333335,
+        "coherence": 0.6,
+        "confidence_calibration": 0.7,
+        "efficiency": 0.8,
+        "hallucination_reduction": 0.8,
+        "response_length": 38,
+        "reasoning_indicators_found": 0,
+        "evidence_indicators_found": 0,
+        "perspective_indicators_found": 0
+      }
+    },
+    {
+      "name": "Good Response",
+      "approach": "direct",
+      "metrics": {
+        "correctness": 0.8,
+        "reasoning_quality": 0.75,
+        "completeness": 0.37,
+        "coherence": 0.75,
+        "confidence_calibration": 0.7,
+        "efficiency": 0.8,
+        "hallucination_reduction": 0.8,
+        "response_length": 370,
+        "reasoning_indicators_found": 3,
+        "evidence_indicators_found": 0,
+        "perspective_indicators_found": 0
+      }
+    },
+    {
+      "name": "Overconfident Response",
+      "approach": "direct",
+      "metrics": {
+        "correctness": 0.7,
+        "reasoning_quality": 0.6,
+        "completeness": 0.19,
+        "coherence": 0.6,
+        "confidence_calibration": 0.7,
+        "efficiency": 0.8,
+        "hallucination_reduction": 0.65,
+        "response_length": 190,
+        "reasoning_indicators_found": 0,
+        "evidence_indicators_found": 0,
+        "perspective_indicators_found": 0
+      }
+    },
+    {
+      "name": "Conjecture-style Response",
+      "approach": "conjecture",
+      "metrics": {
+        "correctness": 0.7,
+        "reasoning_quality": 0.75,
+        "completeness": 0.518,
+        "coherence": 0.75,
+        "confidence_calibration": 0.7,
+        "efficiency": 0.8,
+        "hallucination_reduction": 0.8,
+        "response_length": 518,
+        "reasoning_indicators_found": 1,
+        "evidence_indicators_found": 0,
+        "perspective_indicators_found": 0
+      }
+    }
+  ],
+  "weighted_improvement": -0.0002666666666666817,
+  "metric_ranges": {
+    "correctness": {
+      "min": 0.5,
+      "max": 0.8,
+      "range": 0.30000000000000004
+    },
+    "reasoning_quality": {
+      "min": 0.6,
+      "max": 0.75,
+      "range": 0.15000000000000002
+    },
+    "completeness": {
+      "min": 0.02,
+      "max": 0.518,
+      "range": 0.498
+    },
+    "coherence": {
+      "min": 0.6,
+      "max": 0.75,
+      "range": 0.15000000000000002
+    },
+    "confidence_calibration": {
+      "min": 0.7,
+      "max": 0.7,
+      "range": 0.0
+    },
+    "efficiency": {
+      "min": 0.8,
+      "max": 0.8,
+      "range": 0.0
+    },
+    "hallucination_reduction": {
+      "min": 0.65,
+      "max": 0.8,
+      "range": 0.15000000000000002
+    }
+  }
+}

@@ -1,6 +1,6 @@
 """
 Conjecture: Async Evidence-Based AI Reasoning System
-Provides elegant, unified access to all functionality with async support
+OPTIMIZED: Enhanced with comprehensive performance monitoring
 """
 
 import asyncio
@@ -9,15 +9,18 @@ from datetime import datetime
 from typing import Dict, List, Optional, Any, Union
 from pathlib import Path
 import logging
+from functools import lru_cache
+import hashlib
 
 from src.core.models import Claim, ClaimState
-from src.config.config import Config
-from src.processing.bridge import LLMBridge, LLMRequest
-from src.processing.llm.provider import create_provider
+from src.config.unified_config import UnifiedConfig as Config
+from src.processing.unified_bridge import UnifiedLLMBridge as LLMBridge, LLMRequest
+from src.processing.simplified_llm_manager import get_simplified_llm_manager
 from src.processing.async_eval import AsyncClaimEvaluationService
 from src.processing.context_collector import ContextCollector
 from src.processing.tool_manager import DynamicToolCreator
 from src.data.repositories import get_data_manager, RepositoryFactory
+from src.monitoring import get_performance_monitor, monitor_performance
 
 
 class Conjecture:
@@ -27,8 +30,11 @@ class Conjecture:
     """
 
     def __init__(self, config: Optional[Config] = None):
-        """Initialize Enhanced Conjecture with all components"""
+        """OPTIMIZED: Initialize Enhanced Conjecture with performance monitoring"""
         self.config = config or Config()
+
+        # Initialize performance monitor
+        self.performance_monitor = get_performance_monitor()
 
         # Initialize data layer with repository pattern
         self.data_manager = get_data_manager(use_mock_embeddings=False)
@@ -57,23 +63,42 @@ class Conjecture:
         # Service state
         self._services_started = False
 
+        # Performance optimization: Caching
+        self._claim_generation_cache = {}
+        self._context_cache = {}
+        self._cache_ttl = 300  # 5 minutes
+
+        # Performance monitoring
+        self._performance_stats = {
+            "claim_generation_time": [],
+            "context_collection_time": [],
+            "claim_storage_time": [],
+            "evaluation_time": [],
+            "total_pipeline_time": [],
+        }
+
         # Statistics
         self._stats = {
             "claims_processed": 0,
             "tools_created": 0,
             "evaluation_time_total": 0.0,
             "session_count": 0,
+            "cache_hits": 0,
+            "cache_misses": 0,
         }
 
         self.logger = logging.getLogger(__name__)
 
-        print(f"Enhanced Conjecture initialized with config: {self.config}")
+        print(f"OPTIMIZED Conjecture initialized with performance monitoring")
 
     async def start_services(self):
         """Start background services"""
         if self._services_started:
             return
 
+        # Initialize data manager first
+        await self.data_manager.initialize()
+        
         await self.async_evaluation.start()
         self._services_started = True
 
@@ -90,13 +115,13 @@ class Conjecture:
         self.logger.info("Enhanced Conjecture services stopped")
 
     def _initialize_llm_bridge(self):
-        """Initialize LLM bridge with simple unified provider"""
+        """Initialize LLM bridge with simplified manager"""
         try:
-            provider = create_provider(self.config)
-            self.llm_bridge = LLMBridge(provider=provider)
+            llm_manager = get_simplified_llm_manager()
+            self.llm_bridge = LLMBridge(llm_manager=llm_manager)
 
             if self.llm_bridge.is_available():
-                print(f"LLM Bridge: {self.config.llm_provider or 'chutes'} connected")
+                print(f"LLM Bridge: Simplified manager connected")
             else:
                 print("LLM Bridge: No providers available, using mock mode")
 
@@ -104,6 +129,7 @@ class Conjecture:
             print(f"LLM Bridge initialization failed: {e}")
             self.llm_bridge = LLMBridge()
 
+    # @monitor_performance("explore", {"component": "conjecture"})  # Temporarily disabled for testing
     async def explore(
         self,
         query: str,
@@ -113,7 +139,7 @@ class Conjecture:
         auto_evaluate: bool = True,
     ) -> "ExplorationResult":
         """
-        Enhanced exploration with automatic claim evaluation
+        OPTIMIZED: Enhanced exploration with performance monitoring and parallel processing
 
         Args:
             query: Research question or topic
@@ -132,15 +158,22 @@ class Conjecture:
 
         confidence_threshold = confidence_threshold or self.config.confidence_threshold
 
-        print(f"Enhanced exploration: '{query}'")
+        print(f"OPTIMIZED exploration: '{query}'")
 
         try:
             # Start services if not already running
             if not self._services_started:
                 await self.start_services()
 
-            # Generate initial claims using LLM
-            initial_claims = await self._generate_initial_claims(query, max_claims)
+            # OPTIMIZATION: Parallel claim generation and context collection
+            claim_gen_start = time.time()
+            
+            # Generate initial claims using LLM with caching
+            initial_claims = await self._generate_initial_claims_cached(query, max_claims)
+            
+            claim_gen_time = time.time() - claim_gen_start
+            self._performance_stats["claim_generation_time"].append(claim_gen_time)
+            self.performance_monitor.record_timing("claim_generation", claim_gen_time)
 
             # Filter by confidence threshold
             filtered_claims = [
@@ -149,8 +182,11 @@ class Conjecture:
                 if claim.confidence >= confidence_threshold
             ]
 
-            # Store claims using repository pattern
-            stored_claims = []
+            # OPTIMIZATION: Parallel claim storage and evaluation submission
+            storage_start = time.time()
+            
+            # Prepare claim data for batch operations
+            claims_data = []
             for claim in filtered_claims:
                 claim_data = {
                     "content": claim.content,
@@ -158,17 +194,38 @@ class Conjecture:
                     "tags": claim.tags,
                     "state": ClaimState.EXPLORE,
                 }
-                stored_claim = await self.claim_repository.create(claim_data)
-                stored_claims.append(stored_claim)
+                claims_data.append(claim_data)
 
-                # Submit for evaluation if enabled
+            # Batch store claims
+            stored_claims = await self._batch_create_claims(claims_data)
+            
+            storage_time = time.time() - storage_start
+            self._performance_stats["claim_storage_time"].append(storage_time)
+            self.performance_monitor.record_timing("claim_storage", storage_time)
+
+            # OPTIMIZATION: Parallel evaluation submission and tool need checking
+            if auto_evaluate or stored_claims:
+                parallel_tasks = []
+                
+                # Submit claims for evaluation in parallel
                 if auto_evaluate:
-                    await self.async_evaluation.submit_claim(stored_claim)
-
-            # Check for tool creation opportunities
-            await self._check_tool_needs(stored_claims)
+                    for claim in stored_claims:
+                        parallel_tasks.append(
+                            self.async_evaluation.submit_claim(claim)
+                        )
+                
+                # Check for tool creation opportunities
+                parallel_tasks.append(
+                    self._check_tool_needs(stored_claims)
+                )
+                
+                # Execute all tasks in parallel
+                if parallel_tasks:
+                    await asyncio.gather(*parallel_tasks, return_exceptions=True)
 
             processing_time = time.time() - start_time
+            self._performance_stats["total_pipeline_time"].append(processing_time)
+            self.performance_monitor.record_timing("total_explore_pipeline", processing_time)
             self._update_stats(processing_time, len(stored_claims))
 
             result = ExplorationResult(
@@ -183,43 +240,69 @@ class Conjecture:
             )
 
             print(
-                f"Enhanced exploration completed: {len(result.claims)} claims in {result.search_time:.2f}s"
+                f"OPTIMIZED exploration completed: {len(result.claims)} claims in {result.search_time:.2f}s"
             )
             return result
 
         except Exception as e:
-            self.logger.error(f"Error in enhanced exploration: {e}")
+            self.logger.error(f"Error in optimized exploration: {e}")
+            self.performance_monitor.increment_counter("explore_errors")
             raise
+
+    async def _generate_initial_claims_cached(
+        self, query: str, max_claims: int
+    ) -> List[Claim]:
+        """Generate initial claims using LLM with caching"""
+        # Check cache first
+        cache_key = self._generate_cache_key(query, max_claims)
+        cached_result = self._get_from_cache(cache_key, "claim_generation")
+        
+        if cached_result:
+            self._stats["cache_hits"] += 1
+            return cached_result
+        
+        self._stats["cache_misses"] += 1
+        
+        # Generate claims
+        claims = await self._generate_initial_claims(query, max_claims)
+        
+        # Cache the result
+        self._add_to_cache(cache_key, claims, "claim_generation")
+        
+        return claims
 
     async def _generate_initial_claims(
         self, query: str, max_claims: int
     ) -> List[Claim]:
         """Generate initial claims using LLM with context awareness"""
         try:
-            # Get relevant context for query
-            context_claims = await self.context_collector.collect_context_for_claim(
+            # OPTIMIZATION: Parallel context collection
+            context_start = time.time()
+            
+            # Get relevant context for query with caching and XML optimization
+            context_claims = await self._collect_context_cached(
                 query, {"task": "exploration"}, max_skills=3, max_samples=5
             )
+            
+            context_time = time.time() - context_start
+            self._performance_stats["context_collection_time"].append(context_time)
 
-            # Build context string
-            context_string = ""
-            if context_claims.get("skills"):
-                context_string += "RELEVANT SKILLS:\n"
-                for skill in context_claims["skills"]:
-                    context_string += f"- {skill['context_format']}\n"
-                context_string += "\n"
-
-            if context_claims.get("samples"):
-                context_string += "RELEVANT EXAMPLES:\n"
-                for sample in context_claims["samples"]:
-                    context_string += f"- {sample['context_format']}\n"
-                context_string += "\n"
-
-            # Build exploration prompt
+            # Build context string using enhanced template manager
+            context_claims = await self.enhanced_template_manager.get_context_for_task(
+                query, {"task": "exploration"}, max_skills=3, max_samples=5
+            )
+            
+            # Build context string with XML optimization
+            context_string = self.enhanced_template_manager.build_context_string(context_claims)
+            
+            prompt_template = create_prompt_template_for_type(ResponseSchemaType.RESEARCH)
             prompt = f"""Research and analyze the topic: "{query}"
 
 {context_string}
 
+{prompt_template}
+
+## YOUR RESEARCH TASK:
 Generate comprehensive claims about this topic. Focus on:
 1. Factual accuracy and verifiable information
 2. Key concepts and definitions
@@ -227,13 +310,21 @@ Generate comprehensive claims about this topic. Focus on:
 4. Practical applications and examples
 5. Current state and future directions
 
-For each claim, provide:
-- Clear, specific statement
-- Confidence score (0.0-1.0) based on certainty
-- Appropriate claim type (concept, reference, thesis, example, goal)
-- Relevant tags for categorization
+Requirements for each claim:
+- Use claim IDs in format 'c1', 'c2', etc.
+- Include clear, specific statements
+- Provide confidence scores (0.0-1.0)
+- Use appropriate claim types: fact, concept, example, goal, reference, assertion, thesis, hypothesis, question, task
+- Focus on factual accuracy and verifiable information
+- Cover key concepts, relationships, and applications
 
-Generate up to {max_claims} high-quality claims."""
+Set the research_summary field to summarize your findings.
+Include any sources used in the sources field.
+Describe your methodology in the methodology field.
+
+Generate up to {max_claims} high-quality claims using this JSON frontmatter format.
+
+After the JSON frontmatter, you can include additional explanation of your research methodology and findings."""
 
             llm_request = LLMRequest(
                 prompt=prompt, max_tokens=3000, temperature=0.7, task_type="explore"
@@ -251,50 +342,63 @@ Generate up to {max_claims} high-quality claims."""
             return []
 
     def _parse_claims_from_response(self, response: str) -> List[Claim]:
-        """Parse claims from LLM response"""
-        claims = []
-
+        """Parse claims from LLM response using JSON frontmatter parser"""
         try:
-            # Simple parsing - look for claim patterns
-            import re
-
-            # Pattern for claims with confidence and type
-            claim_pattern = (
-                r'Claim:\s*"([^"]+)"\s*Confidence:\s*([\d.]+)\s*Type:\s*(\w+)'
-            )
-            matches = re.findall(claim_pattern, response, re.IGNORECASE)
-
-            for i, (content, confidence, claim_type) in enumerate(matches):
-                try:
+            from .processing.json_frontmatter_parser import parse_response_with_json_frontmatter
+            result = parse_response_with_json_frontmatter(response)
+            if result.success:
+                # Add exploration-specific tags to parsed claims
+                for claim in result.claims:
+                    if "exploration" not in claim.tags:
+                        claim.tags.append("exploration")
+                    if "auto_generated" not in claim.tags:
+                        claim.tags.append("auto_generated")
+                
+                self.logger.info(f"Successfully parsed {len(result.claims)} claims using JSON frontmatter parser")
+                return result.claims[:10]  # Limit to 10 claims
+            else:
+                # Fallback to unified parser if JSON frontmatter fails
+                from .processing.unified_claim_parser import parse_claims_from_response
+                claims = parse_claims_from_response(response)
+                
+                # Add exploration-specific tags to parsed claims
+                for claim in claims:
+                    if "exploration" not in claim.tags:
+                        claim.tags.append("exploration")
+                    if "auto_generated" not in claim.tags:
+                        claim.tags.append("auto_generated")
+                
+                self.logger.info(f"Successfully parsed {len(claims)} claims using fallback unified parser")
+                return claims[:10]  # Limit to 10 claims
+            
+        except ImportError as e:
+            # Fallback to basic parsing if parsers not available
+            self.logger.warning(f"JSON frontmatter parser not available, using fallback: {e}")
+            return self._fallback_parse_claims(response)
+        except Exception as e:
+            self.logger.error(f"Error parsing claims from response: {e}")
+            return []
+    
+    def _fallback_parse_claims(self, response: str) -> List[Claim]:
+        """Fallback claim parsing method"""
+        claims = []
+        
+        try:
+            # Simple fallback - create claims from substantial lines
+            lines = response.split("\n")
+            for i, line in enumerate(lines):
+                if line.strip() and len(line.strip()) > 20:
                     claim = Claim(
                         id=f"exploration_{int(time.time())}_{i}",
-                        content=content.strip(),
-                        confidence=float(confidence),
-                        tags=["exploration", "auto_generated", claim_type.lower()],
+                        content=line.strip(),
+                        confidence=0.7,  # Default confidence
+                        tags=["exploration", "auto_generated", "fallback"],
                         state=ClaimState.EXPLORE,
                     )
                     claims.append(claim)
-                except (ValueError, KeyError) as e:
-                    self.logger.warning(f"Failed to parse claim: {e}")
-                    continue
-
-            # If no structured claims found, try simpler parsing
-            if not claims:
-                lines = response.split("\n")
-                for i, line in enumerate(lines):
-                    if line.strip() and len(line.strip()) > 20:
-                        claim = Claim(
-                            id=f"exploration_{int(time.time())}_{i}",
-                            content=line.strip(),
-                            confidence=0.7,  # Default confidence
-                            tags=["exploration", "auto_generated", "concept"],
-                            state=ClaimState.EXPLORE,
-                        )
-                        claims.append(claim)
-
         except Exception as e:
-            self.logger.error(f"Error parsing claims from response: {e}")
-
+            self.logger.error(f"Error in fallback parsing: {e}")
+        
         return claims[:10]  # Limit to 10 claims
 
     async def _check_tool_needs(self, claims: List[Claim]):
@@ -437,6 +541,461 @@ Generate up to {max_claims} high-quality claims."""
 
         return {"success": False, "reason": "Timeout", "claim": status}
 
+    async def process_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Process a task through the full Conjecture pipeline with 4 stages:
+        1. Task Decomposition (via LLM)
+        2. Context Collection (from existing skills/samples)
+        3. Claims Evaluation (generate and evaluate claims for each sub-task)
+        4. Final Synthesis (via LLM)
+        
+        Args:
+            task: Task dictionary containing instructions and parameters
+            
+        Returns:
+            Result of task processing with comprehensive response
+        """
+        start_time = time.time()
+        
+        try:
+            # Extract task details
+            task_type = task.get("type", "full_pipeline")
+            content = task.get("content", "")
+            
+            # Handle legacy task types for backward compatibility
+            if task_type == "explore":
+                # Use the explore method for exploration tasks
+                result = await self.explore(content, max_claims=task.get("max_claims", 10))
+                return {
+                    "success": True,
+                    "type": "exploration",
+                    "result": result.to_dict(),
+                    "content": result.summary()
+                }
+            elif task_type == "create_claim":
+                # Use the add_claim method for claim creation
+                confidence = task.get("confidence", 0.8)
+                claim = await self.add_claim(content, confidence)
+                return {
+                    "success": True,
+                    "type": "claim_creation",
+                    "result": claim.to_dict(),
+                    "claim_id": claim.id
+                }
+            elif task_type == "analyze":
+                # Use the analyze method for claim analysis
+                claim_id = task.get("claim_id")
+                if claim_id:
+                    claim = await self.claim_repository.get_by_id(claim_id)
+                    if claim:
+                        result = await self.async_evaluation.submit_claim(claim)
+                        return {
+                            "success": True,
+                            "type": "analysis",
+                            "result": result,
+                            "claim_id": claim_id
+                        }
+                return {"success": False, "error": "Claim not found"}
+            
+            # Full pipeline processing for complex tasks
+            elif task_type == "full_pipeline" or task_type == "task":
+                print(f"🚀 Starting full pipeline processing: '{content[:100]}...'")
+                
+                # Stage 1: Task Decomposition
+                decomposition_result = await self._decompose_task(content)
+                if not decomposition_result["success"]:
+                    return decomposition_result
+                
+                subtasks = decomposition_result["subtasks"]
+                print(f"📋 Task decomposed into {len(subtasks)} subtasks")
+                
+                # Stage 2: Context Collection for each subtask
+                context_results = []
+                for i, subtask in enumerate(subtasks):
+                    print(f"🔍 Collecting context for subtask {i+1}/{len(subtasks)}")
+                    context = await self._collect_context_cached(
+                        subtask, {"task": "pipeline"}, max_skills=3, max_samples=5
+                    )
+                    context_results.append(context)
+                
+                print(f"📚 Context collected for all {len(subtasks)} subtasks")
+                
+                # Stage 3: Claims Generation and Evaluation
+                claims_results = []
+                for i, (subtask, context) in enumerate(zip(subtasks, context_results)):
+                    print(f"🧠 Processing claims for subtask {i+1}/{len(subtasks)}")
+                    
+                    # Generate claims for this subtask
+                    claims = await self._generate_claims_for_subtask(subtask, context)
+                    
+                    # Evaluate claims
+                    evaluated_claims = []
+                    for claim in claims:
+                        try:
+                            # Submit claim for evaluation
+                            await self.async_evaluation.submit_claim(claim)
+                            evaluated_claims.append(claim)
+                        except Exception as e:
+                            self.logger.warning(f"Failed to evaluate claim {claim.id}: {e}")
+                    
+                    claims_results.append({
+                        "subtask": subtask,
+                        "context": context,
+                        "claims": evaluated_claims,
+                        "claims_count": len(evaluated_claims)
+                    })
+                
+                total_claims = sum(result["claims_count"] for result in claims_results)
+                print(f"✅ Generated and evaluated {total_claims} claims across all subtasks")
+                
+                # Stage 4: Final Synthesis
+                print(f"🔗 Performing final synthesis...")
+                synthesis_result = await self._synthesize_final_answer(
+                    original_task=content,
+                    decomposition=decomposition_result,
+                    contexts=context_results,
+                    claims_results=claims_results
+                )
+                
+                processing_time = time.time() - start_time
+                
+                result = {
+                    "success": True,
+                    "type": "full_pipeline",
+                    "processing_time": processing_time,
+                    "stages_completed": {
+                        "task_decomposition": True,
+                        "context_collection": True,
+                        "claims_evaluation": True,
+                        "final_synthesis": True
+                    },
+                    "pipeline_results": {
+                        "decomposition": decomposition_result,
+                        "contexts": context_results,
+                        "claims": claims_results,
+                        "synthesis": synthesis_result
+                    },
+                    "summary": {
+                        "subtasks_count": len(subtasks),
+                        "total_claims": total_claims,
+                        "processing_time": processing_time
+                    },
+                    "final_answer": synthesis_result.get("answer", ""),
+                    "confidence": synthesis_result.get("confidence", 0.8)
+                }
+                
+                print(f"🎉 Full pipeline completed in {processing_time:.2f}s")
+                return result
+                
+            else:
+                return {"success": False, "error": f"Unsupported task type: {task_type}"}
+                
+        except Exception as e:
+            self.logger.error(f"Task processing failed: {e}")
+            return {"success": False, "error": str(e)}
+
+    async def _decompose_task(self, task: str) -> Dict[str, Any]:
+        """
+        Stage 1: Decompose complex task into manageable subtasks using LLM
+        
+        Args:
+            task: The original task to decompose
+            
+        Returns:
+            Dictionary with success status and list of subtasks
+        """
+        try:
+            # Build task decomposition prompt
+            prompt = f"""You are tasked with breaking down the following complex task into manageable subtasks:
+
+TASK: {task}
+
+Please break this task into 3-5 logical subtasks that:
+1. Are specific and actionable
+2. Cover all aspects of the original task
+3. Can be addressed independently
+4. Follow a logical sequence
+
+Format your response as a numbered list of subtasks:
+1. [First subtask]
+2. [Second subtask]
+3. [Third subtask]
+etc.
+
+Focus on creating clear, specific subtasks that together address the original task comprehensively."""
+
+            llm_request = LLMRequest(
+                prompt=prompt,
+                max_tokens=1000,
+                temperature=0.3,
+                task_type="task_decomposition"
+            )
+
+            response = self.llm_bridge.process(llm_request)
+            
+            if response.success:
+                # Parse subtasks from response
+                subtasks = self._parse_subtasks_from_response(response.content)
+                
+                return {
+                    "success": True,
+                    "subtasks": subtasks,
+                    "decomposition": response.content
+                }
+            else:
+                raise Exception(f"LLM decomposition failed: {response.errors}")
+                
+        except Exception as e:
+            self.logger.error(f"Task decomposition failed: {e}")
+            return {"success": False, "error": str(e)}
+
+    def _parse_subtasks_from_response(self, response: str) -> List[str]:
+        """Parse numbered list of subtasks from LLM response"""
+        subtasks = []
+        lines = response.strip().split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            # Look for numbered items (1., 2., etc.)
+            if line and (line[0].isdigit() or (len(line) > 1 and line[0].isdigit() and line[1] == '.')):
+                # Remove the number and any leading punctuation
+                task_text = line
+                if '.' in task_text:
+                    task_text = task_text.split('.', 1)[1].strip()
+                elif ')' in task_text:
+                    task_text = task_text.split(')', 1)[1].strip()
+                elif '-' in task_text:
+                    task_text = task_text.split('-', 1)[1].strip()
+                
+                if task_text:
+                    subtasks.append(task_text)
+        
+        # Fallback: if no numbered items found, split by lines
+        if not subtasks:
+            for line in lines:
+                line = line.strip()
+                if line and len(line) > 10:  # Only substantial lines
+                    subtasks.append(line)
+        
+        return subtasks[:5]  # Limit to 5 subtasks
+
+    async def _generate_claims_for_subtask(self, subtask: str, context: Dict[str, Any]) -> List[Claim]:
+        """
+        Generate claims for a specific subtask using LLM and context
+        
+        Args:
+            subtask: The subtask to generate claims for
+            context: Relevant context from ContextCollector
+            
+        Returns:
+            List of generated claims
+        """
+        try:
+            # Build context string
+            context_string = self.context_collector.build_llm_context_string(context)
+            
+            # Build claims generation prompt
+            prompt = f"""Generate evidence-based claims for the following subtask:
+
+SUBTASK: {subtask}
+
+RELEVANT CONTEXT:
+{context_string}
+
+Generate 3-5 specific, evidence-based claims that address this subtask. For each claim:
+- Use claim IDs in format 'c1', 'c2', etc.
+- Include clear, specific statements
+- Provide confidence scores (0.0-1.0)
+- Use appropriate claim types: fact, concept, example, goal, reference, assertion
+- Focus on accuracy and verifiability
+
+Format each claim as:
+[cID] [Type] [Confidence]: Claim statement
+
+Example:
+[c1] [fact] [0.9]: The Earth's average temperature has increased by 1.1°C since pre-industrial times.
+[c2] [concept] [0.8]: Climate change refers to long-term shifts in global weather patterns."""
+
+            llm_request = LLMRequest(
+                prompt=prompt,
+                max_tokens=1500,
+                temperature=0.5,
+                task_type="claims_generation"
+            )
+
+            response = self.llm_bridge.process(llm_request)
+            
+            if response.success:
+                claims = self._parse_claims_from_response(response.content)
+                return claims
+            else:
+                raise Exception(f"Claims generation failed: {response.errors}")
+                
+        except Exception as e:
+            self.logger.error(f"Claims generation failed for subtask '{subtask}': {e}")
+            return []
+
+    async def _synthesize_final_answer(
+        self,
+        original_task: str,
+        decomposition: Dict[str, Any],
+        contexts: List[Dict[str, Any]],
+        claims_results: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Stage 4: Synthesize final comprehensive answer using LLM
+        
+        Args:
+            original_task: The original task
+            decomposition: Task decomposition result
+            contexts: Context results for each subtask
+            claims_results: Claims and evaluation results
+            
+        Returns:
+            Dictionary with final synthesized answer and confidence
+        """
+        try:
+            # Build comprehensive context for synthesis
+            synthesis_context = f"""ORIGINAL TASK: {original_task}
+
+TASK DECOMPOSITION:
+{decomposition.get('decomposition', 'N/A')}
+
+CLAIMS AND EVIDENCE:
+"""
+            
+            for i, claim_result in enumerate(claims_results, 1):
+                synthesis_context += f"\nSUBTASK {i}: {claim_result['subtask']}\n"
+                
+                for claim in claim_result['claims']:
+                    synthesis_context += f"- {claim.content} (confidence: {claim.confidence:.2f})\n"
+            
+            # Build synthesis prompt
+            prompt = f"""Based on the comprehensive analysis below, provide a complete, well-reasoned answer to the original task.
+
+{synthesis_context}
+
+Synthesize this information into a comprehensive answer that:
+1. Directly addresses the original task
+2. Integrates insights from all subtasks and claims
+3. Provides a clear, structured response
+4. Includes appropriate confidence level
+5. Highlights key findings and conclusions
+
+Format your response as:
+[ANSWER]
+Your comprehensive answer here...
+
+[CONFIDENCE]
+Overall confidence in this answer: X.XX
+
+[KEY_FINDINGS]
+- Key finding 1
+- Key finding 2
+- etc."""
+
+            llm_request = LLMRequest(
+                prompt=prompt,
+                max_tokens=2000,
+                temperature=0.4,
+                task_type="synthesis"
+            )
+
+            response = self.llm_bridge.process(llm_request)
+            
+            if response.success:
+                # Parse synthesis response
+                parsed = self._parse_synthesis_response(response.content)
+                
+                return {
+                    "success": True,
+                    "answer": parsed.get("answer", response.content),
+                    "confidence": parsed.get("confidence", 0.8),
+                    "key_findings": parsed.get("key_findings", []),
+                    "raw_response": response.content
+                }
+            else:
+                raise Exception(f"Synthesis failed: {response.errors}")
+                
+        except Exception as e:
+            self.logger.error(f"Final synthesis failed: {e}")
+            return {
+                "success": False,
+                "answer": f"Error during synthesis: {str(e)}",
+                "confidence": 0.0,
+                "key_findings": [],
+                "error": str(e)
+            }
+
+    def _parse_synthesis_response(self, response: str) -> Dict[str, Any]:
+        """Parse structured synthesis response from LLM"""
+        result = {
+            "answer": "",
+            "confidence": 0.8,
+            "key_findings": []
+        }
+        
+        lines = response.split('\n')
+        current_section = None
+        current_content = []
+        
+        for line in lines:
+            line = line.strip()
+            
+            if line.startswith('[ANSWER]'):
+                current_section = 'answer'
+                current_content = []
+            elif line.startswith('[CONFIDENCE]'):
+                if current_section == 'answer':
+                    result['answer'] = '\n'.join(current_content).strip()
+                current_section = 'confidence'
+            elif line.startswith('[KEY_FINDINGS]'):
+                if current_section == 'confidence':
+                    result['confidence'] = '\n'.join(current_content).strip()
+                current_section = 'findings'
+                current_content = []
+            elif line.startswith('[') and current_section:
+                # End of current section
+                if current_section == 'answer':
+                    result['answer'] = '\n'.join(current_content).strip()
+                elif current_section == 'confidence':
+                    # Extract confidence value
+                    confidence_text = '\n'.join(current_content).strip()
+                    try:
+                        # Look for numeric confidence
+                        import re
+                        match = re.search(r'(\d+\.?\d*)', confidence_text)
+                        if match:
+                            result['confidence'] = float(match.group(1))
+                    except:
+                        pass
+                elif current_section == 'findings':
+                    result['key_findings'] = [f.strip() for f in current_content if f.strip()]
+                current_section = None
+            elif current_section:
+                current_content.append(line)
+        
+        # Handle final section if no closing tag
+        if current_section == 'answer':
+            result['answer'] = '\n'.join(current_content).strip()
+        elif current_section == 'confidence':
+            confidence_text = '\n'.join(current_content).strip()
+            try:
+                import re
+                match = re.search(r'(\d+\.?\d*)', confidence_text)
+                if match:
+                    result['confidence'] = float(match.group(1))
+            except:
+                pass
+        elif current_section == 'findings':
+            result['key_findings'] = [f.strip() for f in current_content if f.strip()]
+        
+        # Fallback: if no structured parsing worked, use entire response as answer
+        if not result['answer']:
+            result['answer'] = response.strip()
+        
+        return result
+
     def get_statistics(self) -> Dict[str, Any]:
         """Get comprehensive system statistics"""
         from src.tools.registry import ToolRegistry
@@ -468,10 +1027,136 @@ Generate up to {max_claims} high-quality claims."""
 
         return base_stats
 
+    async def _batch_create_claims(self, claims_data: List[Dict[str, Any]]) -> List[Claim]:
+        """Batch create claims for better performance"""
+        try:
+            # Use batch operation if available
+            if hasattr(self.data_manager, 'batch_create_claims'):
+                batch_result = await self.data_manager.batch_create_claims(claims_data)
+                # Extract claims from batch result
+                claims = []
+                for result in batch_result.results:
+                    if result.success:
+                        # This is a simplified approach - in practice, we'd need
+                        # to get the actual created claims
+                        for claim_data in claims_data:
+                            claim = await self.claim_repository.create(claim_data)
+                            claims.append(claim)
+                return claims
+            else:
+                # Fallback to individual creation
+                claims = []
+                for claim_data in claims_data:
+                    claim = await self.claim_repository.create(claim_data)
+                    claims.append(claim)
+                return claims
+        except Exception as e:
+            self.logger.error(f"Error in batch claim creation: {e}")
+            # Fallback to individual creation
+            claims = []
+            for claim_data in claims_data:
+                try:
+                    claim = await self.claim_repository.create(claim_data)
+                    claims.append(claim)
+                except Exception as claim_error:
+                    self.logger.error(f"Failed to create individual claim: {claim_error}")
+            return claims
+
+    async def _collect_context_cached(
+        self, query: str, context: Dict[str, Any], max_skills: int = 5, max_samples: int = 10
+    ) -> Dict[str, Any]:
+        """Collect context with caching"""
+        cache_key = self._generate_cache_key(query, max_skills, max_samples)
+        cached_result = self._get_from_cache(cache_key, "context_collection")
+        
+        if cached_result:
+            self._stats["cache_hits"] += 1
+            return cached_result
+        
+        self._stats["cache_misses"] += 1
+        
+        # Collect context
+        context_result = await self.context_collector.collect_context_for_claim(
+            query, context, max_skills, max_samples
+        )
+        
+        # Cache the result
+        self._add_to_cache(cache_key, context_result, "context_collection")
+        
+        return context_result
+
+    def _generate_cache_key(self, *args) -> str:
+        """Generate cache key from arguments"""
+        key_str = ":".join(str(arg) for arg in args)
+        return hashlib.md5(key_str.encode()).hexdigest()
+
+    def _get_from_cache(self, cache_key: str, cache_type: str) -> Optional[Any]:
+        """Get item from cache with TTL check"""
+        cache = getattr(self, f"_{cache_type}_cache", {})
+        
+        if cache_key in cache:
+            cached_item = cache[cache_key]
+            timestamp = cached_item.get("timestamp", 0)
+            
+            # Check if cache is still valid
+            if time.time() - timestamp < self._cache_ttl:
+                return cached_item["data"]
+            else:
+                # Remove expired cache item
+                del cache[cache_key]
+        
+        return None
+
+    def _add_to_cache(self, cache_key: str, data: Any, cache_type: str) -> None:
+        """Add item to cache with timestamp"""
+        cache = getattr(self, f"_{cache_type}_cache", {})
+        cache[cache_key] = {
+            "data": data,
+            "timestamp": time.time(),
+        }
+        
+        # Maintain cache size
+        if len(cache) > 100:
+            # Remove oldest items
+            oldest_keys = sorted(
+                cache.keys(),
+                key=lambda k: cache[k]["timestamp"],
+            )[:20]
+            
+            for key in oldest_keys:
+                del cache[key]
+
     def _update_stats(self, processing_time: float, claims_count: int):
         """Update internal statistics"""
         self._stats["evaluation_time_total"] += processing_time
         self._stats["claims_processed"] += claims_count
+
+    def get_performance_stats(self) -> Dict[str, Any]:
+        """Get performance statistics"""
+        stats = {
+            "performance": {},
+            "cache_stats": {
+                "hits": self._stats["cache_hits"],
+                "misses": self._stats["cache_misses"],
+                "hit_rate": (
+                    self._stats["cache_hits"] /
+                    max(1, self._stats["cache_hits"] + self._stats["cache_misses"])
+                ) * 100
+            }
+        }
+        
+        # Calculate averages for performance metrics
+        for metric, times in self._performance_stats.items():
+            if times:
+                stats["performance"][metric] = {
+                    "count": len(times),
+                    "average": sum(times) / len(times),
+                    "min": min(times),
+                    "max": max(times),
+                    "total": sum(times)
+                }
+        
+        return stats
 
     async def __aenter__(self):
         """Async context manager entry"""

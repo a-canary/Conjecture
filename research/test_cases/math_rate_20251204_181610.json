@@ -1,0 +1,17 @@
+{
+  "id": "math_rate_20251204_181610",
+  "category": "mathematical_reasoning",
+  "difficulty": "medium",
+  "description": "Rate, time, and distance problem with unit conversion",
+  "question": "Two cars are traveling to the same destination 392 miles away. Car A travels at an average speed of 50 mph, while Car B travels at 62 mph. How much longer does the slower car take to reach the destination? Express your answer in hours and minutes.",
+  "ground_truth": "The slower car takes 1 hours and 31 minutes longer.\n\nSolution:\nTime for Car A = 392 \u00f7 50 = 7.84 hours\nTime for Car B = 392 \u00f7 62 = 6.32 hours\nTime difference = 1.52 hours = 1 hours and 31 minutes",
+  "expected_approach": "step_by_step",
+  "metadata": {
+    "type": "rate_problem",
+    "requires_speed_calculation": true,
+    "requires_time_calculation": true,
+    "requires_unit_conversion": true,
+    "estimated_time_minutes": 10,
+    "claims_based_approach_beneficial": true
+  }
+}

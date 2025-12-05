@@ -1,0 +1,113 @@
+{
+  "experiment_id": "fixed_chutes_20251205_063246",
+  "start_time": "2025-12-05T06:27:23.592391",
+  "end_time": "2025-12-05T06:32:46.813975",
+  "duration_seconds": 323.221584,
+  "models_tested": [
+    "zai-org/GLM-4.6",
+    "zai-org/GLM-4.5-Air",
+    "openai/gpt-oss-20b"
+  ],
+  "approaches_tested": [
+    "c",
+    "d"
+  ],
+  "test_cases_used": [
+    "argument_evaluation_001"
+  ],
+  "results": [
+    {
+      "model": "zai-org/GLM-4.6",
+      "approach": "conjecture",
+      "approach_name": "Conjecture Claims-Based",
+      "test_case_id": "argument_evaluation_001",
+      "test_case_category": "claims_reasoning",
+      "prompt": "You are tasked with solving a complex problem using Conjecture's approach of breaking down the problem into smaller, manageable claims.\n\n**Problem:**\nEvaluate the overall case for remote work based on the mixed evidence. Provide a balanced recommendation with confidence scores for each aspect.\n\n**In...",
+      "response": "1.  **Deconstruct the User's Request:**\n    *   **Core Task:** Evaluate the overall case for remote work based on mixed evidence.\n    *   **Methodology:** Use Conjecture's approach (breaking down into smaller claims).\n    *   **Specific Instructions:**\n        *   3-5 key claims/subtasks.\n        *   Confidence score (0.0-1.0) for each claim.\n        *   Show how claims relate.\n        *   Provide a final solution based on the claims.\n        *   Use the specific format: `[cX | claim content | / confidence]`.\n\n2.  **Initial Brainstorming & Problem Framing:**\n    *   The problem is about \"evaluating the overall case for remote work.\" This isn't a simple yes/no question. It's about weighing pros and cons.\n    *   The evidence is \"mixed,\" which is a key phrase. This means I can't just say \"re...",
+      "response_time": 47.98367357254028,
+      "response_length": 6663,
+      "timestamp": "2025-12-05T06:28:11.576064"
+    },
+    {
+      "model": "zai-org/GLM-4.6",
+      "approach": "direct",
+      "approach_name": "Direct Prompting",
+      "test_case_id": "argument_evaluation_001",
+      "test_case_category": "claims_reasoning",
+      "prompt": "Answer the following question to the best of your ability:\n\nEvaluate the overall case for remote work based on the mixed evidence. Provide a balanced recommendation with confidence scores for each aspect.\n\nProvide a clear, accurate, and complete answer.",
+      "response": "1.  **Deconstruct the User's Request:**\n    *   **Core Task:** Evaluate the overall case for remote work.\n    *   **Key Constraint:** Base the evaluation on \"mixed evidence.\" This is crucial. It means I can't just be a cheerleader for remote work or a naysayer. I must acknowledge the nuances, contradictions, and context-dependency of the data.\n    *   **Required Output:**\n        *   A balanced recommendation.\n        *   Confidence scores for each aspect.\n        *   The answer must be clear, accurate, and complete.\n\n2.  **Initial Brainstorming & Structuring:**\n    *   How do I structure a \"balanced evaluation\"? A pro/con list is too simplistic. A better approach is to break down \"remote work\" into its key impact areas.\n    *   What are the major areas where remote work has an effect?\n   ...",
+      "response_time": 68.39147186279297,
+      "response_length": 6836,
+      "timestamp": "2025-12-05T06:29:19.967536"
+    },
+    {
+      "model": "zai-org/GLM-4.5-Air",
+      "approach": "conjecture",
+      "approach_name": "Conjecture Claims-Based",
+      "test_case_id": "argument_evaluation_001",
+      "test_case_category": "claims_reasoning",
+      "prompt": "You are tasked with solving a complex problem using Conjecture's approach of breaking down the problem into smaller, manageable claims.\n\n**Problem:**\nEvaluate the overall case for remote work based on the mixed evidence. Provide a balanced recommendation with confidence scores for each aspect.\n\n**In...",
+      "response": "# Evaluation of Remote Work: Claim-Based Analysis\n\n[c1 | Remote work has mixed effects on productivity and performance, with variations across industries, roles, and individual preferences. | / 0.8]\n[c2 | Remote work generally improves work-life balance and reduces commute stress, but can lead to social isolation and blurred work-life boundaries. | / 0.9]\n[c3 | Remote work presents challenges for spontaneous collaboration and innovation, but can enhance focused work and diverse participation in decision-making. | / 0.7]\n[c4 | Successful remote work implementation requires significant changes to management practices, organizational culture, and digital infrastructure. | / 0.9]\n[c5 | Remote work can reduce carbon emissions and overhead costs, but may increase energy consumption in home offic...",
+      "response_time": 99.7793927192688,
+      "response_length": 2370,
+      "timestamp": "2025-12-05T06:30:59.746929"
+    },
+    {
+      "model": "zai-org/GLM-4.5-Air",
+      "approach": "direct",
+      "approach_name": "Direct Prompting",
+      "test_case_id": "argument_evaluation_001",
+      "test_case_category": "claims_reasoning",
+      "prompt": "Answer the following question to the best of your ability:\n\nEvaluate the overall case for remote work based on the mixed evidence. Provide a balanced recommendation with confidence scores for each aspect.\n\nProvide a clear, accurate, and complete answer.",
+      "response": "## Evaluation of Remote Work: A Balanced Assessment with Confidence Scores\n\nThe evidence on remote work is indeed mixed, reflecting its complex and context-dependent nature. Here's a balanced evaluation across key aspects, with confidence scores reflecting the strength and consistency of the evidence:\n\n**1. Productivity & Performance:**\n*   **Evidence:** Meta-analyses and large-scale studies (e.g., Stanford, Owl Labs, Microsoft) generally show **neutral to positive effects** on productivity. Factors like reduced commute time, fewer interruptions, and increased autonomy contribute. However, challenges include blurred work-life boundaries, potential for overwork, and difficulties in measuring complex, collaborative output. Performance can be highly variable based on individual roles, persona...",
+      "response_time": 98.71427512168884,
+      "response_length": 6240,
+      "timestamp": "2025-12-05T06:32:38.461204"
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "approach": "conjecture",
+      "approach_name": "Conjecture Claims-Based",
+      "test_case_id": "argument_evaluation_001",
+      "test_case_category": "claims_reasoning",
+      "prompt": "You are tasked with solving a complex problem using Conjecture's approach of breaking down the problem into smaller, manageable claims.\n\n**Problem:**\nEvaluate the overall case for remote work based on the mixed evidence. Provide a balanced recommendation with confidence scores for each aspect.\n\n**In...",
+      "response": "[c1 | Remote work can maintain or even increase employee productivity for many roles, especially those that rely on deep concentration and digital collaboration tools. | / 0.85]  \n[c2 | Remote work generally improves employee well\u2011being by reducing commute stress, offering flexible schedules, and enabling better work\u2011life balance, but it can also increase feelings of isolation and blur boundaries between work and personal life. | / 0.80]  \n[c3 | Remote work challenges organizational culture by making spontaneous interactions, informal knowledge sharing, and onboarding more difficult; however, intentional virtual rituals and clear communication protocols can mitigate these effects. | / 0.75]  \n[c4 | Remote work can lower fixed overhead costs (office space, utilities, on\u2011site amenities) but ...",
+      "response_time": 3.3143842220306396,
+      "response_length": 2706,
+      "timestamp": "2025-12-05T06:32:41.775588"
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "approach": "direct",
+      "approach_name": "Direct Prompting",
+      "test_case_id": "argument_evaluation_001",
+      "test_case_category": "claims_reasoning",
+      "prompt": "Answer the following question to the best of your ability:\n\nEvaluate the overall case for remote work based on the mixed evidence. Provide a balanced recommendation with confidence scores for each aspect.\n\nProvide a clear, accurate, and complete answer.",
+      "response": "## The Remote\u2011Work Landscape \u2013 A Balanced Assessment\n\n| Aspect | What the evidence says | Recommendation | Confidence |\n|--------|------------------------|----------------|------------|\n| **Productivity** | \u2022 2020\u20112023 surveys (e.g., Gartner, Stanford, Buffer) show *mixed* productivity results: some teams report 10\u201120\u202f% gains, others see 5\u201110\u202f% drops. <br>\u2022 Context matters: high\u2011skill, self\u2011directed roles tend to thrive; routine, highly supervised roles suffer. <br>\u2022 Tool maturity (video, async, project\u2011management) strongly correlates with performance. | **Adopt a hybrid model** that gives teams the flexibility to choose the mode that maximizes output. | 0.78 |\n| **Employee Well\u2011Being & Engagement** | \u2022 Remote work reduces commute stress and can improve work\u2011life balance. <br>\u2022 Loneliness,...",
+      "response_time": 5.03777003288269,
+      "response_length": 5458,
+      "timestamp": "2025-12-05T06:32:46.813358"
+    }
+  ],
+  "analysis": {
+    "approach_stats": {
+      "conjecture": 3,
+      "direct": 3
+    },
+    "model_stats": {
+      "zai-org/GLM-4.6": {
+        "conjecture": 1,
+        "direct": 1
+      },
+      "zai-org/GLM-4.5-Air": {
+        "conjecture": 1,
+        "direct": 1
+      },
+      "openai/gpt-oss-20b": {
+        "conjecture": 1,
+        "direct": 1
+      }
+    }
+  },
+  "note": "FIXED CHUTES API CALLS - GLM and GPT models with proper response handling, no simulation"
+}

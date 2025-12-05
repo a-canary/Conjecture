@@ -1,0 +1,50 @@
+[
+  {
+    "model_name": "ibm/granite-4-h-tiny",
+    "access_method": "direct",
+    "total_tests": 4,
+    "successful_tests": 4,
+    "success_rate": 1.0,
+    "avg_response_time": 1.3718470931053162,
+    "total_tokens": 414,
+    "avg_tokens_per_test": 103.5,
+    "overall_performance_score": 0.7247637998947872,
+    "timestamp": "2025-12-05T06:54:20.800356"
+  },
+  {
+    "model_name": "lms/granite-4-h-tiny",
+    "access_method": "conjecture",
+    "total_tests": 4,
+    "successful_tests": 4,
+    "success_rate": 1.0,
+    "avg_response_time": 1.1952508687973022,
+    "total_tokens": 375,
+    "avg_tokens_per_test": 93.75,
+    "overall_performance_score": 0.7398844472767315,
+    "timestamp": "2025-12-05T06:54:25.581359"
+  },
+  {
+    "model_name": "glm-4.6",
+    "access_method": "direct",
+    "total_tests": 4,
+    "successful_tests": 3,
+    "success_rate": 0.75,
+    "avg_response_time": 9.550153732299805,
+    "total_tokens": 1561,
+    "avg_tokens_per_test": 520.3333333333334,
+    "overall_performance_score": 0.43567633538981343,
+    "timestamp": "2025-12-05T06:55:24.598922"
+  },
+  {
+    "model_name": "zai/GLM-4.6",
+    "access_method": "conjecture",
+    "total_tests": 4,
+    "successful_tests": 4,
+    "success_rate": 1.0,
+    "avg_response_time": 1.1850932240486145,
+    "total_tokens": 350,
+    "avg_tokens_per_test": 87.5,
+    "overall_performance_score": 0.7439605801245786,
+    "timestamp": "2025-12-05T06:55:29.339295"
+  }
+]

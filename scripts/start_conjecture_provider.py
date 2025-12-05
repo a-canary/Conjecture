@@ -31,12 +31,12 @@ def check_port_available(port):
 
 def start_provider():
     """Start the Conjecture provider server"""
-    print("🚀 Starting Conjecture Local Provider...")
+    print("Starting Conjecture Local Provider...")
 
-    # Check if port 5678 is available
-    if not check_port_available(5678):
+    # Check if port 5680 is available
+    if not check_port_available(5680):
         print(
-            "❌ Port 5678 is already in use. Please stop the existing service or use a different port."
+            "Port 5680 is already in use. Please stop the existing service or use a different port."
         )
         sys.exit(1)
 
@@ -51,23 +51,23 @@ def start_provider():
         sys.exit(1)
 
     try:
-        print(f"✅ Starting provider from: {provider_script}")
-        print("📋 Available endpoints:")
+        print(f"Starting provider from: {provider_script}")
+        print("   Available endpoints:")
         print("   POST /v1/chat/completions - Main chat endpoint")
         print("   POST /tools/tell_user - TellUser tool")
         print("   POST /tools/ask_user - AskUser tool")
         print("   GET /models - List models")
         print("   GET /health - Health check")
-        print("\n🔄 Starting server on http://127.0.0.1:5678")
+        print("\nStarting server on http://127.0.0.1:5678")
         print("Press Ctrl+C to stop the server")
 
         # Run the provider
         subprocess.run([sys.executable, str(provider_script)], cwd=project_root)
 
     except KeyboardInterrupt:
-        print("\n🛑 Stopping Conjecture provider...")
+        print("\nStopping Conjecture provider...")
     except Exception as e:
-        print(f"❌ Error starting provider: {e}")
+        print(f"Error starting provider: {e}")
         sys.exit(1)
 
 

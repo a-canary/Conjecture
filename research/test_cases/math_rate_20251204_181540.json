@@ -1,0 +1,17 @@
+{
+  "id": "math_rate_20251204_181540",
+  "category": "mathematical_reasoning",
+  "difficulty": "medium",
+  "description": "Rate, time, and distance problem with unit conversion",
+  "question": "Two cars are traveling to the same destination 201 miles away. Car A travels at an average speed of 49 mph, while Car B travels at 57 mph. How much longer does the slower car take to reach the destination? Express your answer in hours and minutes.",
+  "ground_truth": "The slower car takes 0 hours and 34 minutes longer.\n\nSolution:\nTime for Car A = 201 \u00f7 49 = 4.10 hours\nTime for Car B = 201 \u00f7 57 = 3.53 hours\nTime difference = 0.58 hours = 0 hours and 34 minutes",
+  "expected_approach": "step_by_step",
+  "metadata": {
+    "type": "rate_problem",
+    "requires_speed_calculation": true,
+    "requires_time_calculation": true,
+    "requires_unit_conversion": true,
+    "estimated_time_minutes": 10,
+    "claims_based_approach_beneficial": true
+  }
+}

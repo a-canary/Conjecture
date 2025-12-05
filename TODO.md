@@ -64,6 +64,18 @@
   - [x] Moved `run_conjecture.bat` and `setup_config.bat` to `scripts/`
 - [ ] **Check for unused imports** in test files
 
+#### Oustanding User Tasks
+- ensure all LLM prompts use retry with exponential backoff 10 seconds to upto 10 minutes.
+- complete work needed to collect model-harness quality metrics and analysis, fix any errors
+- Add openRouter: gpt-oss-20b to user config to test models, run metric test and analysis
+- refactor Direct and Conjecture to use LLMLocalRouter as provider. 
+- do we have duplicate frameworks? do needed organization and clean up
+- optimization tests to improve metrics, revert if does not show promise:
+  - refactor upstream LLMs prompts and responses to be xml format, should increase tool call and claim creation success rate. 
+  - adjust the upstream prompt to increase claim creation and more thorough though process.
+  - further prime the conjecture database by evaluating "What are best practices for fact checking?", "What are best practices for programming?", "What is scientific method?", "What are steps of critical thinking?". Once evaluated these will create valuable claims to help models reason.
+  - if all models+approaches score 100% on a type of test, reduce it's test count to 1 to speed up testing, but stull catch bad regressions. 
+
 ---
 
 ## 🔄 Current Status
@@ -268,3 +280,10 @@
 5. Run 4-model comparison test once fixes are verified
 
 
+
+
+## other ideas not ready yet
+Extract code to make a LLMLocalRouter that is FastAPI service that will forward your LLM request to a specific provider. the config specifies linear failover order and filters. So skip provider if it failed in last X seconds. skip provider if context is bigger than X. if all providers skipped or failed auto-retry with exponential backoff from 10 seconds upto 10 minutes. The configured failover lists are presented to the user as models (localhost:5677/v1/models) to select on each prompt. Use python libraries to minimize code foot-print. See if you can write this in 100 lines of code, in one file. allow multiple API Keys for same provider. 
+remove model name from config, instead discover models from all providers every 15 minutes or on start. 
+so config is {portNumber: {base_url:[api_key,...]}} 
+track response time per url over last 2 minutes, and route 99% requests to fastest url first, failover to others. 

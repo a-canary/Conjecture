@@ -8,6 +8,13 @@ Conjecture is an AI-Powered Evidence-Based Reasoning System that enables users t
 
 **Architecture**: CLI Interface → Core Engine → Data Layer (SQLite + ChromaDB)
 
+## Essential Docs
+- ANALYSIS.md: most recent comprehensive analysis of tests and metrics, rewrite after each comprehensive test results
+- RESULTS.md: After experiment, log the hypothesis and result in a single short paragraph. Use this to guide replanning 
+- TODO.md: breakdown of remaining work to persist between agents
+
+IMPORTANT: organize each feature development or experiement in a git branch based on "Base" Branch. When metrics and analysis improves, rebase "Base" to current work branch. If hypothesis or feature dev failed, revert to Base and retry or do next todo item.
+
 ## Essential Commands
 
 ### Running the Application
@@ -208,6 +215,11 @@ python scripts/migrate_to_config.py
 2. **Exact matching**: Edit tool requires exact whitespace/indentation matches
 3. **Test after**: Run tests immediately after modifications
 4. **Cross-platform**: Consider Windows and Unix compatibility
+
+### Complexity Prevention Rules
+1. **No duplicate implementations**: Before creating new files, search existing code. If similar functionality exists, improve it instead of creating duplicates
+2. **Keep single source of truth**: Only maintain the most recent/valuable version of each component. Archive or delete outdated versions immediately
+3. **Post-feature cleanup**: After each feature git commit, perform a "purge-organize-rename-fixup" commit to remove duplicates, organize files, and fix references
 
 ### Key Dependencies
 - **Pydantic 2.5.2**: Data validation and models

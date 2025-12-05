@@ -29,18 +29,23 @@ class ErrorType(Enum):
 
 @dataclass
 class RetryConfig:
-    """Configuration for retry logic"""
-    max_attempts: int = 3
-    base_delay: float = 1.0  # Base delay in seconds
-    max_delay: float = 60.0  # Maximum delay in seconds
+    """Configuration for retry logic with enhanced exponential backoff (10s to 10min range)"""
+    max_attempts: int = 5  # Increased attempts for better resilience
+    base_delay: float = 10.0  # Base delay in seconds (increased to 10s)
+    max_delay: float = 600.0  # Maximum delay in seconds (10 minutes)
     exponential_base: float = 2.0  # Exponential backoff base
     jitter: bool = True  # Add random jitter to prevent thundering herd
     retry_on: List[ErrorType] = field(default_factory=lambda: [
         ErrorType.NETWORK_ERROR,
         ErrorType.API_ERROR,
+        ErrorType.RATE_LIMIT_ERROR,  # Added rate limit retry
         ErrorType.TIMEOUT_ERROR,
         ErrorType.UNKNOWN_ERROR
     ])
+    # Enhanced configuration for different error types
+    rate_limit_multiplier: float = 2.0  # Multiplier for rate limit errors
+    network_multiplier: float = 1.5  # Multiplier for network errors
+    timeout_multiplier: float = 1.0  # Multiplier for timeout errors
 
 
 @dataclass
@@ -127,8 +132,8 @@ class RetryHandler:
                         logger.error(f"Max retry attempts ({self.config.max_attempts}) reached")
                         raise
                     
-                    # Calculate delay
-                    delay = self._calculate_delay(attempt)
+                    # Calculate delay with error type consideration
+                    delay = self._calculate_delay(attempt, error_type)
                     logger.warning(f"Attempt {attempt + 1} failed ({error_type}): {e}. Retrying in {delay:.2f}s...")
                     time.sleep(delay)
             
@@ -157,13 +162,24 @@ class RetryHandler:
         else:
             return ErrorType.UNKNOWN_ERROR
     
-    def _calculate_delay(self, attempt: int) -> float:
-        """Calculate delay with exponential backoff and jitter"""
+    def _calculate_delay(self, attempt: int, error_type: ErrorType) -> float:
+        """Calculate delay with exponential backoff, error-specific multipliers, and jitter"""
+        # Base exponential backoff
         delay = self.config.base_delay * (self.config.exponential_base ** attempt)
+        
+        # Apply error-specific multipliers
+        if error_type == ErrorType.RATE_LIMIT_ERROR:
+            delay *= self.config.rate_limit_multiplier
+        elif error_type == ErrorType.NETWORK_ERROR:
+            delay *= self.config.network_multiplier
+        elif error_type == ErrorType.TIMEOUT_ERROR:
+            delay *= self.config.timeout_multiplier
+        
+        # Ensure we don't exceed max_delay
         delay = min(delay, self.config.max_delay)
         
         if self.config.jitter:
-            # Add random jitter (±25% of delay)
+            # Add random jitter (±25% of delay) to prevent thundering herd
             jitter_range = delay * 0.25
             delay += random.uniform(-jitter_range, jitter_range)
         

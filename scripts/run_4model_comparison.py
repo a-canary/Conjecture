@@ -129,7 +129,8 @@ class ChutesProvider(ModelProvider):
     def __init__(
         self, api_key: str, base_url: str = "https://api.z.ai/api/coding/paas/v4"
     ):
-
+        self.api_key = api_key
+        self.base_url = base_url
 
     async def call_model(self, prompt: str, model_name: str) -> Tuple[str, float, int]:
         """Call Chutes API model directly"""
@@ -225,7 +226,7 @@ class ModelComparisonTest:
     def __init__(self):
         self.providers = {
             "lmstudio": LMStudioProvider(),
-            "chutes": ChutesProvider(os.getenv("ZAI_API_KEY", ""), os.getenv("ZAI_API_URL", "https://api.z.ai/api/coding/paas/v4")),
+            "chutes": ChutesProvider(os.getenv("ZAI_API_KEY", ""), os.getenv("ZAI_API_URL", "https://api.z.ai/api/coding/paas")),
             "conjecture": ConjectureProvider(),
         }
         self.test_results = []

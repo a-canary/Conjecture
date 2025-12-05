@@ -20,5 +20,18 @@
   "debug": false,
   "database_path": "data/conjecture.db",
   "user": "user",
-  "team": "default"
+  "team": "default",
+  "retry_config": {
+    "max_attempts": 5,
+    "base_delay": 10.0,
+    "max_delay": 600.0,
+    "exponential_base": 2.0,
+    "jitter": true,
+    "jitter_percentage": 0.25,
+    "rate_limit_multiplier": 3.0,
+    "network_multiplier": 2.0,
+    "timeout_multiplier": 1.5,
+    "connection_multiplier": 2.5,
+    "http_error_multiplier": 1.0
+  }
 }

@@ -243,6 +243,10 @@ class Claim(BaseModel):
             f"Supported By: {', '.join(self.supported_by) if self.supported_by else 'none'}"
         )
 
+    def format_for_output(self) -> str:
+        """Format claim for output in standard [c{id} | content | / confidence] format"""
+        return f"[c{self.id} | {self.content} | / {self.confidence:.2f}]"
+
     def __repr__(self) -> str:
         return f"Claim(id={self.id}, confidence={self.confidence}, state={self.state.value}, dirty={self.is_dirty})"
 
@@ -279,7 +283,7 @@ class Claim(BaseModel):
     def _get_default_threshold(self) -> float:
         """Get effective confidence threshold"""
         try:
-            from ..config.simple_config import get_config
+            from ..config.config import get_config
 
             config = get_config()
             return config.get_effective_confident_threshold()

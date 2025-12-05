@@ -1,0 +1,17 @@
+{
+  "id": "seating_arrangement_20251204_181518",
+  "category": "complex_reasoning",
+  "difficulty": "medium",
+  "description": "Seating arrangement logic puzzle with professions",
+  "question": "Five people (Alice, Bob, Charlie, David, Eve) are sitting in a row at positions 1-5. Each person has a different profession. Use these clues to determine who sits where and their profession:\n\n1. The engineer sits at one end\n2. Bob sits next to the doctor\n3. The teacher sits in the middle (position 3)\n4. David sits immediately to the right of the artist\n5. The chef sits next to Alice\n\nWho sits in position 2 and what is their profession?",
+  "ground_truth": "Position 2: Bob is the artist\n\nSolution:\n- Position 1: Alice is the teacher\n- Position 2: Bob is the artist\n- Position 3: Charlie is the engineer\n- Position 4: David is the doctor\n- Position 5: Eve is the chef",
+  "expected_approach": "break_down_problem",
+  "metadata": {
+    "type": "logic_puzzle",
+    "requires_deduction": true,
+    "multiple_constraints": true,
+    "spatial_reasoning": true,
+    "estimated_time_minutes": 12,
+    "claims_based_approach_beneficial": true
+  }
+}

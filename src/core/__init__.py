@@ -1,5 +1,5 @@
 """
-Conjecture: Core package for Simplified Universal Claim Architecture
+Conjecture: Core package for Unified Claim Architecture
 Provides unified claim models and relationship management
 """
 
@@ -8,12 +8,15 @@ from .models import (
     Claim,
     ClaimBatch,
     ClaimState,
+    ClaimType,
     ClaimScope,
     DirtyReason,
     ProcessingResult,
     ToolCall,
     ExecutionResult,
     ParsedResponse,
+    Relationship,
+    DataConfig,
     create_claim_index,
     get_orphaned_claims,
     get_root_claims,
@@ -22,14 +25,36 @@ from .models import (
     filter_claims_by_confidence,
     create_claim,
     generate_claim_id,
+    validate_claim_id,
+    validate_confidence,
 )
 
-# Export core components
+# Unified models (consolidated from multiple sources)
+from .unified_models import (
+    DataSource,
+    DataItem,
+    ContextItemType,
+    ContextItem,
+    ContextResult,
+    TokenUsage,
+    CacheEntry,
+    PromptTemplateStatus,
+    PromptTemplateType,
+    PromptVariable,
+    PromptTemplate,
+    LLMResponse,
+    ResponseSchema,
+    ParsedLLMResponse,
+    FallbackResponse,
+    PromptMetrics,
+)
+
+# Export all components
 __all__ = [
     # Core claim models
     "Claim",
     "ClaimType",
-    "ClaimState",
+    "ClaimState", 
     "ClaimScope",
     "ClaimBatch",
     "DirtyReason",
@@ -37,6 +62,9 @@ __all__ = [
     "ToolCall",
     "ExecutionResult",
     "ParsedResponse",
+    "Relationship",
+    "DataConfig",
+    
     # Helper functions
     "create_claim_index",
     "get_orphaned_claims",
@@ -46,4 +74,24 @@ __all__ = [
     "filter_claims_by_confidence",
     "create_claim",
     "generate_claim_id",
+    "validate_claim_id",
+    "validate_confidence",
+    
+    # Unified models
+    "DataSource",
+    "DataItem",
+    "ContextItemType",
+    "ContextItem",
+    "ContextResult",
+    "TokenUsage",
+    "CacheEntry",
+    "PromptTemplateStatus",
+    "PromptTemplateType",
+    "PromptVariable",
+    "PromptTemplate",
+    "LLMResponse",
+    "ResponseSchema",
+    "ParsedLLMResponse",
+    "FallbackResponse",
+    "PromptMetrics",
 ]
