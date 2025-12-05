@@ -24,6 +24,10 @@ class PromptTemplateType(str, Enum):
     EVALUATION = "evaluation"
     GENERAL = "general"
     CUSTOM = "custom"
+    ANALYSIS = "analysis"
+    VALIDATION = "validation"
+    SYNTHESIS = "synthesis"
+    TASK_DECOMPOSITION = "task_decomposition"
 
 
 class PromptVariable(BaseModel):

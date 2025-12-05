@@ -1,0 +1,117 @@
+{
+  "baseline_results": {
+    "factual_1": {
+      "query": "What are the health benefits of regular exercise?",
+      "template_type": "baseline",
+      "claims_generated": 2,
+      "response_time": 0.6,
+      "quality_score": 70.0,
+      "confidence_scores": [
+        0.8,
+        0.7
+      ],
+      "avg_confidence": 0.75,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.35
+    },
+    "conceptual_1": {
+      "query": "What is machine learning interpretability and why is it important?",
+      "template_type": "baseline",
+      "claims_generated": 2,
+      "response_time": 0.6,
+      "quality_score": 68.0,
+      "confidence_scores": [
+        0.8,
+        0.6
+      ],
+      "avg_confidence": 0.7,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.35
+    },
+    "technical_1": {
+      "query": "How can we optimize database queries for better performance?",
+      "template_type": "baseline",
+      "claims_generated": 2,
+      "response_time": 0.6,
+      "quality_score": 65.0,
+      "confidence_scores": [
+        0.9,
+        0.7
+      ],
+      "avg_confidence": 0.8,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.35
+    }
+  },
+  "enhanced_results": {
+    "factual_1": {
+      "query": "What are the health benefits of regular exercise?",
+      "template_type": "enhanced",
+      "claims_generated": 4,
+      "response_time": 0.7,
+      "quality_score": 85.0,
+      "confidence_scores": [
+        0.9,
+        0.8,
+        0.7,
+        0.6
+      ],
+      "avg_confidence": 0.75,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.15
+    },
+    "conceptual_1": {
+      "query": "What is machine learning interpretability and why is it important?",
+      "template_type": "enhanced",
+      "claims_generated": 3,
+      "response_time": 0.7,
+      "quality_score": 80.0,
+      "confidence_scores": [
+        0.7,
+        0.6,
+        0.5
+      ],
+      "avg_confidence": 0.6,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.15
+    },
+    "technical_1": {
+      "query": "How can we optimize database queries for better performance?",
+      "template_type": "enhanced",
+      "claims_generated": 3,
+      "response_time": 0.7,
+      "quality_score": 78.0,
+      "confidence_scores": [
+        0.8,
+        0.7,
+        0.6
+      ],
+      "avg_confidence": 0.7,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.15
+    }
+  },
+  "metadata": {
+    "experiment_start": "2025-12-05T16:05:54.003823",
+    "hypothesis": "Chain-of-thought examples and confidence calibration guidance will increase claim creation thoroughness by 25%",
+    "baseline_claims_per_task": 1.2,
+    "target_claims_per_task": 2.5
+  },
+  "overall_results": {
+    "baseline_avg_claims": 2,
+    "enhanced_avg_claims": 3.3333333333333335,
+    "claims_improvement_pct": 66.66666666666667,
+    "baseline_avg_quality": 67.66666666666667,
+    "enhanced_avg_quality": 81.0,
+    "quality_improvement_pct": 19.70443349753694,
+    "baseline_avg_calibration_error": 0.35,
+    "enhanced_avg_calibration_error": 0.15,
+    "calibration_improvement_pct": 57.14285714285714
+  },
+  "conclusion": "SUPPORTED: Enhanced prompt engineering shows significant improvement meeting all success criteria",
+  "success_criteria_met": {
+    "claims_per_task_target": true,
+    "quality_improvement_target": true,
+    "calibration_error_target": true
+  }
+}

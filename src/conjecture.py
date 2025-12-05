@@ -301,7 +301,7 @@ class Conjecture:
             else:
                 context_string = "No relevant context available."
             
-            # Get enhanced XML template for claim creation
+            # Get enhanced XML template for claim creation with chain-of-thought and confidence calibration
             xml_template = self.enhanced_template_manager.get_template("research_enhanced_xml")
             
             if not xml_template:
@@ -324,14 +324,24 @@ Generate claims using this XML structure:
   <!-- Add more claims as needed -->
 </claims>"""
             else:
-                # Use XML template with proper variable substitution
-                prompt = xml_template.template_content.format(
-                    user_query=query,
-                    relevant_context=context_string
-                )
-                
-                # Add specific claim count instruction
-                prompt += f"\n\nGenerate exactly {max_claims} high-quality claims using the XML format specified above."
+                # Use enhanced XML template with proper variable substitution and chain-of-thought guidance
+                try:
+                    prompt = xml_template.template_content.format(
+                        user_query=query,
+                        relevant_context=context_string
+                    )
+                    
+                    # Add specific claim count instruction with enhanced guidance
+                    prompt += f"\n\nGenerate exactly {max_claims} high-quality claims using the enhanced XML format specified above."
+                    prompt += "\nFollow the 6-step chain-of-thought research process for each claim."
+                    prompt += "\nApply the confidence calibration guidelines to ensure accurate confidence scoring."
+                    prompt += f"\nTarget {max_claims} claims with diverse types (fact, concept, example, goal, reference, hypothesis)."
+                    
+                except KeyError as e:
+                    self.logger.warning(f"Template variable substitution failed: {e}")
+                    # Fallback to basic format rendering
+                    prompt = xml_template.template_content.replace("{{user_query}}", query).replace("{{relevant_context}}", context_string)
+                    prompt += f"\n\nGenerate exactly {max_claims} high-quality claims using the XML format specified above."
 
             llm_request = LLMRequest(
                 prompt=prompt, max_tokens=3000, temperature=0.7, task_type="explore"

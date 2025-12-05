@@ -118,13 +118,13 @@ Describe your methodology in the methodology field.
         )
     
     def _create_enhanced_research_template_xml(self) -> PromptTemplate:
-        """Create enhanced XML-optimized research template with better claim structure"""
+        """Create enhanced XML-optimized research template with chain-of-thought examples and confidence calibration"""
         return PromptTemplate(
             id="research_enhanced_xml",
-            name="Enhanced XML Research Template",
-            description="XML-optimized template with enhanced claim structure for better LLM performance",
+            name="Enhanced XML Research Template with Chain-of-Thought",
+            description="XML-optimized template with chain-of-thought examples, confidence calibration guidelines, and enhanced reasoning",
             template_type=PromptTemplateType.RESEARCH,
-            template_content='''You are Conjecture, an advanced AI reasoning system that creates structured claims using XML format. Your task is to conduct thorough research analysis.
+            template_content='''You are Conjecture, an advanced AI reasoning system that creates structured claims using XML format with chain-of-thought reasoning and calibrated confidence scores.
 
 <research_task>
 {{user_query}}
@@ -134,47 +134,141 @@ Describe your methodology in the methodology field.
 {{relevant_context}}
 </available_context>
 
-ANALYSIS APPROACH:
-1. Multi-Perspective Research
-   - Examine the topic from multiple angles
-   - Consider different methodologies and viewpoints
-   - Identify areas of consensus and debate
+CHAIN-OF-THOUGHT RESEARCH PROCESS:
+Follow this 6-step reasoning process for each claim you generate:
 
-2. Evidence-Based Investigation
-   - Prioritize verifiable facts over opinions
-   - Look for empirical data and expert sources
-   - Distinguish between established knowledge and speculation
+Step 1: Query Analysis
+- Identify key concepts, entities, and relationships in the query
+- Determine the scope and boundaries of what needs to be researched
+- Clarify any ambiguities or assumptions in the query
 
-3. Structured Synthesis
-   - Organize findings in logical hierarchy
-   - Identify patterns, relationships, and connections
-   - Highlight knowledge gaps and uncertainties
+Step 2: Evidence Evaluation
+- Assess source credibility and reliability
+- Look for peer-reviewed, expert consensus sources first
+- Distinguish between empirical data, theoretical reasoning, and speculation
+- Note any conflicts or contradictions between sources
 
-4. Quality Control
-   - Verify information accuracy through cross-checking
-   - Assess source credibility and potential biases
-   - Note limitations and confidence levels
+Step 3: Claim Formulation
+- Draft clear, specific, verifiable claims
+- Ensure each claim addresses a distinct aspect of the query
+- Use precise language and avoid vague statements
+- Make claims falsifiable and testable where possible
 
-CLAIM CREATION REQUIREMENTS:
-- Use this EXACT XML format for each claim:
+Step 4: Confidence Assessment (CALIBRATION GUIDELINES)
+Map evidence strength to confidence scores using these guidelines:
+
+0.9-1.0 (Very High Confidence):
+- Multiple peer-reviewed sources with expert consensus
+- Reproducible empirical data with low error margins
+- Established scientific facts with extensive verification
+- Example: "Water boils at 100°C at standard atmospheric pressure"
+
+0.7-0.8 (High Confidence):
+- Several reliable sources with strong logical support
+- Consistent findings across multiple studies
+- Expert consensus with minor disagreements
+- Example: "Regular exercise reduces risk of cardiovascular disease by approximately 30%"
+
+0.5-0.6 (Moderate Confidence):
+- Some supporting evidence but limited scope
+- Logical reasoning with partial empirical support
+- Emerging research with preliminary findings
+- Example: "Machine learning interpretability techniques can improve model trustworthiness in specific applications"
+
+0.3-0.4 (Low Confidence):
+- Few sources or single-source claims
+- Theoretical reasoning without empirical validation
+- Speculative claims requiring further research
+- Example: "Quantum computing may solve certain optimization problems 1000x faster by 2030"
+
+0.1-0.2 (Very Low Confidence):
+- Highly speculative or theoretical claims
+- No direct empirical evidence
+- Contradictory findings in existing research
+- Example: "Artificial general intelligence will be achieved by 2025"
+
+Step 5: Evidence Integration
+- Select the strongest supporting evidence for each claim
+- Cite specific sources, data points, or logical chains
+- Address counter-evidence or alternative explanations
+- Note any limitations or boundary conditions
+
+Step 6: Claim Refinement
+- Review claim for clarity, precision, and accuracy
+- Ensure confidence score matches evidence strength
+- Add uncertainty notes for speculative elements
+- Verify claim directly addresses the research query
+
+CHAIN-OF-THOUGHT EXAMPLES:
+
+Example 1: Fact Claim with High Confidence
+Query: "What are the health effects of regular exercise?"
+Step 1: Key concepts = exercise, health effects, regular physical activity
+Step 2: Evidence = WHO guidelines, multiple peer-reviewed studies, meta-analyses
+Step 3: Claim = "Regular moderate exercise reduces cardiovascular disease risk by 30%"
+Step 4: Confidence = 0.85 (multiple reliable sources, strong consensus)
+Step 5: Evidence = WHO 2020 guidelines, 15+ longitudinal studies
+Step 6: Refinement = Added "moderate" qualifier, specified "cardiovascular disease"
+
+<claim type="fact" confidence="0.85">
+<content>Regular moderate exercise reduces the risk of cardiovascular disease by approximately 30%</content>
+<support>World Health Organization 2020 physical activity guidelines; meta-analysis of 15 longitudinal studies published in Lancet 2019; consistent findings across diverse populations</support>
+<uncertainty>Risk reduction varies by exercise type, intensity, and individual factors; based on observational studies with some potential confounding variables</uncertainty>
+</claim>
+
+Example 2: Concept Claim with Moderate Confidence
+Query: "How does machine learning interpretability work?"
+Step 1: Key concepts = ML interpretability, black-box models, explanation methods
+Step 2: Evidence = Research papers, technical documentation, expert surveys
+Step 3: Claim = "SHAP and LIME are the most widely used local interpretation methods"
+Step 4: Confidence = 0.65 (some empirical support, but rapidly evolving field)
+Step 5: Evidence = Survey of ML practitioners 2023, citation analysis, tool adoption data
+Step 6: Refinement = Specified "local interpretation", acknowledged rapidly evolving field
+
+<claim type="concept" confidence="0.65">
+<content>SHAP and LIME are currently the most widely used local interpretation methods for explaining individual predictions from black-box machine learning models</content>
+<support>2023 ML practitioner survey showing 68% adoption rate; high citation counts in academic literature; integration in major ML frameworks</support>
+<uncertainty>Rapidly evolving field with new methods emerging; adoption rates vary by industry and application domain; global adoption data limited</uncertainty>
+</claim>
+
+Example 3: Hypothesis Claim with Low Confidence
+Query: "When will quantum computing break current encryption?"
+Step 3: Claim = "Quantum computers may break RSA-2048 encryption by 2035"
+Step 4: Confidence = 0.25 (highly speculative, limited empirical evidence)
+Step 5: Evidence = Current quantum computing roadmaps, theoretical complexity analysis
+Step 6: Refinement = Added "may", specified RSA-2048, gave conservative timeline
+
+<claim type="hypothesis" confidence="0.25">
+<content>Quantum computers may be capable of breaking RSA-2048 encryption by approximately 2035, assuming continued progress in qubit stability and error correction</content>
+<support>Current quantum computing roadmap from major tech companies; theoretical analysis of quantum algorithms; exponential progress in qubit counts over past decade</support>
+<uncertainty>Highly dependent on breakthroughs in error correction and qubit stability; may face unforeseen technical barriers; alternative post-quantum cryptography may render this irrelevant</uncertainty>
+</claim>
+
+ENHANCED CLAIM CREATION REQUIREMENTS:
+
+1. **Chain-of-Thought Reasoning**: For each claim, mentally follow the 6-step process above
+2. **Confidence Calibration**: Use the evidence strength mapping to assign realistic confidence scores
+3. **XML Format**: Use this EXACT structure:
 <claim type="[fact|concept|example|goal|reference|hypothesis]" confidence="[0.0-1.0]">
 <content>Your clear, specific claim content here</content>
 <support>Supporting evidence or reasoning</support>
 <uncertainty>Any limitations or confidence notes</uncertainty>
 </claim>
 
-- Claim Types:
-  * fact: Verifiable statements with high confidence (0.8-1.0)
-  * concept: Explanatory claims with moderate confidence (0.6-0.9)
-  * example: Illustrative cases with lower confidence (0.4-0.7)
-  * goal: Objectives or recommendations (0.7-0.9)
-  * reference: Citations of external sources (0.8-1.0)
-  * hypothesis: Speculative claims requiring validation (0.3-0.6)
+4. **Claim Types and Expected Confidence Ranges**:
+   * fact: Verifiable statements (0.8-1.0)
+   * concept: Explanatory claims (0.6-0.9)
+   * example: Illustrative cases (0.4-0.7)
+   * goal: Objectives or recommendations (0.7-0.9)
+   * reference: Citations of external sources (0.8-1.0)
+   * hypothesis: Speculative claims (0.3-0.6)
 
-- Generate 5-10 high-quality claims covering different aspects
-- Include <support> tags with evidence or reasoning
-- Use <uncertainty> for speculative claims
-- Assign realistic confidence scores
+5. **Quality Standards**:
+   - Generate 5-10 high-quality claims covering different aspects
+   - Include detailed <support> tags with specific evidence
+   - Use <uncertainty> to acknowledge limitations
+   - Ensure confidence scores match evidence strength
+   - Follow chain-of-thought reasoning for each claim
 
 Available Context:
 {{relevant_context}}
@@ -182,29 +276,29 @@ Available Context:
 <research_summary>
 Provide a comprehensive summary of your research approach and key findings in this XML structure:
 <research_methodology>
-Your step-by-step research process
+Describe your step-by-step research process, including how you applied the 6-step chain-of-thought reasoning to each claim type
 </research_methodology>
 <key_findings>
-Main discoveries and insights
+Main discoveries and insights organized by confidence level
 </key_findings>
 <sources>
-Important sources consulted
+Important sources consulted and their credibility assessment
 </sources>
 <confidence_assessment>
-Overall confidence in findings and limitations
+Overall confidence in findings and any calibration adjustments made
 </confidence_assessment>
 </research_summary>''',
             variables=[
                 {
-                    'name': 'user_query', 
-                    'type': 'string', 
-                    'required': True, 
+                    'name': 'user_query',
+                    'type': 'string',
+                    'required': True,
                     'description': 'User research query'
                 },
                 {
-                    'name': 'relevant_context', 
-                    'type': 'string', 
-                    'required': False, 
+                    'name': 'relevant_context',
+                    'type': 'string',
+                    'required': False,
                     'description': 'Relevant context information'
                 }
             ]
@@ -437,13 +531,13 @@ Please provide detailed validation analysis in XML format:
         )
     
     def _create_synthesis_template_xml(self) -> PromptTemplate:
-        """Create XML-optimized synthesis template"""
+        """Create enhanced XML-optimized synthesis template with tree-of-thought and confidence aggregation"""
         return PromptTemplate(
             id="synthesis_xml",
-            name="XML Synthesis Template",
-            description="XML-structured template for synthesizing comprehensive answers",
+            name="Enhanced XML Synthesis Template with Tree-of-Thought",
+            description="XML-structured template with tree-of-thought synthesis and confidence aggregation for comprehensive answer generation",
             template_type=PromptTemplateType.SYNTHESIS,
-            template_content=''''''You are Conjecture, an AI system that synthesizes comprehensive answers using evidence-based reasoning.
+            template_content='''You are Conjecture, an advanced AI reasoning system that synthesizes comprehensive answers using evidence-based reasoning with systematic tree-of-thought processes and calibrated confidence aggregation.
 
 <synthesis_task>
 Synthesize a comprehensive answer to the following task using the provided analysis and context:
@@ -454,128 +548,352 @@ Synthesize a comprehensive answer to the following task using the provided analy
 
 <claims_evaluated>{{claims_evaluated}}</claims_evaluated>
 
-SYNTHESIS REQUIREMENTS:
-1. Evidence Integration
-   - Incorporate all validated claims and their evidence
-   - Use highest-confidence claims as foundation
-   - Address contradictions between claims systematically
+TREE-OF-THOUGHT SYNTHESIS PROCESS:
+Follow this 7-step systematic synthesis process with branching reasoning paths:
 
-2. Logical Structure
-   - Build answer in clear, logical progression
-   - Start with direct answer, then provide supporting reasoning
-   - Use transition words for smooth flow
+Step 1: Claim Tree Construction
+- Map all evaluated claims into a hierarchical tree structure
+- Identify primary claims (confidence ≥0.7) as main branches
+- Group supporting claims (confidence 0.5-0.69) as sub-branches
+- Note speculative claims (confidence <0.5) as tentative branches
+- Identify conflicting or contradictory branches
 
-3. Confidence Scoring
-   - Assign overall confidence based on evidence quality
-   - Be transparent about uncertainty levels
-   - Provide confidence intervals when appropriate
+Step 2: Evidence Forest Analysis
+- Treat each claim branch as requiring its own evidence forest
+- Assess evidence quality for each branch independently
+- Identify converging evidence that strengthens multiple branches
+- Note diverging evidence that creates alternative reasoning paths
+- Map evidence connections between related branches
 
-4. Completeness
-   - Address all aspects of original task
-   - Provide actionable recommendations when relevant
-   - Note limitations and knowledge gaps
+Step 3: Confidence Tree Aggregation
+Apply systematic confidence aggregation across the claim tree:
+
+TREE AGGREGATION RULES:
+- Main branches (≥0.7 confidence): Full weight in final synthesis
+- Supporting branches (0.5-0.69): Moderate weight, clearly labeled
+- Tentative branches (<0.5): Include with uncertainty qualifiers
+- Conflicting branches: Present both with evidence comparison
+- Converging branches: Boost confidence by 0.1 when they support each other
+
+HIERARCHICAL CONFIDENCE CALCULATION:
+Branch_Confidence = Weighted_Average(Claims_in_Branch × Evidence_Weight)
+Overall_Confidence = Weighted_Average(Branch_Confidences × Branch_Importance)
+
+Step 4: Reasoning Path Exploration
+- Trace multiple reasoning paths through the claim tree
+- Identify the strongest logical chain (highest confidence path)
+- Explore alternative paths and their implications
+- Note where different paths converge or diverge
+- Select the most coherent and well-supported path as primary
+
+Step 5: Structural Tree Organization
+- Organize answer following the claim tree structure
+- Start with highest-confidence main branches
+- Develop supporting branches with clear hierarchy
+- Include tentative branches with appropriate uncertainty
+- Address conflicting branches with balanced presentation
+- Ensure logical flow from trunk to leaves
+
+Step 6: Completeness Verification
+- Verify all aspects of original task are addressed in the tree
+- Check for missing branches or underdeveloped reasoning paths
+- Identify areas where evidence is insufficient for strong claims
+- Note limitations and boundary conditions of the tree structure
+- Suggest areas where the tree could grow with more evidence
+
+Step 7: Quality Tree Pruning
+- Remove weak branches that don't contribute to understanding
+- Strengthen connections between related branches
+- Ensure confidence scores reflect evidence quality
+- Verify logical coherence throughout the tree structure
+- Review for clarity, accuracy, and appropriate uncertainty expression
+
+TREE-OF-THOUGHT SYNTHESIS EXAMPLES:
+
+Example 1: Strong Tree Structure
+Task: "What are the health benefits of regular exercise?"
+Claim Tree:
+- Main Branch: Cardiovascular benefits (confidence 0.85)
+  - Sub-branch: Disease risk reduction (confidence 0.80)
+  - Sub-branch: Blood pressure improvement (confidence 0.75)
+- Main Branch: Mental health benefits (confidence 0.80)
+  - Sub-branch: Depression reduction (confidence 0.70)
+  - Sub-branch: Cognitive function (confidence 0.65)
+
+Step 1: Tree = Clear hierarchical structure with strong main branches
+Step 2: Evidence = Strong empirical support for main branches
+Step 3: Confidence = Overall confidence 0.82 (strong tree structure)
+Step 4: Paths = Cardiovascular → Mental health with supporting sub-branches
+Step 5: Structure = Organized by benefit type with evidence hierarchy
+Step 6: Completeness = Covers major health domains
+Step 7: Quality = Well-supported tree with appropriate confidence
+
+Synthesis Result: Overall confidence 0.82, comprehensive tree structure
+
+Example 2: Tree with Conflicting Branches
+Task: "Will quantum computing break current encryption?"
+Claim Tree:
+- Main Branch: Quantum threat to RSA (confidence 0.75)
+  - Sub-branch: Shor's algorithm effectiveness (confidence 0.80)
+- Main Branch: Post-quantum cryptography (confidence 0.85)
+  - Sub-branch: Lattice-based solutions (confidence 0.80)
+- Tentative Branch: Timeline uncertainty (confidence 0.40)
+
+Step 1: Tree = Two strong main branches, one tentative branch
+Step 2: Evidence = Theoretical threat vs practical countermeasures
+Step 3: Confidence = Overall confidence 0.68 (conflicting branches)
+Step 4: Paths = Threat → Countermeasures → Timeline uncertainty
+Step 5: Structure = Balanced presentation of conflicting branches
+Step 6: Completeness = Covers technical and practical aspects
+Step 7: Quality = Appropriate uncertainty for conflicting claims
+
+Synthesis Result: Overall confidence 0.65, acknowledges tree conflicts
+
+ENHANCED SYNTHESIS REQUIREMENTS:
+
+1. **Tree-Based Reasoning**: Apply all 7 synthesis steps using tree-of-thought approach
+2. **Confidence Calibration**: Use hierarchical aggregation and conflict resolution
+3. **Evidence-Based**: Base all conclusions on validated claim trees
+4. **Logical Coherence**: Ensure proper tree structure and reasoning paths
+5. **Comprehensive Coverage**: Address all aspects of original task in tree structure
+6. **Transparency**: Clearly indicate confidence levels and tree uncertainties
 
 Available Context:
 {{relevant_context}}
 
-Please provide a comprehensive synthesis in XML format:
+Please provide a comprehensive tree-based synthesis in XML format:
 
 <synthesis_result>
-  <answer>Direct answer to the task</answer>
-  <confidence>Overall confidence level (0.0-1.0)</confidence>
-  <reasoning>Step-by-step synthesis reasoning</reasoning>
-  <key_findings>Key insights and conclusions</key_findings>
-  <evidence_used>Summary of evidence incorporated</evidence_used>
-  <recommendations>Actionable recommendations</recommendations>
-</synthesis_result>'''''',
+  <claim_tree_structure>Description of how claims were organized into hierarchical tree structure</claim_tree_structure>
+  <evidence_forest_analysis>Analysis of evidence quality and connections across tree branches</evidence_forest_analysis>
+  <confidence_tree_aggregation>
+    <aggregated_confidence>Overall confidence score with tree-based calculation</aggregated_confidence>
+    <tree_confidence_breakdown>How confidence was aggregated across tree levels</tree_confidence_breakdown>
+    <branch_conflict_resolution>How conflicting tree branches were resolved</branch_conflict_resolution>
+  </confidence_tree_aggregation>
+  <reasoning_path_exploration>Analysis of multiple reasoning paths through the claim tree</reasoning_path_exploration>
+  <structural_tree_organization>Description of answer organization following tree structure</structural_tree_organization>
+  <completeness_verification>Assessment that all task aspects are covered in the tree</completeness_verification>
+  <answer>Direct, comprehensive answer following tree-of-thought structure</answer>
+  <reasoning>Detailed step-by-step tree-based synthesis reasoning</reasoning>
+  <key_findings>Most important insights and conclusions from tree analysis</key_findings>
+  <evidence_used>Summary of evidence incorporated across tree branches</evidence_used>
+  <uncertainties_and_limitations>Areas of uncertainty and tree structure limitations</uncertainties_and_limitations>
+  <recommendations>Actionable recommendations and further tree growth suggestions</recommendations>
+  <synthesis_quality>Self-assessment of tree completeness and accuracy</synthesis_quality>
+</synthesis_result>''',
             variables=[
                 {
-                    'name': 'original_task', 
-                    'type': 'string', 
-                    'required': True, 
+                    'name': 'original_task',
+                    'type': 'string',
+                    'required': True,
                     'description': 'Original task to be addressed'
                 },
                 {
-                    'name': 'analysis_results', 
-                    'type': 'string', 
-                    'required': True, 
+                    'name': 'analysis_results',
+                    'type': 'string',
+                    'required': True,
                     'description': 'Results from claim analysis'
                 },
                 {
-                    'name': 'claims_evaluated', 
-                    'type': 'string', 
-                    'required': True, 
+                    'name': 'claims_evaluated',
+                    'type': 'string',
+                    'required': True,
                     'description': 'Evaluated claims with evidence'
                 },
                 {
-                    'name': 'relevant_context', 
-                    'type': 'string', 
-                    'required': False, 
+                    'name': 'relevant_context',
+                    'type': 'string',
+                    'required': False,
                     'description': 'Relevant context information'
                 }
             ]
         )
     
     def _create_task_decomposition_template_xml(self) -> PromptTemplate:
-        """Create XML-optimized task decomposition template"""
+        """Create enhanced XML-optimized task decomposition template with tree-of-thought reasoning"""
         return PromptTemplate(
             id="task_decomposition_xml",
-            name="XML Task Decomposition Template",
-            description="XML-structured template for breaking complex tasks into subtasks",
+            name="Enhanced XML Task Decomposition Template with Tree-of-Thought",
+            description="XML-structured template with tree-of-thought reasoning for breaking complex tasks into subtasks",
             template_type=PromptTemplateType.TASK_DECOMPOSITION,
-            template_content=''''''You are Conjecture, an AI system that decomposes complex tasks into manageable subtasks.
+            template_content='''You are Conjecture, an advanced AI reasoning system that decomposes complex tasks into manageable subtasks using systematic tree-of-thought reasoning processes.
 
 <decomposition_task>
 {{complex_task}}</decomposition_task>
 
-DECOMPOSITION REQUIREMENTS:
-1. Logical Breakdown
-   - Analyze task structure and identify main components
-   - Break task into 3-5 logical subtasks
-   - Ensure subtasks are actionable and independent
-   - Maintain clear dependencies between subtasks
+TREE-OF-THOUGHT TASK DECOMPOSITION PROCESS:
+Follow this 6-step systematic decomposition process with hierarchical reasoning:
 
-2. Subtask Specification
-   - Each subtask should have clear objective
-   - Include required resources and context
-   - Specify expected deliverables
-   - Maintain logical sequencing
+Step 1: Task Analysis and Root Identification
+- Parse the complex task into its core components and objectives
+- Identify the main goal or root objective that drives the entire task
+- Extract key constraints, requirements, and success criteria
+- Recognize implicit assumptions and dependencies
+- Determine the scope and boundaries of what needs to be accomplished
 
-3. Completeness
-   - Subtasks should collectively address original task
-   - No gaps or overlaps between subtasks
-   - Each subtask should be testable
+Step 2: Hierarchical Task Tree Construction
+- Break down the root objective into primary branches (main subtasks)
+- Further decompose primary branches into secondary branches (detailed subtasks)
+- Continue decomposition until reaching atomic, actionable tasks
+- Ensure each branch represents a distinct, logical component
+- Maintain clear parent-child relationships in the task tree
+
+Step 3: Dependency Mapping and Sequencing
+- Identify dependencies between different branches and subtasks
+- Determine which branches can be executed in parallel vs sequentially
+- Map critical path that determines overall project timeline
+- Identify potential bottlenecks or blocking dependencies
+- Establish logical flow and execution order
+
+Step 4: Resource and Complexity Assessment
+- Evaluate each subtask for required resources, skills, and tools
+- Assess complexity level and estimated effort for each branch
+- Identify subtasks that require specialized expertise or external resources
+- Note potential risks or challenges for each task branch
+- Assign confidence levels to decomposition accuracy (0.7-0.9 typical)
+
+Step 5: Completeness and Validation Verification
+- Verify that all task tree branches collectively cover the original task
+- Check for gaps, overlaps, or redundancies in the decomposition
+- Ensure each leaf node represents an actionable, testable subtask
+- Validate that the task tree maintains logical coherence
+- Confirm that success criteria are preserved in the decomposition
+
+Step 6: Optimization and Refinement
+- Optimize the task tree for efficiency and clarity
+- Combine related subtasks where beneficial
+- Split complex subtasks where they become more manageable
+- Ensure each subtask has clear success criteria and deliverables
+- Review and refine the overall tree structure for optimal execution
+
+TREE-OF-THOUGHT DECOMPOSITION EXAMPLES:
+
+Example 1: Software Development Task
+Complex Task: "Build a machine learning recommendation system"
+
+Step 1: Root = ML recommendation system with user personalization
+Step 2: Task Tree:
+  - Data Collection Branch
+    - User data gathering (confidence 0.85)
+    - Item data collection (confidence 0.90)
+    - Data cleaning pipeline (confidence 0.80)
+  - Model Development Branch
+    - Algorithm selection (confidence 0.75)
+    - Model training (confidence 0.85)
+    - Hyperparameter tuning (confidence 0.70)
+  - System Integration Branch
+    - API development (confidence 0.80)
+    - Frontend integration (confidence 0.75)
+    - Performance testing (confidence 0.85)
+
+Step 3: Dependencies = Data → Model → Integration (sequential)
+Step 4: Resources = Data scientists, ML engineers, web developers
+Step 5: Completeness = All aspects covered, no gaps
+Step 6: Optimization = Clear deliverables for each subtask
+
+Decomposition Result: 3 main branches, 9 atomic subtasks, overall confidence 0.81
+
+Example 2: Research Task
+Complex Task: "Analyze the impact of remote work on employee productivity"
+
+Step 1: Root = Remote work productivity analysis with multiple factors
+Step 2: Task Tree:
+  - Literature Review Branch
+    - Academic studies search (confidence 0.90)
+    - Industry reports analysis (confidence 0.85)
+    - Meta-analysis compilation (confidence 0.75)
+  - Data Collection Branch
+    - Survey design and distribution (confidence 0.80)
+    - Productivity metrics collection (confidence 0.85)
+    - Qualitative interviews (confidence 0.70)
+  - Analysis Branch
+    - Statistical correlation analysis (confidence 0.80)
+    - Factor identification (confidence 0.75)
+    - Recommendation formulation (confidence 0.70)
+
+Step 3: Dependencies = Literature → Data → Analysis (sequential)
+Step 4: Resources = Research team, survey tools, statistical software
+Step 5: Completeness = Comprehensive coverage of research methodology
+Step 6: Optimization = Clear research methodology with defined outputs
+
+Decomposition Result: 3 main branches, 8 atomic subtasks, overall confidence 0.79
+
+ENHANCED TASK DECOMPOSITION REQUIREMENTS:
+
+1. **Tree-Based Reasoning**: Apply all 6 decomposition steps systematically
+2. **Hierarchical Structure**: Create clear parent-child relationships in task tree
+3. **Dependency Clarity**: Explicitly map dependencies and execution order
+4. **Completeness Assurance**: Ensure task tree covers all aspects of original task
+5. **Actionable Subtasks**: Each leaf node must be testable and executable
+6. **Confidence Assessment**: Provide confidence levels for decomposition accuracy
 
 Available Context:
 {{relevant_context}}
 
-Please break down the task into XML-structured subtasks:
+Please break down the task into XML-structured hierarchical subtasks:
 
-<subtasks>
-  <subtask id="1">
-    <objective>Clear objective for first subtask</objective>
-    <required_resources>Resources needed for this subtask</required_resources>
-    <expected_deliverables>What this subtask should produce</expected_deliverables>
-    <dependencies>Dependencies on other subtasks</dependencies>
-  </subtask>
-  
-  <!-- Add more subtasks as needed -->
-</subtasks>
-
-<decomposition_summary>
-Summary of the decomposition approach and key decisions.
-</decomposition_summary>'''''',
+<task_decomposition_result>
+  <task_analysis>Detailed breakdown of root objective and key components</task_analysis>
+  <hierarchical_tree_structure>
+    <main_branches>Primary task branches with confidence levels</main_branches>
+    <subtask_hierarchy>Detailed breakdown into atomic, actionable subtasks</subtask_hierarchy>
+    <tree_depth>Number of levels in the task tree</tree_depth>
+    <total_subtasks>Total count of atomic subtasks identified</total_subtasks>
+  </hierarchical_tree_structure>
+  <dependency_mapping>
+    <sequential_dependencies>Subtasks that must be executed in order</sequential_dependencies>
+    <parallel_opportunities>Subtasks that can be executed simultaneously</parallel_opportunities>
+    <critical_path>Critical path that determines overall timeline</critical_path>
+  </dependency_mapping>
+  <resource_assessment>
+    <skill_requirements>Skills and expertise needed for each branch</skill_requirements>
+    <tool_requirements>Tools, software, or resources required</tool_requirements>
+    <complexity_levels>Complexity assessment for each subtask</complexity_levels>
+    <risk_factors>Potential challenges or bottlenecks</risk_factors>
+  </resource_assessment>
+  <completeness_verification>
+    <coverage_analysis>How task tree covers original requirements</coverage_analysis>
+    <gap_identification>Any missing components or overlooked aspects</gap_identification>
+    <redundancy_check>Overlapping or redundant subtasks identified</redundancy_check>
+    <validation_status>Confirmation that decomposition is complete and logical</validation_status>
+  </completeness_verification>
+  <optimization_summary>
+    <efficiency_improvements>Optimizations made to task tree structure</efficiency_improvements>
+    <clarity_enhancements>Improvements to subtask definitions and deliverables</clarity_enhancements>
+    <overall_confidence>Confidence level in decomposition accuracy (0.7-0.9)</overall_confidence>
+  </optimization_summary>
+  <subtasks>
+    <!-- XML structure for each atomic subtask -->
+    <subtask id="[subtask_id]">
+      <branch>Main task branch this subtask belongs to</branch>
+      <objective>Clear, specific objective for this subtask</objective>
+      <deliverables>Specific outputs or results expected</deliverables>
+      <success_criteria>Measurable criteria for subtask completion</success_criteria>
+      <dependencies>Other subtasks that must be completed first</dependencies>
+      <estimated_complexity>Complexity level (low/medium/high) and effort</estimated_complexity>
+      <required_resources>Skills, tools, and resources needed</required_resources>
+      <confidence_level>Confidence in subtask definition and feasibility (0.7-0.9)</confidence_level>
+    </subtask>
+  </subtasks>
+  <decomposition_summary>
+    <approach_description>Summary of tree-of-thought decomposition approach</approach_description>
+    <key_decisions>Important decisions made during decomposition process</key_decisions>
+    <execution_recommendations>Recommended execution order and strategy</execution_recommendations>
+    <quality_assessment>Self-assessment of decomposition quality and completeness</quality_assessment>
+  </decomposition_summary>
+</task_decomposition_result>''',
             variables=[
                 {
-                    'name': 'complex_task', 
-                    'type': 'string', 
-                    'required': True, 
+                    'name': 'complex_task',
+                    'type': 'string',
+                    'required': True,
                     'description': 'Complex task to decompose'
                 },
                 {
-                    'name': 'relevant_context', 
-                    'type': 'string', 
-                    'required': False, 
+                    'name': 'relevant_context',
+                    'type': 'string',
+                    'required': False,
                     'description': 'Relevant context information'
                 }
             ]
