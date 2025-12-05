@@ -1,0 +1,608 @@
+{
+  "baseline_results": {
+    "tc1": {
+      "query": "What are most effective fact-checking methodologies for verifying online information?",
+      "type": "factual",
+      "domain": "fact_checking",
+      "group": "baseline",
+      "claims_generated": 5,
+      "claims": [
+        {
+          "id": "generated_1764973006_0",
+          "content": "Studies show that a multi\u2011step verification process\u2014comprising source credibility assessment, cross\u2011checking with primary documents, and contextual analysis\u2014improves fact\u2011checking accuracy by 35% compared to single\u2011step methods (Crawford & Duffy, 2021).",
+          "type": "fact",
+          "confidence": 0.92,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973006_1",
+          "content": "Automated fact\u2011checking algorithms that flag inconsistencies and then pass flagged items to human reviewers achieve an overall precision of 88% and recall of 81%, outperforming fully automated systems which typically hover around 70% precision (VeracityLab, 2022).",
+          "type": "fact",
+          "confidence": 0.88,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973006_2",
+          "content": "A robust fact\u2011checking methodology must integrate both \u201csource\u2011centric\u201d and \u201ccontent\u2011centric\u201d lenses: source\u2011centric evaluates the provenance and reputation of the information provider, while content\u2011centric scrutinizes linguistic cues, logical coherence, and consistency with established facts.",
+          "type": "concept",
+          "confidence": 0.85,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973006_3",
+          "content": "The PolitiFact \u201cTruth-O-Meter\u201d protocol, which combines a 12\u2011point credibility rubric with independent verification of cited evidence, demonstrated a 94% agreement rate with peer\u2011reviewed fact checks over a one\u2011year period (PolitiFact, 2020).",
+          "type": "example",
+          "confidence": 0.83,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973006_4",
+          "content": "The primary goal of effective online fact\u2011checking is to reduce the spread of false claims by at least 50% in the first 48 hours after publication, thereby limiting misinformation\u2019s reach before it becomes entrenched in public discourse.",
+          "type": "goal",
+          "confidence": 0.9,
+          "tags": [
+            "baseline"
+          ]
+        }
+      ],
+      "quality_metrics": {
+        "quality_score": 100.0,
+        "xml_compliance": 100.0,
+        "confidence_calibration_error": 0.126,
+        "evidence_utilization": 0.5,
+        "cross_task_knowledge_transfer": 0.3333333333333333,
+        "response_time": 0.0
+      },
+      "response_time": 0.0,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.126,
+      "evidence_utilization": 0.5,
+      "cross_task_knowledge_transfer": 0.3333333333333333
+    },
+    "tc2": {
+      "query": "How can developers optimize database query performance in large-scale applications?",
+      "type": "technical",
+      "domain": "programming",
+      "group": "baseline",
+      "claims_generated": 4,
+      "claims": [
+        {
+          "id": "generated_1764973107_0",
+          "content": "Creating appropriate indexes on columns frequently used in WHERE clauses, JOIN conditions, and ORDER BY statements is a fundamental practice that can reduce query execution time by orders of magnitude by preventing full table scans.",
+          "type": "fact",
+          "confidence": 0.95,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973107_1",
+          "content": "Denormalization, the strategic introduction of data redundancy into a database schema, is a key concept for optimizing read-heavy workloads in large-scale applications, as it reduces the need for costly JOIN operations at the expense of increased write complexity and storage.",
+          "type": "concept",
+          "confidence": 0.9,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973107_2",
+          "content": "For example, replacing a `SELECT N+1` query pattern, where N is the number of parent records, with a single query that uses a `JOIN` or fetches data in batches can drastically reduce the total number of round trips to the database and improve overall response time.",
+          "type": "example",
+          "confidence": 0.85,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973107_3",
+          "content": "A primary performance goal for developers is to minimize database load by implementing a multi-layered caching strategy, which serves frequently accessed data from faster in-memory stores like Redis or Memcached, thereby reducing the number of direct queries to the primary database.",
+          "type": "goal",
+          "confidence": 0.95,
+          "tags": [
+            "baseline"
+          ]
+        }
+      ],
+      "quality_metrics": {
+        "quality_score": 100.0,
+        "xml_compliance": 100.0,
+        "confidence_calibration_error": 0.16249999999999998,
+        "evidence_utilization": 0.4,
+        "cross_task_knowledge_transfer": 0.26666666666666666,
+        "response_time": 0.0
+      },
+      "response_time": 0.0,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.16249999999999998,
+      "evidence_utilization": 0.4,
+      "cross_task_knowledge_transfer": 0.26666666666666666
+    },
+    "tc3": {
+      "query": "What are the key principles of scientific method and how do they apply to modern research?",
+      "type": "conceptual",
+      "domain": "scientific_method",
+      "group": "baseline",
+      "claims_generated": 4,
+      "claims": [
+        {
+          "id": "generated_1764973199_0",
+          "content": "The principle of falsifiability, proposed by philosopher Karl Popper, is a core tenet of the scientific method, stating that for a theory to be considered scientific, it must be inherently testable and capable of being proven false.",
+          "type": "fact",
+          "confidence": 0.95,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973199_1",
+          "content": "The scientific method functions as an iterative, cyclical process rather than a rigid, linear sequence of steps, where conclusions from one study often lead to new questions, refined hypotheses, and further experimentation.",
+          "type": "concept",
+          "confidence": 0.9,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973199_2",
+          "content": "In modern computational research, such as in artificial intelligence, the scientific method is applied through rigorous A/B testing and benchmarking, where a new algorithm (hypothesis) is evaluated against a standard dataset to verifiably determine if it improves performance (prediction).",
+          "type": "example",
+          "confidence": 0.85,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973199_3",
+          "content": "A fundamental goal of the scientific method in modern research is to establish objectivity and mitigate cognitive biases by relying on empirical evidence, peer review, and reproducibility to build a reliable body of knowledge.",
+          "type": "goal",
+          "confidence": 0.9,
+          "tags": [
+            "baseline"
+          ]
+        }
+      ],
+      "quality_metrics": {
+        "quality_score": 100.0,
+        "xml_compliance": 100.0,
+        "confidence_calibration_error": 0.15000000000000002,
+        "evidence_utilization": 0.4,
+        "cross_task_knowledge_transfer": 0.26666666666666666,
+        "response_time": 0.0
+      },
+      "response_time": 0.0,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.15000000000000002,
+      "evidence_utilization": 0.4,
+      "cross_task_knowledge_transfer": 0.26666666666666666
+    },
+    "tc4": {
+      "query": "How can critical thinking skills be applied to evaluate complex business decisions?",
+      "type": "analytical",
+      "domain": "critical_thinking",
+      "group": "baseline",
+      "claims_generated": 5,
+      "claims": [
+        {
+          "id": "generated_1764973330_0",
+          "content": "Critical thinking involves systematic analysis of assumptions, evidence, and reasoning patterns when evaluating business decisions.",
+          "type": "fact",
+          "confidence": 0.92,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973330_1",
+          "content": "Studies show that organizations that embed critical thinking into decision\u2011making processes reduce costly errors by up to 30% over five years.",
+          "type": "fact",
+          "confidence": 0.88,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973330_2",
+          "content": "The critical\u2011thinking framework for business decisions comprises five stages: problem identification, data gathering, hypothesis formulation, evaluation of alternatives, and decision implementation.",
+          "type": "concept",
+          "confidence": 0.85,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973330_3",
+          "content": "In 2018, a Fortune 500 company used critical thinking to reassess its supply\u2011chain strategy, identifying inefficiencies that led to a 15% cost reduction within one fiscal year.",
+          "type": "example",
+          "confidence": 0.8,
+          "tags": [
+            "baseline"
+          ]
+        },
+        {
+          "id": "generated_1764973330_4",
+          "content": "Applying critical thinking to complex business decisions aims to enhance decision quality, increase stakeholder trust, and improve organizational resilience.",
+          "type": "goal",
+          "confidence": 0.75,
+          "tags": [
+            "baseline"
+          ]
+        }
+      ],
+      "quality_metrics": {
+        "quality_score": 100.0,
+        "xml_compliance": 100.0,
+        "confidence_calibration_error": 0.08999999999999997,
+        "evidence_utilization": 0.5,
+        "cross_task_knowledge_transfer": 0.3333333333333333,
+        "response_time": 0.0
+      },
+      "response_time": 0.0,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.08999999999999997,
+      "evidence_utilization": 0.5,
+      "cross_task_knowledge_transfer": 0.3333333333333333
+    }
+  },
+  "primed_results": {
+    "tc1": {
+      "query": "What are most effective fact-checking methodologies for verifying online information?",
+      "type": "factual",
+      "domain": "fact_checking",
+      "group": "primed",
+      "claims_generated": 5,
+      "claims": [
+        {
+          "id": "generated_1764973573_0",
+          "content": "The most effective fact-checking methodologies prioritize primary and authoritative sources over secondary or anecdotal evidence.",
+          "type": "fact",
+          "confidence": 0.95,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973573_1",
+          "content": "Corroborating claims with multiple, independent sources significantly improves the reliability of online information verification.",
+          "type": "concept",
+          "confidence": 0.9,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973573_2",
+          "content": "For instance, verifying a claim about a political event is more credible when confirmed by official government documents and reputable news outlets reporting independently from each other.",
+          "type": "example",
+          "confidence": 0.85,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973573_3",
+          "content": "The primary goal of fact-checking methodologies should be to ensure online information accuracy through rigorous evaluation within the full context of the statement.",
+          "type": "goal",
+          "confidence": 0.9,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973573_4",
+          "content": "For further reading on effective fact-checking practices, refer to authoritative sources such as Poynter Institute's International Fact-Checking Network guidelines.",
+          "type": "reference",
+          "confidence": 0.8,
+          "tags": [
+            "primed"
+          ]
+        }
+      ],
+      "quality_metrics": {
+        "quality_score": 100.0,
+        "xml_compliance": 100.0,
+        "confidence_calibration_error": 0.13,
+        "evidence_utilization": 0.5,
+        "cross_task_knowledge_transfer": 0.3333333333333333,
+        "response_time": 0.0
+      },
+      "response_time": 0.0,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.13,
+      "evidence_utilization": 0.5,
+      "cross_task_knowledge_transfer": 0.3333333333333333
+    },
+    "tc2": {
+      "query": "How can developers optimize database query performance in large-scale applications?",
+      "type": "technical",
+      "domain": "programming",
+      "group": "primed",
+      "claims_generated": 5,
+      "claims": [
+        {
+          "id": "generated_1764973580_0",
+          "content": "Indexing columns used in WHERE clauses and JOIN conditions can significantly improve query performance by reducing the amount of data scanned.",
+          "type": "fact",
+          "confidence": 0.9,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973580_1",
+          "content": "Normalizing database schemas to eliminate redundant data and enforce data integrity can simplify queries and reduce storage requirements, but may impact performance if over-normalized.",
+          "type": "concept",
+          "confidence": 0.95,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973580_2",
+          "content": "Implementing caching mechanisms, such as in-memory caches or query result caching, can reduce the load on the database by serving frequently accessed data from memory instead of executing queries repeatedly.",
+          "type": "example",
+          "confidence": 0.85,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973580_3",
+          "content": "The primary goal is to ensure that database queries execute efficiently and scale well with increasing data volumes and user traffic in large-scale applications.",
+          "type": "goal",
+          "confidence": 0.9,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973580_4",
+          "content": "Referencing the official documentation of specific database management systems (DBMS) can provide valuable insights into query optimization techniques tailored to each system's architecture and features.",
+          "type": "reference",
+          "confidence": 0.8,
+          "tags": [
+            "primed"
+          ]
+        }
+      ],
+      "quality_metrics": {
+        "quality_score": 100.0,
+        "xml_compliance": 100.0,
+        "confidence_calibration_error": 0.13,
+        "evidence_utilization": 0.5,
+        "cross_task_knowledge_transfer": 0.3333333333333333,
+        "response_time": 0.0
+      },
+      "response_time": 0.0,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.13,
+      "evidence_utilization": 0.5,
+      "cross_task_knowledge_transfer": 0.3333333333333333
+    },
+    "tc3": {
+      "query": "What are the key principles of scientific method and how do they apply to modern research?",
+      "type": "conceptual",
+      "domain": "scientific_method",
+      "group": "primed",
+      "claims_generated": 5,
+      "claims": [
+        {
+          "id": "generated_1764973586_0",
+          "content": "The scientific method is a systematic, objective, and iterative process for acquiring reliable knowledge about the natural world.",
+          "type": "fact",
+          "confidence": 0.98,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973586_1",
+          "content": "Observation, hypothesis formulation, experimentation, data analysis, and conclusion drawing are core components of the scientific method.",
+          "type": "concept",
+          "confidence": 0.95,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973586_2",
+          "content": "In a controlled experiment to test the effect of sunlight on plant growth, researchers manipulate the independent variable (light exposure) while keeping other factors constant to observe the dependent variable (plant growth).",
+          "type": "example",
+          "confidence": 0.92,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973586_3",
+          "content": "The primary goal of the scientific method is to generate objective, evidence-based knowledge that can be independently verified and replicated by other researchers.",
+          "type": "goal",
+          "confidence": 0.9,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973586_4",
+          "content": "Peer review, replication studies, and falsifiability are essential methodologies within the scientific method to ensure reliability and validity of knowledge claims (Benchmarks for Science Literacy: Project 2061).",
+          "type": "reference",
+          "confidence": 0.94,
+          "tags": [
+            "primed"
+          ]
+        }
+      ],
+      "quality_metrics": {
+        "quality_score": 100.0,
+        "xml_compliance": 100.0,
+        "confidence_calibration_error": 0.18799999999999994,
+        "evidence_utilization": 0.5,
+        "cross_task_knowledge_transfer": 0.3333333333333333,
+        "response_time": 0.0
+      },
+      "response_time": 0.0,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.18799999999999994,
+      "evidence_utilization": 0.5,
+      "cross_task_knowledge_transfer": 0.3333333333333333
+    },
+    "tc4": {
+      "query": "How can critical thinking skills be applied to evaluate complex business decisions?",
+      "type": "analytical",
+      "domain": "critical_thinking",
+      "group": "primed",
+      "claims_generated": 6,
+      "claims": [
+        {
+          "id": "generated_1764973593_0",
+          "content": "Critical thinking skills involve objective analysis of information to make informed decisions.",
+          "type": "fact",
+          "confidence": 0.95,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973593_1",
+          "content": "Breaking down complex business problems into smaller, manageable components is a key aspect of critical thinking when evaluating decisions.",
+          "type": "concept",
+          "confidence": 0.9,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973593_2",
+          "content": "When considering the decision to launch a new product line, a manager should examine market trends, customer feedback, and financial projections before reaching a conclusion.",
+          "type": "example",
+          "confidence": 0.93,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973593_3",
+          "content": "Seeking out diverse perspectives from stakeholders such as employees, customers, and suppliers can provide valuable insights when evaluating complex business decisions.",
+          "type": "concept",
+          "confidence": 0.94,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973593_4",
+          "content": "The goal of applying critical thinking skills to complex business decisions is to make well-informed choices that minimize risks and maximize potential benefits.",
+          "type": "goal",
+          "confidence": 0.96,
+          "tags": [
+            "primed"
+          ]
+        },
+        {
+          "id": "generated_1764973593_5",
+          "content": "According to a study by the American Management Association, organizations with employees who possess strong critical thinking skills are more likely to adapt to change and succeed in competitive markets (2021).",
+          "type": "reference",
+          "confidence": 0.89,
+          "tags": [
+            "primed"
+          ]
+        }
+      ],
+      "quality_metrics": {
+        "quality_score": 100.0,
+        "xml_compliance": 100.0,
+        "confidence_calibration_error": 0.17833333333333334,
+        "evidence_utilization": 0.6,
+        "cross_task_knowledge_transfer": 0.4,
+        "response_time": 0.0
+      },
+      "response_time": 0.0,
+      "xml_compliance": 100.0,
+      "confidence_calibration_error": 0.17833333333333334,
+      "evidence_utilization": 0.6,
+      "cross_task_knowledge_transfer": 0.4
+    }
+  },
+  "priming_results": {
+    "fact_checking": {
+      "query": "What are best practices for fact checking and verifying information accuracy?",
+      "claims_generated": 3,
+      "claims_stored": 3,
+      "success": true
+    },
+    "programming": {
+      "query": "What are fundamental principles and best practices for software development and programming?",
+      "claims_generated": 3,
+      "claims_stored": 3,
+      "success": true
+    },
+    "scientific_method": {
+      "query": "What is scientific method and how does it ensure reliable knowledge generation?",
+      "claims_generated": 6,
+      "claims_stored": 6,
+      "success": true
+    },
+    "critical_thinking": {
+      "query": "What are core principles and techniques of critical thinking for logical analysis?",
+      "claims_generated": 7,
+      "claims_stored": 7,
+      "success": true
+    }
+  },
+  "baseline_metrics": {
+    "quality_score": 0.0,
+    "xml_compliance": 100.0,
+    "claims_generated": 4.5,
+    "evidence_utilization": 0.45,
+    "cross_task_knowledge_transfer": 0.3,
+    "confidence_calibration_error": 0.132125
+  },
+  "primed_metrics": {
+    "quality_score": 0.0,
+    "xml_compliance": 100.0,
+    "claims_generated": 5.25,
+    "evidence_utilization": 0.525,
+    "cross_task_knowledge_transfer": 0.35,
+    "confidence_calibration_error": 0.15658333333333332
+  },
+  "improvements": {
+    "quality_score": 0.0,
+    "xml_compliance": 0.0,
+    "claims_generated": 16.666666666666664,
+    "evidence_utilization": 16.666666666666668,
+    "cross_task_knowledge_transfer": 16.666666666666664,
+    "confidence_calibration_error": -18.511510564490695
+  },
+  "success_criteria": {
+    "reasoning_quality_improvement": {
+      "target": 20.0,
+      "achieved": 0.0,
+      "success": false
+    },
+    "evidence_utilization_increase": {
+      "target": 30.0,
+      "achieved": 16.666666666666668,
+      "success": false
+    },
+    "cross_task_knowledge_transfer": {
+      "target": 1.0,
+      "achieved": 16.666666666666664,
+      "success": true
+    },
+    "complexity_impact": {
+      "target": 15.0,
+      "achieved": 5.0,
+      "success": true
+    },
+    "overall_success": false
+  },
+  "experiment_timestamp": "2025-12-05T22:26:33.487568",
+  "execution_type": "REAL_LLM_CALLS"
+}
