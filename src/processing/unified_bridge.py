@@ -10,9 +10,18 @@ from dataclasses import dataclass
 import time
 import logging
 
-from ..core.models import Claim
-from .unified_llm_manager import UnifiedLLMManager, get_unified_llm_manager
-from ..utils.retry_utils import with_llm_retry, EnhancedRetryConfig
+try:
+    from ..core.models import Claim
+    from .unified_llm_manager import UnifiedLLMManager, get_unified_llm_manager
+    from ..utils.retry_utils import with_llm_retry, EnhancedRetryConfig
+except ImportError:
+    # Handle relative import issues for test compatibility
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+    from core.models import Claim
+    from processing.unified_llm_manager import UnifiedLLMManager, get_unified_llm_manager
+    from utils.retry_utils import with_llm_retry, EnhancedRetryConfig
 
 # Configure logging
 logger = logging.getLogger(__name__)

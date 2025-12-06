@@ -459,7 +459,14 @@ class DataConfig(BaseModel):
 
 
 # Import common result classes to maintain backward compatibility
-from .common_results import ProcessingResult, BatchResult
+try:
+    from .common_results import ProcessingResult, BatchResult
+except ImportError:
+    # Handle relative import issues for test compatibility
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+    from core.common_results import ProcessingResult, BatchResult
 
 
 # Helper functions for working with Claim collections
