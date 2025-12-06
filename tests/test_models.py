@@ -571,19 +571,22 @@ class TestUtilityFunctions:
     @pytest.mark.models
     def test_generate_claim_id(self):
         """Test claim ID generation utility function."""
-        # Test various counters
-        assert generate_claim_id(1) == "c0000001"
-        assert generate_claim_id(42) == "c0000042"
-        assert generate_claim_id(1234567) == "c1234567"
-        assert generate_claim_id(0) == "c0000000"
-        assert generate_claim_id(9999999) == "c9999999"
+        # Test function signature (takes no arguments)
+        claim_id = generate_claim_id()
+        assert isinstance(claim_id, str)
+        assert claim_id.startswith("c")
+        assert len(claim_id) == 8  # c + 7 digits
 
-        # Test that it generates correct format
-        for i in [0, 1, 10, 100, 1000, 10000, 100000, 1000000]:
-            claim_id = generate_claim_id(i)
-            assert claim_id.startswith("c")
-            assert len(claim_id) == 8
-            assert claim_id[1:].isdigit()
+        # Test uniqueness
+        claim_id2 = generate_claim_id()
+        assert claim_id != claim_id2
+
+        # Test basic functionality
+        claim_id = generate_claim_id()
+        assert claim_id.startswith("c")
+        assert len(claim_id) == 8
+        # Test that remaining chars are hex digits
+        assert all(c in "0123456789abcdef" for c in claim_id[1:])
 
 
 class TestCustomExceptions:
