@@ -1,0 +1,643 @@
+# Conjecture Project File Inventory
+# Generated on: 2025-12-06
+# Total files: 400+ (including hidden directories)
+
+## ROOT DIRECTORY FILES
+========================
+
+.coveragerc                              # Coverage configuration
+.env.example                             # Environment variables template
+.env.test                                # Test environment variables
+.gitignore                               # Git ignore rules
+.kilocodemodes                           # Kilo Code modes configuration
+AGENTS.md                                # Agent guidelines and rules
+ANALYSIS.md                              # Most recent analysis of tests and metrics
+CONFIG_WIZARD_README.md                  # Configuration wizard documentation
+conjecture                               # Main executable script
+COVERAGE_ANALYSIS_REPORT.md              # Coverage analysis report
+coverage_baseline.json                   # Coverage baseline data
+coverage.json                            # Current coverage data
+EMOJI_USAGE.md                           # Emoji usage documentation
+errors.txt                               # Error log file
+EXPERIMENT_2_EXECUTION_SUMMARY.md        # Experiment 2 summary
+experiment_4_baseline_results.json       # Experiment 4 baseline data
+experiment_4_optimization_results.json   # Experiment 4 optimization data
+experiment_5_multimodal_results.json     # Experiment 5 multimodal data
+experiment_6_enhanced_synthesis_results.json # Experiment 6 synthesis data
+gpt_oss_correctness.json                 # GPT OSS correctness metrics
+gpt_oss_metrics.json                     # GPT OSS performance metrics
+llm_tool_usage_test_results_20251205_162657.json # LLM tool usage test results
+llm_tool_usage_test_results_20251205_162841.json # LLM tool usage test results
+pre-commit-hook.sh                       # Pre-commit hook script
+pyproject.toml                           # Python project configuration
+README.md                                # Project README
+requirements.txt                         # Python dependencies
+RESULTS.md                               # Experiment results log
+run_tests.bat                            # Windows test runner
+run_tests.sh                             # Unix/Linux/macOS test runner
+
+## HIDDEN DIRECTORIES
+===================
+
+### .agent/ (Agent Infrastructure)
+----------------------------------
+.agent/docs/2025-11-25-architecture-review-conjecture-project.md
+
+### .conjecture/ (User Data & Configuration)
+--------------------------------------------
+.conjecture/config.json                    # User configuration
+.conjecture/README_USER_DATA.md           # User data documentation
+.conjecture/README.md                     # Configuration directory README
+.conjecture/data/conjecture.db            # SQLite database
+.conjecture/tools/README.md               # Tools documentation
+
+### .crush/ (Build System)
+--------------------------
+(empty directory)
+
+### .factory/ (Factory System)
+-----------------------------
+(empty directory)
+
+### .ruff_cache/ (Ruff Linter Cache)
+-----------------------------------
+(empty directory)
+
+## CORE DIRECTORIES
+==================
+
+### archive/ (Archived Documentation & Experiments)
+----------------------------------------------------
+#### Documentation (65% reduction from original)
+archive/documentation/CHUTES_API_DOCUMENTATION.md
+archive/documentation/CLAUDES_TODOLIST.md
+archive/documentation/cli_rubric.md
+archive/documentation/context_compression_analysis.md
+archive/documentation/COVERAGE_IMPROVEMENT_STRATEGY.md
+archive/documentation/data_layer_rubric.md
+archive/documentation/DEPRECATED_CODE_CLEANUP_REPORT.md
+archive/documentation/END_TO_END_PIPELINE_EXPERIMENT_REPORT.md
+archive/documentation/end_to_end_report_end_to_end_20251204_182000.md
+archive/documentation/end_to_end_report_end_to_end_20251204_182050.md
+archive/documentation/ENHANCED_FRAMEWORK_SUMMARY.md
+archive/documentation/experiment_2_commit_monitoring.md
+archive/documentation/experiment_2_complete_documentation.md
+archive/documentation/experiment_2_enhanced_prompt_design.md
+archive/documentation/experiment_2_enhanced_templates_specification.md
+archive/documentation/experiment_2_final_summary.md
+archive/documentation/experiment_2_implementation_plan.md
+archive/documentation/experiment_2_integration_validation.md
+archive/documentation/experiment_2_risk_assessment.md
+archive/documentation/experiment_2_simple_report_20251205_160556.md
+archive/documentation/experiment_2_testing_strategy.md
+archive/documentation/EXPERIMENT_3_DATABASE_PRIMING_DESIGN.md
+archive/documentation/EXPERIMENT_3_EXECUTION_SUMMARY.md
+archive/documentation/EXPERIMENT_4_CONTEXT_WINDOW_OPTIMIZATION_DESIGN.md
+archive/documentation/EXPERIMENT_5_MULTIMODAL_INTEGRATION_DESIGN.md
+archive/documentation/EXPERIMENT_6_CLAIM_SYNTHESIS_DESIGN.md
+archive/documentation/EXPERIMENT_6_COLLABORATIVE_REASONING_DESIGN.md
+archive/documentation/EXPERIMENT_IMPLEMENTATION_TIMELINES_RESOURCES.md
+archive/documentation/experiment_results.md
+archive/documentation/file_structure.md
+archive/documentation/HYPOTHESIS_TESTING_GUIDE.md
+archive/documentation/IMPLEMENTATION_COMPLETE.md
+archive/documentation/IMPLEMENTATION_SUMMARY.md
+archive/documentation/INFRASTRUCTURE_INTEGRATION_PLAN.md
+archive/documentation/interface_design.md
+archive/documentation/LONG_TERM_STRATEGIC_ROADMAP.md
+archive/documentation/NEXT_ITERATION_EXPERIMENTS_COMPREHENSIVE_GUIDE.md
+archive/documentation/old_req.md
+archive/documentation/phase3_rubric.md
+archive/documentation/PROJECT_IMPROVEMENT_PHASE_1_REPORT.md
+archive/documentation/PROJECT_IMPROVEMENT_PHASE_2_REPORT.md
+archive/documentation/PROJECT_IMPROVEMENT_PHASE_3_PLAN.md
+archive/documentation/PYDANTIC_CONFIG_MIGRATION.md
+archive/documentation/QUALITY_METRICS_SUMMARY.md
+archive/documentation/README.md
+archive/documentation/RISK_ASSESSMENT_MITIGATION_STRATEGIES.md
+archive/documentation/security_audit_report.md
+archive/documentation/simple_task_decomposition_report_71c542bd_20251204_221548.md
+archive/documentation/simplified-architecture-migration.md
+archive/documentation/SUCCESS_CRITERIA_MEASUREMENT_FRAMEWORKS.md
+archive/documentation/TRUE_CONJECTURE_ANALYSIS.md
+archive/documentation/XML_OPTIMIZATION_DEPLOYMENT_RECOMMENDATIONS.md
+archive/documentation/XML_OPTIMIZATION_FINAL_ANALYSIS.md
+archive/documentation/XML_OPTIMIZATION_FINAL_RESULTS.md
+archive/documentation/XML_OPTIMIZATION_IMPLEMENTATION_SUMMARY.md
+archive/documentation/XML_OPTIMIZATION_SUCCESS_CRITERIA_ANALYSIS.md
+
+#### Archived Experiments
+archive/experiments/experiment_5_multimodal_test.py
+archive/experiments/experiment_6_claim_synthesis_test.py
+
+### core_tools/ (Core Tool Implementations)
+-------------------------------------------
+core_tools/__init__.py
+core_tools/apply_diff.py
+core_tools/claim_tools.py
+core_tools/file_tools.py
+core_tools/interaction_tools.py
+core_tools/readFiles.py
+core_tools/webSearch.py
+core_tools/writeFiles.py
+
+### coverage_reports/ (Coverage Analysis Reports)
+-------------------------------------------------
+coverage_reports/coverage_20251206_015900.json
+coverage_reports/coverage_20251206_034500.json
+
+### docs/ (Current Documentation - ~35 high-value files)
+--------------------------------------------------------
+#### Main Documentation
+docs/COVERAGE_IMPLEMENTATION_FINAL_REPORT.md
+docs/COVERAGE_IMPLEMENTATION_SUMMARY.md
+docs/COVERAGE_IMPROVEMENT_ROADMAP.md
+docs/COVERAGE_INFRASTRUCTURE_GUIDE.md
+docs/COVERAGE_WORKFLOW.md
+docs/data_layer_architecture.md
+docs/data_layer_summary.md
+docs/data_layer_validation_report.md
+docs/ibm_granite_tiny_integration_guide.md
+docs/index.md
+docs/lm_studio_provider.md
+docs/simplified_architecture_guide.md
+docs/TEST_SUITES_COMPREHENSIVE_GUIDE.md
+
+#### Architecture Documentation
+docs/architecture/agent_subsystem.md
+docs/architecture/data_layer_architecture.md
+docs/architecture/implementation.md
+docs/architecture/llm_subsystem.md
+docs/architecture/local_subsystem.md
+docs/architecture/main.md
+docs/architecture/processing_subsystem.md
+
+#### Configuration Documentation
+docs/configuration/setup.md
+
+#### Examples Documentation
+docs/examples/SKILLS_AS_CLAIMS.md
+
+#### Reference Documentation
+docs/reference/llm_providers.md
+docs/reference/prompts.md
+
+#### Tutorial Documentation
+docs/tutorials/advanced.md
+docs/tutorials/basic_usage.md
+
+### experiments/ (Active Research & Experiments)
+------------------------------------------------
+#### Experiment Scripts
+experiments/README_model_comparison.md
+experiments/run_claims_based_reasoning_experiment.py
+experiments/run_claims_experiment_standalone.py
+experiments/run_coding_capabilities_experiment.py
+experiments/run_context_compression_experiment.py
+experiments/run_end_to_end_experiment.py
+experiments/run_end_to_end_standalone.py
+experiments/run_local_experiment.py
+experiments/run_model_comparison_experiment.py
+experiments/run_task_decomposition_experiment.py
+experiments/simple_context_compression_experiment.py
+experiments/simple_task_decomposition_experiment.py
+
+#### Experiment Results
+experiments/results/end_to_end_results_end_to_end_20251204_182000.json
+experiments/results/end_to_end_results_end_to_end_20251204_182050.json
+experiments/results/experiment_2_simple_results_20251205_160556.json
+experiments/results/experiment_3_real_results_20251205_172633.json
+experiments/results/experiment_3_standalone_results_20251205_162740.json
+
+#### Experiment Test Cases
+experiments/experiments/results/local_experiment_results_20251204_221953.json
+experiments/experiments/results/local_experiment_results_20251204_222238.json
+experiments/experiments/results/simple_task_decomposition_experiment_71c542bd_20251204_221548.json
+experiments/experiments/test_cases/simple_context_compression_cases_15.json
+experiments/experiments/test_cases/simple_task_decomposition_cases_10.json
+experiments/test_cases/claims_based_reasoning_cases_75.json
+
+#### Experiment Reports
+experiments/reports/claims_based_reasoning_report_9cfb87b9_2025-12-04 23-08-17.md
+
+### research/ (Research Scripts & Analysis)
+-------------------------------------------
+research/.env.example
+research/analyze_comprehensive_results.py
+research/analyze_lm_studio_results.py
+research/baseline_comparison.py
+research/check_chutes_models.py
+research/comprehensive_comparison_study.py
+research/comprehensive_experiment_runner.py
+research/comprehensive_scientific_research.py
+research/config.json
+research/conjecture_explore_method_clean.py
+research/conjecture_iteration_2.py
+research/conjecture_iteration_3.py
+research/debug_chutes_api.py
+research/diagnose_conjecture_failures.py
+research/direct_vs_conjecture_test.py
+research/enhanced_test_generator.py
+research/final_scientific_analysis.py
+research/fixed_chutes_experiment.py
+research/generate_comprehensive_test_suite.py
+research/generate_initial_claims_clean.py
+research/HYPOTHESIS_TESTING_EXECUTION_SUMMARY.md
+research/hypothesis_testing_framework.py
+research/improved_conjecture_study.py
+research/lm_studio_config.json
+research/metrics_test_results.json
+research/production_chutes_research.py
+research/quick_test.py
+research/README.md
+research/real_chutes_experiment.py
+research/run_comprehensive_experiment.py
+research/run_hypothesis_testing.py
+research/run_lm_studio_experiment.py
+research/run_research.py
+research/simple_chutes_test.py
+research/simple_experiment.py
+research/simple_validation.py
+research/simplified_experiment_runner.py
+research/standalone_hypothesis_testing.py
+research/statistical_analyzer.py
+research/statistical_validation.py
+
+### scripts/ (Utility & Automation Scripts)
+------------------------------------------
+scripts/compare_coverage.py
+scripts/coverage_baseline.py
+scripts/examine_responses.py
+scripts/migrate_to_config.py
+scripts/prime_database.py
+scripts/requirements.txt
+scripts/run_4model_comparison_new.py
+scripts/run_4model_comparison.py
+scripts/run_all_tests.bat
+scripts/run_conjecture.bat
+scripts/run_coverage.bat
+scripts/run_coverage.sh
+scripts/setup_config.bat
+scripts/setup_coverage.sh
+scripts/start_conjecture_provider.py
+scripts/test_conjecture_provider.py
+
+### specs/ (Project Specifications)
+-----------------------------------
+specs/phases.md
+specs/project.md
+specs/README.md
+specs/requirements.md
+specs/architecture/simple-universal-claim-architecture.md
+specs/context/complete-relationship-context-builder.md
+specs/implementation/emoji-implementation-design.md
+specs/implementation/unified-claim-system-implementation.md
+specs/llm/instruction-support-relationship-protocol.md
+specs/support/emoji-troubleshooting.md
+specs/testing/emoji-testing-plan.md
+specs/user-guides/emoji-usage-guide.md
+
+### src/ (Source Code)
+---------------------
+
+#### Core Source Files
+src/__init__.py
+src/core.py
+src/conjecture.py
+
+#### Agent Coordination
+src/agent/ (directory exists but empty in current listing)
+
+#### CLI Interface
+src/cli/__init__.py
+src/cli/base_cli.py
+src/cli/dirty_commands.py
+src/cli/encoding_handler.py
+src/cli/modular_cli.py
+src/cli/tf_suppression.py
+src/cli/backends/__init__.py
+src/cli/backends/cloud_backend.py
+src/cli/backends/local_backend.py
+
+#### Configuration Management
+src/config/__init__.py
+src/config/backward_compatibility.py
+src/config/default_config.json
+src/config/default_simplified_config.json
+src/config/diagnostics.py
+src/config/dirty_flag_config.py
+src/config/individual_env_validator.py
+src/config/local_config.py
+src/config/migration_utils.py
+src/config/providers.json
+src/config/pydantic_config.py
+src/config/router_config.json
+src/config/settings_models.py
+src/config/setup_wizard.py
+src/config/simple_provider_validator.py
+src/config/simplified_wizard.py
+src/config/tiny_model_config.py
+src/config/unified_config.py
+src/config/unified_provider_validator.py
+
+#### Context Building & Management
+src/context/__init__.py
+src/context/complete_context_builder.py
+
+#### Core Models & Utilities
+src/core/__init__.py
+src/core/claim_operations.py
+src/core/common_results.py
+src/core/dirty_flag.py
+src/core/models.py
+src/core/relationship_manager.py
+src/core/support_relationship_manager.py
+src/core/unified_models.py
+
+#### User Interfaces
+src/interfaces/llm_interface.py
+src/interfaces/simple_gui.py
+src/interfaces/simple_tui.py
+src/interfaces/tui_design.md
+
+#### LLM Instruction Processing
+src/llm/__init__.py
+src/llm/instruction_support_processor.py
+
+#### Local Model Management
+src/local/__init__.py
+src/local/embeddings.py
+src/local/local_manager.py
+src/local/ollama_client.py
+src/local/unified_manager.py
+src/local/vector_store.py
+
+#### Specialized Operation Modes
+src/modes/deep_analysis/ (empty directory)
+
+#### Performance & Metrics Monitoring
+src/monitoring/__init__.py
+src/monitoring/metrics_analysis.py
+src/monitoring/metrics_visualization.py
+src/monitoring/performance_monitor.py
+src/monitoring/retry_tracker.py
+
+#### LLM Integration & Evaluation
+src/processing/__init__.py
+src/processing/backward_compatibility.py
+src/processing/chutes_adapter.py
+src/processing/common_context.py
+src/processing/context_collector.py
+src/processing/dynamic_priming_engine.py
+src/processing/enhanced_claim_synthesis.py
+src/processing/enhanced_context_builder.py
+src/processing/error_handling.py
+src/processing/example_generator.py
+src/processing/exploration_engine.py
+src/processing/hierarchical_context_processor.py
+src/processing/intelligent_claim_selector.py
+src/processing/json_frontmatter_parser.py
+src/processing/json_schemas.py
+src/processing/multimodal_processor.py
+src/processing/response_parser.py
+src/processing/simplified_llm_manager.py
+src/processing/tiny_model_processor.py
+src/processing/tool_creator.py
+src/processing/tool_executor.py
+src/processing/tool_manager.py
+src/processing/tool_registry.py
+src/processing/unified_bridge.py
+src/processing/unified_claim_parser.py
+src/processing/unified_llm_manager.py
+
+##### LLM Prompts & Templates
+src/processing/llm_prompts/__init__.py
+src/processing/llm_prompts/context_integrator.py
+src/processing/llm_prompts/enhanced_template_manager.py
+src/processing/llm_prompts/models.py
+src/processing/llm_prompts/response_processor.py
+src/processing/llm_prompts/template_manager.py
+src/processing/llm_prompts/xml_optimized_templates.py
+
+##### Processing Support Systems
+src/processing/support_systems/__init__.py
+src/processing/support_systems/context_builder.py
+src/processing/support_systems/data_collection.py
+src/processing/support_systems/models.py
+src/processing/support_systems/persistence_layer.py
+
+#### External Provider Implementations
+src/providers/conjecture_provider.py
+
+#### Tool Registry & Management
+src/tools/__init__.py
+src/tools/ingest_examples.py
+src/tools/registry.py
+
+#### Utility Functions
+src/utils/__init__.py
+src/utils/emoji_support.py
+src/utils/id_generator.py
+src/utils/logging.py
+src/utils/retry_utils.py
+src/utils/simple_yaml.py
+src/utils/verbose_logger.py
+
+### tests/ (Comprehensive Test Suite - 89% coverage)
+----------------------------------------------------
+#### Test Configuration
+tests/evaluation_config/process_rubric.md
+tests/evaluation_config/product_rubric.md
+tests/evaluation_config/use_cases.yaml
+
+#### Test Examples
+tests/examples/ (empty directory)
+
+#### Test Reports
+tests/reports/coding_evaluation/ (empty directory)
+
+#### Test Results
+tests/results/coding_evaluation/ (empty directory)
+tests/results/comprehensive_metrics/ (empty directory)
+
+#### Test Scripts (100+ test files)
+tests/performance_benchmarks.py
+tests/requirements.txt
+tests/run_evals.py
+tests/run_tests.py
+tests/test_ab_testing_framework.py
+tests/test_api_debug.py
+tests/test_api_simple.py
+tests/test_architecture_simple.py
+tests/test_architecture.py
+tests/test_backend_functionality.py
+tests/test_basic_functionality.py
+tests/test_basic_workflows.py
+tests/test_chroma_manager.py
+tests/test_chutes_api.py
+tests/test_chutes_integration.py
+tests/test_cli_comprehensive.py
+tests/test_cli_functionality.py
+tests/test_cli_rubric.py
+tests/test_cli_working.py
+tests/test_coding_capabilities.py
+tests/test_coding_implementation.py
+tests/test_comprehensive_metrics.py
+tests/test_context_builder.py
+tests/test_core_cli.py
+tests/test_core_models_comprehensive.py
+tests/test_core_tools.py
+tests/test_data_layer_comprehensive.py
+tests/test_data_layer_final.py
+tests/test_data_layer_focused.py
+tests/test_data_layer_isolated.py
+tests/test_data_layer_simple.py
+tests/test_data_layer.py
+tests/test_data_manager_integration.py
+tests/test_data_models.py
+tests/test_data_repositories_comprehensive.py
+tests/test_dirty_flag_standalone.py
+tests/test_dirty_flag.py
+tests/test_discovery_simple.py
+tests/test_discovery_system.py
+tests/test_embedding_service.py
+tests/test_emoji.py
+tests/test_enhanced_conjecture_comprehensive.py
+tests/test_enhanced_retry.py
+tests/test_error_handling.py
+tests/test_fallback_mechanisms.py
+tests/test_full_stack_chutes.py
+tests/test_granite_model_specific.py
+tests/test_hypothesis_validation_suite.py
+tests/test_hypothesis_validation.py
+tests/test_integration_critical_paths.py
+tests/test_integration_end_to_end.py
+tests/test_json_frontmatter_parser.py
+tests/test_json_schemas.py
+tests/test_llm_judge.py
+tests/test_llm_providers_comprehensive.py
+tests/test_llm_providers_mock.py
+tests/test_lm_studio_e2e.py
+tests/test_lm_studio_provider.py
+tests/test_local_integration.py
+tests/test_metrics_framework.py
+tests/test_metrics_simple.py
+tests/test_models.py
+tests/test_modular_cli.py
+tests/test_output.py
+tests/test_performance_monitoring.py
+tests/test_performance_regression.py
+tests/test_performance.py
+tests/test_processing_comprehensive.py
+tests/test_processing_layer_comprehensive.py
+tests/test_processing_layer.py
+tests/test_prompt_command.py
+tests/test_provider_standalone.py
+tests/test_providers_integration.py
+tests/test_providers_simple.py
+tests/test_quick_validation.py
+tests/test_rust_minesweeper.py
+tests/test_scope_promotion.py
+tests/test_setup_wizard_simple.py
+tests/test_setup_wizard.py
+tests/test_simple_config_no_unicode.py
+tests/test_simple_config.py
+tests/test_simple_error_handling.py
+tests/test_simple_functionality.py
+tests/test_simple_validation.py
+tests/test_simplified_architecture.py
+tests/test_simplified_conjecture.py
+tests/test_simplified_data_manager.py
+tests/test_sqlite_manager.py
+tests/test_statistical_validation.py
+tests/test_suite.py
+tests/test_tag_architecture.py
+tests/test_three_part_architecture.py
+tests/test_tool_registry_comprehensive.py
+tests/test_tool_validator_simple.py
+
+### tools/ (External Tools)
+--------------------------
+(empty directory)
+
+## FILE TYPE ANALYSIS
+====================
+
+### Python Files (.py)
+- Source code: ~150 files in src/
+- Tests: ~80 files in tests/
+- Scripts: ~20 files in scripts/
+- Research: ~30 files in research/
+- Experiments: ~15 files in experiments/
+- Core tools: ~8 files in core_tools/
+
+### Configuration Files (.json, .yaml, .yml, .toml)
+- JSON: ~25 configuration and data files
+- YAML: ~3 configuration files
+- TOML: 1 (pyproject.toml)
+
+### Documentation Files (.md)
+- Active docs: ~35 files in docs/
+- Archived docs: ~65 files in archive/documentation/
+- Specs: ~10 files in specs/
+- Research docs: ~5 files
+- Root docs: ~10 files
+
+### Database Files
+- SQLite: 1 (.conjecture/data/conjecture.db)
+
+### Shell Scripts
+- Bash: ~5 files (.sh)
+- Batch: ~5 files (.bat)
+
+### Other Files
+- Coverage: ~5 files (.json, .rc)
+- Git: 1 (.gitignore)
+- Environment: 2 (.env.*)
+- Requirements: 2 (requirements.txt)
+
+## DIRECTORY SIZE ANALYSIS
+=========================
+
+### Largest Directories (by file count)
+1. tests/ - ~80+ test files
+2. src/ - ~150+ source files
+3. archive/documentation/ - ~65 archived docs
+4. research/ - ~30 research scripts
+5. docs/ - ~35 active docs
+6. experiments/ - ~15 experiment files
+7. scripts/ - ~15 utility scripts
+8. specs/ - ~10 specification files
+
+### Key Architecture Components
+- CLI Interface: src/cli/
+- Core Models: src/core/
+- Configuration: src/config/
+- Processing Layer: src/processing/
+- LLM Integration: src/processing/llm_prompts/
+- Local Models: src/local/
+- Monitoring: src/monitoring/
+- Tools: src/tools/
+- Utilities: src/utils/
+
+## SUMMARY
+==========
+
+Total estimated files: 400+
+Main categories:
+- Python source code: ~300 files
+- Documentation: ~110 files
+- Configuration: ~30 files
+- Data/Results: ~20 files
+- Scripts/Utilities: ~20 files
+- Other: ~20 files
+
+The project follows a well-organized structure with clear separation of concerns:
+- Core functionality in src/
+- Comprehensive testing in tests/
+- Active documentation in docs/
+- Archived documentation in archive/
+- Research and experiments in dedicated directories
+- Configuration and scripts at appropriate levels
+
+This inventory provides a complete overview of the Conjecture project structure for analysis and evaluation purposes.

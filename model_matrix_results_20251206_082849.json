@@ -1,0 +1,403 @@
+{
+  "timestamp": "20251206_082849",
+  "config_file": "C:\\Users\\Aaron.Canary\\.conjecture\\config.json",
+  "available_models": [
+    {
+      "name": "granite-4-h-tiny",
+      "original": "ibm/granite-4-h-tiny",
+      "url": "http://localhost:1234",
+      "name_field": "lms/granite-4-h-tiny",
+      "api_key": ""
+    },
+    {
+      "name": "glm-4.6",
+      "original": "glm-4.6",
+      "url": "https://api.z.ai/api/coding/paas/v4",
+      "name_field": "zai/GLM-4.6",
+      "api_key": "70e6e12e4d7c46e2a4d0b85503d51f38.LQHl8d98kDJChttb"
+    },
+    {
+      "name": "gpt-oss-20b",
+      "original": "openai/gpt-oss-20b",
+      "url": "https://openrouter.ai/api/v1",
+      "name_field": "openrouter/gpt-oss-20b",
+      "api_key": "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"
+    }
+  ],
+  "matrix": {
+    "Direct": {
+      "granite-4-h-tiny": 23.0,
+      "glm-4.6": 23.0,
+      "gpt-oss-20b": 23.0,
+      "ROW_AVG": 23.0
+    },
+    "Conjecture": {
+      "granite-4-h-tiny": 23.0,
+      "glm-4.6": 23.0,
+      "gpt-oss-20b": 23.0,
+      "ROW_AVG": 23.0
+    }
+  },
+  "detailed_results": [
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Direct",
+      "test_prompt": "Five people live in five houses of different colors. Each person has a different profession and favorite fruit.\n\nClues:\n1. The doctor lives in middle house\n2. The baker lives in first house\n3. The teacher likes bananas\n4. The engineer lives in green house\n5. The person who likes elderberries lives in the last house\n\nWho lives in the red house and what fruit do they like? Think step by step.",
+      "response_time": 8.943161249160767,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Direct",
+      "test_prompt": "Write a function to check if a string is a palindrome.\n\nRequirements:\n- Ignore case and non-alphanumeric characters\n- Return True if palindrome, False otherwise\n- Include test cases\n\nBreak this into claims about the algorithm design, then implement.",
+      "response_time": 10.353297472000122,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Direct",
+      "test_prompt": "A new software update shows mixed results:\n- User satisfaction increased by 15%\n- System crashes increased by 8%\n- Performance improved by 22%\n- Customer support tickets up 12%\n\nShould the company deploy this update to all 50,000 users? Analyze the trade-offs and provide a recommendation with confidence level.",
+      "response_time": 5.61193323135376,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Direct",
+      "test_prompt": "Plan a 2-hour team meeting for 5 people to discuss a project launch.\n\nRequirements:\n- Review project status (30 min)\n- Brainstorm marketing ideas (45 min)\n- Assign action items (30 min)\n- Q&A session (15 min)\n\nCreate a detailed agenda with timing and responsibilities.",
+      "response_time": 7.040229797363281,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Direct",
+      "test_prompt": "Here's a bugged function:\n```python\ndef find_average(numbers):\n    total = 0\n    for num in numbers:\n        total += num\n    return total / len(numbers)\n```\n\nThe function fails on empty lists. Identify the bug and provide a corrected version with proper error handling.\n\nBreak this down into claims about what's wrong and how to fix it.",
+      "response_time": 4.903853893280029,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Direct",
+      "test_prompt": "Five people live in five houses of different colors. Each person has a different profession and favorite fruit.\n\nClues:\n1. The doctor lives in middle house\n2. The baker lives in first house\n3. The teacher likes bananas\n4. The engineer lives in green house\n5. The person who likes elderberries lives in the last house\n\nWho lives in the red house and what fruit do they like? Think step by step.",
+      "response_time": 46.110045433044434,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Direct",
+      "test_prompt": "Write a function to check if a string is a palindrome.\n\nRequirements:\n- Ignore case and non-alphanumeric characters\n- Return True if palindrome, False otherwise\n- Include test cases\n\nBreak this into claims about the algorithm design, then implement.",
+      "response_time": 43.18910002708435,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Direct",
+      "test_prompt": "A new software update shows mixed results:\n- User satisfaction increased by 15%\n- System crashes increased by 8%\n- Performance improved by 22%\n- Customer support tickets up 12%\n\nShould the company deploy this update to all 50,000 users? Analyze the trade-offs and provide a recommendation with confidence level.",
+      "response_time": 31.836695194244385,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Direct",
+      "test_prompt": "Plan a 2-hour team meeting for 5 people to discuss a project launch.\n\nRequirements:\n- Review project status (30 min)\n- Brainstorm marketing ideas (45 min)\n- Assign action items (30 min)\n- Q&A session (15 min)\n\nCreate a detailed agenda with timing and responsibilities.",
+      "response_time": 52.620863914489746,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Direct",
+      "test_prompt": "Here's a bugged function:\n```python\ndef find_average(numbers):\n    total = 0\n    for num in numbers:\n        total += num\n    return total / len(numbers)\n```\n\nThe function fails on empty lists. Identify the bug and provide a corrected version with proper error handling.\n\nBreak this down into claims about what's wrong and how to fix it.",
+      "response_time": 52.23091983795166,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Direct",
+      "test_prompt": "Five people live in five houses of different colors. Each person has a different profession and favorite fruit.\n\nClues:\n1. The doctor lives in middle house\n2. The baker lives in first house\n3. The teacher likes bananas\n4. The engineer lives in green house\n5. The person who likes elderberries lives in the last house\n\nWho lives in the red house and what fruit do they like? Think step by step.",
+      "response_time": 18.835644006729126,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Direct",
+      "test_prompt": "Write a function to check if a string is a palindrome.\n\nRequirements:\n- Ignore case and non-alphanumeric characters\n- Return True if palindrome, False otherwise\n- Include test cases\n\nBreak this into claims about the algorithm design, then implement.",
+      "response_time": 25.112024068832397,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Direct",
+      "test_prompt": "A new software update shows mixed results:\n- User satisfaction increased by 15%\n- System crashes increased by 8%\n- Performance improved by 22%\n- Customer support tickets up 12%\n\nShould the company deploy this update to all 50,000 users? Analyze the trade-offs and provide a recommendation with confidence level.",
+      "response_time": 28.98906111717224,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Direct",
+      "test_prompt": "Plan a 2-hour team meeting for 5 people to discuss a project launch.\n\nRequirements:\n- Review project status (30 min)\n- Brainstorm marketing ideas (45 min)\n- Assign action items (30 min)\n- Q&A session (15 min)\n\nCreate a detailed agenda with timing and responsibilities.",
+      "response_time": 9.713054418563843,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Direct",
+      "test_prompt": "Here's a bugged function:\n```python\ndef find_average(numbers):\n    total = 0\n    for num in numbers:\n        total += num\n    return total / len(numbers)\n```\n\nThe function fails on empty lists. Identify the bug and provide a corrected version with proper error handling.\n\nBreak this down into claims about what's wrong and how to fix it.",
+      "response_time": 18.773073434829712,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Conjecture",
+      "test_prompt": "Five people live in five houses of different colors. Each person has a different profession and favorite fruit.\n\nClues:\n1. The doctor lives in middle house\n2. The baker lives in first house\n3. The teacher likes bananas\n4. The engineer lives in green house\n5. The person who likes elderberries lives in the last house\n\nWho lives in the red house and what fruit do they like? Think step by step.",
+      "response_time": 7.119792461395264,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Conjecture",
+      "test_prompt": "Write a function to check if a string is a palindrome.\n\nRequirements:\n- Ignore case and non-alphanumeric characters\n- Return True if palindrome, False otherwise\n- Include test cases\n\nBreak this into claims about the algorithm design, then implement.",
+      "response_time": 8.438017129898071,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Conjecture",
+      "test_prompt": "A new software update shows mixed results:\n- User satisfaction increased by 15%\n- System crashes increased by 8%\n- Performance improved by 22%\n- Customer support tickets up 12%\n\nShould the company deploy this update to all 50,000 users? Analyze the trade-offs and provide a recommendation with confidence level.",
+      "response_time": 4.994097948074341,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Conjecture",
+      "test_prompt": "Plan a 2-hour team meeting for 5 people to discuss a project launch.\n\nRequirements:\n- Review project status (30 min)\n- Brainstorm marketing ideas (45 min)\n- Assign action items (30 min)\n- Q&A session (15 min)\n\nCreate a detailed agenda with timing and responsibilities.",
+      "response_time": 4.896270275115967,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Conjecture",
+      "test_prompt": "Here's a bugged function:\n```python\ndef find_average(numbers):\n    total = 0\n    for num in numbers:\n        total += num\n    return total / len(numbers)\n```\n\nThe function fails on empty lists. Identify the bug and provide a corrected version with proper error handling.\n\nBreak this down into claims about what's wrong and how to fix it.",
+      "response_time": 9.057509660720825,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Conjecture",
+      "test_prompt": "Five people live in five houses of different colors. Each person has a different profession and favorite fruit.\n\nClues:\n1. The doctor lives in middle house\n2. The baker lives in first house\n3. The teacher likes bananas\n4. The engineer lives in green house\n5. The person who likes elderberries lives in the last house\n\nWho lives in the red house and what fruit do they like? Think step by step.",
+      "response_time": 33.440937995910645,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Conjecture",
+      "test_prompt": "Write a function to check if a string is a palindrome.\n\nRequirements:\n- Ignore case and non-alphanumeric characters\n- Return True if palindrome, False otherwise\n- Include test cases\n\nBreak this into claims about the algorithm design, then implement.",
+      "response_time": 21.934908151626587,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Conjecture",
+      "test_prompt": "A new software update shows mixed results:\n- User satisfaction increased by 15%\n- System crashes increased by 8%\n- Performance improved by 22%\n- Customer support tickets up 12%\n\nShould the company deploy this update to all 50,000 users? Analyze the trade-offs and provide a recommendation with confidence level.",
+      "response_time": 40.964866161346436,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Conjecture",
+      "test_prompt": "Plan a 2-hour team meeting for 5 people to discuss a project launch.\n\nRequirements:\n- Review project status (30 min)\n- Brainstorm marketing ideas (45 min)\n- Assign action items (30 min)\n- Q&A session (15 min)\n\nCreate a detailed agenda with timing and responsibilities.",
+      "response_time": 39.55893540382385,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Conjecture",
+      "test_prompt": "Here's a bugged function:\n```python\ndef find_average(numbers):\n    total = 0\n    for num in numbers:\n        total += num\n    return total / len(numbers)\n```\n\nThe function fails on empty lists. Identify the bug and provide a corrected version with proper error handling.\n\nBreak this down into claims about what's wrong and how to fix it.",
+      "response_time": 10.811569452285767,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Conjecture",
+      "test_prompt": "Five people live in five houses of different colors. Each person has a different profession and favorite fruit.\n\nClues:\n1. The doctor lives in middle house\n2. The baker lives in first house\n3. The teacher likes bananas\n4. The engineer lives in green house\n5. The person who likes elderberries lives in the last house\n\nWho lives in the red house and what fruit do they like? Think step by step.",
+      "response_time": 40.46717381477356,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Conjecture",
+      "test_prompt": "Write a function to check if a string is a palindrome.\n\nRequirements:\n- Ignore case and non-alphanumeric characters\n- Return True if palindrome, False otherwise\n- Include test cases\n\nBreak this into claims about the algorithm design, then implement.",
+      "response_time": 27.367947340011597,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Conjecture",
+      "test_prompt": "A new software update shows mixed results:\n- User satisfaction increased by 15%\n- System crashes increased by 8%\n- Performance improved by 22%\n- Customer support tickets up 12%\n\nShould the company deploy this update to all 50,000 users? Analyze the trade-offs and provide a recommendation with confidence level.",
+      "response_time": 3.821565628051758,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Conjecture",
+      "test_prompt": "Plan a 2-hour team meeting for 5 people to discuss a project launch.\n\nRequirements:\n- Review project status (30 min)\n- Brainstorm marketing ideas (45 min)\n- Assign action items (30 min)\n- Q&A session (15 min)\n\nCreate a detailed agenda with timing and responsibilities.",
+      "response_time": 3.677584648132324,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Conjecture",
+      "test_prompt": "Here's a bugged function:\n```python\ndef find_average(numbers):\n    total = 0\n    for num in numbers:\n        total += num\n    return total / len(numbers)\n```\n\nThe function fails on empty lists. Identify the bug and provide a corrected version with proper error handling.\n\nBreak this down into claims about what's wrong and how to fix it.",
+      "response_time": 14.688424348831177,
+      "response_length": 0,
+      "success": true,
+      "relevance_score": 20.0,
+      "coherence_score": 20.0,
+      "accuracy_score": 30.0,
+      "overall_score": 23.0
+    }
+  ]
+}

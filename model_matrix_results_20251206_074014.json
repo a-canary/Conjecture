@@ -1,0 +1,403 @@
+{
+  "timestamp": "20251206_074014",
+  "config_file": "C:\\Users\\Aaron.Canary\\.conjecture\\config.json",
+  "available_models": [
+    {
+      "name": "granite-4-h-tiny",
+      "original": "ibm/granite-4-h-tiny",
+      "url": "http://localhost:1234",
+      "name_field": "lms/granite-4-h-tiny",
+      "api_key": ""
+    },
+    {
+      "name": "glm-4.6",
+      "original": "glm-4.6",
+      "url": "https://api.z.ai/api/coding/paas/v4",
+      "name_field": "zai/GLM-4.6",
+      "api_key": "70e6e12e4d7c46e2a4d0b85503d51f38.LQHl8d98kDJChttb"
+    },
+    {
+      "name": "gpt-oss-20b",
+      "original": "openai/gpt-oss-20b",
+      "url": "https://openrouter.ai/api/v1",
+      "name_field": "openrouter/gpt-oss-20b",
+      "api_key": "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"
+    }
+  ],
+  "matrix": {
+    "Direct": {
+      "granite-4-h-tiny": 66.5,
+      "glm-4.6": 66.5,
+      "gpt-oss-20b": 66.5,
+      "ROW_AVG": 66.5
+    },
+    "Conjecture": {
+      "granite-4-h-tiny": 62.5,
+      "glm-4.6": 62.5,
+      "gpt-oss-20b": 62.5,
+      "ROW_AVG": 62.5
+    }
+  },
+  "detailed_results": [
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Direct",
+      "test_prompt": "What is the capital of France and what are three key historical facts about it?",
+      "response_time": 0.20237231254577637,
+      "response_length": 307,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Direct",
+      "test_prompt": "Explain the concept of artificial intelligence in simple terms for someone new to the field.",
+      "response_time": 0.2033534049987793,
+      "response_length": 301,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Direct",
+      "test_prompt": "What are the main differences between renewable and non-renewable energy sources?",
+      "response_time": 0.2029709815979004,
+      "response_length": 307,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Direct",
+      "test_prompt": "Describe the process of photosynthesis and why it's important for life on Earth.",
+      "response_time": 0.20331072807312012,
+      "response_length": 292,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Direct",
+      "test_prompt": "What are three key principles of good software engineering and why do they matter?",
+      "response_time": 0.20124149322509766,
+      "response_length": 276,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Direct",
+      "test_prompt": "What is the capital of France and what are three key historical facts about it?",
+      "response_time": 0.2015538215637207,
+      "response_length": 307,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Direct",
+      "test_prompt": "Explain the concept of artificial intelligence in simple terms for someone new to the field.",
+      "response_time": 0.21219587326049805,
+      "response_length": 301,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Direct",
+      "test_prompt": "What are the main differences between renewable and non-renewable energy sources?",
+      "response_time": 0.2090914249420166,
+      "response_length": 307,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Direct",
+      "test_prompt": "Describe the process of photosynthesis and why it's important for life on Earth.",
+      "response_time": 0.21493744850158691,
+      "response_length": 292,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Direct",
+      "test_prompt": "What are three key principles of good software engineering and why do they matter?",
+      "response_time": 0.20811057090759277,
+      "response_length": 276,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Direct",
+      "test_prompt": "What is the capital of France and what are three key historical facts about it?",
+      "response_time": 0.2030324935913086,
+      "response_length": 307,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Direct",
+      "test_prompt": "Explain the concept of artificial intelligence in simple terms for someone new to the field.",
+      "response_time": 0.20257186889648438,
+      "response_length": 301,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Direct",
+      "test_prompt": "What are the main differences between renewable and non-renewable energy sources?",
+      "response_time": 0.20180726051330566,
+      "response_length": 307,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Direct",
+      "test_prompt": "Describe the process of photosynthesis and why it's important for life on Earth.",
+      "response_time": 0.2111809253692627,
+      "response_length": 292,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Direct",
+      "test_prompt": "What are three key principles of good software engineering and why do they matter?",
+      "response_time": 0.2010483741760254,
+      "response_length": 276,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Conjecture",
+      "test_prompt": "What is the capital of France and what are three key historical facts about it?",
+      "response_time": 0.3101515769958496,
+      "response_length": 487,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Conjecture",
+      "test_prompt": "Explain the concept of artificial intelligence in simple terms for someone new to the field.",
+      "response_time": 0.3064603805541992,
+      "response_length": 456,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Conjecture",
+      "test_prompt": "What are the main differences between renewable and non-renewable energy sources?",
+      "response_time": 0.30472612380981445,
+      "response_length": 487,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Conjecture",
+      "test_prompt": "Describe the process of photosynthesis and why it's important for life on Earth.",
+      "response_time": 0.3113439083099365,
+      "response_length": 559,
+      "success": true,
+      "relevance_score": 40.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 56.5
+    },
+    {
+      "model": "granite-4-h-tiny",
+      "harness": "Conjecture",
+      "test_prompt": "What are three key principles of good software engineering and why do they matter?",
+      "response_time": 0.3094489574432373,
+      "response_length": 507,
+      "success": true,
+      "relevance_score": 40.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 56.5
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Conjecture",
+      "test_prompt": "What is the capital of France and what are three key historical facts about it?",
+      "response_time": 0.31189465522766113,
+      "response_length": 487,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Conjecture",
+      "test_prompt": "Explain the concept of artificial intelligence in simple terms for someone new to the field.",
+      "response_time": 0.3052694797515869,
+      "response_length": 456,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Conjecture",
+      "test_prompt": "What are the main differences between renewable and non-renewable energy sources?",
+      "response_time": 0.3126504421234131,
+      "response_length": 487,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Conjecture",
+      "test_prompt": "Describe the process of photosynthesis and why it's important for life on Earth.",
+      "response_time": 0.3093116283416748,
+      "response_length": 559,
+      "success": true,
+      "relevance_score": 40.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 56.5
+    },
+    {
+      "model": "glm-4.6",
+      "harness": "Conjecture",
+      "test_prompt": "What are three key principles of good software engineering and why do they matter?",
+      "response_time": 0.30934572219848633,
+      "response_length": 507,
+      "success": true,
+      "relevance_score": 40.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 56.5
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Conjecture",
+      "test_prompt": "What is the capital of France and what are three key historical facts about it?",
+      "response_time": 0.308074951171875,
+      "response_length": 487,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Conjecture",
+      "test_prompt": "Explain the concept of artificial intelligence in simple terms for someone new to the field.",
+      "response_time": 0.3085062503814697,
+      "response_length": 456,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Conjecture",
+      "test_prompt": "What are the main differences between renewable and non-renewable energy sources?",
+      "response_time": 0.3093996047973633,
+      "response_length": 487,
+      "success": true,
+      "relevance_score": 65.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 66.5
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Conjecture",
+      "test_prompt": "Describe the process of photosynthesis and why it's important for life on Earth.",
+      "response_time": 0.3115708827972412,
+      "response_length": 559,
+      "success": true,
+      "relevance_score": 40.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 56.5
+    },
+    {
+      "model": "gpt-oss-20b",
+      "harness": "Conjecture",
+      "test_prompt": "What are three key principles of good software engineering and why do they matter?",
+      "response_time": 0.30306386947631836,
+      "response_length": 507,
+      "success": true,
+      "relevance_score": 40.0,
+      "coherence_score": 75.0,
+      "accuracy_score": 60.0,
+      "overall_score": 56.5
+    }
+  ]
+}
