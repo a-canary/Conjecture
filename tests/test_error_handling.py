@@ -11,7 +11,7 @@ from typing import List, Dict, Any
 from unittest.mock import Mock, patch, MagicMock
 
 from src.data.data_manager import DataManager
-from src.data.sqlite_manager import SQLiteManager
+from src.data.optimized_sqlite_manager import OptimizedSQLiteManager as SQLiteManager
 from src.data.chroma_manager import ChromaManager
 from src.data.embedding_service import EmbeddingService, MockEmbeddingService
 from src.data.models import (

@@ -148,6 +148,55 @@ class FileSystemBackend(StorageBackend):
         
         except Exception as e:
             logger.error(f"Failed to list keys: {e}")
+    
+    async def retrieve_batch(self, keys: List[str]) -> Dict[str, Any]:
+        """Batch retrieve multiple keys efficiently"""
+        try:
+            results = {}
+            
+            # Group keys by file type for efficient processing
+            json_keys = []
+            pkl_keys = []
+            
+            for key in keys:
+                if key.endswith('.json'):
+                    json_keys.append(key)
+                elif key.endswith('.pkl'):
+                    pkl_keys.append(key)
+                else:
+                    # Try both formats for keys without extension
+                    json_keys.append(key + '.json')
+                    pkl_keys.append(key + '.pkl')
+            
+            # Batch process JSON files
+            if json_keys:
+                for json_key in json_keys:
+                    json_path = self._get_file_path(json_key).with_suffix('.json')
+                    if json_path.exists():
+                        try:
+                            content = json_path.read_text()
+                            results[json_key] = json.loads(content)
+                        except Exception as e:
+                            logger.error(f"Failed to read JSON file {json_key}: {e}")
+                            results[json_key] = None
+            
+            # Batch process pickle files
+            if pkl_keys:
+                for pkl_key in pkl_keys:
+                    pkl_path = self._get_file_path(pkl_key).with_suffix('.pkl')
+                    if pkl_path.exists():
+                        try:
+                            content = pkl_path.read_bytes()
+                            results[pkl_key] = pickle.loads(content)
+                        except Exception as e:
+                            logger.error(f"Failed to read pickle file {pkl_key}: {e}")
+                            results[pkl_key] = None
+            
+            return results
+            
+        except Exception as e:
+            logger.error(f"Failed to batch retrieve keys: {e}")
+            return {}
             return []
     
     async def backup(self, backup_location: str) -> str:
@@ -373,41 +422,53 @@ class PersistenceLayer:
 
     async def search_claims(self, query: str, filters: Optional[Dict[str, Any]] = None,
                           limit: int = 50) -> List[Claim]:
-        """Search claims"""
+        """Optimized claim search with efficient batching"""
         try:
-            # For now, simple text-based search
-            # In a full implementation, this would use proper indexing
+            # Optimized search with proper batching
             all_keys = await self.storage_backend.list_keys("claims/")
             
+            # Batch retrieve claims in chunks for better performance
+            batch_size = 100  # Process 100 claims at a time
             claims = []
             query_lower = query.lower()
             
-            for key in all_keys[:limit * 2]:  # Get more than needed for filtering
-                claim_data = await self.storage_backend.retrieve(key)
-                if claim_data:
-                    claim = Claim(**claim_data)
-                    
-                    # Simple text search
-                    content_match = query_lower in claim.content.lower()
-                    
-                    # Apply filters
-                    matches = content_match
-                    if filters:
-                        if 'type' in filters:
-                            claim_types = [t.value for t in claim.type]
-                            matches = matches and any(t in claim_types for t in filters['type'])
+            # Process keys in batches to avoid too many individual calls
+            for i in range(0, len(all_keys), batch_size):
+                batch_keys = all_keys[i:i + batch_size]
+                
+                # Batch retrieve claims
+                batch_data = await self.storage_backend.retrieve_batch(batch_keys)
+                
+                for key, claim_data in zip(batch_keys, batch_data):
+                    if claim_data:
+                        claim = Claim(**claim_data)
                         
-                        if 'tags' in filters:
-                            matches = matches and any(tag in claim.tags for tag in filters['tags'])
+                        # Optimized text search with early filtering
+                        content_match = query_lower in claim.content.lower()
                         
-                        if 'confidence_min' in filters:
-                            matches = matches and claim.confidence >= filters['confidence_min']
-                    
-                    if matches:
-                        claims.append(claim)
+                        # Early filter application to avoid unnecessary processing
+                        if not content_match:
+                            continue  # Skip if content doesn't match
                         
-                        if len(claims) >= limit:
-                            break
+                        # Apply filters efficiently
+                        matches = True
+                        if filters:
+                            if 'type' in filters:
+                                claim_types = [t.value for t in claim.type]
+                                matches = matches and any(t in claim_types for t in filters['type'])
+                            
+                            if 'tags' in filters and matches:
+                                matches = any(tag in claim.tags for tag in filters['tags'])
+                            
+                            if 'confidence_min' in filters and matches:
+                                matches = claim.confidence >= filters['confidence_min']
+                        
+                        if matches:
+                            claims.append(claim)
+                            
+                            # Early exit when limit reached
+                            if len(claims) >= limit:
+                                return claims
             
             return claims
         

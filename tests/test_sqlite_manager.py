@@ -11,7 +11,7 @@ import os
 from datetime import datetime, timedelta
 from typing import Dict, Any
 
-from src.data.sqlite_manager import SQLiteManager
+from src.data.optimized_sqlite_manager import OptimizedSQLiteManager as SQLiteManager
 from src.data.models import (
     Claim, Relationship, ClaimFilter, DataConfig,
     ClaimNotFoundError, InvalidClaimError, RelationshipError, DataLayerError

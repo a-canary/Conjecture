@@ -7,7 +7,7 @@ JSON frontmatter format. Each schema includes validation rules and examples.
 
 from typing import Dict, Any, List
 from enum import Enum
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 import json
 
 
@@ -32,13 +32,15 @@ class BaseClaimSchema(BaseModel):
     tags: List[str] = Field(default_factory=list, description="Additional tags")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
 
-    @validator('id')
+    @field_validator('id')
+    @classmethod
     def validate_claim_id(cls, v):
         if not v.startswith('c') or not v[1:].isdigit():
             raise ValueError(f"Claim ID must be in format 'c<number>', got: {v}")
         return v
 
-    @validator('type')
+    @field_validator('type')
+    @classmethod
     def validate_claim_type(cls, v):
         valid_types = {
             'fact', 'concept', 'example', 'goal', 'reference', 
@@ -58,7 +60,8 @@ class ClaimsResponseSchema(BaseModel):
     version: str = Field(default="1.0", description="Schema version")
     timestamp: str = Field(..., description="ISO timestamp")
 
-    @validator('type')
+    @field_validator('type')
+    @classmethod
     def validate_type(cls, v):
         if v != "claims":
             raise ValueError(f"Invalid response type for claims schema: {v}")
@@ -77,7 +80,8 @@ class AnalysisResponseSchema(BaseModel):
     version: str = Field(default="1.0", description="Schema version")
     timestamp: str = Field(..., description="ISO timestamp")
 
-    @validator('type')
+    @field_validator('type')
+    @classmethod
     def validate_type(cls, v):
         if v != "analysis":
             raise ValueError(f"Invalid response type for analysis schema: {v}")
@@ -97,13 +101,15 @@ class ValidationResponseSchema(BaseModel):
     version: str = Field(default="1.0", description="Schema version")
     timestamp: str = Field(..., description="ISO timestamp")
 
-    @validator('type')
+    @field_validator('type')
+    @classmethod
     def validate_type(cls, v):
         if v != "validation":
             raise ValueError(f"Invalid response type for validation schema: {v}")
         return v
 
-    @validator('validation_result')
+    @field_validator('validation_result')
+    @classmethod
     def validate_result(cls, v):
         valid_results = {'valid', 'invalid', 'needs_revision'}
         if v.lower() not in valid_results:
@@ -122,13 +128,15 @@ class InstructionSupportSchema(BaseModel):
     version: str = Field(default="1.0", description="Schema version")
     timestamp: str = Field(..., description="ISO timestamp")
 
-    @validator('type')
+    @field_validator('type')
+    @classmethod
     def validate_type(cls, v):
         if v != "instruction_support":
             raise ValueError(f"Invalid response type for instruction support schema: {v}")
         return v
 
-    @validator('relationships')
+    @field_validator('relationships')
+    @classmethod
     def validate_relationships(cls, v):
         for rel in v:
             if 'instruction_claim_id' not in rel or 'target_claim_id' not in rel:
@@ -148,7 +156,8 @@ class RelationshipAnalysisSchema(BaseModel):
     version: str = Field(default="1.0", description="Schema version")
     timestamp: str = Field(..., description="ISO timestamp")
 
-    @validator('type')
+    @field_validator('type')
+    @classmethod
     def validate_type(cls, v):
         if v != "relationship_analysis":
             raise ValueError(f"Invalid response type for relationship analysis schema: {v}")
@@ -167,7 +176,8 @@ class ExplorationResponseSchema(BaseModel):
     version: str = Field(default="1.0", description="Schema version")
     timestamp: str = Field(..., description="ISO timestamp")
 
-    @validator('type')
+    @field_validator('type')
+    @classmethod
     def validate_type(cls, v):
         if v != "exploration":
             raise ValueError(f"Invalid response type for exploration schema: {v}")
@@ -187,7 +197,8 @@ class ResearchResponseSchema(BaseModel):
     version: str = Field(default="1.0", description="Schema version")
     timestamp: str = Field(..., description="ISO timestamp")
 
-    @validator('type')
+    @field_validator('type')
+    @classmethod
     def validate_type(cls, v):
         if v != "research":
             raise ValueError(f"Invalid response type for research schema: {v}")
@@ -205,7 +216,8 @@ class ErrorResponseSchema(BaseModel):
     version: str = Field(default="1.0", description="Schema version")
     timestamp: str = Field(..., description="ISO timestamp")
 
-    @validator('type')
+    @field_validator('type')
+    @classmethod
     def validate_type(cls, v):
         if v != "error":
             raise ValueError(f"Invalid response type for error schema: {v}")

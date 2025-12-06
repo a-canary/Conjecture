@@ -191,9 +191,9 @@ class StatisticalValidationSystem:
             self.logger.warning(f"Could not set plotting style: {e}")
             plt.style.use('default')
     
-    def analyze_category_results(
-        self, 
-        category: str, 
+    async def analyze_category_results(
+        self,
+        category: str,
         test_results: List[Dict[str, Any]],
         approaches: List[str] = ["direct", "conjecture"]
     ) -> CategoryStatisticalResult:

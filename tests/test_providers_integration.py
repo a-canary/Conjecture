@@ -15,7 +15,7 @@ from dataclasses import dataclass
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-from src.core.basic_models import BasicClaim, ClaimState, ClaimType
+from src.core.models import BasicClaim, ClaimState, ClaimType
 from src.processing.llm.llm_manager import LLMManager
 from src.config.unified_provider_validator import UnifiedProviderValidator
 

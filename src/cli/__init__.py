@@ -10,8 +10,9 @@ from .base_cli import (
     DatabaseError,
     BackendNotAvailableError,
 )
-# Temporarily disabled due to indentation issues
-# from .backends import BACKEND_REGISTRY, LocalBackend, CloudBackend, HybridBackend, AutoBackend
+from .backends import BACKEND_REGISTRY
+from .backends.local_backend import LocalBackend
+from .backends.cloud_backend import CloudBackend
 # from .modular_cli import app
 
 __all__ = [
@@ -19,9 +20,9 @@ __all__ = [
     "ClaimValidationError",
     "DatabaseError",
     "BackendNotAvailableError",
-    # 'BACKEND_REGISTRY',
-    # 'LocalBackend',
-    # 'CloudBackend',
+    "BACKEND_REGISTRY",
+    "LocalBackend",
+    "CloudBackend",
     # 'HybridBackend',
     # 'AutoBackend',
     # 'app'

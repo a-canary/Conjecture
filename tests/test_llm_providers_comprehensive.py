@@ -9,7 +9,7 @@ import json
 import os
 from typing import Dict, Any
 
-from src.core.basic_models import BasicClaim, ClaimState, ClaimType
+from src.core.models import BasicClaim, ClaimState, ClaimType
 from src.processing.llm.llm_manager import LLMManager
 from src.processing.llm.chutes_integration import ChutesProcessor
 from src.processing.llm.openrouter_integration import OpenRouterProcessor
@@ -45,24 +45,7 @@ class TestLLMProviderBase(unittest.TestCase):
         
         # Mock response for successful processing
         self.mock_response = {
-            "choices": [{"message": {"content": '''{
-                "claims": [
-                    {
-                        "claim_id": "test_1",
-                        "state": "VERIFIED",
-                        "confidence": 0.85,
-                        "analysis": "Empirically observable fact",
-                        "verification": "Direct observation confirms"'''
-                    },
-                    {
-                        "claim_id": "test_2", 
-                        "state": "VERIFIED",
-                        "confidence": 0.98,
-                        "analysis": "Well-established scientific fact",
-                        "verification": "Multiple scientific studies confirm"
-                    }
-                ]
-            }'}}],
+            "choices": [{"message": {"content": '{"claims": [{"claim_id": "test_1", "state": "VERIFIED", "confidence": 0.85, "analysis": "Empirically observable fact", "verification": "Direct observation confirms"}, {"claim_id": "test_2", "state": "VERIFIED", "confidence": 0.98, "analysis": "Well-established scientific fact", "verification": "Multiple scientific studies confirm"}]}'}}],
             "usage": {
                 "prompt_tokens": 50,
                 "completion_tokens": 100,

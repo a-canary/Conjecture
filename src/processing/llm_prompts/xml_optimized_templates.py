@@ -22,7 +22,7 @@ class XMLOptimizedTemplateManager:
         self.templates = {
             "research_xml": self._create_research_template_xml(),
             "research_enhanced_xml": self._create_enhanced_research_template_xml(),
-            "research_enhanced_xml": self._create_enhanced_research_template_xml(),
+            # "research_enhanced_xml": self._create_enhanced_research_template_xml(),
             "analysis_xml": self._create_analysis_template_xml(),
             "validation_xml": self._create_validation_template_xml(),
             "synthesis_xml": self._create_synthesis_template_xml(),
@@ -36,7 +36,7 @@ class XMLOptimizedTemplateManager:
             name="XML Research Template",
             description="XML-structured template for research tasks with enhanced context handling",
             template_type=PromptTemplateType.RESEARCH,
-            template_content=''''''You are Conjecture, an AI system that uses evidence-based reasoning to explore new claims based on existing context.
+            template_content='''You are Conjecture, an AI system that uses evidence-based reasoning to explore new claims based on existing context.
 
 <research_task>
 {{user_query}}
@@ -100,7 +100,7 @@ Generate up to 10 high-quality claims using this XML structure:
 Summarize your overall research approach, key findings, and methodology.
 Include any sources used in the sources field.
 Describe your methodology in the methodology field.
-</research_summary>'''''',
+</research_summary>''',
             variables=[
                 {
                     'name': 'user_query', 
@@ -161,7 +161,7 @@ Map evidence strength to confidence scores using these guidelines:
 - Multiple peer-reviewed sources with expert consensus
 - Reproducible empirical data with low error margins
 - Established scientific facts with extensive verification
-- Example: "Water boils at 100°C at standard atmospheric pressure"
+- Example: "Water boils at 100C at standard atmospheric pressure"
 
 0.7-0.8 (High Confidence):
 - Several reliable sources with strong logical support
@@ -304,98 +304,6 @@ Overall confidence in findings and any calibration adjustments made
             ]
         )
     
-    def _create_enhanced_research_template_xml(self) -> PromptTemplate:
-        """Create enhanced XML-optimized research template with better claim structure"""
-        return PromptTemplate(
-            id="research_enhanced_xml",
-            name="Enhanced XML Research Template",
-            description="XML-optimized template with enhanced claim structure for better LLM performance",
-            template_type=PromptTemplateType.RESEARCH,
-            template_content='''You are Conjecture, an advanced AI reasoning system that creates structured claims using XML format. Your task is to conduct thorough research analysis.
-
-<research_task>
-{user_query}
-</research_task>
-
-<available_context>
-{relevant_context}
-</available_context>
-
-ANALYSIS APPROACH:
-1. Multi-Perspective Research
-   - Examine topic from multiple angles
-   - Consider different methodologies and viewpoints
-   - Identify areas of consensus and debate
-
-2. Evidence-Based Investigation
-   - Prioritize verifiable facts over opinions
-   - Look for empirical data and expert sources
-   - Distinguish between established knowledge and speculation
-
-3. Structured Synthesis
-   - Organize findings in logical hierarchy
-   - Identify patterns, relationships, and connections
-   - Highlight knowledge gaps and uncertainties
-
-4. Quality Control
-   - Verify information accuracy through cross-checking
-   - Assess source credibility and potential biases
-   - Note limitations and confidence levels
-
-CLAIM CREATION REQUIREMENTS:
-- Use this EXACT XML format for each claim:
-<claim type="[fact|concept|example|goal|reference|hypothesis]" confidence="[0.0-1.0]">
-<content>Your clear, specific claim content here</content>
-<support>Supporting evidence or reasoning</support>
-<uncertainty>Any limitations or confidence notes</uncertainty>
-</claim>
-
-- Claim Types:
-  * fact: Verifiable statements with high confidence (0.8-1.0)
-  * concept: Explanatory claims with moderate confidence (0.6-0.9)
-  * example: Illustrative cases with lower confidence (0.4-0.7)
-  * goal: Objectives or recommendations (0.7-0.9)
-  * reference: Citations of external sources (0.8-1.0)
-  * hypothesis: Speculative claims requiring validation (0.3-0.6)
-
-- Generate 5-10 high-quality claims covering different aspects
-- Include <support> tags with evidence or reasoning
-- Use <uncertainty> for speculative claims
-- Assign realistic confidence scores
-
-Available Context:
-{relevant_context}
-
-<research_summary>
-Provide a comprehensive summary of your research approach and key findings in this XML structure:
-<research_methodology>
-Your step-by-step research process
-</research_methodology>
-<key_findings>
-Main discoveries and insights
-</key_findings>
-<sources>
-Important sources consulted
-</sources>
-<confidence_assessment>
-Overall confidence in findings and limitations
-</confidence_assessment>
-</research_summary>''',
-            variables=[
-                {
-                    'name': 'user_query', 
-                    'type': 'string', 
-                    'required': True, 
-                    'description': 'User research query'
-                },
-                {
-                    'name': 'relevant_context', 
-                    'type': 'string', 
-                    'required': False, 
-                    'description': 'Relevant context information'
-                }
-            ]
-        )
     
     def _create_analysis_template_xml(self) -> PromptTemplate:
         return PromptTemplate(
@@ -403,7 +311,7 @@ Overall confidence in findings and limitations
             name="XML Analysis Template",
             description="XML-structured template for analyzing claims with enhanced reasoning",
             template_type=PromptTemplateType.ANALYSIS,
-            template_content=''''''You are Conjecture, an AI system that analyzes claims using evidence-based reasoning.
+            template_content='''You are Conjecture, an AI system that analyzes claims using evidence-based reasoning.
 
 <analysis_task>
 Analyze the following claims for accuracy, consistency, and logical coherence:
@@ -452,7 +360,7 @@ Please analyze the provided claims and return structured findings in XML format:
   <recommendations>
     <!-- Specific recommendations for claim improvements -->
   </recommendations>
-</analysis_result>'''''',
+</analysis_result>''',
             variables=[
                 {
                     'name': 'claims_for_analysis', 
@@ -476,7 +384,7 @@ Please analyze the provided claims and return structured findings in XML format:
             name="XML Validation Template", 
             description="XML-structured template for validating claim accuracy and consistency",
             template_type=PromptTemplateType.VALIDATION,
-            template_content=''''''You are Conjecture, an AI system that validates claims using evidence-based reasoning.
+            template_content='''You are Conjecture, an AI system that validates claims using evidence-based reasoning.
 
 <validation_task>
 Validate the following claim for accuracy, consistency, and logical soundness:
@@ -513,7 +421,7 @@ Please provide detailed validation analysis in XML format:
   <confidence_assessment>Assessment of confidence scoring</confidence_assessment>
   <specific_issues>List of specific issues found</specific_issues>
   <recommendations>Validation recommendations</recommendations>
-</validation_result>'''''',
+</validation_result>''',
             variables=[
                 {
                     'name': 'claim_to_validate', 
@@ -553,7 +461,7 @@ Follow this 7-step systematic synthesis process with branching reasoning paths:
 
 Step 1: Claim Tree Construction
 - Map all evaluated claims into a hierarchical tree structure
-- Identify primary claims (confidence ≥0.7) as main branches
+- Identify primary claims (confidence >=0.7) as main branches
 - Group supporting claims (confidence 0.5-0.69) as sub-branches
 - Note speculative claims (confidence <0.5) as tentative branches
 - Identify conflicting or contradictory branches
@@ -569,15 +477,15 @@ Step 3: Confidence Tree Aggregation
 Apply systematic confidence aggregation across the claim tree:
 
 TREE AGGREGATION RULES:
-- Main branches (≥0.7 confidence): Full weight in final synthesis
+- Main branches (>=0.7 confidence): Full weight in final synthesis
 - Supporting branches (0.5-0.69): Moderate weight, clearly labeled
 - Tentative branches (<0.5): Include with uncertainty qualifiers
 - Conflicting branches: Present both with evidence comparison
 - Converging branches: Boost confidence by 0.1 when they support each other
 
 HIERARCHICAL CONFIDENCE CALCULATION:
-Branch_Confidence = Weighted_Average(Claims_in_Branch × Evidence_Weight)
-Overall_Confidence = Weighted_Average(Branch_Confidences × Branch_Importance)
+Branch_Confidence = Weighted_Average(Claims_in_Branch * Evidence_Weight)
+Overall_Confidence = Weighted_Average(Branch_Confidences * Branch_Importance)
 
 Step 4: Reasoning Path Exploration
 - Trace multiple reasoning paths through the claim tree
@@ -602,7 +510,7 @@ Step 6: Completeness Verification
 - Suggest areas where the tree could grow with more evidence
 
 Step 7: Quality Tree Pruning
-- Remove weak branches that don't contribute to understanding
+- Remove weak branches that don''t contribute to understanding
 - Strengthen connections between related branches
 - Ensure confidence scores reflect evidence quality
 - Verify logical coherence throughout the tree structure
@@ -623,7 +531,7 @@ Claim Tree:
 Step 1: Tree = Clear hierarchical structure with strong main branches
 Step 2: Evidence = Strong empirical support for main branches
 Step 3: Confidence = Overall confidence 0.82 (strong tree structure)
-Step 4: Paths = Cardiovascular → Mental health with supporting sub-branches
+Step 4: Paths = Cardiovascular -> Mental health with supporting sub-branches
 Step 5: Structure = Organized by benefit type with evidence hierarchy
 Step 6: Completeness = Covers major health domains
 Step 7: Quality = Well-supported tree with appropriate confidence
@@ -634,7 +542,7 @@ Example 2: Tree with Conflicting Branches
 Task: "Will quantum computing break current encryption?"
 Claim Tree:
 - Main Branch: Quantum threat to RSA (confidence 0.75)
-  - Sub-branch: Shor's algorithm effectiveness (confidence 0.80)
+  - Sub-branch: Shor''s algorithm effectiveness (confidence 0.80)
 - Main Branch: Post-quantum cryptography (confidence 0.85)
   - Sub-branch: Lattice-based solutions (confidence 0.80)
 - Tentative Branch: Timeline uncertainty (confidence 0.40)
@@ -642,7 +550,7 @@ Claim Tree:
 Step 1: Tree = Two strong main branches, one tentative branch
 Step 2: Evidence = Theoretical threat vs practical countermeasures
 Step 3: Confidence = Overall confidence 0.68 (conflicting branches)
-Step 4: Paths = Threat → Countermeasures → Timeline uncertainty
+Step 4: Paths = Threat -> Countermeasures -> Timeline uncertainty
 Step 5: Structure = Balanced presentation of conflicting branches
 Step 6: Completeness = Covers technical and practical aspects
 Step 7: Quality = Appropriate uncertainty for conflicting claims
@@ -787,7 +695,7 @@ Step 2: Task Tree:
     - Frontend integration (confidence 0.75)
     - Performance testing (confidence 0.85)
 
-Step 3: Dependencies = Data → Model → Integration (sequential)
+Step 3: Dependencies = Data -> Model -> Integration (sequential)
 Step 4: Resources = Data scientists, ML engineers, web developers
 Step 5: Completeness = All aspects covered, no gaps
 Step 6: Optimization = Clear deliverables for each subtask
@@ -812,7 +720,7 @@ Step 2: Task Tree:
     - Factor identification (confidence 0.75)
     - Recommendation formulation (confidence 0.70)
 
-Step 3: Dependencies = Literature → Data → Analysis (sequential)
+Step 3: Dependencies = Literature -> Data -> Analysis (sequential)
 Step 4: Resources = Research team, survey tools, statistical software
 Step 5: Completeness = Comprehensive coverage of research methodology
 Step 6: Optimization = Clear research methodology with defined outputs
@@ -865,7 +773,7 @@ Please break down the task into XML-structured hierarchical subtasks:
   </optimization_summary>
   <subtasks>
     <!-- XML structure for each atomic subtask -->
-    <subtask id="[subtask_id]">
+    <subtask id='[subtask_id]'>
       <branch>Main task branch this subtask belongs to</branch>
       <objective>Clear, specific objective for this subtask</objective>
       <deliverables>Specific outputs or results expected</deliverables>
@@ -965,7 +873,7 @@ Please break down the task into XML-structured hierarchical subtasks:
             if var_name == "user_query":
                 # Escape XML special characters in user input
                 safe_value = str(var_value).replace('&', '&').replace('<', '<').replace('>', '>')
-                optimized_prompt = optimized_prompt.replace(f'{{{{{var_name}}}}', safe_value)
+                optimized_prompt = optimized_prompt.replace('{{' + var_name + '}}', safe_value)
         
         # Ensure proper XML structure
         optimized_prompt = f"{xml_header}\n{optimized_prompt}"
@@ -983,7 +891,7 @@ Please break down the task into XML-structured hierarchical subtasks:
         if claims_var:
             # Convert claims to XML structure
             claims_xml = self._convert_claims_to_xml(claims_var)
-            optimized_prompt = prompt.replace(f'{{{{{variables["claims_for_analysis"]}}}', claims_xml)
+            optimized_prompt = prompt.replace('{{variables["claims_for_analysis"]}}', claims_xml)
         
         # Add XML declaration and structure
         optimized_prompt = f"{xml_header}\n{optimized_prompt}"
@@ -999,7 +907,7 @@ Please break down the task into XML-structured hierarchical subtasks:
         if claim_var:
             # Escape XML special characters in claim content
             safe_claim = str(claim_var).replace('&', '&').replace('<', '<').replace('>', '>').replace('"', '"')
-            optimized_prompt = prompt.replace(f'{{{{{variables["claim_to_validate"]}}}', safe_claim)
+            optimized_prompt = prompt.replace('{{variables["claim_to_validate"]}}', safe_claim)
         
         optimized_prompt = f"{xml_header}\n{optimized_prompt}"
         return optimized_prompt
@@ -1015,7 +923,7 @@ Please break down the task into XML-structured hierarchical subtasks:
             if var_name in ['original_task', 'analysis_results', 'claims_evaluated', 'relevant_context']:
                 # Escape XML special characters
                 safe_value = str(var_value).replace('&', '&').replace('<', '<').replace('>', '>').replace('"', '"')
-                optimized_prompt = optimized_prompt.replace(f'{{{{{var_name}}}}}', safe_value)
+                optimized_prompt = optimized_prompt.replace('{{' + var_name + '}}', safe_value)
         
         optimized_prompt = f"{xml_header}\n{optimized_prompt}"
         return optimized_prompt
@@ -1030,7 +938,7 @@ Please break down the task into XML-structured hierarchical subtasks:
         if task_var:
             # Escape XML special characters
             safe_task = str(task_var).replace('&', '&').replace('<', '<').replace('>', '>').replace('"', '"')
-            optimized_prompt = prompt.replace(f'{{{{{variables["complex_task"]}}}', safe_task)
+            optimized_prompt = prompt.replace('{{variables["complex_task"]}}', safe_task)
         
         optimized_prompt = f"{xml_header}\n{optimized_prompt}"
         return optimized_prompt

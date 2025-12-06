@@ -67,10 +67,13 @@ class Conjecture:
         # Service state
         self._services_started = False
 
-        # Performance optimization: Caching
+        # Performance optimization: Caching with memory management
         self._claim_generation_cache = {}
         self._context_cache = {}
         self._cache_ttl = 300  # 5 minutes
+        self._max_cache_size = 50  # Maximum items per cache
+        self._cache_cleanup_interval = 60  # Cleanup every 60 seconds
+        self._last_cache_cleanup = time.time()
 
         # Performance monitoring
         self._performance_stats = {
@@ -109,14 +112,18 @@ class Conjecture:
         self.logger.info("Enhanced Conjecture services started")
 
     async def stop_services(self):
-        """Stop background services"""
+        """Stop background services and cleanup resources"""
         if not self._services_started:
             return
 
         await self.async_evaluation.stop()
+        
+        # Clear caches to prevent memory leaks during shutdown
+        self.clear_all_caches()
+        
         self._services_started = False
 
-        self.logger.info("Enhanced Conjecture services stopped")
+        self.logger.info("Enhanced Conjecture services stopped and resources cleaned up")
 
     def _initialize_llm_bridge(self):
         """Initialize LLM bridge with simplified manager"""
@@ -1108,15 +1115,21 @@ Overall confidence in this answer: X.XX
         return hashlib.md5(key_str.encode()).hexdigest()
 
     def _get_from_cache(self, cache_key: str, cache_type: str) -> Optional[Any]:
-        """Get item from cache with TTL check"""
+        """Get item from cache with TTL check and periodic cleanup"""
         cache = getattr(self, f"_{cache_type}_cache", {})
+        
+        # Periodic cleanup to prevent memory leaks
+        current_time = time.time()
+        if current_time - self._last_cache_cleanup > self._cache_cleanup_interval:
+            self._cleanup_expired_cache(cache_type)
+            self._last_cache_cleanup = current_time
         
         if cache_key in cache:
             cached_item = cache[cache_key]
             timestamp = cached_item.get("timestamp", 0)
             
             # Check if cache is still valid
-            if time.time() - timestamp < self._cache_ttl:
+            if current_time - timestamp < self._cache_ttl:
                 return cached_item["data"]
             else:
                 # Remove expired cache item
@@ -1125,23 +1138,61 @@ Overall confidence in this answer: X.XX
         return None
 
     def _add_to_cache(self, cache_key: str, data: Any, cache_type: str) -> None:
-        """Add item to cache with timestamp"""
+        """Add item to cache with timestamp and size management"""
         cache = getattr(self, f"_{cache_type}_cache", {})
+        
+        # Enforce cache size limit to prevent memory leaks
+        if len(cache) >= self._max_cache_size:
+            self._enforce_cache_size_limit(cache_type)
+        
         cache[cache_key] = {
             "data": data,
             "timestamp": time.time(),
         }
+    
+    def _cleanup_expired_cache(self, cache_type: str) -> None:
+        """Remove expired items from cache to prevent memory leaks"""
+        cache = getattr(self, f"_{cache_type}_cache", {})
+        current_time = time.time()
         
-        # Maintain cache size
-        if len(cache) > 100:
-            # Remove oldest items
-            oldest_keys = sorted(
-                cache.keys(),
-                key=lambda k: cache[k]["timestamp"],
-            )[:20]
-            
-            for key in oldest_keys:
-                del cache[key]
+        expired_keys = [
+            key for key, item in cache.items()
+            if current_time - item.get("timestamp", 0) >= self._cache_ttl
+        ]
+        
+        for key in expired_keys:
+            del cache[key]
+        
+        if expired_keys:
+            self.logger.debug(f"Cleaned up {len(expired_keys)} expired items from {cache_type} cache")
+    
+    def _enforce_cache_size_limit(self, cache_type: str) -> None:
+        """Enforce maximum cache size to prevent memory leaks"""
+        cache = getattr(self, f"_{cache_type}_cache", {})
+        
+        if len(cache) <= self._max_cache_size:
+            return
+        
+        # Remove oldest items to maintain size limit
+        items_by_age = sorted(
+            cache.items(),
+            key=lambda item: item[1].get("timestamp", 0)
+        )
+        
+        # Remove oldest 25% of items
+        items_to_remove = max(1, len(items_by_age) // 4)
+        
+        for i in range(items_to_remove):
+            key = items_by_age[i][0]
+            del cache[key]
+        
+        self.logger.debug(f"Removed {items_to_remove} old items from {cache_type} cache to enforce size limit")
+    
+    def clear_all_caches(self) -> None:
+        """Clear all caches to free memory - call this during shutdown or memory pressure"""
+        self._claim_generation_cache.clear()
+        self._context_cache.clear()
+        self.logger.info("All caches cleared to free memory")
 
     def _update_stats(self, processing_time: float, claims_count: int):
         """Update internal statistics"""

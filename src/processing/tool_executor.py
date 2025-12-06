@@ -490,10 +490,18 @@ print(json.dumps(result))
                     process.communicate(), timeout=self.limits.max_execution_time
                 )
 
-                # Parse result
+                # Parse result with better error handling
                 result_json = stdout.decode().strip()
                 if result_json:
-                    result = json.loads(result_json)
+                    try:
+                        result = json.loads(result_json)
+                    except json.JSONDecodeError:
+                        result = {
+                            "success": False,
+                            "error": "Invalid JSON output from execution",
+                            "stdout": result_json[:500] + "..." if len(result_json) > 500 else result_json,
+                            "stderr": stderr.decode(),
+                        }
                 else:
                     result = {
                         "success": False,
@@ -503,8 +511,14 @@ print(json.dumps(result))
                     }
 
             except asyncio.TimeoutError:
-                process.kill()
-                await process.wait()
+                # More graceful timeout handling
+                process.terminate()
+                try:
+                    await asyncio.wait_for(process.wait(), timeout=2.0)
+                except asyncio.TimeoutError:
+                    process.kill()
+                    await process.wait()
+                
                 result = {
                     "success": False,
                     "error": f"Execution timeout after {self.limits.max_execution_time} seconds",

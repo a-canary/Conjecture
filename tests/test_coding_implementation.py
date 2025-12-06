@@ -11,6 +11,7 @@ def test_coding_test_cases():
     
     try:
         import json
+        import os  # Missing import
         from pathlib import Path
         
         # Test loading coding test cases
@@ -31,6 +32,10 @@ def test_coding_test_cases():
         
         print(f"Total coding test cases available: {total_cases}")
         return total_cases >= 100  # Expecting at least 100 cases
+        
+    except Exception as e:
+        print(f"Error loading coding test cases: {e}")
+        return False
 
 def test_coding_evaluator():
     """Test coding evaluator initialization"""

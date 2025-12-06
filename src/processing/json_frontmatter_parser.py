@@ -43,7 +43,7 @@ from typing import List, Dict, Any, Optional, Tuple, Union
 from dataclasses import dataclass
 from enum import Enum
 
-from pydantic import BaseModel, Field, validator, ValidationError
+from pydantic import BaseModel, Field, field_validator, ValidationError
 
 from src.core.models import Claim, ClaimType, ClaimState
 from src.utils.logging import get_logger
@@ -69,14 +69,16 @@ class JSONClaimData(BaseModel):
     tags: Optional[List[str]] = Field(default_factory=list, description="Additional tags")
     metadata: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Additional metadata")
 
-    @validator('id')
+    @field_validator('id')
+    @classmethod
     def validate_claim_id(cls, v):
         """Validate claim ID format"""
         if not re.match(r'^c\d+$', v):
             raise ValueError(f"Claim ID must be in format 'c<number>', got: {v}")
         return v
 
-    @validator('type')
+    @field_validator('type')
+    @classmethod
     def validate_claim_type(cls, v):
         """Validate claim type if provided"""
         if v is not None:
@@ -99,7 +101,7 @@ class JSONFrontmatterData(BaseModel):
     version: str = Field(default="1.0", description="Format version")
     timestamp: Optional[str] = Field(None, description="Response timestamp")
 
-    @validator('timestamp')
+    @field_validator('timestamp')
     def validate_timestamp(cls, v):
         """Validate timestamp format"""
         if v is not None:

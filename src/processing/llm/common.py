@@ -54,12 +54,20 @@ class GenerationConfig:
 class LLMProcessingResult:
     """Unified result structure for LLM processing"""
 
-    content: str
-    model_used: str
-    tokens_used: Optional[int] = None
+    success: bool
+    processed_claims: List[Any] = None
+    errors: List[str] = None
+    processing_time: float = 0.0
+    tokens_used: int = 0
+    model_used: str = ""
+    content: str = ""
     processing_time_ms: Optional[int] = None
     metadata: Dict[str, Any] = None
 
     def __post_init__(self):
+        if self.processed_claims is None:
+            self.processed_claims = []
+        if self.errors is None:
+            self.errors = []
         if self.metadata is None:
             self.metadata = {}

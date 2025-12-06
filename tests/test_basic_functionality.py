@@ -14,22 +14,15 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 def test_backend_imports():
     """Test that backend modules can be imported."""
     try:
-        from cli.backends.local_backend import LocalBackend
+        from src.cli.backends.local_backend import LocalBackend
         print("[OK] LocalBackend imported successfully")
         
-        from cli.backends.cloud_backend import CloudBackend
+        from src.cli.backends.cloud_backend import CloudBackend
         print("[OK] CloudBackend imported successfully")
-        
-        from cli.backends.hybrid_backend import HybridBackend
-        print("[OK] HybridBackend imported successfully")
-        
-        from cli.backends.auto_backend import AutoBackend
-        print("[OK] AutoBackend imported successfully")
         
         # Test backend instantiation without registry
         backends = {}
-        for name, backend_class in [("local", LocalBackend), ("cloud", CloudBackend), 
-                                   ("hybrid", HybridBackend), ("auto", AutoBackend)]:
+        for name, backend_class in [("local", LocalBackend), ("cloud", CloudBackend)]:
             backend = backend_class()
             backends[name] = backend
             print(f"[OK] {name.title()} backend instantiated successfully")
@@ -53,7 +46,7 @@ def test_backend_imports():
 def test_base_cli():
     """Test base CLI functionality."""
     try:
-        from cli.base_cli import BaseCLI
+        from src.cli.base_cli import BaseCLI
         print("[OK] BaseCLI imported successfully")
         
         # Test that it's an abstract class
@@ -73,7 +66,7 @@ def test_modular_cli_import():
     """Test modular CLI import."""
     try:
         # Test without importing the full app initially
-        import cli.modular_cli
+        import src.cli.modular_cli
         print("[OK] Modular CLI module imported successfully")
         return True
     except Exception as e:

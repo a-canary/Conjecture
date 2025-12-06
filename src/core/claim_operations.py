@@ -256,7 +256,7 @@ def filter_claims_by_tags(claims: List[Claim], tags: List[str], match_all: bool 
     """Pure function to filter claims by tags"""
     target_tags = set(tags)
     
-if match_all:
+    if match_all:
         return [c for c in claims if target_tags.issubset(set(c.tags))]
     else:
         return [c for c in claims if any(tag in target_tags for tag in c.tags)]

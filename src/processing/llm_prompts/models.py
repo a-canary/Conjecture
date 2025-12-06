@@ -5,7 +5,7 @@ Data models for LLM Prompt Management System
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class PromptTemplateStatus(str, Enum):
@@ -56,13 +56,14 @@ class PromptTemplate(BaseModel):
     usage_count: int = Field(default=0, description="Number of times used")
     success_rate: float = Field(default=1.0, description="Success rate")
     
-    @validator('variables')
-    def validate_content_placeholders(cls, v, values):
+    @field_validator('variables')
+    @classmethod
+    def validate_content_placeholders(cls, v, info):
         """Ensure all placeholders in content have corresponding variables"""
-        if 'template_content' in values:
+        if info.data and 'template_content' in info.data:
             import re
             # Find {{variable}} placeholders
-            placeholders = re.findall(r'\{\{(\w+)\}\}', values.get('template_content', ''))
+            placeholders = re.findall(r'\{\{(\w+)\}\}', info.data.get('template_content', ''))
             variable_names = [var.name for var in v]
             
             missing_vars = set(placeholders) - set(variable_names)

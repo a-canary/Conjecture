@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional
 from datetime import datetime
 
 from .llm.openai_compatible_provider import OpenAICompatibleProcessor, create_openai_compatible_processor
-from ..core.models import Claim
+from src.core.models import Claim
 
 
 class SimplifiedLLMManager:
@@ -60,17 +60,58 @@ class SimplifiedLLMManager:
             print(f"[LLM] Warning: Could not load provider config: {e}")
             return []
 
+    def _validate_provider_config(self, provider_config: Dict[str, Any]) -> Dict[str, Any]:
+        """Validate provider configuration with clear error messages"""
+        errors = []
+        
+        # Validate required fields
+        if "name" not in provider_config:
+            errors.append("Provider name is required")
+        elif not provider_config["name"] or not isinstance(provider_config["name"], str):
+            errors.append("Provider name must be a non-empty string")
+        
+        if "url" not in provider_config:
+            errors.append("Provider URL is required")
+        elif not provider_config["url"] or not isinstance(provider_config["url"], str):
+            errors.append("Provider URL must be a non-empty string")
+        
+        # Validate optional fields
+        url = provider_config.get("url", "")
+        if url and not (url.startswith("http://") or url.startswith("https://")):
+            errors.append("Provider URL must start with http:// or https://")
+        
+        api_key = provider_config.get("api", "")
+        if api_key and not isinstance(api_key, str):
+            errors.append("API key must be a string")
+        
+        model = provider_config.get("model", "gpt-3.5-turbo")
+        if not isinstance(model, str) or not model.strip():
+            errors.append("Model must be a non-empty string")
+        
+        priority = provider_config.get("priority", 999)
+        if not isinstance(priority, int) or priority < 0:
+            errors.append("Priority must be a non-negative integer")
+        
+        if errors:
+            error_msg = f"Configuration validation failed for {provider_config.get('name', 'unknown')}: {'; '.join(errors)}"
+            raise ValueError(error_msg)
+        
+        return provider_config
+    
     def _initialize_processors(self, providers: List[Dict[str, Any]]):
-        """Initialize OpenAI-compatible processors"""
+        """Initialize OpenAI-compatible processors with validation"""
         print("[LLM] Initializing OpenAI-compatible providers...")
         
         for provider_config in providers:
             try:
-                provider_name = provider_config["name"]
-                api_url = provider_config["url"]
-                api_key = provider_config.get("api", "")
-                model = provider_config.get("model", "gpt-3.5-turbo")
-                priority = provider_config.get("priority", 999)
+                # Validate configuration first
+                validated_config = self._validate_provider_config(provider_config)
+                
+                provider_name = validated_config["name"]
+                api_url = validated_config["url"]
+                api_key = validated_config.get("api", "")
+                model = validated_config.get("model", "gpt-3.5-turbo")
+                priority = validated_config.get("priority", 999)
                 
                 # Create unified processor
                 processor = create_openai_compatible_processor(
@@ -84,6 +125,9 @@ class SimplifiedLLMManager:
                 self.provider_priorities[provider_name] = priority
                 print(f"[LLM] {provider_name} processor initialized (priority: {priority})")
                 
+            except ValueError as e:
+                print(f"[LLM] Configuration validation failed: {e}")
+                continue  # Skip this provider but continue with others
             except Exception as e:
                 print(f"[LLM] Failed to initialize {provider_config.get('name', 'unknown')}: {e}")
         

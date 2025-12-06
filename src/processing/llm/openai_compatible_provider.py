@@ -12,8 +12,8 @@ from datetime import datetime
 
 from .error_handling import RetryConfig, CircuitBreakerConfig, with_error_handling, LLMErrorHandler
 from .common import GenerationConfig, LLMProcessingResult
-from ...core.models import Claim
-from ...utils.retry_utils import EnhancedRetryConfig, with_enhanced_retry
+from src.core.models import Claim
+from src.utils.retry_utils import EnhancedRetryConfig, with_enhanced_retry
 
 
 class OpenAICompatibleProcessor:

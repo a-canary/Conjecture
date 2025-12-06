@@ -445,12 +445,33 @@ class LocalVectorStore:
     async def _update_sqlite_vector(self, claim_id: str, updates: Dict[str, Any]) -> None:
         """Update a vector in the SQLite database."""
         async with aiosqlite.connect(self.db_path) as conn:
-            set_clause = ', '.join(f"{k} = ?" for k in updates.keys())
-            values = list(updates.values()) + [claim_id]
+            # Validate column names to prevent SQL injection
+            allowed_columns = {
+                'content', 'embedding', 'metadata', 'embedding_hash', 'updated_at'
+            }
             
-            await conn.execute(f'''
-                UPDATE vector_metadata SET {set_clause} WHERE id = ?
-            ''', values)
+            # Filter updates to only include allowed columns
+            filtered_updates = {
+                k: v for k, v in updates.items()
+                if k in allowed_columns
+            }
+            
+            if not filtered_updates:
+                logger.warning(f"No valid columns to update for claim {claim_id}")
+                return
+            
+            # Build parameterized query safely
+            set_clause = ', '.join(f"{k} = ?" for k in filtered_updates.keys())
+            values = list(filtered_updates.values()) + [claim_id]
+            
+            # Use parameterized query to prevent SQL injection
+            query = f'''
+                UPDATE vector_metadata
+                SET {set_clause}
+                WHERE id = ?
+            '''
+            
+            await conn.execute(query, values)
             await conn.commit()
 
     async def _update_faiss_vector(self, claim_id: str, embedding: List[float]) -> None:

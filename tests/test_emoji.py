@@ -17,7 +17,7 @@ def test_basic_emoji_functions():
     emoji_printer.print(":microscope: Testing Basic Emoji Functions")
     print("=" * 50)
 
-    from utils.terminal_emoji import (
+    from src.utils.emoji_support import (
         success,
         error,
         warning,

@@ -52,7 +52,7 @@ error_console = Console(stderr=True, legacy_windows=True)
 from .base_cli import BaseCLI
 
 # from .dirty_commands import dirty_app  # Temporarily disabled due to import issues
-from config.config import validate_config
+from src.config.unified_config import validate_config
 
 # Create the main Typer app
 app = typer.Typer(
@@ -83,7 +83,7 @@ def get_backend(backend_type: str = "auto") -> BaseCLI:
         )
         console.print("\n[bold yellow]Configuration Setup:[/bold yellow]")
         
-        from src.config.config import ConfigHierarchy
+        from src.config.unified_config import ConfigHierarchy
         hierarchy = ConfigHierarchy()
         
         console.print("1. [cyan]User config:[/cyan] ~/.conjecture/config.json")
@@ -543,7 +543,7 @@ def setup(
         console.print("3. Add the configuration below:")
 
         # Show provider-specific config
-        from config.unified_validator import get_unified_validator
+        from src.config.unified_provider_validator import get_unified_validator
 
         validator = get_unified_validator()
         examples = validator.get_format_examples()

@@ -1,0 +1,153 @@
+[run]
+# Source code to measure coverage for
+source = src
+
+# Branch coverage enabled for more comprehensive measurement
+branch = True
+
+# Dynamic analysis to better understand conditional coverage
+# Note: This option is not available in current coverage version
+# dynamic_analysis = True
+
+# Include files that match these patterns
+include = 
+    src/*
+    src/**/*.py
+
+# Exclude patterns for non-production code
+omit = 
+    # Test files
+    */tests/*
+    */test_*
+    *_test.py
+    tests/*
+    
+    # __init__.py files (typically just imports)
+    */__init__.py
+    
+    # Setup and configuration files
+    setup.py
+    */setup.py
+    */conftest.py
+    
+    # Migration and scripts
+    scripts/*
+    */scripts/*
+    */migrations/*
+    
+    # Example and demo files
+    examples/*
+    */examples/*
+    demo/*
+    
+    # Documentation and research files
+    docs/*
+    research/*
+    
+    # Generated code
+    generated_code/*
+    */generated_code/*
+    
+    # Performance benchmarks (not core functionality)
+    */performance_benchmarks*
+    */benchmarks/*
+    
+    # Temporary and cache files
+    */__pycache__/*
+    */.pytest_cache/*
+    */.coverage*
+    
+    # Third-party integrations that are optional
+    */third_party/*
+    */vendor/*
+
+[report]
+# Exclude lines matching these regex patterns from coverage calculation
+exclude_lines =
+    # pragma: no cover
+    pragma: no cover
+    
+    # Defensive programming
+    def __repr__
+    if self.debug:
+    
+    # Error handling that's difficult to test
+    except ImportError:
+    except Exception:
+    except:
+        raise
+    
+    # Abstract methods and interfaces
+    @(abc\.)?abstractmethod
+    raise NotImplementedError
+    
+    # Type checking guards
+    if TYPE_CHECKING:
+    
+    # Development and debugging code
+    if __name__ == .__main__.:
+    
+    # Logging and debug statements
+    logger\.(debug|info|warning|error|critical)
+    
+    # TODO and FIXME comments
+    # TODO:
+    # FIXME:
+    
+    # Complex conditional logic that's hard to test
+    if False:
+    if True:
+    
+    # Property setters/getters that are simple
+    @property
+    @[a-zA-Z_]+\.setter
+
+# Show missing lines in terminal output
+show_missing = True
+
+# Skip empty files
+skip_empty = True
+
+# Sort report by missing lines
+sort = Miss
+
+# Precision for percentage coverage
+precision = 2
+
+[html]
+# Directory for HTML coverage reports
+directory = htmlcov
+
+# Show source code in HTML report
+show_contexts = True
+
+# Skip covered files to reduce report size
+skip_covered = False
+
+# Skip empty files
+skip_empty = True
+
+# Include additional context lines around covered code
+extra_context = 2
+
+[xml]
+# Output file for XML coverage reports
+output = coverage.xml
+
+# Path to source files for XML report
+source = src
+
+[paths]
+# Map different source paths to a common canonical path
+# Useful for CI/CD environments where paths may differ
+source =
+    src/
+    .tox/*/site-packages/
+    */site-packages/
+
+[json]
+# Output file for JSON coverage reports
+output = coverage.json
+
+# Pretty print JSON output
+pretty_print = True

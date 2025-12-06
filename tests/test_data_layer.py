@@ -9,10 +9,10 @@ import tempfile
 import shutil
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from data.data_manager import DataManager
-from data.models import DataConfig
+from src.data.data_manager import DataManager
+from src.core.models import DataConfig
 
 
 async def test_data_layer():

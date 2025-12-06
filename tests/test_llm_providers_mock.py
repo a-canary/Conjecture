@@ -9,7 +9,7 @@ import json
 import asyncio
 from typing import Dict, Any
 
-from src.core.basic_models import BasicClaim, ClaimState, ClaimType
+from src.core.models import BasicClaim, ClaimState, ClaimType
 
 
 class MockResponse:

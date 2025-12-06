@@ -2,16 +2,25 @@
 Integration tests for DataManager.
 """
 import pytest
+import pytest_asyncio
 import asyncio
 import tempfile
 import shutil
 import os
 
-from src.data.data_manager import DataManager
-from src.data.models import Claim, ClaimFilter, DataConfig
+try:
+    from src.data.optimized_sqlite_manager import OptimizedSQLiteManager as SQLiteManager
+    from src.core.models import Claim, ClaimFilter, DataConfig
+    from src.data.data_manager import DataManager
+except ImportError:
+    # Handle import issues for test compatibility
+    import sys
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+    from src.core.models import Claim, ClaimFilter, DataConfig
+    from src.data.data_manager import DataManager
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def data_manager():
     """Create a temporary data manager for testing."""
     temp_dir = tempfile.mkdtemp()

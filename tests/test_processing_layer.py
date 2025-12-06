@@ -9,7 +9,7 @@ import sys
 # Add src directory to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from src.core.basic_models import BasicClaim, ClaimState, ClaimType
+from src.core.models import BasicClaim, ClaimState, ClaimType
 from src.data.mock_chroma import MockChromaDB
 
 

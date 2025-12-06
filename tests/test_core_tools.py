@@ -10,11 +10,11 @@ import json
 from typing import Dict, Any, List
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 # Import Core Tools system components
 from src.tools.registry import ToolRegistry, register_tool, get_tool_registry
-from src.llm.simple_llm_processor import SimpleLLMProcessor
+from src.processing.simple_llm_processor import SimpleLLMProcessor
 from src.context.complete_context_builder import CompleteContextBuilder
 from src.core.models import Claim, ClaimType
 from src.interfaces.llm_interface import LLMInterface

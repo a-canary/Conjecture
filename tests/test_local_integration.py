@@ -154,7 +154,7 @@ async def test_local_vector_store():
                 claim_id="faiss-test-1",
                 content="FAISS test claim",
                 embedding=test_embedding,
-                {"faiss": True}
+                metadata={"faiss": True}
             )
             
             if success:
