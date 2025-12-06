@@ -243,7 +243,7 @@ class TestClaimModel:
         assert len(claim_set) == 1
 
     @pytest.mark.models
-def test_claim_confidence_assessment(self):
+    def test_claim_confidence_assessment(self):
         """Test claim confidence assessment vs validation."""
         # High confidence claim should be confident
         confident_claim = Claim(
@@ -676,7 +676,7 @@ class TestModelIntegration:
         assert all(r.success for r in batch_result.results)
 
     @pytest.mark.models
-def test_filter_with_real_claims(self):
+    def test_filter_with_real_claims(self):
         """Test applying filters to real claim data."""
         claim = Claim(
             id="c0000001",
@@ -703,7 +703,7 @@ class TestModelPerformance:
     """Performance tests for model operations."""
 
     @pytest.mark.models
-def test_claim_creation_performance(self, benchmark):
+    def test_claim_creation_performance(self, benchmark):
         """Benchmark claim creation performance."""
         def create_claim():
             return Claim(
@@ -745,7 +745,7 @@ class TestModelEdgeCases:
     """Test edge cases and boundary conditions."""
 
     @pytest.mark.models
-def test_extreme_confidence_values(self):
+    def test_extreme_confidence_values(self):
         """Test extreme confidence values."""
         # Boundary values
         Claim(
@@ -761,7 +761,7 @@ def test_extreme_confidence_values(self):
         )
 
     @pytest.mark.models
-def test_long_content(self):
+    def test_long_content(self):
         """Test claim with very long content."""
         long_content = "A" * 10000  # 10KB of content
         
@@ -774,7 +774,7 @@ def test_long_content(self):
         assert len(claim.content) == 10000
 
     @pytest.mark.models
-def test_many_tags(self):
+    def test_many_tags(self):
         """Test claim with many tags."""
         many_tags = [f"tag_{i}" for i in range(100)]
         
