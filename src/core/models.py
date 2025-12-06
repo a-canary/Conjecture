@@ -448,6 +448,8 @@ class DataConfig(BaseModel):
         default="all-MiniLM-L6-v2", description="Embedding model name"
     )
     max_tokens: int = Field(default=8000, ge=1000, description="Maximum context tokens")
+    max_connections: Optional[int] = Field(default=10, ge=1, description="Maximum database connections")
+    use_mock_embeddings: bool = Field(default=False, description="Use mock embeddings for testing")
 
     @field_validator("max_tokens")
     @classmethod
