@@ -110,7 +110,11 @@ class SimpleModelMatrixRunner:
         }
 
         if model_info["api_key"]:
-            headers["Authorization"] = f"Bearer {model_info['api_key']}"
+            # GLM-4.6 uses direct API key, others use Bearer
+            if model_info["name"] == "glm-4.6":
+                headers["Authorization"] = model_info['api_key']
+            else:
+                headers["Authorization"] = f"Bearer {model_info['api_key']}"
 
         # Format for different providers
         if model_info["name"] == "granite-4-h-tiny":
@@ -137,7 +141,9 @@ class SimpleModelMatrixRunner:
 
             # Extract response text
             if "choices" in result and result["choices"]:
-                content = result["choices"][0]["message"]["content"]
+                message = result["choices"][0]["message"]
+                # GLM-4.6 uses reasoning_content field
+                content = message.get("reasoning_content") or message.get("content", "")
             else:
                 content = str(result)
 
