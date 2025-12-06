@@ -189,6 +189,5 @@ def print_ml_environment_info(console=None) -> None:
             console.print(f"  • {lib_name.title()}: Not installed", style="dim")
 
 
-# Initialize TensorFlow warning suppression when module is imported
-suppress_tensorflow_warnings()
-setup_ml_logging()
+# NOTE: TensorFlow suppression is now lazy-loaded to avoid startup performance impact
+# Call suppress_tensorflow_warnings() and setup_ml_logging() explicitly when needed
