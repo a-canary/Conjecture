@@ -31,7 +31,7 @@ class OptimizedConjecture:
         self.config = config or Config()
 
         # Defer all heavy imports
-        self._llm_bridge = None
+        self._llm_manager = None
         self._data_manager = None
         self._claim_repository = None
         self._context_collector = None
@@ -61,13 +61,13 @@ class OptimizedConjecture:
         print(f"Optimized Conjecture initialized with lazy loading")
 
     @property
-    def llm_bridge(self):
-        """Lazy load LLM bridge"""
-        if self._llm_bridge is None:
+    def llm_manager(self):
+        """Lazy load LLM manager"""
+        if self._llm_manager is None:
             start_time = time.time()
             self._load_llm_bridge()
-            self._performance_stats["component_init_times"]["llm_bridge"] = time.time() - start_time
-        return self._llm_bridge
+            self._performance_stats["component_init_times"]["llm_manager"] = time.time() - start_time
+        return self._llm_manager
 
     @property
     def data_manager(self):
@@ -90,23 +90,19 @@ class OptimizedConjecture:
     def _load_llm_bridge(self):
         """Load LLM bridge components"""
         try:
-            # Import simplified LLM manager (lightweight)
+            # Use simplified LLM manager directly for better performance
             from src.processing.simplified_llm_manager import get_simplified_llm_manager
-            from src.processing.unified_bridge import UnifiedLLMBridge as LLMBridge, LLMRequest
+            self._llm_manager = get_simplified_llm_manager()
+            self._initialized_components.add("llm_manager")
 
-            llm_manager = get_simplified_llm_manager()
-            self._llm_bridge = LLMBridge(llm_manager=llm_manager)
-            self._initialized_components.add("llm_bridge")
-
-            if self._llm_bridge.is_available():
-                print(f"LLM Bridge: Connected to providers")
+            if self._llm_manager.get_available_providers():
+                print(f"LLM Manager: Connected to {len(self._llm_manager.get_available_providers())} providers")
             else:
-                print("LLM Bridge: No providers available, using mock mode")
+                print("LLM Manager: No providers available, using fallback mode")
 
         except Exception as e:
-            print(f"LLM Bridge initialization failed: {e}")
-            # Create minimal mock bridge
-            self._llm_bridge = None
+            print(f"LLM Manager initialization failed: {e}")
+            self._llm_manager = None
 
     def _load_data_manager(self):
         """Load data manager with minimal dependencies"""
@@ -290,7 +286,7 @@ class OptimizedConjecture:
 
     async def _generate_claims_optimized(self, query: str, max_claims: int) -> List[Claim]:
         """Generate claims with optimized LLM usage"""
-        if not self.llm_bridge:
+        if not self.llm_manager:
             # Fallback: create simple claims
             return self._create_fallback_claims(query, max_claims)
 
@@ -309,15 +305,19 @@ Requirements:
   <claim type="concept" confidence="0.7">Your conceptual claim here</claim>
 </claims>"""
 
-            from src.processing.unified_bridge import LLMRequest
-            llm_request = LLMRequest(
-                prompt=prompt,
+            # Import GenerationConfig for proper parameter passing
+            from src.processing.llm.common import GenerationConfig
+
+            config = GenerationConfig(
                 max_tokens=1500,  # Reduced for performance
                 temperature=0.7,
-                task_type="explore"
+                top_p=0.8
             )
 
-            response = self.llm_bridge.process(llm_request)
+            response = self.llm_manager.generate_response(
+                prompt=prompt,
+                config=config
+            )
 
             if response.success:
                 return self._parse_claims_optimized(response.content)
