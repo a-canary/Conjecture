@@ -1,0 +1,51 @@
+{
+  "test_start": "2025-12-06T14:58:37.347134",
+  "scaling_improvements": {
+    "performance_improvement": 304.78781855673714,
+    "resource_efficiency": 30.0,
+    "system_reliability": 100.0,
+    "scientific_integrity": 100.0,
+    "overall_scaling_score": 741.4363455670211
+  },
+  "concurrent_execution": {
+    "sequential_time": 0.44087791442871094,
+    "concurrent_time": 0.10891580581665039,
+    "improvement_percent": 75.29569927362242,
+    "speedup_factor": 4.047878185567371,
+    "concurrent_efficiency": 1.0119695463918428
+  },
+  "database_isolation": {
+    "total_operations": 20,
+    "successful_operations": 20,
+    "failed_operations": 0,
+    "success_rate": 1.0,
+    "total_time": 0.06260108947753906,
+    "operations_per_second": 319.483257670394,
+    "isolation_effectiveness": 1.0
+  },
+  "resource_efficiency": {
+    "baseline_resource_usage": 100.0,
+    "optimized_resource_usage": 70.0,
+    "efficiency_improvement": 30.0,
+    "resource_conservation": 30.0
+  },
+  "scientific_integrity": {
+    "consistency": {
+      "concurrent_queries": 5,
+      "unique_results": 1,
+      "consistency_score": 1.0
+    },
+    "accuracy": {
+      "total_tests": 10,
+      "accurate_results": 10,
+      "accuracy_score": 1.0
+    },
+    "reproducibility": {
+      "total_runs": 3,
+      "reproducible_runs": 3,
+      "reproducibility_score": 1.0
+    },
+    "overall_integrity_score": 1.0,
+    "integrity_maintained": true
+  }
+}
