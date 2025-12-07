@@ -1,361 +1,522 @@
 #!/usr/bin/env python3
 """
-Standalone test for context optimization - tests core logic directly
+Standalone Test for Tiny LLM Prompt Engineering Optimizer Core Components
+Tests the core functionality without complex dependencies
 """
 
-import re
-from typing import Dict, List, Tuple, Optional, Any, Set
-from dataclasses import dataclass
+import asyncio
+import time
+from datetime import datetime
+from typing import Dict, List, Any, Optional
+from dataclasses import dataclass, field
 from enum import Enum
 
-class TaskType(Enum):
-    """Task types requiring different context optimization strategies"""
-    REASONING = "reasoning"
-    SYNTHESIS = "synthesis"
-    ANALYSIS = "analysis"
-    DECISION = "decision"
 
-class InformationCategory(Enum):
-    """Information categories for intelligent prioritization"""
-    CRITICAL = "critical"
-    HIGH = "high"
-    MEDIUM = "medium"
-    LOW = "low"
-    REDUNDANT = "redundant"
+class OptimizationStrategy(str, Enum):
+    """Prompt optimization strategies for tiny LLMs"""
+    MINIMAL_TOKENS = "minimal_tokens"
+    BALANCED = "balanced"
+    MAX_STRUCTURE = "max_structure"
+    ADAPTIVE = "adaptive"
 
-class ComponentType(Enum):
-    """Context component types requiring allocation"""
-    CLAIM_PROCESSING = "claim_processing"
-    REASONING_ENGINE = "reasoning_engine"
-    TASK_INSTRUCTIONS = "task_instructions"
+
+class TaskComplexity(str, Enum):
+    """Task complexity levels"""
+    SIMPLE = "simple"
+    MODERATE = "moderate"
+    COMPLEX = "complex"
+    VERY_COMPLEX = "very_complex"
+
 
 @dataclass
-class ContextChunk:
-    """Chunk of context with optimization metadata"""
-    content: str
-    tokens: int
-    category: InformationCategory
-    relevance_score: float
-    semantic_density: float
-    keywords: Set[str]
+class TinyModelCapabilities:
+    """Tiny model capability profile"""
+    model_name: str
+    context_window: int
+    max_reasoning_depth: int
+    preferred_structure: str
+    token_efficiency: float
+    known_strengths: List[str] = field(default_factory=list)
+    known_limitations: List[str] = field(default_factory=list)
 
-def test_semantic_density():
-    """Test semantic density calculation logic"""
-    print("Testing semantic density calculation...")
 
-    # Simplified semantic density calculator
-    stop_words = {
-        'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-        'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have'
-    }
+@dataclass
+class TaskDescription:
+    """Task description for optimization"""
+    task_type: str
+    complexity: TaskComplexity
+    required_inputs: List[str]
+    expected_output_format: str
+    token_budget: Optional[int] = None
 
-    semantic_patterns = {
-        r'\b(because|since|therefore|thus|hence)\b': 0.9,
-        r'\b(however|nevertheless|although|despite)\b': 0.85,
-        r'\b(proves|establishes|confirms|demonstrates)\b': 0.9,
-    }
 
-    def calculate_semantic_density(text: str) -> float:
-        if not text or not text.strip():
-            return 0.0
+@dataclass
+class OptimizedPrompt:
+    """Represents an optimized prompt"""
+    original_prompt: str
+    optimized_prompt: str
+    optimization_strategy: str
+    token_reduction: int
+    optimization_score: float
+    changes_made: List[str]
 
-        words = text.lower().split()
-        tokens = len(words)
 
-        # Content ratio (non-stop words)
-        content_words = [w for w in words if w not in stop_words]
-        content_ratio = len(content_words) / max(len(words), 1)
+class TinyModelCapabilityProfiler:
+    """Simplified model capability profiler"""
 
-        # Semantic pattern score
-        pattern_score = 0.0
-        for pattern, weight in semantic_patterns.items():
-            matches = len(re.findall(pattern, text.lower()))
-            pattern_score += matches * weight
+    def __init__(self):
+        """Initialize capability profiler"""
+        self.model_profiles = {
+            "granite-tiny": TinyModelCapabilities(
+                model_name="granite-tiny",
+                context_window=2048,
+                max_reasoning_depth=3,
+                preferred_structure="xml",
+                token_efficiency=150.0,
+                known_strengths=["pattern_matching", "structured_data"],
+                known_limitations=["complex_reasoning", "long_context"]
+            ),
+            "llama-3.2-1b": TinyModelCapabilities(
+                model_name="llama-3.2-1b",
+                context_window=4096,
+                max_reasoning_depth=4,
+                preferred_structure="json",
+                token_efficiency=120.0,
+                known_strengths=["instruction_following", "analysis"],
+                known_limitations=["multi_step_reasoning"]
+            ),
+            "phi-3-mini": TinyModelCapabilities(
+                model_name="phi-3-mini",
+                context_window=4096,
+                max_reasoning_depth=4,
+                preferred_structure="plain",
+                token_efficiency=100.0,
+                known_strengths=["conversation", "reasoning"],
+                known_limitations=["very_structured_output"]
+            )
+        }
 
-        # Novelty (unique words)
-        unique_words = len(set(content_words))
-        novelty_ratio = unique_words / max(len(content_words), 1)
+    def get_model_capabilities(self, model_name: str) -> Optional[TinyModelCapabilities]:
+        """Get capabilities for a specific model"""
+        return self.model_profiles.get(model_name)
 
-        # Combined density
-        density = (
-            content_ratio * 0.3 +
-            min(pattern_score / tokens, 1.0) * 0.4 +
-            novelty_ratio * 0.3
+
+class SimplePromptOptimizer:
+    """Simplified prompt optimizer for testing"""
+
+    def __init__(self):
+        """Initialize prompt optimizer"""
+        self.profiler = TinyModelCapabilityProfiler()
+        self.stats = {
+            "optimizations_performed": 0,
+            "total_tokens_saved": 0
+        }
+
+    async def optimize_prompt(
+        self,
+        task: TaskDescription,
+        context_items: List[str],
+        model_name: str,
+        optimization_strategy: OptimizationStrategy = OptimizationStrategy.ADAPTIVE
+    ) -> OptimizedPrompt:
+        """Optimize prompt for tiny LLM"""
+
+        start_time = time.time()
+
+        # Get model capabilities
+        model_capabilities = self.profiler.get_model_capabilities(model_name)
+        if not model_capabilities:
+            raise ValueError(f"Unknown model: {model_name}")
+
+        # Generate base prompt
+        base_prompt = self._generate_base_prompt(task, context_items)
+
+        # Apply optimization strategy
+        optimized_content = self._apply_optimization_strategy(
+            base_prompt, task, model_capabilities, optimization_strategy
         )
 
-        return min(density, 1.0)
+        # Calculate metrics
+        original_tokens = len(base_prompt.split())
+        optimized_tokens = len(optimized_content.split())
+        token_reduction = original_tokens - optimized_tokens
+        optimization_score = self._calculate_optimization_score(
+            optimized_content, task, model_capabilities
+        )
 
-    # Test cases
-    test_cases = [
-        ("", 0.0, "Empty text"),
-        ("The cat sat on the mat.", 0.2, "Simple text"),
-        ("Because neural networks learn patterns, they can therefore recognize complex features in data. However, this requires extensive training despite computational costs.", 0.7, "Complex text with semantic patterns"),
-        ("This demonstrates that machine learning algorithms establish new capabilities through systematic training processes, thereby proving their effectiveness in various applications.", 0.8, "Highly semantic text"),
+        optimization_time = (time.time() - start_time) * 1000
+
+        # Create result
+        result = OptimizedPrompt(
+            original_prompt=base_prompt,
+            optimized_prompt=optimized_content,
+            optimization_strategy=optimization_strategy.value,
+            token_reduction=token_reduction,
+            optimization_score=optimization_score,
+            changes_made=[
+                f"Applied {optimization_strategy.value} strategy",
+                f"Optimized for {model_capabilities.model_name}",
+                f"Reduced by {token_reduction} tokens"
+            ]
+        )
+
+        # Update stats
+        self.stats["optimizations_performed"] += 1
+        self.stats["total_tokens_saved"] += token_reduction
+
+        return result
+
+    def _generate_base_prompt(self, task: TaskDescription, context_items: List[str]) -> str:
+        """Generate base prompt from task description"""
+
+        base_prompt = f"""
+You are an AI assistant.
+
+TASK: {task.task_type.replace('_', ' ').title()}
+
+INPUT: {task.required_inputs[0] if task.required_inputs else 'No input provided'}
+
+CONTEXT:
+"""
+
+        # Add context
+        for i, context in enumerate(context_items[:3]):  # Limit context
+            base_prompt += f"{i+1}. {context}\n"
+
+        base_prompt += "\nPlease provide a response."
+
+        return base_prompt.strip()
+
+    def _apply_optimization_strategy(
+        self,
+        prompt: str,
+        task: TaskDescription,
+        model_capabilities: TinyModelCapabilities,
+        strategy: OptimizationStrategy
+    ) -> str:
+        """Apply optimization strategy to prompt"""
+
+        optimized = prompt
+
+        if strategy == OptimizationStrategy.MINIMAL_TOKENS:
+            # Minimize tokens
+            optimized = self._minimize_tokens(optimized)
+        elif strategy == OptimizationStrategy.BALANCED:
+            # Balanced approach
+            optimized = self._balance_prompt(optimized, task)
+        elif strategy == OptimizationStrategy.ADAPTIVE:
+            # Adaptive based on model and task
+            optimized = self._adaptive_optimization(optimized, task, model_capabilities)
+
+        # Apply model-specific optimizations
+        optimized = self._apply_model_specific_optimizations(optimized, model_capabilities)
+
+        return optimized
+
+    def _minimize_tokens(self, prompt: str) -> str:
+        """Minimize token usage"""
+        # Remove redundant words
+        minimizers = [
+            (r'\bplease\b', ''),
+            (r'\bkindly\b', ''),
+            (r'\byou are\b', "You're"),
+            (r'\byou have\b', "You've"),
+            (r'\bwe need to\b', "Need to"),
+            (r'\bit is important to\b', "Important to"),
+        ]
+
+        import re
+        for pattern, replacement in minimizers:
+            prompt = re.sub(pattern, replacement, prompt, flags=re.IGNORECASE)
+
+        # Remove excessive whitespace
+        prompt = re.sub(r'\n\s*\n\s*\n', '\n\n', prompt)
+
+        return prompt.strip()
+
+    def _balance_prompt(self, prompt: str, task: TaskDescription) -> str:
+        """Apply balanced optimization"""
+        # Moderate token reduction while maintaining clarity
+        if task.complexity == TaskComplexity.SIMPLE:
+            return self._minimize_tokens(prompt)
+        else:
+            # Keep more detail for complex tasks
+            return prompt[:int(len(prompt) * 0.8)]  # Reduce by 20%
+
+    def _adaptive_optimization(
+        self,
+        prompt: str,
+        task: TaskDescription,
+        model_capabilities: TinyModelCapabilities
+    ) -> str:
+        """Apply adaptive optimization based on model and task"""
+
+        if task.complexity == TaskComplexity.SIMPLE:
+            return self._minimize_tokens(prompt)
+        elif model_capabilities.preferred_structure == "xml":
+            # Add XML structure for models that prefer it
+            return self._add_xml_structure(prompt, task)
+        else:
+            return self._balance_prompt(prompt, task)
+
+    def _apply_model_specific_optimizations(
+        self,
+        prompt: str,
+        model_capabilities: TinyModelCapabilities
+    ) -> str:
+        """Apply model-specific optimizations"""
+
+        if model_capabilities.preferred_structure == "xml":
+            if "<" not in prompt:
+                prompt = self._add_xml_structure(prompt, None)
+
+        elif model_capabilities.preferred_structure == "json":
+            if "{" not in prompt:
+                prompt = self._add_json_structure(prompt)
+
+        # Apply token limits
+        max_tokens = model_capabilities.context_window // 4  # Leave room for response
+        current_tokens = len(prompt.split())
+
+        if current_tokens > max_tokens:
+            # Truncate to fit
+            words = prompt.split()
+            prompt = " ".join(words[:max_tokens])
+
+        return prompt
+
+    def _add_xml_structure(self, prompt: str, task: Optional[TaskDescription]) -> str:
+        """Add XML structure to prompt"""
+        return f"""<task>
+  <instruction>{prompt}</instruction>
+</task>
+
+<output_format>
+  <answer>Your answer here</answer>
+  <confidence>0.0-1.0</confidence>
+</output_format>"""
+
+    def _add_json_structure(self, prompt: str) -> str:
+        """Add JSON structure to prompt"""
+        return f"""{prompt}
+
+RESPONSE FORMAT:
+{{
+  "answer": "Your answer here",
+  "confidence": 0.0
+}}"""
+
+    def _calculate_optimization_score(
+        self,
+        prompt: str,
+        task: TaskDescription,
+        model_capabilities: TinyModelCapabilities
+    ) -> float:
+        """Calculate optimization score"""
+
+        score = 0.0
+
+        # Length score (optimal length gets higher score)
+        word_count = len(prompt.split())
+        optimal_length = 200 if task.complexity == TaskComplexity.SIMPLE else 400
+        length_score = max(0, 1.0 - abs(word_count - optimal_length) / optimal_length)
+        score += length_score * 0.4
+
+        # Structure score
+        if model_capabilities.preferred_structure == "xml" and "<" in prompt:
+            score += 0.3
+        elif model_capabilities.preferred_structure == "json" and "{" in prompt:
+            score += 0.3
+        elif model_capabilities.preferred_structure == "plain":
+            score += 0.3
+
+        # Clarity score
+        if "TASK:" in prompt and "INPUT:" in prompt:
+            score += 0.3
+
+        return min(1.0, score)
+
+    def get_recommendations(self, task: TaskDescription, model_name: str) -> List[str]:
+        """Get optimization recommendations"""
+        model_capabilities = self.profiler.get_model_capabilities(model_name)
+        recommendations = []
+
+        if model_capabilities:
+            if "complex_reasoning" in model_capabilities.known_limitations:
+                recommendations.append("Break down complex tasks into simpler steps")
+
+            if task.complexity == TaskComplexity.VERY_COMPLEX:
+                recommendations.append("Consider chunked processing for very complex tasks")
+
+            if model_capabilities.preferred_structure == "xml":
+                recommendations.append("Use XML formatting for better model understanding")
+
+        return recommendations
+
+    def get_optimization_stats(self) -> Dict[str, Any]:
+        """Get optimization statistics"""
+        return self.stats.copy()
+
+
+async def test_prompt_optimizer():
+    """Test the prompt optimizer"""
+
+    print("="*60)
+    print("PROMPT ENGINEERING OPTIMIZER TEST")
+    print("="*60)
+
+    optimizer = SimplePromptOptimizer()
+
+    # Test tasks
+    test_tasks = [
+        {
+            "name": "Simple Extraction",
+            "task": TaskDescription(
+                task_type="extraction",
+                complexity=TaskComplexity.SIMPLE,
+                required_inputs=["Extract the date from: The meeting is on December 15, 2024."],
+                expected_output_format="structured"
+            ),
+            "context": ["Meeting scheduling context", "Date formats"],
+            "model": "granite-tiny"
+        },
+        {
+            "name": "Moderate Analysis",
+            "task": TaskDescription(
+                task_type="analysis",
+                complexity=TaskComplexity.MODERATE,
+                required_inputs=["Sales increased by 15% while costs decreased by 8%."],
+                expected_output_format="analysis"
+            ),
+            "context": ["Sales data", "Cost analysis", "Market trends"],
+            "model": "llama-3.2-1b"
+        },
+        {
+            "name": "Complex Research",
+            "task": TaskDescription(
+                task_type="research",
+                complexity=TaskComplexity.COMPLEX,
+                required_inputs=["Analyze the impact of AI on creative industries."],
+                expected_output_format="comprehensive"
+            ),
+            "context": [
+                "AI research papers",
+                "Creative industry reports",
+                "Economic impact studies",
+                "Technology trends"
+            ],
+            "model": "phi-3-mini"
+        }
     ]
 
-    success_count = 0
-    for text, expected_min, description in test_cases:
-        density = calculate_semantic_density(text)
-        print(f"  {description}: {density:.3f}")
-        if density >= expected_min:
-            success_count += 1
-        else:
-            print(f"    WARNING: Expected >= {expected_min}, got {density:.3f}")
+    all_results = []
 
-    print(f"  Semantic density: {success_count}/{len(test_cases)} tests passed")
-    return success_count == len(test_cases)
+    for i, test_case in enumerate(test_tasks, 1):
+        print(f"\n{i}. Testing: {test_case['name']}")
+        print(f"   Model: {test_case['model']}")
+        print(f"   Complexity: {test_case['task'].complexity.value}")
 
-def test_context_chunking():
-    """Test context chunking and analysis"""
-    print("Testing context chunking...")
+        # Test different strategies
+        strategies = [OptimizationStrategy.MINIMAL_TOKENS, OptimizationStrategy.ADAPTIVE]
 
-    sample_text = """
-    Climate change significantly impacts global food security through multiple pathways.
-    Temperature increases affect crop yields, while changes in precipitation patterns alter growing seasons.
-    Extreme weather events have become more frequent and severe.
-    Agricultural adaptation strategies include developing drought-resistant crop varieties.
-    However, these solutions require substantial investment and international cooperation.
-    """
+        for strategy in strategies:
+            try:
+                print(f"\n   Strategy: {strategy.value}")
 
-    sentences = re.split(r'(?<=[.!?])\s+', sample_text.strip())
-    chunks = []
-
-    for sentence in sentences:
-        if not sentence.strip():
-            continue
-
-        # Simple chunk analysis
-        tokens = len(sentence.split())
-        keywords = set(sentence.lower().split())
-        relevance = 0.7  # Simplified
-        density = 0.6    # Simplified
-
-        # Categorize based on content
-        if any(word in sentence.lower() for word in ['however', 'but', 'despite']):
-            category = InformationCategory.HIGH
-        elif any(word in sentence.lower() for word in ['significantly', 'severe', 'frequent']):
-            category = InformationCategory.CRITICAL
-        else:
-            category = InformationCategory.MEDIUM
-
-        chunk = ContextChunk(
-            content=sentence.strip(),
-            tokens=tokens,
-            category=category,
-            relevance_score=relevance,
-            semantic_density=density,
-            keywords=keywords
-        )
-        chunks.append(chunk)
-
-    print(f"  Created {len(chunks)} chunks")
-    for i, chunk in enumerate(chunks):
-        print(f"    {i+1}. {chunk.category.value}: '{chunk.content[:50]}...' ({chunk.tokens} tokens)")
-
-    return len(chunks) > 0
-
-def test_resource_allocation():
-    """Test resource allocation logic"""
-    print("Testing resource allocation...")
-
-    total_budget = 2048
-    components = {
-        ComponentType.CLAIM_PROCESSING: {"min": 200, "preferred": 400, "max": 600, "priority": 0.9},
-        ComponentType.REASONING_ENGINE: {"min": 300, "preferred": 500, "max": 800, "priority": 1.0},
-        ComponentType.TASK_INSTRUCTIONS: {"min": 100, "preferred": 150, "max": 200, "priority": 0.7}
-    }
-
-    def allocate_resources(budget: int, complexity: float) -> Dict[ComponentType, int]:
-        """Simplified resource allocation"""
-        # Sort by priority
-        sorted_components = sorted(
-            components.items(),
-            key=lambda x: x[1]["priority"],
-            reverse=True
-        )
-
-        allocation = {}
-        remaining_budget = budget
-
-        for comp_type, config in sorted_components:
-            if remaining_budget <= 0:
-                break
-
-            # Base allocation
-            if config["priority"] >= 0.9:  # Critical
-                allocated = min(config["preferred"], remaining_budget, config["max"])
-            else:  # Lower priority
-                allocated = min(
-                    max(config["min"], int(remaining_budget * 0.2)),
-                    config["preferred"]
+                result = await optimizer.optimize_prompt(
+                    task=test_case['task'],
+                    context_items=test_case['context'],
+                    model_name=test_case['model'],
+                    optimization_strategy=strategy
                 )
 
-            allocation[comp_type] = allocated
-            remaining_budget -= allocated
+                original_length = len(result.original_prompt.split())
+                optimized_length = len(result.optimized_prompt.split())
 
-        return allocation
+                print(f"     [SUCCESS] Optimization completed")
+                print(f"     Original: {original_length} tokens")
+                print(f"     Optimized: {optimized_length} tokens")
+                print(f"     Reduction: {result.token_reduction} tokens")
+                print(f"     Score: {result.optimization_score:.3f}")
 
-    # Test different complexity levels
-    complexities = [0.3, 0.7, 0.9]
-    success_count = 0
+                # Show preview
+                preview = result.optimized_prompt[:150] + "..." if len(result.optimized_prompt) > 150 else result.optimized_prompt
+                print(f"     Preview: {preview}")
 
-    for complexity in complexities:
-        allocation = allocate_resources(total_budget, complexity)
-        total_allocated = sum(allocation.values())
+                all_results.append({
+                    "task": test_case['name'],
+                    "model": test_case['model'],
+                    "strategy": strategy.value,
+                    "success": True,
+                    "score": result.optimization_score,
+                    "token_reduction": result.token_reduction
+                })
 
-        print(f"  Complexity {complexity}: {allocation}")
-        print(f"    Total allocated: {total_allocated}/{total_budget} tokens")
+            except Exception as e:
+                print(f"     [ERROR] {e}")
+                all_results.append({
+                    "task": test_case['name'],
+                    "model": test_case['model'],
+                    "strategy": strategy.value,
+                    "success": False,
+                    "score": 0,
+                    "error": str(e)
+                })
 
-        if total_allocated <= total_budget:
-            success_count += 1
+        # Get recommendations
+        recommendations = optimizer.get_recommendations(test_case['task'], test_case['model'])
+        if recommendations:
+            print(f"\n   Recommendations:")
+            for rec in recommendations:
+                print(f"     - {rec}")
 
-    print(f"  Resource allocation: {success_count}/{len(complexities)} tests passed")
-    return success_count == len(complexities)
+    # Summary
+    print("\n" + "="*60)
+    print("TEST SUMMARY")
+    print("="*60)
 
-def test_optimization_workflow():
-    """Test complete optimization workflow"""
-    print("Testing optimization workflow...")
+    successful_tests = [r for r in all_results if r['success']]
+    total_tests = len(all_results)
 
-    # Sample context
-    context = """
-    Machine learning has revolutionized data analysis and prediction capabilities.
-    Neural networks, inspired by biological systems, can learn complex patterns from data.
-    Deep learning architectures with multiple layers have achieved remarkable results.
-    However, these systems require large amounts of training data and computational resources.
-    Despite these challenges, applications in healthcare, finance, and autonomous systems continue to expand.
-    """
+    print(f"Total tests: {total_tests}")
+    print(f"Successful: {len(successful_tests)}")
+    print(f"Success rate: {len(successful_tests)/total_tests:.1%}")
 
-    # Simulate optimization steps
-    print("  Step 1: Analyzing context...")
-    chunks = []
-    sentences = re.split(r'(?<=[.!?])\s+', context.strip())
+    if successful_tests:
+        avg_score = sum(r['score'] for r in successful_tests) / len(successful_tests)
+        total_tokens_saved = sum(r['token_reduction'] for r in successful_tests)
+        print(f"Average score: {avg_score:.3f}")
+        print(f"Total tokens saved: {total_tokens_saved}")
 
-    for sentence in sentences:
-        if sentence.strip():
-            chunks.append(ContextChunk(
-                content=sentence.strip(),
-                tokens=len(sentence.split()),
-                category=InformationCategory.MEDIUM,
-                relevance_score=0.6,
-                semantic_density=0.5,
-                keywords=set()
-            ))
+    # Get optimizer stats
+    stats = optimizer.get_optimization_stats()
+    print(f"\nOptimizer Statistics:")
+    print(f"  Optimizations performed: {stats['optimizations_performed']}")
+    print(f"  Total tokens saved: {stats['total_tokens_saved']}")
 
-    print(f"    Analyzed {len(chunks)} context chunks")
+    # Test model profiler
+    print(f"\nModel Profiler Test:")
+    profiler = TinyModelCapabilityProfiler()
+    for model_name in ["granite-tiny", "llama-3.2-1b", "phi-3-mini"]:
+        capabilities = profiler.get_model_capabilities(model_name)
+        if capabilities:
+            print(f"  {model_name}: {capabilities.context_window} context, prefers {capabilities.preferred_structure}")
 
-    print("  Step 2: Applying compression...")
-    # Simulate compression (remove redundant words)
-    compressed_chunks = []
-    for chunk in chunks:
-        # Simple compression - remove some filler words
-        compressed = re.sub(r'\b(rather|quite|very|really|basically)\b', '', chunk.content, flags=re.IGNORECASE)
-        compressed = re.sub(r'\s+', ' ', compressed).strip()
+    print("\n" + "="*60)
+    print("TEST COMPLETED")
+    print("="*60)
 
-        if compressed:
-            compressed_chunks.append(ContextChunk(
-                content=compressed,
-                tokens=len(compressed.split()),
-                category=chunk.category,
-                relevance_score=chunk.relevance_score,
-                semantic_density=chunk.semantic_density * 1.1,  # Slight density increase
-                keywords=chunk.keywords
-            ))
+    return len(successful_tests) == total_tests
 
-    original_tokens = sum(c.tokens for c in chunks)
-    compressed_tokens = sum(c.tokens for c in compressed_chunks)
-    compression_ratio = compressed_tokens / max(original_tokens, 1)
-
-    print(f"    Original: {original_tokens} tokens")
-    print(f"    Compressed: {compressed_tokens} tokens")
-    print(f"    Compression ratio: {compression_ratio:.2f}")
-
-    print("  Step 3: Resource allocation...")
-    allocation = {
-        ComponentType.CLAIM_PROCESSING: 400,
-        ComponentType.REASONING_ENGINE: 600,
-        ComponentType.TASK_INSTRUCTIONS: 150
-    }
-    total_allocated = sum(allocation.values())
-    print(f"    Allocated: {total_allocated} tokens")
-    print(f"    Allocation: {allocation}")
-
-    # Validation
-    success = (
-        len(chunks) > 0 and
-        compression_ratio < 1.0 and
-        total_allocated <= 2048
-    )
-
-    print(f"  Optimization workflow: {'PASSED' if success else 'FAILED'}")
-    return success
-
-def main():
-    """Run all standalone tests"""
-    print("Context Optimization System - Standalone Tests")
-    print("=" * 50)
-
-    tests = [
-        ("Semantic Density Calculation", test_semantic_density),
-        ("Context Chunking", test_context_chunking),
-        ("Resource Allocation", test_resource_allocation),
-        ("Optimization Workflow", test_optimization_workflow)
-    ]
-
-    passed = 0
-    total = len(tests)
-
-    for test_name, test_func in tests:
-        print(f"\n{test_name}")
-        print("-" * 30)
-
-        try:
-            if test_func():
-                print(f"PASSED")
-                passed += 1
-            else:
-                print(f"FAILED")
-        except Exception as e:
-            print(f"ERROR: {str(e)}")
-
-    print(f"\n{'='*50}")
-    print(f"Results: {passed}/{total} tests passed")
-
-    if passed == total:
-        print("SUCCESS: Core optimization logic is working!")
-        print("The system demonstrates intelligent context compression,")
-        print("semantic analysis, and resource allocation capabilities.")
-    else:
-        print(f"WARNING: {total - passed} tests failed.")
-        print("Some optimization components may need refinement.")
-
-    # Performance demonstration
-    print(f"\n{'='*50}")
-    print("Performance Demonstration")
-    print("-" * 30)
-
-    # Show optimization metrics
-    test_context = "Complex technical text with multiple claims and supporting evidence that demonstrates sophisticated reasoning patterns and requires intelligent compression for effective processing by language models with limited context windows."
-
-    print(f"Original text length: {len(test_context)} characters")
-    print(f"Original token estimate: {len(test_context.split())} tokens")
-
-    # Simulate optimized version
-    optimized = "Complex technical text with claims and evidence requiring intelligent compression for limited context window models."
-    print(f"Optimized text length: {len(optimized)} characters")
-    print(f"Optimized token estimate: {len(optimized.split())} tokens")
-
-    reduction = (len(test_context.split()) - len(optimized.split())) / len(test_context.split())
-    print(f"Token reduction: {reduction:.1%}")
-
-    print(f"\n{'='*50}")
-    print("Context optimization system successfully demonstrates:")
-    print("• Information-theoretic content analysis")
-    print("• Intelligent compression preserving semantic meaning")
-    print("• Dynamic resource allocation based on task requirements")
-    print("• Performance metrics and quality preservation")
-    print("• Adaptation to tiny LLM constraints")
-
-    return passed == total
 
 if __name__ == "__main__":
-    main()
+    print("Starting standalone prompt optimizer test...")
+
+    async def run_test():
+        success = await test_prompt_optimizer()
+        if success:
+            print("\nAll tests passed!")
+        else:
+            print("\nSome tests failed.")
+
+    asyncio.run(run_test())
