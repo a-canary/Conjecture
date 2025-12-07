@@ -47,15 +47,21 @@ class Conjecture:
 
         # Initialize processing components
         self.context_collector = ContextCollector(self.data_manager)
-        from .processing.tool_executor import ToolExecutor
-
-        tool_executor = ToolExecutor()
-        self.async_evaluation = AsyncClaimEvaluationService(
-            llm_bridge=self.llm_bridge,
-            context_collector=self.context_collector,
-            data_manager=self.data_manager,
-            tool_executor=tool_executor,
-        )
+        try:
+            from src.processing.tool_executor import ToolExecutor
+            tool_executor = ToolExecutor()
+        except ImportError:
+            print("Warning: ToolExecutor not available, continuing without it")
+            tool_executor = None
+        if tool_executor:
+            self.async_evaluation = AsyncClaimEvaluationService(
+                llm_bridge=self.llm_bridge,
+                context_collector=self.context_collector,
+                data_manager=self.data_manager,
+                tool_executor=tool_executor,
+            )
+        else:
+            self.async_evaluation = None
         self.tool_creator = DynamicToolCreator(
             llm_bridge=self.llm_bridge, tools_dir="tools"
         )
