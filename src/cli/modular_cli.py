@@ -143,6 +143,12 @@ def get_backend(backend_type: str = "auto") -> ProcessingInterface:
     return get_processing_interface(backend_type)
 
 
+def print_backend_info(backend_type: str = "auto"):
+    """Print backend information for backward compatibility."""
+    processing_interface = get_processing_interface(backend_type)
+    print_processing_interface_info(processing_interface)
+
+
 def print_processing_interface_info(processing_interface: ProcessingInterface):
     """Print information about the current processing interface."""
     # Get health status to check if interface is properly configured
