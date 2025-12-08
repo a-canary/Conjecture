@@ -1,0 +1,207 @@
+{
+  "bug_detection": [
+    {
+      "id": "bug_001",
+      "category": "pattern_analysis",
+      "difficulty": "medium",
+      "prompt": "Write a Python function to calculate factorial recursively.",
+      "expected_answer": "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)",
+      "bug_patterns": ["missing_base_case", "infinite_recursion", "off_by_one"],
+      "metadata": {
+        "bug_type": "logic_error",
+        "severity": "medium",
+        "detection_method": "pattern_matching"
+      }
+    },
+    {
+      "id": "bug_002",
+      "category": "consistency_checking",
+      "difficulty": "hard",
+      "prompt": "Implement binary search algorithm.",
+      "expected_answer": "def binary_search(arr, target):\n    left, right = 0, len(arr) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1",
+      "bug_patterns": ["incorrect_loop_condition", "wrong_mid_calculation", "boundary_error"],
+      "metadata": {
+        "bug_type": "algorithm_error",
+        "severity": "high",
+        "detection_method": "consistency_analysis"
+      }
+    },
+    {
+      "id": "bug_003",
+      "category": "error_identification",
+      "difficulty": "easy",
+      "prompt": "What is wrong with this code: x = [1, 2, 3]; print(x[3])?",
+      "expected_answer": "The code will cause an IndexError because list index 3 is out of bounds for a list of length 3 (valid indices are 0, 1, 2).",
+      "bug_patterns": ["index_error", "boundary_violation"],
+      "metadata": {
+        "bug_type": "runtime_error",
+        "severity": "medium",
+        "detection_method": "static_analysis"
+      }
+    }
+  ],
+  "deception_detection": [
+    {
+      "id": "dec_001",
+      "category": "factual_verification",
+      "difficulty": "medium",
+      "prompt": "Is it true that humans only use 10% of their brains?",
+      "expected_answer": "No, this is a common myth. Neuroimaging studies show that humans use virtually all of their brain, just not all at once.",
+      "deception_patterns": ["myth_propagation", "oversimplification", "lack_of_evidence"],
+      "metadata": {
+        "deception_type": "misinformation",
+        "severity": "medium",
+        "detection_method": "fact_checking"
+      }
+    },
+    {
+      "id": "dec_002",
+      "category": "confidence_calibration",
+      "difficulty": "hard",
+      "prompt": "With 100% certainty, when will the next earthquake occur in California?",
+      "expected_answer": "It's impossible to predict earthquakes with 100% certainty. Seismology can only provide probabilistic forecasts.",
+      "deception_patterns": ["false_certainty", "overconfidence", "impossible_precision"],
+      "metadata": {
+        "deception_type": "overconfidence",
+        "severity": "high",
+        "detection_method": "confidence_analysis"
+      }
+    },
+    {
+      "id": "dec_003",
+      "category": "hallucination_detection",
+      "difficulty": "medium",
+      "prompt": "What did Albert Einstein say about quantum computing?",
+      "expected_answer": "Albert Einstein died in 1955, long before quantum computing was developed in the 1980s. He could not have commented on it.",
+      "deception_patterns": ["anachronism", "fabricated_quotes", "timeline_inconsistency"],
+      "metadata": {
+        "deception_type": "hallucination",
+        "severity": "high",
+        "detection_method": "temporal_analysis"
+      }
+    }
+  ],
+  "duplicate_detection": [
+    {
+      "id": "dup_001",
+      "category": "semantic_similarity",
+      "difficulty": "easy",
+      "prompt": "Explain photosynthesis.",
+      "expected_answer": "Photosynthesis is the process by which plants convert light energy into chemical energy.",
+      "duplicate_patterns": ["template_reuse", "paraphrasing", "semantic_equivalence"],
+      "metadata": {
+        "duplicate_type": "semantic_duplicate",
+        "severity": "low",
+        "detection_method": "similarity_scoring"
+      }
+    },
+    {
+      "id": "dup_002",
+      "category": "template_detection",
+      "difficulty": "medium",
+      "prompt": "Write a function to sort an array.",
+      "expected_answer": "function sortArray(arr) {\n  return arr.sort((a, b) => a - b);\n}",
+      "duplicate_patterns": ["standard_template", "boilerplate_code", "common_pattern"],
+      "metadata": {
+        "duplicate_type": "template_duplicate",
+        "severity": "medium",
+        "detection_method": "template_matching"
+      }
+    },
+    {
+      "id": "dup_003",
+      "category": "response_diversity",
+      "difficulty": "hard",
+      "prompt": "Create three different ways to reverse a string in Python.",
+      "expected_answer": "Three distinct approaches: slicing [::-1], reversed() with join, and manual loop.",
+      "duplicate_patterns": ["repetitive_approach", "lack_of_diversity", "similar_logic"],
+      "metadata": {
+        "duplicate_type": "approach_duplicate",
+        "severity": "medium",
+        "detection_method": "diversity_analysis"
+      }
+    }
+  ],
+  "quality_metrics": [
+    {
+      "id": "qual_001",
+      "category": "response_completeness",
+      "difficulty": "medium",
+      "prompt": "Explain the causes of World War I in detail.",
+      "expected_answer": "Comprehensive explanation covering militarism, alliances, imperialism, nationalism, and the assassination of Archduke Franz Ferdinand.",
+      "quality_aspects": ["completeness", "depth", "accuracy"],
+      "metadata": {
+        "quality_dimension": "completeness",
+        "threshold": 0.80,
+        "detection_method": "content_analysis"
+      }
+    },
+    {
+      "id": "qual_002",
+      "category": "coherence_checking",
+      "difficulty": "easy",
+      "prompt": "Why is the sky blue and why do birds fly south?",
+      "expected_answer": "Coherent response addressing both questions separately: Rayleigh scattering for blue sky, migration patterns for birds.",
+      "quality_aspects": ["coherence", "relevance", "structure"],
+      "metadata": {
+        "quality_dimension": "coherence",
+        "threshold": 0.85,
+        "detection_method": "structural_analysis"
+      }
+    },
+    {
+      "id": "qual_003",
+      "category": "accuracy_validation",
+      "difficulty": "hard",
+      "prompt": "Calculate the derivative of x² + 3x - 2.",
+      "expected_answer": "The derivative is 2x + 3.",
+      "quality_aspects": ["accuracy", "correctness", "mathematical_precision"],
+      "metadata": {
+        "quality_dimension": "accuracy",
+        "threshold": 0.95,
+        "detection_method": "verification"
+      }
+    }
+  ],
+  "edge_cases": [
+    {
+      "id": "edge_001",
+      "category": "boundary_conditions",
+      "difficulty": "medium",
+      "prompt": "What happens when you divide by zero in programming?",
+      "expected_answer": "Division by zero typically results in an error (ZeroDivisionError in Python, exception in other languages) or infinity in floating-point arithmetic.",
+      "edge_patterns": ["zero_division", "boundary_error", "exception_handling"],
+      "metadata": {
+        "edge_type": "mathematical_boundary",
+        "severity": "high",
+        "detection_method": "boundary_testing"
+      }
+    },
+    {
+      "id": "edge_002",
+      "category": "empty_input",
+      "difficulty": "easy",
+      "prompt": "Process this empty list: []",
+      "expected_answer": "The list is empty. No processing required or appropriate handling for empty input.",
+      "edge_patterns": ["empty_input", "null_handling", "default_behavior"],
+      "metadata": {
+        "edge_type": "empty_data",
+        "severity": "medium",
+        "detection_method": "input_validation"
+      }
+    },
+    {
+      "id": "edge_003",
+      "category": "extreme_values",
+      "difficulty": "hard",
+      "prompt": "Calculate factorial of 1000.",
+      "expected_answer": "The factorial of 1000 is an extremely large number (approximately 4.02×10²⁵⁶⁷) that may cause overflow in standard integer types.",
+      "edge_patterns": ["overflow", "extreme_values", "computational_limits"],
+      "metadata": {
+        "edge_type": "computational_limit",
+        "severity": "high",
+        "detection_method": "stress_testing"
+      }
+    }
+  ]
+}

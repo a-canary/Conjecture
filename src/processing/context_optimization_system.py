@@ -225,7 +225,7 @@ class ContextOptimizationSystem:
         return allocation
 
     async def _apply_allocation(self, optimized_context: str,
-                             allocation: Dict[ComponentType],
+                             allocation: Dict[ComponentType, float],
                              task_type: TaskType) -> Tuple[str, ContextMetrics]:
         """Apply resource allocation to optimized context"""
         logger.debug("Applying resource allocation")
@@ -267,7 +267,7 @@ class ContextOptimizationSystem:
         return '. '.join(sentences[:target_sentences])
 
     async def _predict_performance(self, metrics: ContextMetrics,
-                                 allocation: Dict[ComponentType],
+                                 allocation: Dict[ComponentType, float],
                                  requirements: Dict[str, float]) -> Dict[str, float]:
         """Predict performance based on optimization metrics"""
         predictions = {}
@@ -299,7 +299,7 @@ class ContextOptimizationSystem:
 
     async def _generate_recommendations(self, metrics: ContextMetrics,
                                       performance: Dict[str, float],
-                                      allocation: Dict[ComponentType]) -> List[str]:
+                                      allocation: Dict[ComponentType, float]) -> List[str]:
         """Generate optimization recommendations"""
         recommendations = []
 
@@ -393,7 +393,7 @@ class ContextOptimizationSystem:
         if len(self.optimization_history) > 1000:
             self.optimization_history = self.optimization_history[-500:]
 
-    def _record_allocation_metrics(self, allocation: Dict[ComponentType],
+    def _record_allocation_metrics(self, allocation: Dict[ComponentType, int],
                                  metrics: ContextMetrics) -> None:
         """Record allocation metrics for adaptive learning"""
         if not self.config.enable_learning:

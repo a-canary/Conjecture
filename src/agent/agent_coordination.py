@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 import logging
 
-from ..core.models import Claim, Claim
+from ..core.models import Claim, Claim, DirtyReason
 from ..core.claim_operations import mark_dirty, mark_clean, find_dirty_claims
 from ..processing.tool_registry import create_tool_registry, load_all_tools_from_directory
 from ..processing.tool_execution import execute_tool_from_registry, create_execution_summary
@@ -26,7 +26,7 @@ class AgentSession:
     session_id: str
     user_request: str
     claims: List[Claim]
-    tool_registry
+    tool_registry: Any
     conversation_history: List[Dict[str, Any]] = field(default_factory=list)
     created_at: datetime = field(default_factory=datetime.utcnow)
     last_activity: datetime = field(default_factory=datetime.utcnow)
@@ -349,6 +349,3 @@ async def process_user_request_async(user_request: str,
         metadata=metadata
     )
 
-
-# Import needed modules
-from ..core.models import DirtyReason

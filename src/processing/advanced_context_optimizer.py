@@ -166,7 +166,7 @@ class InformationTheoreticOptimizer:
 
         # Capitalized phrases (potential entities)
         capitalized = re.findall(r'\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b', text)
-        entities.update(capitalized.lower())
+        entities.update([c.lower() for c in capitalized])
 
         # Numbers and measurements
         numbers = re.findall(r'\b\d+(?:\.\d+)?%?\b', text)

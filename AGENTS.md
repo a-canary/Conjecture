@@ -8,13 +8,37 @@ Conjecture is an AI-Powered Evidence-Based Reasoning System that enables users t
 
 **Architecture**: CLI Interface → Core Engine → Data Layer (SQLite + ChromaDB)
 
+## 🚀 Code-Test-Commit Workflow (MANDATORY)
+
+### **ESTABLISHED 2025-12-07 - ALL AGENTS MUST FOLLOW**
+
+#### **Core Workflow Rules**
+1. **One Small Bug/Feature at a Time** - Focus on single, manageable changes
+2. **Test Thoroughly** - Run comprehensive tests before each commit
+3. **Update RESULTS.md** - Document all test results, benchmark metrics, and repo size
+4. **Justify Repo Size Increases** - Every commit must justify any project size growth
+5. **Quality Verification** - Ensure project quality before each commit
+
+#### **Agent-Specific Requirements**
+- **Before Any Code Changes**: Read current RESULTS.md and TODO.md
+- **During Development**: Follow pre-commit checklist religiously
+- **Before Commit**: Update RESULTS.md with current metrics and analysis
+- **After Commit**: Verify all quality gates passed
+
+#### **Quality Gates**
+- **Blocking Issues**: Test failures, coverage <85%, performance regressions, security issues
+- **Warning Conditions**: Test flakiness, minor performance impact, documentation gaps
+- **Commit Readiness**: All blocking issues resolved, warnings documented
+
 ## Essential Docs
 limit project these core docs, plus docs/ for design and how to.
 - ANALYSIS.md: most recent comprehensive analysis of tests and metrics, rewrite after each comprehensive test results
-- RESULTS.md: After experiment, log the hypothesis and result in a single short paragraph. Use this to guide replanning 
+- RESULTS.md: After experiment, log the hypothesis and result in a single short paragraph. Use this to guide replanning
 - TODO.md: breakdown of remaining work to persist between agents
 
 IMPORTANT: organize each feature development or experiement in a git branch based on "Base" Branch. When metrics and analysis improves, rebase "Base" to current work branch. If hypothesis or feature dev failed, revert to Base and retry or do next todo item.
+
+CRITICAL: ALL AGENTS must follow the Code-Test-Commit workflow rules documented in TODO.md Section 1. No exceptions.
 
 ## Essential Commands
 
@@ -67,6 +91,21 @@ mkdir -p ~/.conjecture
 
 # Validate configuration
 python conjecture config
+```
+
+### EndPoint App Management
+```bash
+# CRITICAL: ALWAYS use the restart_endpoint.bat script for EndPoint App
+# NEVER run python run_endpoint_app.py directly
+./restart_endpoint.bat     # Windows (REQUIRED)
+./restart_endpoint.sh     # Unix/Linux/macOS
+
+# The bat script handles:
+# - Proper process termination
+# - Port cleanup
+# - Environment setup
+# - Error handling
+# - Unicode encoding issues
 ```
 
 ## Code Organization and Structure
@@ -123,6 +162,7 @@ tests/                   # Comprehensive test suite
 - `src/conjecture.py` - Core Conjecture class with async evaluation
 - `src/core/models.py` - Single source of truth for data models
 - `src/config/unified_config.py` - Unified configuration system
+- `restart_endpoint.bat` - (re)start the ConjectureEndpoint service
 
 ### Core Models
 - **Claim**: Main data structure with states (Explore, Validated, Orphaned, Queued)

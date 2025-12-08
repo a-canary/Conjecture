@@ -19,7 +19,7 @@ def main():
     sys.path.insert(0, os.path.join(script_dir, 'src'))
 
     # Import and run the modular CLI
-    from cli.modular_cli import app
+    from src.cli.modular_cli import app
     app()
 
 if __name__ == "__main__":

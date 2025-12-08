@@ -87,8 +87,16 @@ class PerformanceMonitor:
             
         self._monitoring_active = True
         
-        # Start background snapshot task
-        self._snapshot_task = asyncio.create_task(self._snapshot_loop())
+        # Start background snapshot task only if there's an event loop
+        try:
+            self._snapshot_task = asyncio.create_task(self._snapshot_loop())
+        except RuntimeError as e:
+            if "no running event loop" in str(e):
+                # No event loop available, skip snapshot task
+                logger.warning("No event loop available, skipping background snapshot task")
+                self._snapshot_task = None
+            else:
+                raise
         
         # Start system monitoring thread
         if self.enable_system_monitoring:

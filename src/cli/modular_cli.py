@@ -50,6 +50,7 @@ console = Console(
 error_console = Console(stderr=True, legacy_windows=True)
 
 from .base_cli import BaseCLI
+from src.interfaces.processing_interface import ProcessingInterface
 
 # from .dirty_commands import dirty_app  # Temporarily disabled due to import issues
 from src.config.unified_config import validate_config
@@ -65,47 +66,58 @@ app = typer.Typer(
 # Add dirty flag subcommand
 # app.add_typer(dirty_app, name="dirty", help="Dirty flag system management")  # Temporarily disabled
 
-# Global backend instance
-current_backend: BaseCLI = None
+# Global processing interface instance
+current_processing_interface: ProcessingInterface = None
 
 
-def get_backend(backend_type: str = "auto") -> BaseCLI:
-    """Get or create the specified backend instance."""
-    global current_backend
+def get_processing_interface(backend_type: str = "auto") -> ProcessingInterface:
+    """Get or create the specified processing interface instance."""
+    global current_processing_interface
 
-    # If we already have a backend instance, reuse it
-    if current_backend is not None:
-        return current_backend
+    # If we already have a processing interface instance, reuse it
+    if current_processing_interface is not None:
+        return current_processing_interface
 
-    # Import backend registry
-    from .backends import BACKEND_REGISTRY
+    # Import and create Conjecture instance (implements ProcessingInterface)
+    from src.conjecture import Conjecture
+    from src.config.unified_config import UnifiedConfig as Config
     
-    # Try to get an available backend
-    available_backends = BACKEND_REGISTRY.get_available_backends()
-    
-    if not available_backends:
-        # Use simple backend as fallback
-        current_backend = BACKEND_REGISTRY.get_backend("simple")
-    else:
-        # Use the first available backend
-        backend_name = available_backends[0]
-        current_backend = BACKEND_REGISTRY.get_backend(backend_name)
-
-    # Check availability
-    if not current_backend.is_available():
+    try:
+        # Create configuration
+        config = Config()
+        
+        # Create Conjecture instance (implements ProcessingInterface)
+        interface = Conjecture(config=config)
+        current_processing_interface = interface
+        
+        # Start services only if there's an event loop
+        try:
+            import asyncio
+            asyncio.create_task(current_processing_interface.start_services())
+            console.print("[green]+ Processing interface initialized[/green]")
+        except RuntimeError as e:
+            if "no running event loop" in str(e):
+                console.print("[yellow]+ Processing interface created (services not started - no event loop)[/yellow]")
+            else:
+                raise
+        
+        # Always return the interface
+        return current_processing_interface
+        
+    except Exception as e:
         error_console.print(
-            "[bold red]No LLM providers are properly configured[/bold red]"
+            f"[bold red]Failed to initialize processing interface: {e}[/bold red]"
         )
         console.print("\n[bold yellow]Configuration Setup:[/bold yellow]")
         
-        from src.config.unified_config import ConfigHierarchy
+        from src.config.pydantic_config import ConfigHierarchy
         hierarchy = ConfigHierarchy()
         
         console.print("1. [cyan]User config:[/cyan] ~/.conjecture/config.json")
-        console.print(f"   Status: {'✓ Exists' if hierarchy.user_config.exists() else '✗ Not found'}")
+        console.print(f"   Status: {'+ Exists' if hierarchy.user_config.exists() else '- Not found'}")
         
         console.print("2. [cyan]Workspace config:[/cyan] .conjecture/config.json")
-        console.print(f"   Status: {'✓ Exists' if hierarchy.workspace_config.exists() else '✗ Not found'}")
+        console.print(f"   Status: {'+ Exists' if hierarchy.workspace_config.exists() else '- Not found'}")
         
         console.print("\n[bold]Example config format:[/bold]")
         console.print("[cyan]{")
@@ -125,27 +137,37 @@ def get_backend(backend_type: str = "auto") -> BaseCLI:
 
         raise typer.Exit(1)
 
-    return current_backend
+
+def get_backend(backend_type: str = "auto") -> ProcessingInterface:
+    """Alias for get_processing_interface for backward compatibility."""
+    return get_processing_interface(backend_type)
 
 
-def print_backend_info(backend: BaseCLI):
-    """Print information about the current backend."""
-    info = backend.get_backend_info()
+def print_processing_interface_info(processing_interface: ProcessingInterface):
+    """Print information about the current processing interface."""
+    # Get health status to check if interface is properly configured
+    import asyncio
+    try:
+        health = asyncio.run(processing_interface.get_health_status())
+        
+        panel_content = "Processing Interface: Conjecture\n"
+        panel_content += f"Status: {'OK' if health.get('healthy', False) else 'FAIL'}\n"
+        
+        if health.get('services'):
+            services = health['services']
+            panel_content += f"Data Manager: {'OK' if services.get('data_manager', False) else 'FAIL'}\n"
+            panel_content += f"LLM Bridge: {'OK' if services.get('llm_bridge', False) else 'FAIL'}\n"
+            panel_content += f"Async Evaluation: {'OK' if services.get('async_evaluation', False) else 'FAIL'}\n"
+        
+        if health.get('active_sessions') is not None:
+            panel_content += f"Active Sessions: {health['active_sessions']}\n"
 
-    panel_content = f"[bold]Backend:[/bold] {info['name']}\n"
-    panel_content += (
-        f"[bold]Configured:[/bold] {'OK' if info['configured'] else 'FAIL'}\n"
-    )
-
-    if info.get("provider"):
-        panel_content += f"[bold]Provider:[/bold] {info['provider']}\n"
-    if info.get("type"):
-        panel_content += f"[bold]Type:[/bold] {info['type']}\n"
-    if info.get("model"):
-        panel_content += f"[bold]Model:[/bold] {info['model']}\n"
+    except Exception as e:
+        panel_content = "Processing Interface: Conjecture\n"
+        panel_content += f"Status: ERROR - {e}\n"
 
     panel = Panel(
-        panel_content, title="[bold]Backend Information[/bold]", border_style="blue"
+        panel_content, title="Processing Interface Information", border_style="blue"
     )
     console.print(panel)
 
@@ -157,21 +179,20 @@ def main(
         False, "--verbose", "-v", help="Enable verbose output"
     ),
 ):
-    """Conjecture CLI - Unified interface with pluggable backends."""
-    global current_backend
+    """Conjecture CLI - Unified interface with processing interface."""
+    global current_processing_interface
 
-    # Initialize backend
+    # Initialize processing interface
     try:
-        current_backend = get_backend(backend)
+        current_processing_interface = get_processing_interface(backend)
 
         if verbose:
-            console.print(f"[green]Initialized {backend} backend[/green]")
-            print_backend_info(current_backend)
+            console.print(f"[green]Initialized {backend} processing interface[/green]")
 
     except typer.Exit:
         raise
     except Exception as e:
-        error_console.print(f"[red]Error initializing backend: {e}[/red]")
+        error_console.print(f"[red]Error initializing processing interface: {e}[/red]")
         raise typer.Exit(1)
 
 
@@ -191,17 +212,30 @@ def create(
 ):
     """Create a new claim."""
     try:
-        # Override backend if specified
+        # Override processing interface if specified
         if backend:
-            cli_backend = get_backend(backend)
+            processing_interface = get_processing_interface(backend)
         else:
-            cli_backend = current_backend
+            # Initialize processing interface if not already done
+            processing_interface = get_processing_interface()
 
-        if not cli_backend:
+        if not processing_interface:
             error_console.print(
-                "[red]No backend initialized. Use --backend option.[/red]"
+                "[red]No processing interface initialized. Use --backend option.[/red]"
             )
             raise typer.Exit(1)
+            
+        # Start services synchronously if not already started
+        import asyncio
+        try:
+            # Check if we're in an async context
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            # No running loop, create one and start services
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(processing_interface.start_services())
+            loop.close()
 
         with Progress(
             TextColumn("[progress.description]{task.description}"),
@@ -211,15 +245,27 @@ def create(
 
             try:
                 import asyncio
-                claim_coroutine = cli_backend.create_claim(content, confidence, user=user, analyze=analyze)
-                if asyncio.iscoroutine(claim_coroutine):
-                    claim = asyncio.run(claim_coroutine)
-                else:
-                    claim = claim_coroutine
-                claim_id = claim.id
-                progress.update(
-                    task, description=f"Claim {claim_id} created successfully!"
+                claim_coroutine = processing_interface.create_claim(
+                    content=content,
+                    confidence=confidence,
+                    tags=[user] if user else None
                 )
+                claim = asyncio.run(claim_coroutine)
+                claim_id = claim.id
+                
+                # Analyze claim if requested
+                if analyze:
+                    progress.update(task, description="Analyzing claim...")
+                    eval_coroutine = processing_interface.evaluate_claim(claim_id)
+                    eval_result = asyncio.run(eval_coroutine)
+                    if eval_result.success:
+                        progress.update(task, description=f"Claim {claim_id} created and analyzed!")
+                    else:
+                        progress.update(task, description=f"Claim {claim_id} created but analysis failed")
+                else:
+                    progress.update(
+                        task, description=f"Claim {claim_id} created successfully!"
+                    )
 
             except Exception as e:
                 progress.update(task, description="Error occurred")
@@ -239,15 +285,15 @@ def get(
 ):
     """Get a claim by ID."""
     try:
-        # Override backend if specified
+        # Override processing interface if specified
         if backend:
-            cli_backend = get_backend(backend)
+            processing_interface = get_processing_interface(backend)
         else:
-            cli_backend = current_backend
+            processing_interface = current_processing_interface
 
-        if not cli_backend:
+        if not processing_interface:
             error_console.print(
-                "[red]No backend initialized. Use --backend option.[/red]"
+                "[red]No processing interface initialized. Use --backend option.[/red]"
             )
             raise typer.Exit(1)
 
@@ -259,27 +305,26 @@ def get(
 
             try:
                 import asyncio
-                claim_coroutine = cli_backend.get_claim(claim_id)
-                if asyncio.iscoroutine(claim_coroutine):
-                    claim = asyncio.run(claim_coroutine)
-                else:
-                    claim = claim_coroutine
+                claim_coroutine = processing_interface.get_claim(claim_id)
+                claim = asyncio.run(claim_coroutine)
 
                 if claim:
                     progress.update(task, description="Claim retrieved successfully!")
 
-                    user = claim.get("created_by", claim.get("user_id", "unknown"))
-                    created = claim.get("created_at", claim.get("created", "unknown"))
-                    metadata = claim.get("metadata", {})
+                    user = claim.created_by if hasattr(claim, 'created_by') else "unknown"
+                    created = claim.created if hasattr(claim, 'created') else claim.updated
+                    metadata = claim.metadata if hasattr(claim, 'metadata') else {}
+                    tags = claim.tags if hasattr(claim, 'tags') else []
+                    state = claim.state.value if hasattr(claim, 'state') else "unknown"
+                    
                     panel = Panel(
-                        f"[bold]ID:[/bold] {claim['id']}\n"
-                        f"[bold]Content:[/bold] {claim['content']}\n"
-                        f"[bold]Confidence:[/bold] {claim['confidence']:.2f}\n"
-                        f"[bold]State:[/bold] {claim.get('state', 'unknown')}\n"
+                        f"[bold]ID:[/bold] {claim.id}\n"
+                        f"[bold]Content:[/bold] {claim.content}\n"
+                        f"[bold]Confidence:[/bold] {claim.confidence:.2f}\n"
+                        f"[bold]State:[/bold] {state}\n"
                         f"[bold]User:[/bold] {user}\n"
                         f"[bold]Created:[/bold] {created}\n"
-                        f"[bold]Tags:[/bold] {claim.get('tags', [])}\n"
-                        f"[bold]Dirty:[/bold] {claim.get('is_dirty', False)}",
+                        f"[bold]Tags:[/bold] {tags}\n",
                         title=f"Claim Details: {claim_id}",
                         border_style="blue",
                     )
@@ -308,15 +353,15 @@ def search(
 ):
     """Search claims by content."""
     try:
-        # Override backend if specified
+        # Override processing interface if specified
         if backend:
-            cli_backend = get_backend(backend)
+            processing_interface = get_processing_interface(backend)
         else:
-            cli_backend = current_backend
+            processing_interface = current_processing_interface
 
-        if not cli_backend:
+        if not processing_interface:
             error_console.print(
-                "[red]No backend initialized. Use --backend option.[/red]"
+                "[red]No processing interface initialized. Use --backend option.[/red]"
             )
             raise typer.Exit(1)
 
@@ -327,40 +372,37 @@ def search(
             task = progress.add_task("[cyan]Searching claims...", total=None)
 
             try:
-                results = cli_backend.search_claims(query, limit)
+                import asyncio
+                results_coroutine = processing_interface.search_claims(query, limit=limit)
+                results = asyncio.run(results_coroutine)
 
                 progress.update(task, description=f"Found {len(results)} results")
 
                 if results:
-                    # Use backend's table creation or fallback
-                    if hasattr(cli_backend, "_create_search_table"):
-                        table = cli_backend._create_search_table(results, query)
-                    else:
-                        # Fallback table creation
-                        table = Table(title=f"Search Results for: '{query}'")
-                        table.add_column("ID", style="cyan", no_wrap=True)
-                        table.add_column("Content", style="white")
-                        table.add_column("Confidence", style="green")
-                        table.add_column("Similarity", style="yellow")
-                        table.add_column("User", style="blue")
+                    # Create table for search results
+                    table = Table(title=f"Search Results for: '{query}'")
+                    table.add_column("ID", style="cyan", no_wrap=True)
+                    table.add_column("Content", style="white")
+                    table.add_column("Confidence", style="green")
+                    table.add_column("State", style="yellow")
+                    table.add_column("User", style="blue")
 
-                        for result in results:
-                            content = (
-                                result["content"][:50] + "..."
-                                if len(result["content"]) > 50
-                                else result["content"]
-                            )
-                            table.add_row(
-                                result["id"],
-                                content,
-                                f"{result['confidence']:.2f}",
-                                f"{result['similarity']:.3f}"
-                                if "similarity" in result
-                                else "N/A",
-                                result.get(
-                                    "created_by", result.get("user_id", "unknown")
-                                ),
-                            )
+                    for claim in results:
+                        content = (
+                            claim.content[:50] + "..."
+                            if len(claim.content) > 50
+                            else claim.content
+                        )
+                        user = claim.created_by if hasattr(claim, 'created_by') else "unknown"
+                        state = claim.state.value if hasattr(claim, 'state') else "unknown"
+                        
+                        table.add_row(
+                            claim.id,
+                            content,
+                            f"{claim.confidence:.2f}",
+                            state,
+                            user,
+                        )
 
                     console.print(table)
                 else:
@@ -389,15 +431,15 @@ def analyze(
 ):
     """Analyze a claim using LLM services."""
     try:
-        # Override backend if specified
+        # Override processing interface if specified
         if backend:
-            cli_backend = get_backend(backend)
+            processing_interface = get_processing_interface(backend)
         else:
-            cli_backend = current_backend
+            processing_interface = current_processing_interface
 
-        if not cli_backend:
+        if not processing_interface:
             error_console.print(
-                "[red]No backend initialized. Use --backend option.[/red]"
+                "[red]No processing interface initialized. Use --backend option.[/red]"
             )
             raise typer.Exit(1)
 
@@ -408,18 +450,23 @@ def analyze(
             task = progress.add_task("[cyan]Analyzing claim...", total=None)
 
             try:
-                analysis = cli_backend.analyze_claim(claim_id)
+                import asyncio
+                eval_coroutine = processing_interface.evaluate_claim(claim_id)
+                eval_result = asyncio.run(eval_coroutine)
                 progress.update(task, description="Analysis complete!")
 
                 # Display analysis results
                 panel = Panel(
-                    f"[bold]Claim ID:[/bold] {analysis['claim_id']}\n"
-                    f"[bold]Backend:[/bold] {analysis.get('backend', 'unknown')}\n"
-                    f"[bold]Analysis Type:[/bold] {analysis.get('analysis_type', 'unknown')}\n"
-                    f"[bold]Confidence:[/bold] {analysis.get('confidence_score', 0):.2f}\n"
-                    f"[bold]Sentiment:[/bold] {analysis.get('sentiment', 'unknown')}\n"
-                    f"[bold]Topics:[/bold] {', '.join(analysis.get('topics', []))}\n"
-                    f"[bold]Status:[/bold] {analysis.get('verification_status', 'unknown')}",
+                    f"[bold]Claim ID:[/bold] {eval_result.claim_id}\n"
+                    f"[bold]Success:[/bold] {eval_result.success}\n"
+                    f"[bold]Original Confidence:[/bold] {eval_result.original_confidence:.2f}\n"
+                    f"[bold]New Confidence:[/bold] {eval_result.new_confidence:.2f}\n"
+                    f"[bold]State:[/bold] {eval_result.state.value}\n"
+                    f"[bold]Summary:[/bold] {eval_result.evaluation_summary}\n"
+                    f"[bold]Processing Time:[/bold] {eval_result.processing_time:.2f}s\n"
+                    f"[bold]Supporting Evidence:[/bold] {len(eval_result.supporting_evidence)} items\n"
+                    f"[bold]Counter Evidence:[/bold] {len(eval_result.counter_evidence)} items\n"
+                    f"[bold]Recommendations:[/bold] {len(eval_result.recommendations)} items",
                     title=f"Analysis Results for {claim_id}",
                     border_style="green",
                 )
@@ -451,12 +498,12 @@ def prompt(
 ):
     """Process a prompt as a claim with workspace context."""
     try:
-        # Use current backend (no backend override option for prompt)
-        cli_backend = current_backend
+        # Use current processing interface (no backend override option for prompt)
+        processing_interface = current_processing_interface
 
-        if not cli_backend:
+        if not processing_interface:
             error_console.print(
-                "[red]No backend initialized. Use --backend option.[/red]"
+                "[red]No processing interface initialized. Use --backend option.[/red]"
             )
             raise typer.Exit(1)
 
@@ -467,8 +514,45 @@ def prompt(
             task = progress.add_task("[cyan]Processing prompt...", total=None)
 
             try:
-                result = cli_backend.process_prompt(prompt_text, confidence, verbose)
+                import asyncio
+                
+                # Create a claim from the prompt first
+                claim_coroutine = processing_interface.create_claim(
+                    content=prompt_text,
+                    confidence=confidence,
+                    tags=["prompt", "workspace-context"]
+                )
+                claim = asyncio.run(claim_coroutine)
+                
+                # Evaluate the claim to get LLM processing
+                eval_coroutine = processing_interface.evaluate_claim(claim.id)
+                eval_result = asyncio.run(eval_coroutine)
+                
                 progress.update(task, description="Prompt processed successfully!")
+                
+                # Display results
+                if eval_result.success:
+                    panel = Panel(
+                        f"[bold]Prompt:[/bold] {prompt_text}\n"
+                        f"[bold]Claim ID:[/bold] {claim.id}\n"
+                        f"[bold]Confidence:[/bold] {eval_result.new_confidence:.2f}\n"
+                        f"[bold]State:[/bold] {eval_result.state.value}\n"
+                        f"[bold]Evaluation:[/bold] {eval_result.evaluation_summary}\n"
+                        f"[bold]Processing Time:[/bold] {eval_result.processing_time:.2f}s",
+                        title="Prompt Processing Results",
+                        border_style="green",
+                    )
+                    console.print(panel)
+                else:
+                    panel = Panel(
+                        f"[bold]Prompt:[/bold] {prompt_text}\n"
+                        f"[bold]Claim ID:[/bold] {claim.id}\n"
+                        f"[bold]Error:[/bold] {eval_result.evaluation_summary}\n"
+                        f"[bold]Processing Time:[/bold] {eval_result.processing_time:.2f}s",
+                        title="Prompt Processing Results",
+                        border_style="red",
+                    )
+                    console.print(panel)
 
             except Exception as e:
                 progress.update(task, description="Error occurred")
@@ -505,15 +589,21 @@ def config():
 
         # Show available providers
         console.print(f"\n[bold]Available Providers:[/bold]")
-        backend = get_backend()
-        if hasattr(backend, 'provider_manager'):
-            providers = backend.provider_manager.get_providers()
-            for i, provider in enumerate(providers):
-                console.print(
-                    f"  • Provider {i + 1}: {provider.get('name', 'Unknown')} ({provider.get('url', 'No URL')})"
-                )
-        else:
-            console.print(f"  • Using {backend.name} backend (no external providers)")
+        try:
+            # Just check the config directly without creating a ProcessingInterface
+            from src.config.unified_config import UnifiedConfig as Config
+            
+            config = Config()
+            if hasattr(config, 'providers') and config.providers:
+                for i, provider in enumerate(config.providers):
+                    console.print(
+                        f"  • Provider {i + 1}: {provider.get('name', 'Unknown')} ({provider.get('url', 'No URL')})"
+                    )
+            else:
+                console.print("  • No providers configured in config")
+                
+        except Exception as e:
+            console.print(f"  • Error checking providers: {e}")
 
 
 @app.command()
@@ -523,9 +613,15 @@ def providers():
     console.print("=" * 50)
 
     try:
-        backend = get_backend()
-        if hasattr(backend, 'provider_manager'):
-            providers = backend.provider_manager.get_providers()
+        # Create a temporary processing interface for this command
+        from src.conjecture import Conjecture
+        from src.config.unified_config import UnifiedConfig as Config
+        
+        config = Config()
+        temp_interface = Conjecture(config=config)
+        
+        if hasattr(temp_interface, 'llm_bridge') and hasattr(temp_interface.llm_bridge, 'provider_manager'):
+            providers = temp_interface.llm_bridge.provider_manager.get_providers()
 
             if not providers:
                 console.print("[red]No providers configured[/red]")
@@ -544,8 +640,8 @@ def providers():
                     console.print(f"    API Key: {provider.get('api')}")
                 console.print()
         else:
-            console.print(f"[bold green]Using {backend.name} backend[/bold green]")
-            console.print("This backend doesn't use external providers")
+            console.print("[bold green]Using Conjecture processing interface[/bold green]")
+            console.print("This interface doesn't use external providers")
 
     except Exception as e:
         console.print(f"[red]Error loading providers: {e}[/red]")
@@ -632,28 +728,29 @@ def stats(
 ):
     """Show database and backend statistics."""
     try:
-        # Override backend if specified
+        # Override processing interface if specified
         if backend:
-            cli_backend = get_backend(backend)
+            processing_interface = get_processing_interface(backend)
         else:
-            cli_backend = current_backend
+            processing_interface = current_processing_interface
 
-        if not cli_backend:
+        if not processing_interface:
             error_console.print(
-                "[red]No backend initialized. Use --backend option.[/red]"
+                "[red]No processing interface initialized. Use --backend option.[/red]"
             )
             raise typer.Exit(1)
 
-        # Get statistics
-        if hasattr(cli_backend, "_get_database_stats"):
-            stats = cli_backend._get_database_stats()
-        else:
-            # Fallback stats
+        # Get statistics using ProcessingInterface
+        import asyncio
+        try:
+            stats = asyncio.run(processing_interface.get_statistics())
+        except Exception:
+            # Fallback stats if get_statistics is not implemented
             stats = {
                 "total_claims": "Unknown",
                 "avg_confidence": "Unknown",
                 "unique_users": "Unknown",
-                "backend_type": cli_backend._get_backend_type(),
+                "backend_type": "Conjecture",
             }
 
         # Create statistics table
@@ -661,7 +758,7 @@ def stats(
         table.add_column("Metric", style="cyan")
         table.add_column("Value", style="green")
 
-        table.add_row("Backend", stats.get("backend_type", "Unknown"))
+        table.add_row("Backend", stats.get("backend_type", "Conjecture"))
         table.add_row("Total Claims", str(stats.get("total_claims", "Unknown")))
         table.add_row(
             "Average Confidence",
@@ -671,15 +768,26 @@ def stats(
         )
         table.add_row("Unique Users", str(stats.get("unique_users", "Unknown")))
 
-        if hasattr(cli_backend, "db_path"):
-            table.add_row("Database Path", cli_backend.db_path)
+        # Get database path from config if available
+        try:
+            from src.config.unified_config import UnifiedConfig as Config
+            config = Config()
+            if hasattr(config, 'database_path'):
+                table.add_row("Database Path", config.database_path)
+        except Exception:
+            pass
 
         table.add_row("Embedding Model", "all-MiniLM-L6-v2")
 
-        # Add backend-specific info
-        backend_info = cli_backend.get_backend_info()
-        if backend_info.get("provider"):
-            table.add_row("Current Provider", backend_info["provider"])
+        # Add processing interface info
+        try:
+            health = asyncio.run(processing_interface.get_health_status())
+            if health.get('services', {}).get('llm_bridge', False):
+                table.add_row("LLM Bridge", "OK")
+            else:
+                table.add_row("LLM Bridge", "FAIL")
+        except Exception:
+            table.add_row("LLM Bridge", "Unknown")
 
         console.print(table)
 
@@ -689,57 +797,71 @@ def stats(
 
 @app.command()
 def backends():
-    """Show available backends and their status."""
-    console.print("[bold]Available Backends[/bold]")
+    """Show available processing interface information."""
+    console.print("[bold]Processing Interface Information[/bold]")
     console.print("=" * 50)
 
-    table = Table(title="Backend Status")
-    table.add_column("Backend", style="cyan")
+    table = Table(title="Processing Interface Status")
+    table.add_column("Component", style="cyan")
     table.add_column("Status", style="green")
     table.add_column("Description", style="white")
 
-    descriptions = {
-        "auto": "Intelligent auto-detection of optimal backend",
-        "local": "Local services (Ollama, LM Studio) - offline capable",
-        "cloud": "Cloud services (OpenAI, Anthropic) - advanced features",
-        "hybrid": "Combines local and cloud for optimal performance",
-    }
-
-    # Using unified provider system
-    console.print("Using unified provider system with automatic failover")
-    console.print("Providers are configured in ~/.conjecture/config.json")
+    # Using ProcessingInterface with Conjecture implementation
+    console.print("Using ProcessingInterface with Conjecture implementation")
+    console.print("Provides clean architecture separation between CLI and processing layers")
+    console.print("Configuration is loaded from ~/.conjecture/config.json")
+    
+    table.add_row("Processing Interface", "Available", "Conjecture - Async Evidence-Based AI Reasoning")
+    table.add_row("Data Layer", "Integrated", "SQLite + ChromaDB for vector storage")
+    table.add_row("LLM Bridge", "Configurable", "Supports multiple LLM providers")
+    table.add_row("Async Evaluation", "Enabled", "Background claim evaluation service")
+    table.add_row("Tool Management", "Dynamic", "Runtime tool creation and execution")
+    table.add_row("Event Streaming", "Supported", "Real-time processing events")
+    
+    console.print(table)
 
 
 @app.command()
 def health():
-    """Check system health and backend availability."""
+    """Check system health and processing interface availability."""
     console.print("[bold]System Health Check[/bold]")
     console.print("=" * 50)
 
-    # Check provider system
+    # Check processing interface system
     try:
-        backend = get_backend()
-        providers = backend.provider_manager.get_providers()
-
-        if providers:
-            console.print(
-                f"[bold green]System Status: {len(providers)} provider(s) configured[/bold green]"
-            )
-            for i, provider in enumerate(providers):
-                console.print(
-                    f"  • {provider.get('name', f'Provider {i + 1}')}: {provider.get('url', 'No URL')}"
-                )
+        processing_interface = current_processing_interface
+        if processing_interface:
+            import asyncio
+            health = asyncio.run(processing_interface.get_health_status())
+            
+            if health.get("healthy", False):
+                console.print("[bold green]System Status: Healthy[/bold green]")
+                
+                services = health.get("services", {})
+                console.print("\n[bold]Service Status:[/bold]")
+                for service_name, status in services.items():
+                    status_text = "✓ OK" if status else "✗ Failed"
+                    status_color = "green" if status else "red"
+                    console.print(f"  • {service_name.title()}: [{status_color}]{status_text}[/{status_color}]")
+                
+                # Show additional health info
+                if "active_sessions" in health:
+                    console.print(f"\nActive Sessions: {health['active_sessions']}")
+                if "event_subscribers" in health:
+                    console.print(f"Event Subscribers: {health['event_subscribers']}")
+                    
+            else:
+                console.print("[bold red]System Status: Unhealthy[/bold red]")
+                if "error" in health:
+                    console.print(f"Error: {health['error']}")
         else:
-            console.print(
-                f"[bold red]System Status: No providers configured[/bold red]"
-            )
-            console.print("Please configure providers in ~/.conjecture/config.json")
+            console.print("[bold red]System Status: No processing interface[/bold red]")
+            console.print("Please initialize the processing interface")
 
     except Exception as e:
         console.print(f"[bold red]System Status: Error - {e}[/bold red]")
 
     console.print("\n[bold]Health Check Complete[/bold]")
-    console.print("All configured providers are available.")
 
 
 @app.command()

@@ -1,0 +1,112 @@
+original_path,moved_date,reason,file_size_bytes,importance
+# === SOURCE FILES TO MOVE ===
+src/monitoring/metrics_analysis.py,2025-12-07,Over-engineered monitoring,32768,Low
+src/monitoring/metrics_visualization.py,2025-12-07,Over-engineered monitoring,28672,Low
+src/monitoring/retry_tracker.py,2025-12-07,Over-engineered monitoring,24576,Low
+src/cli/enhanced_modular_cli.py,2025-12-07,Duplicate CLI variant,28672,Low
+src/cli/ui_enhancements.py,2025-12-07,Duplicate UI variant,24576,Low
+src/cli/dirty_commands.py,2025-12-07,Legacy commands,20480,Low
+src/local/vector_store.py,2025-12-07,Alternative implementation,16384,Low
+src/local/local_manager.py,2025-12-07,Alternative implementation,12288,Low
+src/processing/llm_prompts/xml_optimized_templates.py,2025-12-07,Over-engineered templates,32768,Low
+src/processing/llm_prompts/template_manager.py,2025-12-07,Duplicate template system,20480,Low
+src/processing/support_systems/persistence_layer.py,2025-12-07,Complex support system,16384,Low
+src/processing/support_systems/data_collection.py,2025-12-07,Complex support system,12288,Low
+src/data/adaptive_connection_pool.py,2025-12-07,Experimental feature,12288,Low
+src/data/enhanced_sqlite_manager.py,2025-12-07,Duplicate implementation,20480,Low
+src/data/optimized_sqlite_manager.py,2025-12-07,Duplicate implementation,16384,Low
+src/agent/data_flow.py,2025-12-07,Experimental agent module,8192,Low
+src/agent/support_systems.py,2025-12-07,Experimental agent module,8192,Low
+src/benchmarking/benchmark_framework.py,2025-12-07,Extra benchmark framework,12288,Low
+src/processing/enhanced_context_builder.py,2025-12-07,Duplicate context builder,10240,Low
+# === TEST FILES TO MOVE ===
+tests/test_comprehensive_metrics.py,2025-12-07,Duplicate test coverage,8192,Low
+tests/test_core_models_comprehensive.py,2025-12-07,Duplicate test coverage,8192,Low
+tests/test_data_layer_comprehensive.py,2025-12-07,Duplicate test coverage,8192,Low
+tests/test_data_repositories_comprehensive.py,2025-12-07,Duplicate test coverage,8192,Low
+tests/test_enhanced_conjecture_comprehensive.py,2025-12-07,Duplicate test coverage,8192,Low
+tests/test_llm_providers_comprehensive.py,2025-12-07,Duplicate test coverage,8192,Low
+tests/test_processing_comprehensive.py,2025-12-07,Duplicate test coverage,8192,Low
+tests/test_processing_layer_comprehensive.py,2025-12-07,Duplicate test coverage,8192,Low
+tests/test_tool_registry_comprehensive.py,2025-12-07,Duplicate test coverage,8192,Low
+tests/test_unified_config_comprehensive.py,2025-12-07,Duplicate test coverage,8192,Low
+tests/test_utilities_comprehensive.py,2025-12-07,Duplicate test coverage,8192,Low
+tests/performance_benchmarks_fixed.py,2025-12-07,Old benchmark version,12288,Low
+tests/performance_quality_validation.py,2025-12-07,Duplicate performance test,8192,Low
+tests/test_data_layer_performance.py,2025-12-07,Duplicate performance test,8192,Low
+tests/test_performance.py,2025-12-07,Duplicate performance test,8192,Low
+tests/test_performance_monitoring.py,2025-12-07,Duplicate performance test,8192,Low
+tests/test_performance_regression.py,2025-12-07,Duplicate performance test,8192,Low
+tests/test_data_layer_isolated.py,2025-12-07,Isolated test variant,8192,Low
+tests/test_data_layer_focused.py,2025-12-07,Isolated test variant,8192,Low
+tests/test_coding_capabilities.py,2025-12-07,Experimental test,8192,Low
+# === BENCHMARK FILES TO MOVE ===
+research/test_cases/evidence_evaluation_001.json,2025-12-07,Old evaluation data,2048,Low
+research/test_cases/evidence_eval_20251204_181540.json,2025-12-07,Old evaluation data,1024,Low
+research/test_cases/evidence_eval_20251204_181550.json,2025-12-07,Old evaluation data,1024,Low
+research/test_cases/evidence_eval_20251204_181610.json,2025-12-07,Old evaluation data,1024,Low
+run_comprehensive_benchmarks.py,2025-12-07,Extra benchmark runner,12288,Low
+data_layer_performance_benchmark.py,2025-12-07,Specific benchmark,8192,Low
+exploration_1_provider_standardization.py,2025-12-07,Exploration script,12288,Low
+exploration_2_performance_profiling.py,2025-12-07,Exploration script,12288,Low
+exploration_3_error_recovery.py,2025-12-07,Exploration script,12288,Low
+# === REPORTS TO MOVE ===
+20_EXPLORATIONS_COMPREHENSIVE_SUMMARY.md,2025-12-07,Daily report,10240,Low
+archive_files_analysis.md,2025-12-07,Analysis document,8192,Low
+BATCH4_SWE_BENCH_FINAL_REPORT.md,2025-12-07,Experiment report,8192,Low
+comprehensive_explorations_report_20251206_154248.md,2025-12-07,Daily report,4096,Low
+config_hidden_files_analysis.md,2025-12-07,Analysis document,8192,Low
+CONJECTURE_LLM_EVALUATION_IMPACT_ANALYSIS.md,2025-12-07,Analysis document,8192,Low
+COVERAGE_ANALYSIS_REPORT.md,2025-12-07,Coverage report,8192,Low
+CRITICAL_CORRECTED_EXPLORATION_SUMMARY.md,2025-12-07,Daily report,4096,Low
+DATA_LAYER_OPTIMIZATION_REPORT.md,2025-12-07,Analysis document,8192,Low
+docs_files_analysis.md,2025-12-07,Analysis document,8192,Low
+experiments_files_analysis.md,2025-12-07,Analysis document,8192,Low
+file_inventory.txt,2025-12-07,Inventory file,4096,Low
+GRANITE_TINY_CONJECTURE_ANALYSIS.md,2025-12-07,Analysis document,8192,Low
+INDUSTRY_BENCHMARKING_STRATEGY.md,2025-12-07,Strategy document,8192,Low
+INFRASTRUCTURE_RECOVERY_REPORT.md,2025-12-07,Recovery report,4096,Low
+LLM_CAPABILITY_ENHANCEMENT_FINAL_REPORT.md,2025-12-07,Experiment report,8192,Low
+MISSED_CONTEXT_OPTIMIZATION_RESULTS.md,2025-12-07,Results report,8192,Low
+MISSED_KNOWLEDGE_RETRIEVAL_RESULTS.md,2025-12-07,Results report,8192,Low
+MISSED_LLM_COORDINATION_RESULTS.md,2025-12-07,Results report,8192,Low
+MODEL_MATRIX_REPORT.md,2025-12-07,Experiment report,4096,Low
+PERFORMANCE_METRICS_REPORT.md,2025-12-07,Metrics report,8192,Low
+QUALITY_METRICS_REPORT.md,2025-12-07,Metrics report,8192,Low
+rating_standards.md,2025-12-07,Internal doc,4096,Low
+rating_validation_examples.md,2025-12-07,Internal doc,4096,Low
+research_files_analysis.md,2025-12-07,Analysis document,8192,Low
+root_files_analysis.md,2025-12-07,Analysis document,8192,Low
+SCIENTIFIC_INTEGRITY_AUDIT_REPORT.md,2025-12-07,Audit report,4096,Low
+src_files_analysis.md,2025-12-07,Analysis document,8192,Low
+technical_diagnosis_report_20251206_162838.md,2025-12-07,Tech report,2048,Low
+tests_files_analysis.md,2025-12-07,Analysis document,8192,Low
+# === JSON REPORTS TO MOVE ===
+comprehensive_explorations_20251206_154248.json,2025-12-07,Exploration data,2048,Low
+exploration_3_error_recovery_20251206_182701.json,2025-12-07,Exploration data,512,Low
+experiment_4_baseline_results.json,2025-12-07,Experiment data,1024,Low
+experiment_4_optimization_results.json,2025-12-07,Experiment data,1024,Low
+experiment_5_multimodal_results.json,2025-12-07,Experiment data,1024,Low
+experiment_6_enhanced_synthesis_results.json,2025-12-07,Experiment data,1024,Low
+gpt_oss_correctness.json,2025-12-07,Test data,512,Low
+gpt_oss_metrics.json,2025-12-07,Test data,512,Low
+llm_tool_usage_test_results_20251205_162657.json,2025-12-07,Test results,2048,Low
+llm_tool_usage_test_results_20251205_162841.json,2025-12-07,Test results,2048,Low
+model_matrix_results_20251206_073554.json,2025-12-07,Matrix results,1024,Low
+model_matrix_results_20251206_073837.json,2025-12-07,Matrix results,1024,Low
+model_matrix_results_20251206_074014.json,2025-12-07,Matrix results,1024,Low
+model_matrix_results_20251206_074437.json,2025-12-07,Matrix results,1024,Low
+model_matrix_results_20251206_074520.json,2025-12-07,Matrix results,1024,Low
+model_matrix_results_20251206_074556.json,2025-12-07,Matrix results,1024,Low
+model_matrix_results_20251206_075257.json,2025-12-07,Matrix results,1024,Low
+model_matrix_results_20251206_082849.json,2025-12-07,Matrix results,1024,Low
+real_swe_bench_results_20251206_152815.json,2025-12-07,Test results,1024,Low
+real_swe_bench_results_20251206_235958.json,2025-12-07,Test results,1024,Low
+working_explorations_20251206_155758.json,2025-12-07,Working data,2048,Low
+working_explorations_20251206_155911.json,2025-12-07,Working data,2048,Low
+working_explorations_20251206_155957.json,2025-12-07,Working data,2048,Low
+working_explorations_20251206_160003.json,2025-12-07,Working data,2048,Low
+working_explorations_20251206_234724.json,2025-12-07,Working data,2048,Low
+working_explorations_20251206_235510.json,2025-12-07,Working data,2048,Low
+working_explorations_20251206_235708.json,2025-12-07,Working data,2048,Low
+working_explorations_20251207_000817.json,2025-12-07,Working data,2048,Low

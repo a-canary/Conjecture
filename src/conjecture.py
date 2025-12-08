@@ -6,27 +6,39 @@ OPTIMIZED: Enhanced with comprehensive performance monitoring
 import asyncio
 import time
 from datetime import datetime
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any, Union, AsyncGenerator, Callable
 from pathlib import Path
 import logging
 from functools import lru_cache
 import hashlib
 
-from src.core.models import Claim, ClaimState
+from src.core.models import Claim, ClaimState, ClaimFilter
 from src.config.unified_config import UnifiedConfig as Config
 from src.processing.unified_bridge import UnifiedLLMBridge as LLMBridge, LLMRequest
 from src.processing.simplified_llm_manager import get_simplified_llm_manager
+from src.processing.enhanced_llm_router import get_enhanced_llm_router
 from src.processing.async_eval import AsyncClaimEvaluationService
 from src.processing.context_collector import ContextCollector
 from src.processing.tool_manager import DynamicToolCreator
 from src.data.repositories import get_data_manager, RepositoryFactory
 from src.monitoring import get_performance_monitor, monitor_performance
+from src.interfaces.processing_interface import (
+    ProcessingInterface,
+    EvaluationResult,
+    ToolResult,
+    Context as ProcessingContext,
+    Session,
+    SessionState,
+    ProcessingEvent,
+    EventType
+)
 
 
-class Conjecture:
+class Conjecture(ProcessingInterface):
     """
     Enhanced Conjecture with Async Claim Evaluation and Dynamic Tool Creation
     Implements the full architecture described in the specifications
+    Now implements ProcessingInterface for clean architecture separation
     """
 
     def __init__(self, config: Optional[Config] = None):
@@ -47,6 +59,16 @@ class Conjecture:
 
         # Initialize processing components
         self.context_collector = ContextCollector(self.data_manager)
+        
+        # Event streaming infrastructure
+        self._event_subscribers = {}
+        self._event_queue = asyncio.Queue()
+        self._event_streaming_active = False
+        
+        # Session management
+        self._sessions = {}
+        self._session_counter = 0
+        
         try:
             from src.processing.tool_executor import ToolExecutor
             tool_executor = ToolExecutor()
@@ -67,11 +89,17 @@ class Conjecture:
         )
         
         # Initialize enhanced template manager for XML optimization
-        from .processing.llm_prompts.xml_optimized_templates import XMLOptimizedTemplateManager
-        self.enhanced_template_manager = XMLOptimizedTemplateManager()
+        try:
+            from src.processing.llm_prompts.xml_optimized_templates import XMLOptimizedTemplateManager
+            self.enhanced_template_manager = XMLOptimizedTemplateManager()
+        except ImportError:
+            self.enhanced_template_manager = None
         
         # Service state
         self._services_started = False
+        
+        # Enhanced router (initialized in _initialize_llm_bridge)
+        self.enhanced_router = None
 
         # Performance optimization: Caching with memory management
         self._claim_generation_cache = {}
@@ -124,18 +152,39 @@ class Conjecture:
 
         await self.async_evaluation.stop()
         
+        # Shutdown enhanced router if available
+        if self.enhanced_router:
+            await self.enhanced_router.shutdown()
+        
         # Clear caches to prevent memory leaks during shutdown
         self.clear_all_caches()
         
         self._services_started = False
-
+        
         self.logger.info("Enhanced Conjecture services stopped and resources cleaned up")
 
-    def _initialize_llm_bridge(self):
-        """Initialize LLM bridge with simplified manager"""
+    def _initialize_llm_bridge(self, use_enhanced: bool = False):
+        """Initialize LLM bridge with configurable router choice"""
         try:
+            if use_enhanced:
+                # Try enhanced router first
+                enhanced_router = get_enhanced_llm_router()
+                if enhanced_router.providers:
+                    # Create bridge with enhanced router
+                    self.llm_bridge = LLMBridge(llm_manager=enhanced_router)
+                    self.enhanced_router = enhanced_router
+                    print(f"LLM Bridge: Enhanced router connected with {len(enhanced_router.providers)} providers")
+                    return
+                
+                # Fallback to simplified manager
+                print("LLM Bridge: Enhanced router not available, falling back to simplified manager")
+            else:
+                print("LLM Bridge: Using simplified manager for single provider configuration")
+            
+            # Use simplified manager
             llm_manager = get_simplified_llm_manager()
             self.llm_bridge = LLMBridge(llm_manager=llm_manager)
+            self.enhanced_router = None
 
             if self.llm_bridge.is_available():
                 print(f"LLM Bridge: Simplified manager connected")
@@ -145,6 +194,7 @@ class Conjecture:
         except Exception as e:
             print(f"LLM Bridge initialization failed: {e}")
             self.llm_bridge = LLMBridge()
+            self.enhanced_router = None
 
     # @monitor_performance("explore", {"component": "conjecture"})  # Temporarily disabled for testing
     async def explore(
@@ -254,6 +304,17 @@ class Conjecture:
                 max_claims=max_claims,
                 evaluation_pending=auto_evaluate,
                 tools_created=len(self.tool_creator.get_created_tools()),
+            )
+
+            # Emit response_generated event for exploration completion
+            await self._emit_event(
+                EventType.RESPONSE_GENERATED,
+                data={
+                    "type": "exploration",
+                    "query": query,
+                    "claims_count": len(stored_claims),
+                    "processing_time": processing_time
+                }
             )
 
             print(
@@ -525,6 +586,13 @@ Generate claims using this XML structure:
         self._stats["claims_processed"] += 1
         print(f"Created claim: {claim.id}")
 
+        # Emit claim_created event (already done in create_claim interface method, but add here too for direct calls)
+        await self._emit_event(
+            EventType.CLAIM_CREATED,
+            claim_id=claim.id,
+            data={"claim": claim.to_dict()}
+        )
+
         return claim
 
     async def get_evaluation_status(self, claim_id: str) -> Dict[str, Any]:
@@ -715,6 +783,18 @@ Generate claims using this XML structure:
                 }
                 
                 print(f"🎉 Full pipeline completed in {processing_time:.2f}s")
+                
+                # Emit response_generated event for pipeline completion
+                await self._emit_event(
+                    EventType.RESPONSE_GENERATED,
+                    data={
+                        "type": "full_pipeline",
+                        "processing_time": processing_time,
+                        "subtasks_count": len(subtasks),
+                        "total_claims": total_claims
+                    }
+                )
+                
                 return result
                 
             else:
@@ -1054,6 +1134,17 @@ Overall confidence in this answer: X.XX
         # Add tool creator stats
         tool_stats = self.tool_creator.get_created_tools()
         base_stats.update({"created_tools": tool_stats})
+        
+        # Add enhanced router stats if available
+        if self.enhanced_router:
+            router_status = self.enhanced_router.get_provider_status()
+            router_metrics = self.enhanced_router.get_provider_metrics()
+            base_stats.update({
+                "enhanced_router": {
+                    "status": router_status,
+                    "metrics": router_metrics
+                }
+            })
 
         return base_stats
 
@@ -1240,6 +1331,793 @@ Overall confidence in this answer: X.XX
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Async context manager exit"""
         await self.stop_services()
+
+    # ProcessingInterface Implementation
+    
+    async def create_claim(
+        self,
+        content: str,
+        confidence: Optional[float] = None,
+        tags: Optional[List[str]] = None,
+        session_id: Optional[str] = None,
+        **kwargs
+    ) -> Claim:
+        """
+        Create a new claim with automatic evaluation.
+        
+        Args:
+            content: Claim content text
+            confidence: Initial confidence score (0.0-1.0)
+            tags: Optional tags for categorization
+            session_id: Optional session ID for context
+            **kwargs: Additional claim attributes
+            
+        Returns:
+            Created claim with generated ID
+        """
+        # Use existing add_claim method but emit events
+        claim = await self.add_claim(
+            content=content,
+            confidence=confidence or self.config.confidence_threshold,
+            tags=tags,
+            auto_evaluate=True,
+            **kwargs
+        )
+        
+        # Emit claim_created event
+        await self._emit_event(
+            EventType.CLAIM_CREATED,
+            claim_id=claim.id,
+            session_id=session_id,
+            data={"claim": claim.to_dict()}
+        )
+        
+        return claim
+    
+    async def evaluate_claim(
+        self,
+        claim_id: str,
+        session_id: Optional[str] = None
+    ) -> EvaluationResult:
+        """
+        Evaluate a claim using LLM and context.
+        
+        Args:
+            claim_id: ID of claim to evaluate
+            session_id: Optional session ID for context
+            
+        Returns:
+            Evaluation result with updated confidence and state
+        """
+        start_time = time.time()
+        
+        try:
+            # Get the claim
+            claim = await self.claim_repository.get_by_id(claim_id)
+            if not claim:
+                raise ValueError(f"Claim {claim_id} not found")
+            
+            original_confidence = claim.confidence
+            
+            # Submit for evaluation
+            if self.async_evaluation:
+                await self.async_evaluation.submit_claim(claim)
+                
+                # Wait for evaluation to complete
+                eval_result = await self.wait_for_evaluation(claim_id, timeout=60)
+                
+                if eval_result.get("success"):
+                    # Get updated claim
+                    updated_claim = await self.claim_repository.get_by_id(claim_id)
+                    
+                    processing_time = time.time() - start_time
+                    
+                    result = EvaluationResult(
+                        success=True,
+                        claim_id=claim_id,
+                        original_confidence=original_confidence,
+                        new_confidence=updated_claim.confidence,
+                        state=updated_claim.state,
+                        evaluation_summary=f"Claim evaluated from {original_confidence:.2f} to {updated_claim.confidence:.2f}",
+                        processing_time=processing_time
+                    )
+                    
+                    # Emit claim_evaluated event
+                    await self._emit_event(
+                        EventType.CLAIM_EVALUATED,
+                        claim_id=claim_id,
+                        session_id=session_id,
+                        data={"evaluation_result": result.to_dict()}
+                    )
+                    
+                    return result
+                else:
+                    raise Exception(f"Evaluation failed: {eval_result.get('reason', 'Unknown error')}")
+            else:
+                raise Exception("Async evaluation service not available")
+                
+        except Exception as e:
+            processing_time = time.time() - start_time
+            return EvaluationResult(
+                success=False,
+                claim_id=claim_id,
+                original_confidence=0.0,
+                new_confidence=0.0,
+                state=ClaimState.EXPLORE,
+                evaluation_summary=f"Evaluation failed: {str(e)}",
+                processing_time=processing_time,
+                errors=[str(e)]
+            )
+    
+    async def search_claims(
+        self,
+        query: str,
+        filters: Optional[ClaimFilter] = None,
+        session_id: Optional[str] = None
+    ) -> List[Claim]:
+        """
+        Search for claims using semantic search and filters.
+        
+        Args:
+            query: Search query text
+            filters: Optional claim filters
+            session_id: Optional session ID for context
+            
+        Returns:
+            List of matching claims ranked by relevance
+        """
+        try:
+            # Use data manager for search
+            if filters:
+                # Apply filters if provided
+                search_results = await self.data_manager.search_claims(
+                    query=query,
+                    limit=filters.limit or 20,
+                    claim_type=filters.claim_type,
+                    state=filters.state,
+                    min_confidence=filters.min_confidence,
+                    tags=filters.tags
+                )
+            else:
+                # Basic search
+                search_results = await self.data_manager.search_claims(
+                    query=query,
+                    limit=20
+                )
+            
+            return search_results
+            
+        except Exception as e:
+            self.logger.error(f"Search failed: {e}")
+            return []
+    
+    async def execute_tool(
+        self,
+        tool_name: str,
+        parameters: Dict[str, Any],
+        session_id: Optional[str] = None
+    ) -> ToolResult:
+        """
+        Execute a tool with specified parameters.
+        
+        Args:
+            tool_name: Name of tool to execute
+            parameters: Tool parameters
+            session_id: Optional session ID for context
+            
+        Returns:
+            Tool execution result
+        """
+        start_time = time.time()
+        
+        try:
+            # Emit tool_called event
+            await self._emit_event(
+                EventType.TOOL_CALLED,
+                tool_name=tool_name,
+                session_id=session_id,
+                data={"parameters": parameters}
+            )
+            
+            # Get tool from registry
+            from src.tools.registry import ToolRegistry
+            registry = ToolRegistry()
+            
+            if tool_name not in registry.core_tools:
+                raise ValueError(f"Tool '{tool_name}' not found")
+            
+            # Execute tool
+            tool = registry.core_tools[tool_name]
+            result = await tool.execute(parameters)
+            
+            duration = time.time() - start_time
+            
+            tool_result = ToolResult(
+                success=True,
+                tool_name=tool_name,
+                parameters=parameters,
+                outcome=str(result),
+                duration=duration
+            )
+            
+            # Emit tool_completed event
+            await self._emit_event(
+                EventType.TOOL_COMPLETED,
+                tool_name=tool_name,
+                session_id=session_id,
+                data={"tool_result": tool_result.to_dict()}
+            )
+            
+            return tool_result
+            
+        except Exception as e:
+            duration = time.time() - start_time
+            return ToolResult(
+                success=False,
+                tool_name=tool_name,
+                parameters=parameters,
+                outcome=f"Tool execution failed: {str(e)}",
+                duration=duration,
+                errors=[str(e)]
+            )
+    
+    async def get_context(
+        self,
+        claim_ids: List[str],
+        max_skills: int = 5,
+        max_samples: int = 10,
+        session_id: Optional[str] = None
+    ) -> ProcessingContext:
+        """
+        Build context for specified claims.
+        
+        Args:
+            claim_ids: List of claim IDs to build context for
+            max_skills: Maximum number of skills to include
+            max_samples: Maximum number of samples to include
+            session_id: Optional session ID for context
+            
+        Returns:
+            Context object with relevant claims and metadata
+        """
+        try:
+            # Get claims by IDs
+            claims = []
+            for claim_id in claim_ids:
+                claim = await self.claim_repository.get_by_id(claim_id)
+                if claim:
+                    claims.append(claim)
+            
+            # Use context collector to build context
+            context_data = {}
+            if claims:
+                # Use first claim as query for context collection
+                query = claims[0].content
+                context_data = await self.context_collector.collect_context_for_claim(
+                    query, {"task": "context_building"}, max_skills, max_samples
+                )
+            
+            # Extract skills, samples, and related claims
+            skills = context_data.get("skills", [])
+            samples = context_data.get("samples", [])
+            related_claims = context_data.get("related_claims", [])
+            
+            # Build context string
+            context_parts = []
+            for skill in skills:
+                context_parts.append(f"Skill: {skill.content}")
+            for sample in samples:
+                context_parts.append(f"Sample: {sample.content}")
+            for claim in related_claims:
+                context_parts.append(f"Related: {claim.content}")
+            
+            context_string = "\n".join(context_parts)
+            
+            # Calculate relevance scores (simplified)
+            relevance_scores = {}
+            for claim_id in claim_ids:
+                relevance_scores[claim_id] = 0.8  # Default relevance
+            
+            processing_context = ProcessingContext(
+                claim_ids=claim_ids,
+                skills=skills,
+                samples=samples,
+                related_claims=related_claims,
+                context_string=context_string,
+                relevance_scores=relevance_scores,
+                total_tokens=len(context_string.split())
+            )
+            
+            # Emit context_built event
+            await self._emit_event(
+                EventType.CONTEXT_BUILT,
+                session_id=session_id,
+                data={"context": processing_context.to_dict()}
+            )
+            
+            return processing_context
+            
+        except Exception as e:
+            self.logger.error(f"Context building failed: {e}")
+            return ProcessingContext(
+                claim_ids=claim_ids,
+                context_string=f"Error building context: {str(e)}"
+            )
+    
+    async def create_session(
+        self,
+        user_data: Optional[Dict[str, Any]] = None
+    ) -> Session:
+        """
+        Create a new processing session.
+        
+        Args:
+            user_data: Optional user-specific data
+            
+        Returns:
+            Created session with unique ID
+        """
+        self._session_counter += 1
+        session_id = f"session_{self._session_counter}_{int(time.time())}"
+        
+        session = Session(
+            session_id=session_id,
+            state=SessionState.ACTIVE,
+            user_data=user_data or {}
+        )
+        
+        self._sessions[session_id] = session
+        
+        # Emit session_created event
+        await self._emit_event(
+            EventType.SESSION_CREATED,
+            session_id=session_id,
+            data={"session": session.to_dict()}
+        )
+        
+        return session
+    
+    async def resume_session(
+        self,
+        session_id: str
+    ) -> Session:
+        """
+        Resume an existing session.
+        
+        Args:
+            session_id: ID of session to resume
+            
+        Returns:
+            Resumed session
+        """
+        if session_id not in self._sessions:
+            raise ValueError(f"Session {session_id} not found")
+        
+        session = self._sessions[session_id]
+        session.state = SessionState.ACTIVE
+        session.updated = datetime.utcnow()
+        
+        # Emit session_resumed event
+        await self._emit_event(
+            EventType.SESSION_RESUMED,
+            session_id=session_id,
+            data={"session": session.to_dict()}
+        )
+        
+        return session
+    
+    async def get_claim(
+        self,
+        claim_id: str,
+        session_id: Optional[str] = None
+    ) -> Claim:
+        """
+        Retrieve a specific claim by ID.
+        
+        Args:
+            claim_id: ID of claim to retrieve
+            session_id: Optional session ID for context
+            
+        Returns:
+            Claim object
+        """
+        claim = await self.claim_repository.get_by_id(claim_id)
+        if not claim:
+            raise ValueError(f"Claim {claim_id} not found")
+        return claim
+    
+    async def update_claim(
+        self,
+        claim_id: str,
+        updates: Dict[str, Any],
+        session_id: Optional[str] = None
+    ) -> Claim:
+        """
+        Update an existing claim.
+        
+        Args:
+            claim_id: ID of claim to update
+            updates: Dictionary of fields to update
+            session_id: Optional session ID for context
+            
+        Returns:
+            Updated claim
+        """
+        claim = await self.claim_repository.get_by_id(claim_id)
+        if not claim:
+            raise ValueError(f"Claim {claim_id} not found")
+        
+        # Apply updates
+        updated_claim = await self.claim_repository.update(claim_id, updates)
+        
+        # Emit claim_updated event
+        await self._emit_event(
+            EventType.CLAIM_UPDATED,
+            claim_id=claim_id,
+            session_id=session_id,
+            data={"updates": updates, "claim": updated_claim.to_dict()}
+        )
+        
+        return updated_claim
+    
+    async def delete_claim(
+        self,
+        claim_id: str,
+        session_id: Optional[str] = None
+    ) -> bool:
+        """
+        Delete a claim by ID.
+        
+        Args:
+            claim_id: ID of claim to delete
+            session_id: Optional session ID for context
+            
+        Returns:
+            True if claim was deleted
+        """
+        try:
+            await self.claim_repository.delete(claim_id)
+            return True
+        except Exception as e:
+            self.logger.error(f"Failed to delete claim {claim_id}: {e}")
+            return False
+    
+    async def get_available_tools(
+        self,
+        session_id: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Get list of available tools.
+        
+        Args:
+            session_id: Optional session ID for context
+            
+        Returns:
+            List of tool information dictionaries
+        """
+        from src.tools.registry import ToolRegistry
+        registry = ToolRegistry()
+        
+        tools_info = []
+        for name, tool in registry.core_tools.items():
+            tools_info.append({
+                "name": name,
+                "description": getattr(tool, 'description', 'No description'),
+                "parameters": getattr(tool, 'parameters', {}),
+                "category": getattr(tool, 'category', 'general')
+            })
+        
+        return tools_info
+    
+    # Event Streaming Methods
+    
+    async def stream_events(
+        self,
+        session_id: Optional[str] = None,
+        event_types: Optional[List[EventType]] = None,
+        since: Optional[datetime] = None
+    ) -> AsyncGenerator[ProcessingEvent, None]:
+        """
+        Stream processing events in real-time.
+        
+        Args:
+            session_id: Optional session ID to filter events
+            event_types: Optional event types to filter
+            since: Optional timestamp to filter events
+            
+        Yields:
+            ProcessingEvent objects as they occur
+        """
+        self._event_streaming_active = True
+        
+        try:
+            while self._event_streaming_active:
+                try:
+                    # Get event from queue with timeout
+                    event = await asyncio.wait_for(self._event_queue.get(), timeout=1.0)
+                    
+                    # Apply filters
+                    if session_id and event.session_id != session_id:
+                        continue
+                    if event_types and event.event_type not in event_types:
+                        continue
+                    if since and event.timestamp < since:
+                        continue
+                    
+                    yield event
+                    
+                except asyncio.TimeoutError:
+                    # Continue streaming if no events
+                    continue
+                except Exception as e:
+                    self.logger.error(f"Error in event streaming: {e}")
+                    break
+                    
+        finally:
+            self._event_streaming_active = False
+    
+    async def subscribe_to_events(
+        self,
+        callback: Callable[[ProcessingEvent], None],
+        session_id: Optional[str] = None,
+        event_types: Optional[List[EventType]] = None
+    ) -> str:
+        """
+        Subscribe to processing events with callback.
+        
+        Args:
+            callback: Function to call for each event
+            session_id: Optional session ID to filter events
+            event_types: Optional event types to filter
+            
+        Returns:
+            Subscription ID for unsubscribing later
+        """
+        import uuid
+        subscription_id = str(uuid.uuid4())
+        
+        self._event_subscribers[subscription_id] = {
+            "callback": callback,
+            "session_id": session_id,
+            "event_types": event_types
+        }
+        
+        return subscription_id
+    
+    async def unsubscribe_from_events(
+        self,
+        subscription_id: str
+    ) -> bool:
+        """
+        Unsubscribe from event notifications.
+        
+        Args:
+            subscription_id: ID of subscription to cancel
+            
+        Returns:
+            True if subscription was cancelled
+        """
+        if subscription_id in self._event_subscribers:
+            del self._event_subscribers[subscription_id]
+            return True
+        return False
+    
+    # Batch Processing Methods
+    
+    async def batch_create_claims(
+        self,
+        claims_data: List[Dict[str, Any]],
+        session_id: Optional[str] = None
+    ) -> List[Claim]:
+        """
+        Create multiple claims in batch for better performance.
+        
+        Args:
+            claims_data: List of claim creation data
+            session_id: Optional session ID for context
+            
+        Returns:
+            List of created claims
+        """
+        return await self._batch_create_claims(claims_data)
+    
+    async def batch_evaluate_claims(
+        self,
+        claim_ids: List[str],
+        session_id: Optional[str] = None
+    ) -> List[EvaluationResult]:
+        """
+        Evaluate multiple claims in batch.
+        
+        Args:
+            claim_ids: List of claim IDs to evaluate
+            session_id: Optional session ID for context
+            
+        Returns:
+            List of evaluation results
+        """
+        results = []
+        
+        # Submit all claims for evaluation in parallel
+        evaluation_tasks = []
+        for claim_id in claim_ids:
+            task = self.evaluate_claim(claim_id, session_id)
+            evaluation_tasks.append(task)
+        
+        # Wait for all evaluations to complete
+        if evaluation_tasks:
+            eval_results = await asyncio.gather(*evaluation_tasks, return_exceptions=True)
+            
+            for result in eval_results:
+                if isinstance(result, Exception):
+                    # Create error result
+                    error_result = EvaluationResult(
+                        success=False,
+                        claim_id="unknown",
+                        original_confidence=0.0,
+                        new_confidence=0.0,
+                        state=ClaimState.EXPLORE,
+                        evaluation_summary=f"Evaluation failed: {str(result)}",
+                        errors=[str(result)]
+                    )
+                    results.append(error_result)
+                else:
+                    results.append(result)
+        
+        return results
+    
+    # Health and Status Methods
+    
+    async def get_health_status(self) -> Dict[str, Any]:
+        """
+        Get health status of processing layer.
+        
+        Returns:
+            Dictionary containing health information
+        """
+        try:
+            # Check services
+            services_healthy = {
+                "data_manager": self.data_manager is not None,
+                "llm_bridge": self.llm_bridge.is_available() if self.llm_bridge else False,
+                "async_evaluation": self.async_evaluation is not None and self._services_started,
+                "context_collector": self.context_collector is not None,
+                "tool_creator": self.tool_creator is not None
+            }
+            
+            # Overall health
+            overall_healthy = all(services_healthy.values())
+            
+            # Performance metrics
+            stats = self.get_performance_stats()
+            
+            return {
+                "healthy": overall_healthy,
+                "timestamp": datetime.utcnow().isoformat(),
+                "services": services_healthy,
+                "performance": stats.get("performance", {}),
+                "cache_stats": stats.get("cache_stats", {}),
+                "active_sessions": len(self._sessions),
+                "event_subscribers": len(self._event_subscribers)
+            }
+            
+        except Exception as e:
+            return {
+                "healthy": False,
+                "timestamp": datetime.utcnow().isoformat(),
+                "error": str(e)
+            }
+    
+    async def get_interface_statistics(
+        self,
+        session_id: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Get processing statistics for interface.
+        
+        Args:
+            session_id: Optional session ID for session-specific stats
+            
+        Returns:
+            Dictionary containing statistics
+        """
+        # Use existing get_statistics method and enhance it
+        base_stats = self.get_statistics()
+        
+        # Add interface-specific stats
+        interface_stats = {
+            "active_sessions": len(self._sessions),
+            "event_subscribers": len(self._event_subscribers),
+            "event_streaming_active": self._event_streaming_active,
+            "total_sessions_created": self._session_counter
+        }
+        
+        base_stats.update(interface_stats)
+        return base_stats
+    
+    async def cleanup_resources(
+        self,
+        session_id: Optional[str] = None
+    ) -> bool:
+        """
+        Clean up resources and temporary data.
+        
+        Args:
+            session_id: Optional session ID for session-specific cleanup
+            
+        Returns:
+            True if cleanup was successful
+        """
+        try:
+            if session_id:
+                # Clean up specific session
+                if session_id in self._sessions:
+                    del self._sessions[session_id]
+            else:
+                # Clean up all resources
+                self._sessions.clear()
+                self._event_subscribers.clear()
+                self._event_streaming_active = False
+                
+                # Clear event queue
+                while not self._event_queue.empty():
+                    try:
+                        self._event_queue.get_nowait()
+                    except asyncio.QueueEmpty:
+                        break
+            
+            # Clear caches
+            self.clear_all_caches()
+            
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Cleanup failed: {e}")
+            return False
+    
+    # Helper Methods for Event Management
+    
+    async def _emit_event(
+        self,
+        event_type: EventType,
+        session_id: Optional[str] = None,
+        claim_id: Optional[str] = None,
+        tool_name: Optional[str] = None,
+        data: Optional[Dict[str, Any]] = None,
+        message: Optional[str] = None,
+        progress: Optional[float] = None
+    ):
+        """Emit a processing event"""
+        try:
+            event = ProcessingEvent(
+                event_type=event_type,
+                session_id=session_id,
+                claim_id=claim_id,
+                tool_name=tool_name,
+                data=data or {},
+                message=message,
+                progress=progress
+            )
+            
+            # Add to event queue for streaming
+            await self._event_queue.put(event)
+            
+            # Notify subscribers
+            for sub_id, subscriber in self._event_subscribers.items():
+                # Apply filters
+                if subscriber["session_id"] and event.session_id != subscriber["session_id"]:
+                    continue
+                if subscriber["event_types"] and event.event_type not in subscriber["event_types"]:
+                    continue
+                
+                try:
+                    # Call subscriber callback
+                    subscriber["callback"](event)
+                except Exception as e:
+                    self.logger.error(f"Error in subscriber {sub_id}: {e}")
+                    
+        except Exception as e:
+            self.logger.error(f"Error emitting event {event_type}: {e}")
 
 
 class ExplorationResult:
