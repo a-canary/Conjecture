@@ -17,9 +17,19 @@ from .llm.chutes_integration import ChutesProcessor
 # from .llm.anthropic_integration import AnthropicProcessor  # Commented out - module not found
 # from .llm.google_integration import GoogleProcessor, GOOGLE_AVAILABLE  # Commented out - module not found
 # from .llm.cohere_integration import CohereProcessor  # Commented out - module not found
-from .llm.local_providers_adapter import LocalProviderProcessor
-from ..core.models import Claim
-from ..config.unified_config import UnifiedConfig
+try:
+    from .llm.local_providers_adapter import LocalProviderProcessor
+    from ..core.models import Claim
+    from ..config.unified_config import UnifiedConfig
+except ImportError:
+    # Handle relative import issues for test compatibility
+    import sys
+    import os
+    # Add src directory to path for absolute imports
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+    from src.processing.llm.local_providers_adapter import LocalProviderProcessor
+    from src.core.models import Claim
+    from src.config.unified_config import UnifiedConfig
 
 
 class UnifiedLLMManager:

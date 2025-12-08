@@ -11,8 +11,17 @@ import re
 import hashlib
 from functools import lru_cache
 
-from ..core.models import Claim
-from ..data.data_manager import DataManager
+try:
+    from ..core.models import Claim
+    from ..data.data_manager import DataManager
+except ImportError:
+    # Handle relative import issues for test compatibility
+    import sys
+    import os
+    # Add src directory to path for absolute imports
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+    from src.core.models import Claim
+    from src.data.data_manager import DataManager
 
 
 logger = logging.getLogger(__name__)

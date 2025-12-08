@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 from processing.llm.chutes_integration import ChutesProcessor, GenerationConfig
-from core.basic_models import BasicClaim, ClaimType, ClaimState
+from src.core.models import BasicClaim, ClaimType, ClaimState
 
 def test_chutes_integration():
     """Test Chutes.ai integration"""

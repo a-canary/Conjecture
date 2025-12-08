@@ -66,6 +66,12 @@ try:
 except ImportError:
     pass
 
+try:
+    from .simple_backend import SimpleBackend
+    BACKEND_REGISTRY.register("simple", SimpleBackend)
+except ImportError:
+    pass
+
 # Export main components
 __all__ = [
     "BACKEND_REGISTRY",

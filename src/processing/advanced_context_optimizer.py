@@ -454,7 +454,7 @@ class TinyLLMContextOptimizer:
         filler_patterns = [
             r'\b(basically|essentially|actually|really|virtually)\b',
             r'\b(i think|i believe|it seems to me)\b',
-            r'\b(as far as i'm concerned|from my perspective)\b',
+            r"\b(as far as i\'m concerned|from my perspective)\b",
         ]
 
         for pattern in filler_patterns:

@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 from conjecture import Conjecture
-from config.simple_config import Config
+from src.config.unified_config import UnifiedConfig as Config
 
 
 def test_basic_functionality():

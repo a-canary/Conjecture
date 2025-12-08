@@ -12,9 +12,9 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from core.unified_models import Claim, ClaimType, ClaimState
-from config.simple_config import Config
-from enhanced_conjecture import EnhancedConjecture, ExplorationResult
+from src.core.models import Claim, ClaimType, ClaimState
+from src.config.unified_config import UnifiedConfig as Config
+# from enhanced_conjecture import EnhancedConjecture, ExplorationResult  # Commented out as file doesn't exist
 
 
 class EndToEndIntegrationTest:

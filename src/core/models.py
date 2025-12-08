@@ -292,6 +292,11 @@ class Claim(BaseModel):
             return 0.8
 
 
+# Backward compatibility alias for BasicClaim
+# BasicClaim was the old name for Claim before the model consolidation
+BasicClaim = Claim
+
+
 class ClaimBatch(BaseModel):
     """Batch model for processing multiple claims"""
 

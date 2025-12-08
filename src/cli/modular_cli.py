@@ -73,8 +73,23 @@ def get_backend(backend_type: str = "auto") -> BaseCLI:
     """Get or create the specified backend instance."""
     global current_backend
 
-    # Create backend instance using new provider system
-    current_backend = BaseCLI()
+    # If we already have a backend instance, reuse it
+    if current_backend is not None:
+        return current_backend
+
+    # Import backend registry
+    from .backends import BACKEND_REGISTRY
+    
+    # Try to get an available backend
+    available_backends = BACKEND_REGISTRY.get_available_backends()
+    
+    if not available_backends:
+        # Use simple backend as fallback
+        current_backend = BACKEND_REGISTRY.get_backend("simple")
+    else:
+        # Use the first available backend
+        backend_name = available_backends[0]
+        current_backend = BACKEND_REGISTRY.get_backend(backend_name)
 
     # Check availability
     if not current_backend.is_available():
@@ -195,7 +210,13 @@ def create(
             task = progress.add_task("[cyan]Creating claim...", total=None)
 
             try:
-                claim_id = cli_backend.create_claim(content, confidence, user, analyze)
+                import asyncio
+                claim_coroutine = cli_backend.create_claim(content, confidence, user=user, analyze=analyze)
+                if asyncio.iscoroutine(claim_coroutine):
+                    claim = asyncio.run(claim_coroutine)
+                else:
+                    claim = claim_coroutine
+                claim_id = claim.id
                 progress.update(
                     task, description=f"Claim {claim_id} created successfully!"
                 )
@@ -237,7 +258,12 @@ def get(
             task = progress.add_task("[cyan]Retrieving claim...", total=None)
 
             try:
-                claim = cli_backend.get_claim(claim_id)
+                import asyncio
+                claim_coroutine = cli_backend.get_claim(claim_id)
+                if asyncio.iscoroutine(claim_coroutine):
+                    claim = asyncio.run(claim_coroutine)
+                else:
+                    claim = claim_coroutine
 
                 if claim:
                     progress.update(task, description="Claim retrieved successfully!")
@@ -480,15 +506,14 @@ def config():
         # Show available providers
         console.print(f"\n[bold]Available Providers:[/bold]")
         backend = get_backend()
-        providers = backend.provider_manager.get_providers()
-        for i, provider in enumerate(providers):
-            console.print(
-                f"  • Provider {i + 1}: {provider.get('name', 'Unknown')} ({provider.get('url', 'No URL')})"
-            )
+        if hasattr(backend, 'provider_manager'):
+            providers = backend.provider_manager.get_providers()
+            for i, provider in enumerate(providers):
+                console.print(
+                    f"  • Provider {i + 1}: {provider.get('name', 'Unknown')} ({provider.get('url', 'No URL')})"
+                )
         else:
-            console.print("Configure at least one provider:")
-            console.print("  • Run: [cyan]conjecture setup[/cyan]")
-            console.print("  • Edit: [cyan]~/.conjecture/config.json[/cyan]")
+            console.print(f"  • Using {backend.name} backend (no external providers)")
 
 
 @app.command()
@@ -499,24 +524,28 @@ def providers():
 
     try:
         backend = get_backend()
-        providers = backend.provider_manager.get_providers()
+        if hasattr(backend, 'provider_manager'):
+            providers = backend.provider_manager.get_providers()
 
-        if not providers:
-            console.print("[red]No providers configured[/red]")
-            console.print("\n[yellow]Setup Instructions:[/yellow]")
-            console.print("1. Run: conjecture setup")
-            console.print("2. Edit: ~/.conjecture/config.json")
-            return
+            if not providers:
+                console.print("[red]No providers configured[/red]")
+                console.print("\n[yellow]Setup Instructions:[/yellow]")
+                console.print("1. Run: conjecture setup")
+                console.print("2. Edit: ~/.conjecture/config.json")
+                return
 
-        console.print(f"[bold green]Found {len(providers)} provider(s):[/bold green]")
+            console.print(f"[bold green]Found {len(providers)} provider(s):[/bold green]")
 
-        for i, provider in enumerate(providers):
-            console.print(f"  • Provider {i + 1}: {provider.get('name', 'Unknown')}")
-            console.print(f"    URL: {provider.get('url', 'No URL')}")
-            console.print(f"    Status: {provider.get('status', 'Unknown')}")
-            if provider.get("api"):
-                console.print(f"    API Key: {provider.get('api')}")
-            console.print()
+            for i, provider in enumerate(providers):
+                console.print(f"  • Provider {i + 1}: {provider.get('name', 'Unknown')}")
+                console.print(f"    URL: {provider.get('url', 'No URL')}")
+                console.print(f"    Status: {provider.get('status', 'Unknown')}")
+                if provider.get("api"):
+                    console.print(f"    API Key: {provider.get('api')}")
+                console.print()
+        else:
+            console.print(f"[bold green]Using {backend.name} backend[/bold green]")
+            console.print("This backend doesn't use external providers")
 
     except Exception as e:
         console.print(f"[red]Error loading providers: {e}[/red]")

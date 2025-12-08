@@ -6,7 +6,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "src"))
 
-from core.basic_models import BasicClaim, ClaimScope, ClaimType, ClaimState
+from src.core.models import BasicClaim, ClaimScope, ClaimType, ClaimState
 
 
 class TestScopePromotion(unittest.TestCase):
