@@ -45,14 +45,29 @@ class SimplifiedLLMManager:
                 config = json.load(f)
             
             providers = []
-            for name, provider_config in config.get("providers", {}).items():
-                providers.append({
-                    "name": name,
-                    "url": provider_config.get("url", ""),
-                    "api": provider_config.get("api", provider_config.get("key", "")),
-                    "model": provider_config.get("model", ""),
-                    "priority": provider_config.get("priority", 999)
-                })
+            providers_config = config.get("providers", [])
+            
+            # Handle both list and dict formats for backward compatibility
+            if isinstance(providers_config, list):
+                # New format: list of provider objects
+                for provider_config in providers_config:
+                    providers.append({
+                        "name": provider_config.get("name", f"provider_{len(providers)}"),
+                        "url": provider_config.get("url", ""),
+                        "api": provider_config.get("api", provider_config.get("key", "")),
+                        "model": provider_config.get("model", ""),
+                        "priority": provider_config.get("priority", 999)
+                    })
+            elif isinstance(providers_config, dict):
+                # Old format: dict of named provider configs
+                for name, provider_config in providers_config.items():
+                    providers.append({
+                        "name": name,
+                        "url": provider_config.get("url", ""),
+                        "api": provider_config.get("api", provider_config.get("key", "")),
+                        "model": provider_config.get("model", ""),
+                        "priority": provider_config.get("priority", 999)
+                    })
             
             return providers
             

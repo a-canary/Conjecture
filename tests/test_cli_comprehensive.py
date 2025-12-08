@@ -44,15 +44,15 @@ class TestModularCLI:
     
     def test_get_backend_with_valid_config(self, mock_config):
         """Test getting backend with valid configuration"""
-        with patch('src.cli.modular_cli.BaseCLI') as mock_base_cli:
-            mock_cli_instance = Mock()
-            mock_cli_instance.is_available.return_value = True
-            mock_base_cli.return_value = mock_cli_instance
+        with patch('src.conjecture.Conjecture') as mock_conjecture:
+            mock_interface_instance = Mock()
+            mock_interface_instance.is_available.return_value = True
+            mock_conjecture.return_value = mock_interface_instance
             
             backend = get_backend()
             
-            assert backend == mock_cli_instance
-            mock_base_cli.assert_called_once()
+            assert backend == mock_interface_instance
+            mock_conjecture.assert_called_once()
     
     def test_get_backend_no_providers(self, mock_config):
         """Test getting backend when no providers are available"""
