@@ -13,7 +13,7 @@ import warnings
 from .embeddings import LocalEmbeddingManager, MockEmbeddingManager
 from .ollama_client import OllamaClient, ModelProvider
 from .vector_store import LocalVectorStore, MockVectorStore
-from ..config.local_config import LocalConfig, ServiceMode
+from src.config.local_config import LocalConfig, ServiceMode
 
 logger = logging.getLogger(__name__)
 

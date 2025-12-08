@@ -8,8 +8,8 @@ import asyncio
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 
-from ..base_cli import BaseCLI, DatabaseError, BackendNotAvailableError
-from ...core.models import Claim, generate_claim_id
+from src.cli.base_cli import BaseCLI, DatabaseError, BackendNotAvailableError
+from src.core.models import Claim, generate_claim_id
 
 
 class SimpleBackend(BaseCLI):

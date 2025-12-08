@@ -5,7 +5,7 @@ Provides pluggable backend system for different LLM providers
 """
 
 from typing import Dict, Type, Any, List
-from ..base_cli import BaseCLI, BackendNotAvailableError
+from src.cli.base_cli import BaseCLI, BackendNotAvailableError
 
 
 class BackendRegistry:

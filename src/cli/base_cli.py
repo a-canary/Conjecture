@@ -7,7 +7,7 @@ Provides abstract base class and common exceptions for CLI implementations
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
 
-from ..core.models import Claim, ClaimFilter
+from src.core.models import Claim, ClaimFilter
 
 
 class ClaimValidationError(Exception):

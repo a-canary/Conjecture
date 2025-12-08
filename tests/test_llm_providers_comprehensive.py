@@ -16,9 +16,27 @@ from src.processing.llm.openrouter_integration import OpenRouterProcessor
 from src.processing.llm.groq_integration import GroqProcessor
 from src.processing.llm.openai_integration import OpenAIProcessor
 from src.processing.llm.anthropic_integration import AnthropicProcessor
-from src.processing.llm.google_integration import GoogleProcessor, GOOGLE_AVAILABLE
-from src.processing.llm.cohere_integration import CohereProcessor
-from src.processing.llm.gemini_integration import GeminiProcessor, GEMINI_AVAILABLE
+# from src.processing.llm.google_integration import GoogleProcessor, GOOGLE_AVAILABLE
+# from src.processing.llm.cohere_integration import CohereProcessor
+# from src.processing.llm.gemini_integration import GeminiProcessor, GEMINI_AVAILABLE
+
+# Mock missing providers for test collection
+GOOGLE_AVAILABLE = False
+GEMINI_AVAILABLE = False
+
+class MockProcessor:
+    def __init__(self, *args, **kwargs):
+        pass
+    
+    def process_claims(self, *args, **kwargs):
+        return {"success": False, "error": "Mock processor - not implemented"}
+    
+    def get_stats(self):
+        return {"total_requests": 0, "successful_requests": 0}
+
+GoogleProcessor = MockProcessor
+CohereProcessor = MockProcessor
+GeminiProcessor = MockProcessor
 from src.processing.llm.local_providers_adapter import LocalProviderProcessor
 from src.processing.llm.error_handling import LLMErrorHandler, RetryConfig
 

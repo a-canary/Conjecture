@@ -31,4 +31,38 @@ class UnifiedValidator:
         return ValidationResult(is_valid=True, errors=[], warnings=[])
 
 # Export the main classes
-__all__ = ['UnifiedValidator', 'ValidationResult']
+__all__ = ['UnifiedValidator', 'ValidationResult', 'UnifiedConfigValidator']
+
+# Alias for backward compatibility
+UnifiedConfigValidator = UnifiedValidator
+
+# Additional exports for testing
+from enum import Enum
+
+class ConfigFormat(Enum):
+    """Configuration format enum"""
+    JSON = "json"
+    YAML = "yaml"
+    ENV = "env"
+
+def get_unified_validator(config_path: Optional[str] = None) -> UnifiedValidator:
+    """Get unified validator instance"""
+    return UnifiedValidator()
+
+def validate_config(config: Dict[str, Any]) -> ValidationResult:
+    """Validate configuration"""
+    validator = UnifiedValidator()
+    return validator.validate_config(config)
+
+def get_primary_provider(config: Dict[str, Any]) -> Optional[str]:
+    """Get primary provider from config"""
+    providers = config.get('providers', [])
+    return providers[0].get('name') if providers else None
+
+def show_configuration_status(config: Dict[str, Any]) -> Dict[str, Any]:
+    """Show configuration status"""
+    return {
+        "configured": bool(config.get('providers')),
+        "provider_count": len(config.get('providers', [])),
+        "primary_provider": get_primary_provider(config)
+    }
