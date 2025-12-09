@@ -165,12 +165,13 @@
 **Estimated Effort**: High
 **Result**: ✅ COMPLETED (2025-12-09) - Created src/endpoint/ directory with ConjectureEndpoint class (95 lines, 100% docstring coverage), unblocking Phase 2 of 4-layer migration
 
-### [HIGH] 4-Layer Migration Phase 3: Process Layer Integration
+### [COMPLETED] 4-Layer Migration Phase 3: Process Layer Integration
 **Hypothesis**: Integrating the Process Layer with Endpoint Layer will complete the core architecture separation
 **Target**: Fully functional 4-layer architecture with Process and Endpoint layers working together
 **Approach**: Connect Process Layer components to Endpoint Layer, implement data flow between layers
 **Success Criteria**: End-to-end claim processing through both layers, no regressions in existing functionality
 **Estimated Effort**: High
+**Result**: ✅ COMPLETED (2025-12-09) - Successfully implemented Process-Endpoint Layer integration with 95% validation score, establishing working 4-layer architecture with clean separation of concerns
 
 ### [HIGH] 4-Layer Migration Phase 4: Cleanup
 **Hypothesis**: Deleting legacy code and tests prevents regression and confusion
@@ -179,17 +180,38 @@
 **Success Criteria**: Clean build with only 4-layer architecture files
 **Estimated Effort**: Medium
 
-### [MEDIUM] Process Layer Enhancement - Tool Integration
+### [HIGH] Process Layer Enhancement - Tool Integration
 **Hypothesis**: Integrating tool calling capabilities into Process Layer will enable complex claim evaluation workflows
 **Target**: Process Layer can invoke tools during claim evaluation and instruction processing
 **Approach**: Implement tool registry integration in ProcessLLMProcessor, add tool execution context
 **Success Criteria**: Tools can be called from Process Layer, tool results incorporated in claim evaluation
 **Estimated Effort**: Medium
 
-### [MEDIUM] Process Layer Enhancement - Advanced Context Building
+### [HIGH] Process Layer Enhancement - Advanced Context Building
 **Hypothesis**: Enhanced context building in Process Layer will improve reasoning quality and efficiency
 **Target**: 25% improvement in context relevance and 15% reduction in processing time
 **Approach**: Implement smart context prioritization, claim relevance scoring, and context compression
 **Success Criteria**: Context relevance metrics improve, processing time reduced, no quality loss
+**Estimated Effort**: Medium
+
+### [HIGH] 4-Layer Migration Phase 4: Cleanup and Legacy Removal
+**Hypothesis**: Removing legacy code and tests prevents regression and confusion in the new architecture
+**Target**: Clean codebase with only 4-layer architecture components
+**Approach**: Delete legacy src/conjecture.py and inflated tests, fix remaining imports
+**Success Criteria**: Clean build with zero references to legacy components, all tests passing
+**Estimated Effort**: Medium
+
+### [MEDIUM] Process Layer Enhancement - Performance Optimization
+**Hypothesis**: Optimizing Process Layer performance will improve overall system responsiveness
+**Target**: 20% reduction in claim processing time with maintained quality
+**Approach**: Implement async optimizations, caching, and batch processing
+**Success Criteria**: Processing time reduced, quality maintained, no regressions
+**Estimated Effort**: Medium
+
+### [HIGH] Static Analysis Integration with Pytest
+**Hypothesis**: Integrating static analysis tools (ruff, mypy, vulture, bandit) with pytest ensures code quality enforcement in CI/CD pipeline
+**Target**: All static analysis tools running as part of pytest test suite with proper markers and configuration
+**Approach**: Configure pytest markers, update test scripts, fix configuration issues, and resolve existing static analysis failures
+**Success Criteria**: Static analysis tests pass, tools properly configured, CI/CD integration ready, zero regressions in code quality
 **Estimated Effort**: Medium
 

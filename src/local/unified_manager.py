@@ -1,1 +1,0 @@
-echo "Deleting deprecated src/local/unified_manager.py"
