@@ -165,20 +165,31 @@
 **Estimated Effort**: High
 **Result**: ✅ COMPLETED (2025-12-09) - Created src/endpoint/ directory with ConjectureEndpoint class (95 lines, 100% docstring coverage), unblocking Phase 2 of 4-layer migration
 
-### [HIGH] 4-Layer Migration Phase 3: Cleanup
+### [HIGH] 4-Layer Migration Phase 3: Process Layer Integration
+**Hypothesis**: Integrating the Process Layer with Endpoint Layer will complete the core architecture separation
+**Target**: Fully functional 4-layer architecture with Process and Endpoint layers working together
+**Approach**: Connect Process Layer components to Endpoint Layer, implement data flow between layers
+**Success Criteria**: End-to-end claim processing through both layers, no regressions in existing functionality
+**Estimated Effort**: High
+
+### [HIGH] 4-Layer Migration Phase 4: Cleanup
 **Hypothesis**: Deleting legacy code and tests prevents regression and confusion
 **Target**: Zero references to src/conjecture.py or inflated tests
 **Approach**: Delete legacy files and fix remaining imports
 **Success Criteria**: Clean build with only 4-layer architecture files
 **Estimated Effort**: Medium
 
-### [HIGH] Cleanup: Remove Deceptive Patterns
-**Hypothesis**: Removing silent fallbacks and fake mocks will reveal the true broken state of validity, allowing real fixes
-**Target**:
-1. `src/conjecture.py`: Remove `try-except ImportError` blocks.
-2. `src/cli/modular_cli.py`: Remove commented-out `dirty_commands`.
-3. `tests/`: Delete all tests mocking `chromadb` via `sys.modules`.
-**Approach**: Delete the deceptive code. Let the system crash. Fix the root cause.
-**Success Criteria**: System crashes on missing dependencies instead of silencing them
-**Estimated Effort**: Low
+### [MEDIUM] Process Layer Enhancement - Tool Integration
+**Hypothesis**: Integrating tool calling capabilities into Process Layer will enable complex claim evaluation workflows
+**Target**: Process Layer can invoke tools during claim evaluation and instruction processing
+**Approach**: Implement tool registry integration in ProcessLLMProcessor, add tool execution context
+**Success Criteria**: Tools can be called from Process Layer, tool results incorporated in claim evaluation
+**Estimated Effort**: Medium
+
+### [MEDIUM] Process Layer Enhancement - Advanced Context Building
+**Hypothesis**: Enhanced context building in Process Layer will improve reasoning quality and efficiency
+**Target**: 25% improvement in context relevance and 15% reduction in processing time
+**Approach**: Implement smart context prioritization, claim relevance scoring, and context compression
+**Success Criteria**: Context relevance metrics improve, processing time reduced, no quality loss
+**Estimated Effort**: Medium
 

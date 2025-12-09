@@ -6,11 +6,18 @@ This document provides essential information for AI agents working in the Conjec
 
 Conjecture is an AI-Powered Evidence-Based Reasoning System that enables users to create, search, and analyze evidence-based claims using local or cloud AI providers.
 
-**Architecture**: CLI Interface → Core Engine → Data Layer (SQLite + ChromaDB)
+**Architecture**: docs/ARCHITECTURE.md
 
 ## 🚀 Code-Test-Commit Workflow (MANDATORY)
 
 ### **ESTABLISHED 2025-12-07 - ALL AGENTS MUST FOLLOW**
+
+> [!IMPORTANT]
+> **Current Strategic Focus**
+> 1. **Deep Code Analysis**: Fix root causes, not symptoms. Do not patch over issues with `try/except` or fake mocks.
+> 2. **Dead Code Removal**: Aggressively verify and delete unreachable or duplicate code.
+> 3. **Test Rationalization**: Quality over quantity. Remove inflated, repetitive, or misleading tests.
+> 4. **Deceptive Pattern Removal**: Eliminate silent failures and "safety" blocks that hide actual bugs.
 
 #### **Core Workflow Rules**
 1. **One Small Bug/Feature at a Time** - Focus on single, manageable changes
@@ -31,12 +38,9 @@ Conjecture is an AI-Powered Evidence-Based Reasoning System that enables users t
 - **Commit Readiness**: All blocking issues resolved, warnings documented
 
 ## Essential Docs
-limit project these core docs, plus docs/ for design and how to.
-- ANALYSIS.md: most recent comprehensive analysis of tests and metrics, rewrite after each comprehensive test results
-- RESULTS.md: After experiment, log the hypothesis and result in a single short paragraph. Use this to guide replanning
-- TODO.md: breakdown of remaining work to persist between agents
-
-IMPORTANT: organize each feature development or experiement in a git branch based on "Base" Branch. When metrics and analysis improves, rebase "Base" to current work branch. If hypothesis or feature dev failed, revert to Base and retry or do next todo item.
+- ANALYSIS.md: most recent comprehensive analysis of tests, metrics, and benchmarks to use a baseline to compare WIP changes to before committing, rewrite after each comprehensive test results, git diff to compare to baseline
+- RESULTS.md: log of past work
+- TODO.md: backlog of future work
 
 CRITICAL: ALL AGENTS must follow the Code-Test-Commit workflow rules documented in TODO.md Section 1. No exceptions.
 
@@ -324,6 +328,7 @@ python scripts/migrate_to_config.py
 1. **No duplicate implementations**: Before creating new files, search existing code. If similar functionality exists, improve it instead of creating duplicates
 2. **Keep single source of truth**: Only maintain the most recent/valuable version of each component. Archive or delete outdated versions immediately
 3. **Post-feature cleanup**: After each feature git commit, perform a "purge-organize-rename-fixup" commit to remove duplicates, organize files, and fix references
+4. **NO Deceptive Safety**: Do not use broad `try/except` blocks (e.g., `except Exception: pass`) or mock modules (e.g., `sys.modules['...'] = Mock()`) to force code to run. Let it fail so we can fix the root cause.
 
 ### Key Dependencies
 - **Pydantic 2.5.2**: Data validation and models
