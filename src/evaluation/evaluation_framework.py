@@ -210,7 +210,7 @@ class EvaluationFramework:
                     metric = self.metrics[metric_name]
                     
                     # Create dataset for this metric
-                    dataset = EvaluationDataset(test_cases=test_cases)
+                    dataset = EvaluationDataset(goldens=test_cases)
                     
                     # Run evaluation
                     eval_results = evaluate(

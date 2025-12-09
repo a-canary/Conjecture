@@ -211,9 +211,17 @@ class TestChromaManager:
             query_embedding, where=where_filter
         )
 
-        assert len(results) == 1
-        assert results[0]["id"] == "c0000001"
-        assert results[0]["metadata"]["confidence"] == 0.8
+        assert len(results) == 2
+        # Should return both c0000001 (confidence 0.8) and c0000003 (confidence 0.9)
+        result_ids = [result["id"] for result in results]
+        assert "c0000001" in result_ids
+        assert "c0000003" in result_ids
+        # Verify confidence values are correct
+        for result in results:
+            if result["id"] == "c0000001":
+                assert result["metadata"]["confidence"] == 0.8
+            elif result["id"] == "c0000003":
+                assert result["metadata"]["confidence"] == 0.9
 
     @pytest.mark.asyncio
     async def test_search_by_text(self, chroma_manager):
@@ -297,8 +305,8 @@ class TestChromaManager:
     async def test_batch_add_embeddings_mismatch(self, chroma_manager):
         """Test batch add with mismatched claims and embeddings."""
         claims = [
-            Claim(id="c0000001", content="Claim 1", confidence=0.5, created_by="user1"),
-            Claim(id="c0000002", content="Claim 2", confidence=0.6, created_by="user1"),
+            Claim(id="c0000001", content="This is claim 1 with enough content", confidence=0.5, created_by="user1"),
+            Claim(id="c0000002", content="This is claim 2 with enough content", confidence=0.6, created_by="user1"),
         ]
 
         embeddings = [[0.1] * 384]  # Only one embedding for two claims
@@ -313,14 +321,14 @@ class TestChromaManager:
         claims = [
             Claim(
                 id="c0000001",
-                content="Original 1",
+                content="Original claim 1 with sufficient content length",
                 confidence=0.5,
                 tags=["original"],
                 created_by="user1",
             ),
             Claim(
                 id="c0000002",
-                content="Original 2",
+                content="Original claim 2 with sufficient content length",
                 confidence=0.6,
                 tags=["original"],
                 created_by="user1",
@@ -334,14 +342,14 @@ class TestChromaManager:
         updated_claims = [
             Claim(
                 id="c0000001",
-                content="Updated 1",
+                content="Updated claim 1 with sufficient content length",
                 confidence=0.8,
                 tags=["updated"],
                 created_by="user1",
             ),
             Claim(
                 id="c0000002",
-                content="Updated 2",
+                content="Updated claim 2 with sufficient content length",
                 confidence=0.9,
                 tags=["updated"],
                 created_by="user1",
@@ -363,9 +371,9 @@ class TestChromaManager:
         """Test batch deletion of embeddings."""
         # Add embeddings
         claims = [
-            Claim(id="c0000001", content="Claim 1", confidence=0.5, created_by="user1"),
-            Claim(id="c0000002", content="Claim 2", confidence=0.6, created_by="user1"),
-            Claim(id="c0000003", content="Claim 3", confidence=0.7, created_by="user2"),
+            Claim(id="c0000001", content="This is test claim number one", confidence=0.5, created_by="user1"),
+            Claim(id="c0000002", content="This is test claim number two", confidence=0.6, created_by="user1"),
+            Claim(id="c0000003", content="This is test claim number three", confidence=0.7, created_by="user2"),
         ]
 
         embeddings = [[0.1] * 384, [0.2] * 384, [0.3] * 384]
@@ -390,8 +398,8 @@ class TestChromaManager:
 
         # Add some embeddings
         claims = [
-            Claim(id="c0000001", content="Claim 1", confidence=0.5, created_by="user1"),
-            Claim(id="c0000002", content="Claim 2", confidence=0.6, created_by="user1"),
+            Claim(id="c0000001", content="This is test claim number one", confidence=0.5, created_by="user1"),
+            Claim(id="c0000002", content="This is test claim number two", confidence=0.6, created_by="user1"),
         ]
 
         embeddings = [[0.1] * 384, [0.2] * 384]

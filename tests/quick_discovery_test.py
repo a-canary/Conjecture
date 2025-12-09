@@ -6,10 +6,12 @@ Quick test of the discovery system
 import asyncio
 import sys
 import os
+import pytest
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
+@pytest.mark.asyncio
 async def test_basic_functionality():
     """Test basic discovery functionality"""
     print("🔍 Testing Provider Discovery System...")
