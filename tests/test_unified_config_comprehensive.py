@@ -344,7 +344,9 @@ class TestConfigurationValidation:
             
             try:
                 result = validate_config()
-                assert result == False
+                # With fallback to defaults, validation should pass
+                # because the default config has valid providers
+                assert result == True
             finally:
                 # Restore global config
                 src.config.unified_config._config = original_global

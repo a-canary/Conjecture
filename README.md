@@ -160,34 +160,22 @@ python conjecture export --format json --output results.json
 | **WriteCodeFile** | Generate and save code | `generate --language python "sorting algorithm"` |
 
 ## 🏗️ Architecture
+> **Canonical Reference**: See [specs/architecture.md](specs/architecture.md).
 
-Conjecture uses a clean, simplified architecture after major refactoring:
+Conjecture uses a strict **4-Layer Architecture**:
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   CLI Interface │    │  Core Engine    │    │   Data Layer    │
-│                 │    │                 │    │                 │
-│ • Commands      │───▶│ • Processing    │───▶│ • SQLite DB     │
-│ • Backends      │    │ • Tools         │    │ • Embeddings    │
-│ • Validation    │    │ • Analysis      │    │ • Search        │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
+1.  **Presentation Layer** (`src/cli`): User interaction.
+2.  **Endpoint Layer** (`src/endpoint`): Public API.
+3.  **Process Layer** (`src/process`): Intelligence & Context.
+4.  **Data Layer** (`src/data`): Universal Claim Storage.
 
-### Key Components
-- **`conjecture`**: Main entry point script
-- **`src/cli/modular_cli.py`**: Unified CLI with backend auto-detection
-- **`src/conjecture.py`**: Core Conjecture class with async evaluation
-- **`src/core.py`**: Core models and utilities
-- **`data/conjecture.db`**: SQLite database for claim storage
+This ensures clean separation between "How we store it" (Data), "How we think about it" (Process), and "How we show it" (Presentation).
 
-### 🎉 Recent Major Simplification
-The codebase has undergone significant refactoring to reduce complexity:
-
-- **87% Reduction** in duplicate data classes (40 → 5 classes)
-- **Unified Data Models**: Single source of truth for all configurations
-- **Simplified Context Models**: Streamlined LLM processing
-- **All CLI Commands**: Fully functional (create, get, search, analyze, prompt)
-- **Test Suite**: Validated and passing
+### 🚧 Migration Status
+The project is currently migrating to the **4-Layer Architecture**.
+- **Phase 1**: Documentation Standards (Complete)
+- **Phase 2**: Core Refactoring (In Progress - migrating from `conjecture.py` to `src/endpoint/`)
+- **Phase 3**: Cleanup (Planned)
 
 ## 🔧 Configuration
 

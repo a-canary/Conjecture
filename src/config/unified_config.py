@@ -121,26 +121,30 @@ def get_config() -> UnifiedConfig:
 
 def validate_config() -> bool:
     """Validate configuration (simplified for JSON-based config)"""
-    config = get_config()
+    try:
+        config = get_config()
 
-    # Check if we have at least one provider
-    if not config.providers:
-        print("No providers configured")
-        return False
-
-    # Check if primary provider has required fields
-    primary = config.get_primary_provider()
-    if not primary:
-        print("No primary provider found")
-        return False
-
-    required_fields = ["url", "model"]
-    for field in required_fields:
-        if not primary.get(field):
-            print(f"Primary provider missing required field: {field}")
+        # Check if we have at least one provider
+        if not config.providers:
+            print("No providers configured")
             return False
 
-    return True
+        # Check if primary provider has required fields
+        primary = config.get_primary_provider()
+        if not primary:
+            print("No primary provider found")
+            return False
+
+        required_fields = ["url", "model"]
+        for field in required_fields:
+            if not primary.get(field):
+                print(f"Primary provider missing required field: {field}")
+                return False
+
+        return True
+    except Exception as e:
+        print(f"Configuration validation failed: {e}")
+        return False
 
 
 def reload_config():

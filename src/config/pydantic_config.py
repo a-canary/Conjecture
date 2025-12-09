@@ -148,6 +148,9 @@ class PydanticConfig:
             
             return settings
             
+        except json.JSONDecodeError as e:
+            # Re-raise JSON errors instead of falling back to defaults
+            raise ValueError(f"Invalid JSON in config file: {e}")
         except Exception as e:
             print(f"Error loading config: {e}")
             print("Creating default configuration...")
@@ -186,34 +189,54 @@ class PydanticConfig:
 
     def _setup_workspace_context(self):
         """Setup workspace context based on current directory"""
-        if self.config_hierarchy.is_workspace_config():
-            # We're in a workspace
-            self.settings.workspace.workspace = Path.cwd().name
-        else:
-            # Global workspace
-            self.settings.workspace.workspace = "default"
+        # Only set workspace if it's the default value
+        if self.settings.workspace.workspace == "default":
+            if self.config_hierarchy.is_workspace_config():
+                # We're in a workspace
+                self.settings.workspace.workspace = Path.cwd().name
+            else:
+                # Global workspace
+                self.settings.workspace.workspace = "default"
 
     def _setup_data_directory(self):
         """Setup data directory based on workspace settings"""
         workspace_name = self.settings.workspace.workspace
         
-        if workspace_name != "default":
-            # Workspace-specific data directory
-            workspace_dir = Path.cwd() / ".conjecture"
-            data_dir = workspace_dir / "data"
-            db_path = str(workspace_dir / "data" / "conjecture.db")
+        # Only override database_path if it's the default value
+        current_db_path = self.settings.database.database_path
+        is_default_path = current_db_path in ["data/conjecture.db", "conjecture.db"]
+        
+        if is_default_path:
+            if workspace_name != "default":
+                # Workspace-specific data directory
+                workspace_dir = Path.cwd() / ".conjecture"
+                data_dir = workspace_dir / "data"
+                db_path = str(workspace_dir / "data" / "conjecture.db")
+            else:
+                # Global data directory
+                home_dir = Path.home() / ".conjecture"
+                data_dir = home_dir / "data"
+                db_path = str(home_dir / "data" / "conjecture.db")
+            
+            # Update settings only if using default path
+            self.settings.workspace.data_dir = str(data_dir)
+            self.settings.database.database_path = db_path
+            
+            # Ensure data directory exists
+            data_dir.mkdir(parents=True, exist_ok=True)
         else:
-            # Global data directory
-            home_dir = Path.home() / ".conjecture"
-            data_dir = home_dir / "data"
-            db_path = str(home_dir / "data" / "conjecture.db")
+            # Respect custom database_path from config
+            # Ensure data directory exists for custom path
+            custom_db_path = Path(self.settings.database.database_path)
+            custom_db_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            # Set data_dir to parent directory of custom database path
+            self.settings.workspace.data_dir = str(custom_db_path.parent)
         
-        # Update settings
-        self.settings.workspace.data_dir = str(data_dir)
-        self.settings.database.database_path = db_path
-        
-        # Ensure data directory exists
-        data_dir.mkdir(parents=True, exist_ok=True)
+        # Ensure data_dir is always set
+        if not self.settings.workspace.data_dir:
+            # Fallback to current directory if nothing else is set
+            self.settings.workspace.data_dir = str(Path.cwd())
 
     # Backward compatibility methods
     @property
@@ -299,6 +322,9 @@ class PydanticConfig:
             "default_config_exists": self.config_hierarchy.default_config.exists(),
             "available_providers": len(self.settings.get_available_providers()),
             "primary_provider": self.settings.get_primary_provider().name if self.settings.get_primary_provider() else None,
+            # Add backward compatibility keys for tests
+            "has_providers": len(self.settings.providers) > 0,
+            "provider_count": len(self.settings.providers),
         }
 
     def save_settings(self, target: Optional[str] = None):

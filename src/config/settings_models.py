@@ -29,13 +29,14 @@ class ProviderConfig(BaseModel):
     model_config = ConfigDict(
         validate_assignment=True,
         extra="forbid",
-        use_enum_values=True
+        use_enum_values=True,
+        populate_by_name=True
     )
 
     # Core required fields
     name: str = Field(..., description="Provider name")
     url: str = Field(..., description="Provider API URL")
-    api: str = Field(default="", description="API key (empty for local providers)")
+    api: str = Field(default="", description="API key (empty for local providers)", alias="api_key")
     model: str = Field(..., description="Default model name")
 
     # Optional metadata
@@ -44,6 +45,8 @@ class ProviderConfig(BaseModel):
     description: Optional[str] = Field(default=None, description="Provider description")
     max_tokens: Optional[int] = Field(default=4000, description="Maximum tokens for this provider")
     temperature: Optional[float] = Field(default=0.7, description="Default temperature")
+    timeout: Optional[int] = Field(default=30, description="Request timeout in seconds")
+    max_retries: Optional[int] = Field(default=3, description="Maximum retry attempts")
 
     @field_validator('name')
     @classmethod
@@ -72,13 +75,14 @@ class ProviderConfig(BaseModel):
     @model_validator(mode='after')
     def set_local_provider_flags(self) -> 'ProviderConfig':
         """Set local provider flags based on URL and name"""
-        # Create a new object to avoid recursion
+        # Modify self directly instead of returning a copy
         is_local = (
             self.name in ['ollama', 'lm_studio'] or
             'localhost' in self.url or '127.0.0.1' in self.url
         )
-        # Return a copy with the flag set
-        return self.model_copy(update={'is_local': is_local})
+        # Use object.__setattr__ to bypass Pydantic's immutability during validation
+        object.__setattr__(self, 'is_local', is_local)
+        return self
 
     def get_provider_type(self) -> Optional[ProviderType]:
         """Get the provider type enum"""
@@ -93,7 +97,7 @@ class ProviderConfig(BaseModel):
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization"""
-        return {
+        result = {
             "url": self.url,
             "api": self.api,
             "model": self.model,
@@ -104,11 +108,29 @@ class ProviderConfig(BaseModel):
             "max_tokens": self.max_tokens,
             "temperature": self.temperature,
         }
+        
+        # Include optional fields if they are set (not None)
+        if self.timeout is not None:
+            result["timeout"] = self.timeout
+        if self.max_retries is not None:
+            result["max_retries"] = self.max_retries
+            
+        return result
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "ProviderConfig":
         """Create ProviderConfig from dictionary"""
-        return cls(**data)
+        # Handle api_key -> api field mapping
+        if "api_key" in data and "api" not in data:
+            data = data.copy()
+            data["api"] = data.pop("api_key")
+        
+        # Filter out unknown fields to avoid extra_forbidden errors
+        allowed_fields = {"name", "url", "api", "api_key", "model", "priority", "is_local",
+                       "description", "max_tokens", "temperature", "timeout", "max_retries"}
+        filtered_data = {k: v for k, v in data.items() if k in allowed_fields}
+        
+        return cls(**filtered_data)
 
 
 class DatabaseSettings(BaseModel):
@@ -342,29 +364,60 @@ class ConjectureSettings(BaseModel):
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "ConjectureSettings":
         """Create settings from dictionary"""
-        # Handle providers
+        # Handle providers with proper field mapping
         providers_data = data.get("providers", [])
-        providers = [ProviderConfig.from_dict(p) for p in providers_data]
-        
-        # Create settings instance
-        settings = cls(providers=providers)
-        
-        # Override other fields from data
-        if "debug" in data:
-            settings.debug = data["debug"]
-        if "confidence_threshold" in data:
-            settings.processing.confidence_threshold = data["confidence_threshold"]
-        if "confident_threshold" in data:
-            settings.processing.confident_threshold = data["confident_threshold"]
-        if "max_context_size" in data:
-            settings.processing.max_context_size = data["max_context_size"]
-        if "batch_size" in data:
-            settings.processing.batch_size = data["batch_size"]
-        if "database_path" in data:
-            settings.database.database_path = data["database_path"]
-        if "user" in data:
-            settings.workspace.user = data["user"]
-        if "team" in data:
-            settings.workspace.team = data["team"]
+        providers = []
+        for provider_data in providers_data:
+            # Handle api_key -> api field mapping
+            if "api_key" in provider_data and "api" not in provider_data:
+                provider_data = provider_data.copy()
+                provider_data["api"] = provider_data.pop("api_key")
             
-        return settings
+            # Filter out unknown fields to avoid extra_forbidden errors
+            allowed_fields = {"name", "url", "api", "api_key", "model", "priority", "is_local",
+                           "description", "max_tokens", "temperature", "timeout", "max_retries"}
+            filtered_data = {k: v for k, v in provider_data.items() if k in allowed_fields}
+            providers.append(ProviderConfig(**filtered_data))
+        
+        # Extract other settings with proper handling
+        kwargs = {}
+        
+        # Core settings
+        if "debug" in data:
+            kwargs["debug"] = data["debug"]
+        
+        # Processing settings
+        processing_kwargs = {}
+        if "confidence_threshold" in data:
+            processing_kwargs["confidence_threshold"] = data["confidence_threshold"]
+        if "confident_threshold" in data:
+            processing_kwargs["confident_threshold"] = data["confident_threshold"]
+        if "max_context_size" in data:
+            processing_kwargs["max_context_size"] = data["max_context_size"]
+        if "batch_size" in data:
+            processing_kwargs["batch_size"] = data["batch_size"]
+        
+        # Database settings
+        database_kwargs = {}
+        if "database_path" in data:
+            database_kwargs["database_path"] = data["database_path"]
+        
+        # Workspace settings
+        workspace_kwargs = {}
+        if "user" in data:
+            workspace_kwargs["user"] = data["user"]
+        if "team" in data:
+            workspace_kwargs["team"] = data["team"]
+        if "workspace" in data:
+            workspace_kwargs["workspace"] = data["workspace"]
+        
+        # Create settings with all components
+        kwargs["providers"] = providers
+        if processing_kwargs:
+            kwargs["processing"] = ProcessingSettings(**processing_kwargs)
+        if database_kwargs:
+            kwargs["database"] = DatabaseSettings(**database_kwargs)
+        if workspace_kwargs:
+            kwargs["workspace"] = WorkspaceSettings(**workspace_kwargs)
+            
+        return cls(**kwargs)

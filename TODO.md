@@ -148,3 +148,24 @@
 **Approach**: Refactor TUI using modern terminal UI library
 **Success Criteria**: TUI supports all CLI operations, improved UX, keyboard shortcuts documented
 **Estimated Effort**: Medium
+
+### [HIGH] 4-Layer Migration Phase 1: Standards
+**Hypothesis**: Formalizing the 4-layer architecture documentation creates a single source of truth for refactoring
+**Target**: All specs and README aligned with specs/architecture.md
+**Approach**: Update docs to remove legacy "Enhanced" claims and point to new spec
+**Success Criteria**: No contradictory architecture claims in documentation
+**Estimated Effort**: Low
+
+### [HIGH] 4-Layer Migration Phase 2: Core Refactoring
+**Hypothesis**: Splitting the God Class into Endpoint and Process layers improves modularity
+**Target**: Functioning ConjectureEndpoint and ProcessLayer separated from legacy code
+**Approach**: Create src/process and src/endpoint, migrate logic incrementally
+**Success Criteria**: CLI calls ConjectureEndpoint successfully without src/conjecture.py
+**Estimated Effort**: High
+
+### [HIGH] 4-Layer Migration Phase 3: Cleanup
+**Hypothesis**: Deleting legacy code and tests prevents regression and confusion
+**Target**: Zero references to src/conjecture.py or inflated tests
+**Approach**: Delete legacy files and fix remaining imports
+**Success Criteria**: Clean build with only 4-layer architecture files
+**Estimated Effort**: Medium
