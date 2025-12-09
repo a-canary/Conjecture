@@ -131,7 +131,7 @@ class ConfigurationMigrator:
 
         return base_steps
 
-    def generate_migration_script(self, target_format: ConfigFormat = ConfigFormat.UNIFIED_PROVIDER) -> Dict[str, Any]:
+    def generate_migration_script(self, target_format: ConfigFormat = ConfigFormat.JSON) -> Dict[str, Any]:
         """
         Generate shell script for migration between formats
         """

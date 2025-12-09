@@ -121,6 +121,8 @@ class DirtyReason(str, Enum):
 
 class Claim(BaseModel):
     """Core claim model with validation"""
+    
+    model_config = {"protected_namespaces": ()}
 
     id: str = Field(..., description="Unique claim identifier")
     content: str = Field(

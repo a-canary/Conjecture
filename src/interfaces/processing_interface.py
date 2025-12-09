@@ -171,7 +171,10 @@ class Session(BaseModel):
     metadata: Dict[str, Dict[str, Any]] = field(default_factory=dict)
     user_data: Dict[str, Any] = field(default_factory=dict)
     
-    model_config = {"arbitrary_types_allowed": True}
+    model_config = {
+        "arbitrary_types_allowed": True,
+        "protected_namespaces": ()
+    }
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert session to dictionary"""
