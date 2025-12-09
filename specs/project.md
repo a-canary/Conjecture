@@ -6,45 +6,18 @@
 
 Conjecture is a simple, practical framework for LLM agents that helps developers systematically expand knowledge while preventing and correcting AI hallucinations. The design focuses on clarity and usefulness over theoretical completeness.
 
-## Clean Architecture
+### 4-Layer Architecture
+> **Canonical Reference**: See [specs/architecture.md](specs/architecture.md) for the complete definition.
 
-### Three-Layer Design
+The system follows a strict 4-Layer Architecture to ensure separating of concerns:
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│ Data Layer      │    │  Process Layer  │    │Presentation Layer│
-│                 │    │                 │    │                 │
-│ Claims + Tools  │───▶│ Context & LLM   │───▶│ CLI | TUI | GUI │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
+1.  **Presentation Layer** (`src/cli`): Dumb UI logic.
+2.  **Endpoint Layer** (`src/endpoint`): Public API surface (`ConjectureEndpoint`).
+3.  **Process Layer** (`src/process`): Intelligence, Context Building, LLM orchestration.
+4.  **Data Layer** (`src/data`): Storage of the Universal Claim Model.
 
-**Data Layer = What we know and how we interact**
-- **Claims**: Structured statements of knowledge with confidence scores
-- **Skills as Claims**: Knowledge about methodologies and problem-solving approaches
-- **Tools**: Simple functions for external data interaction
-
-- **Process Layer = How we think and orchestrate**
-- Context building relevant to tasks
-- LLM orchestration of tools and skill claims
-- Response parsing to extract structured insights
-- Async Claim Evaluation Service (continuous evaluation engine)
-- Concurrency Controls (file locking, provider throttling, retry logic)
-
-**Presentation Layer = How users interact**
-
-The Presentation Layer provides multiple ways for users and other agents to interact with the Conjecture system.
-
-- **Command Line Interface (CLI)**: For direct, scriptable access to Conjecture's core functions.
-- **Terminal User Interface (TUI)**: An interactive terminal application that provides rich visualizations of the claim network, active evaluations, and confidence levels, as specified in the UI requirements.
-- **Graphical User Interface (GUI)**: A full graphical application for complex workflows, offering the most detailed "inspection panels" to see inside the evaluation process.
-
-### The Conjecture App
-
-The primary user-facing application, the `ConjectureApp`, presents a standard conversational interface. Questions and final, high-confidence responses are communicated to the user in a familiar chat format. However, it is augmented with special **inspection panels**, allowing the user to view the underlying claim network, see the status of active evaluations, and understand the evidence supporting any given conclusion.
-
-### The Conjecture Model Context Protocol (MCP)
-
-For integration with existing conversational agents (e.g., Gemini-CLI, Copilot, RooCode), the system exposes a `ConjectureMCP`. This interface allows the host agent to use Conjecture's capabilities as a set of tools.
+**Universal Claim Model**
+We use a single data structure, `Claim`, for all knowledge representation. We rely on intelligent processing (LLMs + Tags) to identify instructions, rather than complex subclassing.
 
 - **Example Tools**:
     - `queryClaims`: Allows the host agent to search the existing knowledge graph.

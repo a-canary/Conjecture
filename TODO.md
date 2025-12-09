@@ -216,3 +216,46 @@
 **Estimated Effort**: Medium
 **Result**: ✅ COMPLETED (2025-12-09) - Successfully implemented comprehensive pytest configuration with static analysis integration, including pytest.ini, enhanced conftest.py, updated test scripts, and proper marker registration
 
+### [COMPLETED] Dead Code Analysis and Test Infrastructure Assessment
+**Hypothesis**: Comprehensive dead code analysis and test infrastructure evaluation will identify cleanup opportunities and critical issues
+**Target**: Complete analysis of orphaned files, static errors, and test suite health
+**Approach**: Execute dead code analysis tools, establish static analysis baseline, validate test suite, identify infrastructure issues
+**Success Criteria**: Analysis complete, baseline established, issues documented, cleanup plan ready
+**Estimated Effort**: Medium
+**Result**: ✅ COMPLETED (2025-12-09) - Identified 321 orphaned files (87% of codebase), 24,623 linting errors, 5 syntax errors, and critical test infrastructure degradation (41.1% pass rate vs 94% baseline)
+
+### [CRITICAL] Test Infrastructure Restoration
+**Hypothesis**: Fixing critical test infrastructure issues will restore test suite functionality and enable safe dead code removal
+**Target**: Stable test suite with 95%+ pass rate before any cleanup operations
+**Approach**: Resolve benchmark fixture conflicts, fix async test configuration, address SimpleLLMProcessor constructor issues
+**Success Criteria**: Test suite passes at 95%+ rate, all critical infrastructure issues resolved, dead code removal unblocked
+**Estimated Effort**: High
+
+### [HIGH] Orphaned Module Import Cleanup
+**Hypothesis**: Removing orphaned module imports will eliminate test failures and improve system stability
+**Target**: Zero import errors from deprecated modules
+**Approach**: Remove imports for `local.unified_manager`, `cli.backends.hybrid_backend`, `src.config.adapters` and update dependent code
+**Success Criteria**: All import errors resolved, tests pass, system stability improved
+**Estimated Effort**: High
+
+### [MEDIUM] Critical Syntax Error Resolution
+**Hypothesis**: Fixing syntax errors in critical files will unblock static analysis and enable proper code evaluation
+**Target**: Zero syntax errors blocking analysis tools
+**Approach**: Fix syntax errors in 5 identified critical files, validate with static analysis tools
+**Success Criteria**: All syntax errors resolved, static analysis tools run without blocking errors
+**Estimated Effort**: Medium
+
+### [MEDIUM] Unicode Encoding Security Fix
+**Hypothesis**: Resolving Unicode encoding issues will enable comprehensive security scanning
+**Target**: Security scanning tools run without Unicode-related failures
+**Approach**: Fix encoding issues in security scanning configuration and test files
+**Success Criteria**: Security analysis completes successfully, no Unicode-related errors
+**Estimated Effort**: Medium
+
+### [LOW] Systematic Dead Code Removal
+**Hypothesis**: Systematic removal of 87% orphaned code will significantly improve project maintainability and performance
+**Target**: Remove 321 orphaned files while preserving core functionality
+**Approach**: Execute dead code removal tools after test suite stabilization, validate functionality after removal
+**Success Criteria**: 87% code reduction achieved, core functionality preserved, tests pass
+**Estimated Effort**: Low (deferred until test suite stable)
+
