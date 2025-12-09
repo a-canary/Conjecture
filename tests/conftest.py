@@ -14,6 +14,8 @@ import os
 import time
 import json
 import psutil
+import subprocess
+import configparser
 from datetime import datetime
 
 # Add src to path for imports
@@ -290,15 +292,184 @@ def scientific_test_validator():
 
     return ScientificValidator()
 
-# Performance optimization hooks
+# Static analysis configuration and hooks
+STATIC_ANALYSIS_CONFIG = {
+    'ruff': {
+        'enabled': True,
+        'command': 'ruff check . --format=json',
+        'config_file': '.ruff.toml',
+        'marker': 'ruff'
+    },
+    'mypy': {
+        'enabled': True,
+        'command': 'mypy src/ --json-report /tmp/mypy-report',
+        'config_file': 'mypy.ini',
+        'marker': 'mypy'
+    },
+    'vulture': {
+        'enabled': True,
+        'command': 'vulture src/ tests/ --min-confidence 80 --format json',
+        'config_file': 'vulture.cfg',
+        'marker': 'vulture'
+    },
+    'bandit': {
+        'enabled': True,
+        'command': 'bandit -r src/ -f json -o /tmp/bandit-report.json',
+        'config_file': '.bandit',
+        'marker': 'bandit'
+    }
+}
+
 def pytest_configure(config):
-    """Configure pytest with performance optimizations."""
-    # Register custom markers
-    config.addinivalue_line("markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')")
-    config.addinivalue_line("markers", "performance: marks tests as performance tests")
-    config.addinivalue_line("markers", "integration: marks tests as integration tests")
-    config.addinivalue_line("markers", "unit: marks tests as unit tests")
-    config.addinivalue_line("markers", "critical: marks tests as critical for CI/CD")
+    """Configure pytest with performance optimizations and static analysis integration."""
+    # Register comprehensive custom markers
+    markers_to_register = [
+        # Static analysis markers
+        "static_analysis: Marks tests that run static analysis tools (ruff, mypy, vulture, bandit)",
+        "ruff: Marks tests that run ruff linting and formatting checks",
+        "mypy: Marks tests that run mypy type checking",
+        "vulture: Marks tests that run vulture dead code detection",
+        "bandit: Marks tests that run bandit security analysis",
+        
+        # Test type markers
+        "unit: Marks unit tests (isolated, fast, no external dependencies)",
+        "integration: Marks integration tests (multiple components, external services)",
+        "performance: Marks performance tests (benchmarks, load testing)",
+        "slow: Marks slow-running tests (deselect with '-m \"not slow\"')",
+        
+        # Test characteristic markers
+        "asyncio: Marks async tests that require asyncio event loop",
+        "critical: Marks tests critical for CI/CD pipeline",
+        "flaky: Marks tests known to be flaky (may need retries)",
+        "smoke: Marks smoke tests for basic functionality verification",
+        
+        # Component-specific markers
+        "data_layer: Marks tests for data layer components",
+        "process_layer: Marks tests for process layer components",
+        "endpoint_layer: Marks tests for endpoint layer components",
+        "cli_layer: Marks tests for CLI layer components",
+        
+        # Database and storage markers
+        "sqlite: Marks tests requiring SQLite database",
+        "chroma: Marks tests requiring ChromaDB vector storage",
+        "database: Marks tests requiring any database backend",
+        
+        # External service markers
+        "llm: Marks tests requiring LLM providers",
+        "embedding: Marks tests requiring embedding services",
+        "network: Marks tests requiring network access",
+        
+        # Security and compliance markers
+        "security: Marks security-focused tests",
+        "compliance: Marks compliance and regulatory tests",
+        "utf8: Marks tests for UTF-8 encoding compliance",
+        
+        # Development workflow markers
+        "development: Marks tests for development tools and workflows",
+        "documentation: Marks tests for documentation validation",
+        "examples: Marks tests for example code validation"
+    ]
+    
+    for marker in markers_to_register:
+        config.addinivalue_line("markers", marker)
+    
+    # Initialize static analysis auto-discovery
+    config._static_analysis_results = {}
+    config._static_analysis_enabled = config.getoption("--static-analysis", default=False)
+    
+    # Load pytest.ini configuration for static analysis
+    pytest_ini_path = Path(__file__).parent.parent / "pytest.ini"
+    if pytest_ini_path.exists():
+        parser = configparser.ConfigParser()
+        parser.read(pytest_ini_path)
+        
+        # Update static analysis configuration from pytest.ini
+        if 'pytest-static-analysis' in parser:
+            config._static_analysis_auto_discovery = parser.getboolean('pytest-static-analysis', 'auto_discovery', fallback=True)
+        else:
+            config._static_analysis_auto_discovery = True
+
+def pytest_collection_modifyitems(config, items):
+    """Modify test collection for optimization and static analysis integration."""
+    # Add automatic markers based on test location and name
+    for item in items:
+        # Mark tests in performance directory
+        if "performance" in item.nodeid:
+            item.add_marker(pytest.mark.performance)
+            item.add_marker(pytest.mark.slow)
+
+        # Mark integration tests
+        if "integration" in item.nodeid:
+            item.add_marker(pytest.mark.integration)
+
+        # Mark unit tests (default)
+        if not any(mark.name in ["integration", "performance", "static_analysis"] for mark in item.iter_markers()):
+            item.add_marker(pytest.mark.unit)
+
+        # Mark critical tests
+        if "critical" in item.nodeid or any(keyword in item.name for keyword in
+                                          ["basic", "core", "essential"]):
+            item.add_marker(pytest.mark.critical)
+        
+        # Auto-discover and mark static analysis tests
+        if config.getoption("--static-analysis", default=False) or config._static_analysis_auto_discovery:
+            if "static_analysis" in item.nodeid:
+                item.add_marker(pytest.mark.static_analysis)
+            
+            # Auto-mark tests based on tool names
+            for tool_name, tool_config in STATIC_ANALYSIS_CONFIG.items():
+                if tool_name in item.nodeid or tool_name in item.name:
+                    item.add_marker(getattr(pytest.mark, tool_name))
+                    item.add_marker(pytest.mark.static_analysis)
+
+def pytest_runtest_setup(item):
+    """Setup hook for static analysis test execution."""
+    # Check if this is a static analysis test
+    if any(mark.name == 'static_analysis' for mark in item.iter_markers()):
+        # Ensure static analysis tools are available
+        for tool_name, tool_config in STATIC_ANALYSIS_CONFIG.items():
+            if tool_config['enabled'] and any(mark.name == tool_name for mark in item.iter_markers()):
+                try:
+                    # Check if tool is available
+                    subprocess.run([tool_name, '--version'], capture_output=True, check=True, timeout=10)
+                except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
+                    pytest.skip(f"Static analysis tool '{tool_name}' not available")
+
+def pytest_runtest_call(item):
+    """Call hook for static analysis test execution."""
+    # Execute static analysis tools for marked tests
+    if any(mark.name == 'static_analysis' for mark in item.iter_markers()):
+        for tool_name, tool_config in STATIC_ANALYSIS_CONFIG.items():
+            if tool_config['enabled'] and any(mark.name == tool_name for mark in item.iter_markers()):
+                try:
+                    # Run the static analysis tool
+                    result = subprocess.run(
+                        tool_config['command'].split(),
+                        capture_output=True,
+                        text=True,
+                        timeout=300,
+                        cwd=Path(__file__).parent.parent
+                    )
+                    
+                    # Store results for reporting
+                    if not hasattr(item.config, '_static_analysis_results'):
+                        item.config._static_analysis_results = {}
+                    
+                    item.config._static_analysis_results[tool_name] = {
+                        'returncode': result.returncode,
+                        'stdout': result.stdout,
+                        'stderr': result.stderr,
+                        'success': result.returncode == 0
+                    }
+                    
+                    # Fail test if static analysis finds issues
+                    if result.returncode != 0:
+                        pytest.fail(f"{tool_name} static analysis failed:\n{result.stderr}")
+                        
+                except subprocess.TimeoutExpired:
+                    pytest.fail(f"{tool_name} static analysis timed out after 300 seconds")
+                except Exception as e:
+                    pytest.fail(f"Error running {tool_name} static analysis: {str(e)}")
 
 def pytest_collection_modifyitems(config, items):
     """Modify test collection for optimization."""
@@ -322,16 +493,102 @@ def pytest_collection_modifyitems(config, items):
                                           ["basic", "core", "essential"]):
             item.add_marker(pytest.mark.critical)
 
-# Performance reporting
+# Performance and static analysis reporting
 def pytest_report_header(config):
-    """Add performance information to test report header."""
-    return f"Optimized Test Suite - Parallel Execution Enabled"
+    """Add performance and static analysis information to test report header."""
+    header_lines = [
+        "Optimized Test Suite - Parallel Execution Enabled",
+        "Static Analysis Integration: Configured"
+    ]
+    
+    # Add static analysis tool status
+    if hasattr(config, '_static_analysis_enabled') and config._static_analysis_enabled:
+        header_lines.append("Static Analysis: Active")
+    
+    return "\n".join(header_lines)
 
 def pytest_terminal_summary(terminalreporter, exitstatus, config):
-    """Add performance summary to terminal output."""
-    terminalreporter.write_sep("=", "Performance Optimization Summary")
+    """Add performance and static analysis summary to terminal output."""
+    terminalreporter.write_sep("=", "Test Suite Summary")
     terminalreporter.write_line("• Parallel execution: Enabled")
     terminalreporter.write_line("• Database isolation: Enforced")
     terminalreporter.write_line("• UTF-8 compliance: Validated")
     terminalreporter.write_line("• Memory monitoring: Active")
     terminalreporter.write_line("• Performance timing: Enabled")
+    
+    # Add static analysis summary
+    if hasattr(config, '_static_analysis_results') and config._static_analysis_results:
+        terminalreporter.write_sep("-", "Static Analysis Results")
+        for tool_name, results in config._static_analysis_results.items():
+            status = "✓ PASSED" if results['success'] else "✗ FAILED"
+            terminalreporter.write_line(f"• {tool_name}: {status}")
+            
+            if not results['success'] and results['stderr']:
+                # Show first few lines of error output
+                error_lines = results['stderr'].strip().split('\n')[:3]
+                for line in error_lines:
+                    terminalreporter.write_line(f"  {line}")
+                if len(results['stderr'].strip().split('\n')) > 3:
+                    terminalreporter.write_line("  ... (truncated)")
+
+# Static analysis fixtures
+@pytest.fixture(scope="session")
+def static_analysis_config():
+    """Fixture providing static analysis configuration."""
+    return STATIC_ANALYSIS_CONFIG.copy()
+
+@pytest.fixture(scope="function")
+def static_analysis_runner():
+    """Fixture for running static analysis tools programmatically."""
+    
+    class StaticAnalysisRunner:
+        def run_tool(self, tool_name: str, extra_args: List[str] = None) -> Dict[str, Any]:
+            """Run a specific static analysis tool."""
+            if tool_name not in STATIC_ANALYSIS_CONFIG:
+                raise ValueError(f"Unknown static analysis tool: {tool_name}")
+            
+            tool_config = STATIC_ANALYSIS_CONFIG[tool_name]
+            if not tool_config['enabled']:
+                return {'success': False, 'error': f'Tool {tool_name} is disabled'}
+            
+            command = tool_config['command'].split()
+            if extra_args:
+                command.extend(extra_args)
+            
+            try:
+                result = subprocess.run(
+                    command,
+                    capture_output=True,
+                    text=True,
+                    timeout=300,
+                    cwd=Path(__file__).parent.parent
+                )
+                
+                return {
+                    'success': result.returncode == 0,
+                    'returncode': result.returncode,
+                    'stdout': result.stdout,
+                    'stderr': result.stderr,
+                    'command': ' '.join(command)
+                }
+            except subprocess.TimeoutExpired:
+                return {
+                    'success': False,
+                    'error': f'Tool {tool_name} timed out after 300 seconds',
+                    'command': ' '.join(command)
+                }
+            except Exception as e:
+                return {
+                    'success': False,
+                    'error': f'Error running {tool_name}: {str(e)}',
+                    'command': ' '.join(command)
+                }
+        
+        def run_all_tools(self) -> Dict[str, Dict[str, Any]]:
+            """Run all enabled static analysis tools."""
+            results = {}
+            for tool_name in STATIC_ANALYSIS_CONFIG:
+                results[tool_name] = self.run_tool(tool_name)
+            return results
+    
+    return StaticAnalysisRunner()

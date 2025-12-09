@@ -53,10 +53,50 @@ dev = [
     "coverage>=7.0.0",
     "black>=22.0.0",
     "isort>=5.10.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+    "vulture>=2.0.0",
+    "pylint>=3.0.0",
+    "bandit>=1.7.0",
+    "types-requests",
+    "types-setuptools",
 ]
+
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "C90", "B", "UP"]
+ignore = []
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+
+[tool.pylint.messages_control]
+disable = [
+    "C0114", # missing-module-docstring
+    "C0115", # missing-class-docstring
+    "C0116", # missing-function-docstring
+    "R0903", # too-few-public-methods
+]
+
+[tool.vulture]
+min_confidence = 80
+paths = ["src", "tests"]
+sort_by_size = true
 
 [project.scripts]
 conjecture = "conjecture:main"
+
 
 [tool.setuptools.packages.find]
 where = ["."]
