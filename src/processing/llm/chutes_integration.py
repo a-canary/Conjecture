@@ -119,7 +119,7 @@ class ChutesProcessor:
                     id=f"processed_{claim.id if hasattr(claim, 'id') else i}",
                     content=f"Processed: {claim.content if hasattr(claim, 'content') else str(claim)}",
                     confidence=claim.confidence if hasattr(claim, 'confidence') else 0.8,
-                    type=claim.type if hasattr(claim, 'type') else "fact",
+                    type=claim.type if hasattr(claim, 'type') else "observation",
                     state=claim.state if hasattr(claim, 'state') else "validated",
                     tags=getattr(claim, 'tags', []) + ["processed"],
                     metadata={"task": task, "original_id": getattr(claim, 'id', None)}

@@ -2,10 +2,19 @@
 
 Conjecture is a lightweight, modular AI reasoning system that helps you create, search, and analyze evidence-based claims. Built with simplicity in mind, it provides powerful functionality with minimal complexity.
 
+## 🎯 Core Philosophy: Claims Are NOT Facts
+
+**Critical Principle**: Conjecture treats all knowledge as provisional claims, not facts. Claims are impressions, assumptions, observations, and conjectures that have a variable or unknown amount of truth. Even high-confidence claims may be wrong and are subject to revision based on new evidence.
+
+- **Impressions**: Initial intuitions or gut feelings
+- **Assumptions**: Things taken as true without proof for reasoning
+- **Observations**: Things noticed or perceived through senses/data
+- **Conjectures**: Conclusions formed on incomplete evidence
+
 ## 🎯 What It Does
 
 Conjecture enables you to:
-- **Create Claims**: Store knowledge claims with confidence scores and evidence
+- **Create Claims**: Store provisional knowledge claims with confidence scores reflecting uncertainty
 - **Search Claims**: Find relevant information using semantic search
 - **Analyze Evidence**: Evaluate and validate claims using AI-powered tools
 - **Web Research**: Automatically gather evidence from the web

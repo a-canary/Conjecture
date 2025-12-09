@@ -1,5 +1,6 @@
-        """Generate initial claims using LLM with context awareness"""
-        try:
+async def generate_claims_with_context(self, query: str):
+    """Generate initial claims using LLM with context awareness"""
+    try:
             # OPTIMIZATION: Parallel context collection
             context_start = time.time()
             
@@ -37,3 +38,5 @@
                 return self._parse_claims_from_response(response.content)
             else:
                 raise Exception(f"LLM processing failed: {response.errors}")
+    except Exception as e:
+        raise Exception(f"Claim generation failed: {str(e)}")

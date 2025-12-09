@@ -383,19 +383,20 @@ class Conjecture(ProcessingInterface):
                 prompt = f"""Generate up to {max_claims} high-quality claims about: {query}
 
 Requirements:
-- Use XML format: <claim type="[fact|concept|example|goal|reference|hypothesis]" confidence="[0.0-1.0]">content</claim>
-- Include clear, specific statements
-- Provide realistic confidence scores
-- Cover different aspects: facts, concepts, examples, goals
+- Use XML format: <claim type="[impression|assumption|observation|conjecture|concept|example|goal|reference|assertion|thesis|hypothesis]" confidence="[0.0-1.0]">content</claim>
+- Include clear, specific statements as impressions, assumptions, observations, or conjectures
+- Provide realistic confidence scores reflecting uncertainty
+- Cover different aspects: impressions, assumptions, observations, conjectures, concepts, examples, goals
+- Remember: NO claims are facts, all have variable truth
 
 Context:
 {context_string}
 
 Generate claims using this XML structure:
 <claims>
-  <claim type="fact" confidence="0.9">Your factual claim here</claim>
-  <claim type="concept" confidence="0.8">Your conceptual claim here</claim>
-  <!-- Add more claims as needed -->
+<claim type="observation" confidence="0.7">Your observation claim here</claim>
+<claim type="concept" confidence="0.6">Your conceptual claim here</claim>
+<!-- Add more claims as needed -->
 </claims>"""
             else:
                 # Use enhanced XML template with proper variable substitution and chain-of-thought guidance

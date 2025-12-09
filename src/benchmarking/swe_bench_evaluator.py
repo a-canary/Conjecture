@@ -138,8 +138,7 @@ Expected behavior:
 - calculate_factorial(1) should return 1
 """,
                     hints="Consider edge cases in recursive/iterative factorial implementation",
-                    test_patch=f"""
-diff --git a/main.py b/main.py
+                    test_patch='''diff --git a/main.py b/main.py
 new file mode 100644
 index 0000000..abc1234
 --- /dev/null
@@ -168,7 +167,7 @@ index 0000000..abc1234
 +
 +if __name__ == "__main__":
 +    print(calculate_factorial(0))  # Should print 1
-""",
+''',
                     version="1.0"
                 )
             elif i % 3 == 1:
@@ -188,8 +187,7 @@ Requirements:
 - Time complexity: O(log n)
 """,
                     hints="Use divide and conquer approach with left/right pointers",
-                    test_patch=f"""
-diff --git a/search.py b/search.py
+                    test_patch='''diff --git a/search.py b/search.py
 new file mode 100644
 index 0000000..def4567
 --- /dev/null
@@ -206,7 +204,7 @@ index 0000000..def4567
 +    print(binary_search([1, 2, 3, 4, 5], 6))  # Should print -1
 +    print(binary_search([], 1))  # Should print -1
 +    print(binary_search([42], 42))  # Should print 0
-""",
+''',
                     version="1.0"
                 )
             else:
@@ -225,8 +223,7 @@ Implement a Stack class in `stack.py` with the following methods:
 The implementation should use a Python list internally and handle edge cases appropriately.
 """,
                     hints="Python list append() and pop() are O(1) operations",
-                    test_patch=f"""
-diff --git a/stack.py b/stack.py
+                    test_patch='''diff --git a/stack.py b/stack.py
 new file mode 100644
 index 0000000..ghi7890
 --- /dev/null
@@ -259,7 +256,7 @@ index 0000000..ghi7890
 +    s.push(1)
 +    s.push(2)
 +    print(s.pop())  # Should print 2
-""",
+''',
                     version="1.0"
                 )
 

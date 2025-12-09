@@ -48,7 +48,7 @@ class ModelComparisonSuite:
                 provider="LM Studio", 
                 size_category="small",
                 expected_strengths=["reasoning", "multilingual"],
-                expected_weaknesses["consistency", "depth"],
+                expected_weaknesses=["consistency", "depth"],
                 context_window=4096,
                 cost_per_token=0.0
             ),
@@ -57,7 +57,7 @@ class ModelComparisonSuite:
                 provider="Chutes",
                 size_category="medium",
                 expected_strengths=["reasoning", "following instructions"],
-                expected_weaknesses["creativity", "complex synthesis"],
+                expected_weaknesses=["creativity", "complex synthesis"],
                 context_window=8192,
                 cost_per_token=0.0001
             ),
@@ -66,7 +66,7 @@ class ModelComparisonSuite:
                 provider="Chutes",
                 size_category="medium",
                 expected_strengths=["reasoning", "accuracy", "consistency"],
-                expected_weaknesses["speed", "cost"],
+                expected_weaknesses=["speed", "cost"],
                 context_window=8192,
                 cost_per_token=0.0002
             )

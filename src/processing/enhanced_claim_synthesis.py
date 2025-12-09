@@ -329,7 +329,7 @@ class AdvancedClaimSynthesizer:
         
         # Add specific types based on modality
         if modality == "text":
-            claim_types.append(ClaimType.FACT)
+            claim_types.append(ClaimType.OBSERVATION)
         elif modality == "document":
             claim_types.append(ClaimType.REFERENCE)
         elif modality == "image":

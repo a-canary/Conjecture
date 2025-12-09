@@ -383,7 +383,8 @@ def create_json_frontmatter_prompt_template(response_type: ResponseType, example
         "- Use valid JSON syntax",
         "- Include claim IDs in format 'c1', 'c2', etc.",
         "- Provide confidence scores between 0.0 and 1.0",
-        "- Use appropriate claim types: fact, concept, example, goal, reference, assertion, thesis, hypothesis, question, task",
+        "- Use appropriate claim types: impression, assumption, observation, conjecture, concept, example, goal, reference, assertion, thesis, hypothesis, question, task",
+        "- Remember: Claims are NOT facts, they are impressions, assumptions, observations, or conjectures with variable truth",
         "",
         "## EXAMPLE:"
     ]

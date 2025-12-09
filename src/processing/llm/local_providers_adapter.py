@@ -126,7 +126,7 @@ class LocalProviderProcessor:
                     id=f"local_{self.provider_type}_processed_{claim.id if hasattr(claim, 'id') else i}",
                     content=f"Local {self.provider_type} processed: {claim.content if hasattr(claim, 'content') else str(claim)}",
                     confidence=claim.confidence if hasattr(claim, 'confidence') else 0.7,
-                    type=claim.type if hasattr(claim, 'type') else "fact",
+                    type=claim.type if hasattr(claim, 'type') else "observation",
                     state=claim.state if hasattr(claim, 'state') else "validated",
                     tags=getattr(claim, 'tags', []) + ["processed", f"local_{self.provider_type}"],
                     metadata={

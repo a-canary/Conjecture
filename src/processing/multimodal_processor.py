@@ -278,7 +278,7 @@ class MockMultiModalClaimSynthesizer:
                 id=f"multimodal_{int(time.time())}_{i:03d}",
                 content=claim_content,
                 confidence=evidence_item.confidence,
-                type=[ClaimType.FACT, ClaimType.ANALYSIS],
+                type=[ClaimType.OBSERVATION, ClaimType.CONCEPT],
                 state=ClaimState.VALIDATED,
                 tags=["multimodal", evidence_item.modality.value, "synthesized"],
                 metadata={

@@ -47,7 +47,7 @@ class EnhancedTemplateManager(PromptTemplateManager):
     
     async def create_template(self, name: str, description: str,
                             template_content: str, template_type: PromptTemplateType,
-                            variables: Optional[List[Dict[str, Any]] = None,
+                            variables: Optional[Dict[str, Any]] = None,
                             metadata: Optional[Dict[str, Any]] = None) -> str:
         """Create a new template with enhanced validation"""
         # First create base template
@@ -67,7 +67,7 @@ class EnhancedTemplateManager(PromptTemplateManager):
     
     async def _optimize_template_for_xml(self, template_id: str, 
                                        template_content: str, 
-                                       variables: Optional[List[Dict[str, Any]]) -> OptimizedPrompt:
+                                       variables: Optional[Dict[str, Any]]) -> OptimizedPrompt:
         """Optimize a template for XML structure"""
         start_time = time.time()
         

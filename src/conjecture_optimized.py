@@ -295,14 +295,14 @@ class OptimizedConjecture:
             prompt = f"""Generate {max_claims} high-quality claims about: {query}
 
 Requirements:
-- Use XML format: <claim type="[fact|concept|example]" confidence="[0.0-1.0]">content</claim>
-- Clear, specific statements
+- Use XML format: <claim type="[impression|assumption|observation|conjecture|concept|example]" confidence="[0.0-1.0]">content</claim>
+- Clear, specific statements as impressions, assumptions, observations, or conjectures
 - Realistic confidence scores
 - Cover different aspects
 
 <claims>
-  <claim type="fact" confidence="0.8">Your factual claim here</claim>
-  <claim type="concept" confidence="0.7">Your conceptual claim here</claim>
+  <claim type="observation" confidence="0.7">Your observation claim here</claim>
+  <claim type="concept" confidence="0.6">Your conceptual claim here</claim>
 </claims>"""
 
             # Import GenerationConfig for proper parameter passing

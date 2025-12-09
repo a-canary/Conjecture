@@ -129,7 +129,8 @@ class ChutesProvider(ModelProvider):
     def __init__(
         self, api_key: str, base_url: str = "https://api.z.ai/api/coding/paas/"
     ):
-
+        self.api_key = api_key
+        self.base_url = base_url
 
     async def call_model(self, prompt: str, model_name: str) -> Tuple[str, float, int]:
         """Call Chutes API model directly"""

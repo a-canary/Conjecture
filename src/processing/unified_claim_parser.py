@@ -349,7 +349,7 @@ class UnifiedClaimParser:
                     
                     # Enhanced type mapping
                     type_mapping = {
-                        'fact': ClaimType.FACT,
+                        'observation': ClaimType.OBSERVATION,
                         'concept': ClaimType.CONCEPT,
                         'example': ClaimType.EXAMPLE,
                         'goal': ClaimType.GOAL,

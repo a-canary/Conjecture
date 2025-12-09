@@ -95,7 +95,7 @@ class PromptTemplate:
         """Render template with provided variables"""
         rendered = self.template
         for key, value in kwargs.items():
-            placeholder = f"{{{{{key}}}}"
+            placeholder = "{{" + key + "}}"
             rendered = rendered.replace(placeholder, str(value))
         return rendered
     

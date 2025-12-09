@@ -472,4 +472,6 @@ _global_isolation_manager: Optional[DatabaseIsolationManager] = None
 def get_isolation_manager() -> DatabaseIsolationManager:
     """Get global database isolation manager."""
     global _global_isolation_manager
-        if _global_isolation_manager is None:
+    if _global_isolation_manager is None:
+        _global_isolation_manager = DatabaseIsolationManager()
+    return _global_isolation_manager

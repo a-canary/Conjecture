@@ -92,6 +92,12 @@
 **Approach**: Implement evaluation technique to generate claims that disprove current eval claim when expected to have >40% confidence
 **Success Criteria**: Generates counter-claims for all eval claims >40% confidence, improves reasoning quality, systematic disproval capability
 
+### [MEDIUM] Refactor to Remove ClaimType and Use Only Tags
+**Hypothesis**: Removing ClaimType enum and using only tags will simplify the data model and improve flexibility
+**Target**: Eliminate ClaimType from the codebase and migrate all functionality to tag-based classification
+**Approach**: Analyze current ClaimType usage, implement tag-based replacements, update data models and processing logic, migrate existing claims
+**Success Criteria**: ClaimType enum removed, all functionality preserved through tags, migration script for existing data, 100% test coverage
+
 ### [LOW] CLI Revamp and Testing
 **Hypothesis**: Modernized CLI improves user experience and reliability
 **Target**: Updated CLI with comprehensive test coverage

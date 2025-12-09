@@ -43,18 +43,21 @@ class ClaimState(str, Enum):
 
 
 class ClaimType(str, Enum):
-    """Claim type enumeration"""
+    """Claim type enumeration - All claims are impressions, assumptions, observations, or conjectures with variable truth"""
 
-    FACT = "fact"
-    CONCEPT = "concept"
-    EXAMPLE = "example"
-    GOAL = "goal"
-    REFERENCE = "reference"
-    ASSERTION = "assertion"
-    THESIS = "thesis"
-    HYPOTHESIS = "hypothesis"
-    QUESTION = "question"
-    TASK = "task"
+    IMPRESSION = "impression"  # Initial impression or intuition about something
+    ASSUMPTION = "assumption"  # Something taken as true without proof for reasoning
+    OBSERVATION = "observation"  # Something noticed or perceived through senses/data
+    CONJECTURE = "conjecture"  # Conclusion formed on incomplete evidence
+    CONCEPT = "concept"  # Abstract idea or general notion
+    EXAMPLE = "example"  # Specific instance or case
+    GOAL = "goal"  # Desired outcome or objective
+    REFERENCE = "reference"  # Pointer to external information
+    ASSERTION = "assertion"  # Strong statement made with confidence
+    THESIS = "thesis"  # Proposition put forward for consideration
+    HYPOTHESIS = "hypothesis"  # Proposed explanation for investigation
+    QUESTION = "question"  # Query seeking information
+    TASK = "task"  # Action item or work to be done
 
 
 class ClaimScope(str, Enum):
@@ -531,7 +534,7 @@ def create_claim(
     if tag == "instruction":
         default_tags = ["instruction", "guidance"]
     elif tag == "evidence":
-        default_tags = ["evidence", "fact"]
+        default_tags = ["evidence", "observation"]
     elif tag == "tool_example":
         default_tags = ["tool_example", "example"]
     else:  # default to concept

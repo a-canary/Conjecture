@@ -36,7 +36,7 @@ class ToolManager:
                 "parameters": {
                     "content": {"type": "string", "required": True},
                     "confidence": {"type": "float", "required": False, "default": 0.8},
-                    "claim_type": {"type": "string", "required": False, "default": "fact"},
+                    "claim_type": {"type": "string", "required": False, "default": "observation"},
                     "tags": {"type": "array", "required": False, "default": []}
                 }
             },
@@ -104,7 +104,7 @@ class ToolManager:
                 elif tool_name == "CreateClaim":
                     content = parameters.get("content", "")
                     confidence = parameters.get("confidence", 0.8)
-                    claim_type = parameters.get("claim_type", "fact")
+                    claim_type = parameters.get("claim_type", "observation")
                     tags = parameters.get("tags", [])
                     return {
                         "success": True,

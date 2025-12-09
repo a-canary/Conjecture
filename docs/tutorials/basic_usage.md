@@ -2,6 +2,10 @@
 
 This document provides practical examples of how to use Conjecture for various tasks.
 
+## Important: Understanding Claims
+
+**Claims are NOT facts.** Claims are impressions, assumptions, observations, and conjectures that have a variable or unknown amount of truth. All claims are provisional and subject to revision based on new evidence. Even high-confidence claims may be wrong.
+
 ## 1. Basic Exploration and Claim Creation
 
 ```python
@@ -16,18 +20,18 @@ print("🔍 Exploring machine learning...")
 result = cf.explore("machine learning algorithms", max_claims=5)
 print(result.summary())
 
-# Create individual claims
+# Create individual claims as observations and conjectures
 claim1 = cf.add_claim(
-    content="Supervised learning requires labeled training data",
-    confidence=0.9,
-    claim_type="concept",
+    content="Supervised learning appears to require labeled training data based on current observations",
+    confidence=0.7,  # Lower confidence reflects provisional nature
+    claim_type="observation",
     tags=["ml", "supervised", "data"]
 )
 
 claim2 = cf.add_claim(
-    content="Neural networks can model complex non-linear relationships",
-    confidence=0.85,
-    claim_type="thesis",
+    content="Neural networks seem capable of modeling complex non-linear relationships, though this may vary by architecture",
+    confidence=0.6,  # Moderate confidence for conjecture
+    claim_type="conjecture",
     tags=["ml", "neural-networks", "math"]
 )
 

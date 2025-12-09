@@ -1,6 +1,6 @@
-    async def _generate_initial_claims(
-        self, query: str, max_claims: int
-    ) -> List[Claim]:
+async def _generate_initial_claims(
+    self, query: str, max_claims: int
+) -> List[Claim]:
         """Generate initial claims using LLM with context awareness"""
         try:
             # OPTIMIZATION: Parallel context collection

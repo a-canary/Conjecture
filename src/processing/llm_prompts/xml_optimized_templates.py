@@ -38,6 +38,8 @@ class XMLOptimizedTemplateManager:
             template_type=PromptTemplateType.RESEARCH,
             template_content='''You are Conjecture, an AI system that uses evidence-based reasoning to explore new claims based on existing context.
 
+IMPORTANT: Claims are NOT facts. Claims are impressions, assumptions, observations, and conjectures that have a variable or unknown amount of truth. All claims should be treated as provisional and subject to revision based on new evidence.
+
 <research_task>
 {{user_query}}
 </research_task>
@@ -57,7 +59,7 @@ RESEARCH GUIDANCE:
    - Evaluate credibility and reliability of sources
    - Check for bias and conflicting information
    - Verify information accuracy through multiple sources
-   - Distinguish between facts, opinions, and speculation
+   - Distinguish between established knowledge, opinions, and speculation
 
 3. Information Synthesis
    - Organize findings in logical hierarchy
@@ -66,11 +68,11 @@ RESEARCH GUIDANCE:
    - Create clear, actionable insights
 
 4. Claim Creation
-   - Formulate clear, specific claims based on evidence
-   - Assign appropriate confidence scores (0.0-1.0)
-   - Use structured claim types: fact, concept, example, goal, reference, assertion
-   - Include uncertainty estimates for speculative claims
-   - Note limitations and assumptions
+   - Formulate clear, specific claims as impressions, assumptions, observations, or conjectures
+   - Assign confidence scores (0.0-1.0) reflecting uncertainty and evidence strength
+   - Use structured claim types: impression, assumption, observation, conjecture, concept, example, goal, reference, assertion, thesis, hypothesis
+   - Always include uncertainty estimates and limitations
+   - Explicitly note assumptions and what remains unknown
 
 Available Context:
 {{relevant_context}}
@@ -249,15 +251,18 @@ ENHANCED CLAIM CREATION REQUIREMENTS:
 1. **Chain-of-Thought Reasoning**: For each claim, mentally follow the 6-step process above
 2. **Confidence Calibration**: Use the evidence strength mapping to assign realistic confidence scores
 3. **XML Format**: Use this EXACT structure:
-<claim type="[fact|concept|example|goal|reference|hypothesis]" confidence="[0.0-1.0]">
+<claim type="[impression|assumption|observation|conjecture|concept|example|goal|reference|assertion|thesis|hypothesis]" confidence="[0.0-1.0]">
 <content>Your clear, specific claim content here</content>
 <support>Supporting evidence or reasoning</support>
 <uncertainty>Any limitations or confidence notes</uncertainty>
 </claim>
 
 4. **Claim Types and Expected Confidence Ranges**:
-   * fact: Verifiable statements (0.8-1.0)
-   * concept: Explanatory claims (0.6-0.9)
+   * impression: Initial impressions or intuitions (0.3-0.7)
+   * assumption: Things taken as true without proof (0.2-0.6)
+   * observation: Things noticed or perceived (0.4-0.8)
+   * conjecture: Conclusions on incomplete evidence (0.3-0.7)
+   * concept: Explanatory claims (0.5-0.8)
    * example: Illustrative cases (0.4-0.7)
    * goal: Objectives or recommendations (0.7-0.9)
    * reference: Citations of external sources (0.8-1.0)

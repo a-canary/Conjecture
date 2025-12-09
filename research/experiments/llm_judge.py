@@ -197,7 +197,7 @@ class LLMJudge:
                 0.25: "Inefficient with significant verbosity or important omissions",
                 0.5: "Moderately efficient with some verbosity or minor omissions",
                 0.75: "Efficient with minor verbosity issues",
-                1.0 "Perfectly efficient, concise yet complete"
+                1.0: "Perfectly efficient, concise yet complete"
             },
             weight=0.5
         )

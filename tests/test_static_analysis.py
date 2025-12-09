@@ -10,13 +10,15 @@ def test_ruff_check():
         ["ruff", "check", "."],
         capture_output=True,
         text=True,
+        encoding='utf-8',
+        errors='replace',
         cwd=Path(__file__).parent.parent
     )
     
     if result.returncode != 0:
         print("Ruff check failed:")
-        print(result.stdout)
-        print(result.stderr)
+        print(result.stdout or "")
+        print(result.stderr or "")
         pytest.fail(f"Ruff check failed with exit code {result.returncode}")
     
     assert result.returncode == 0, "Ruff check should pass"
@@ -28,13 +30,15 @@ def test_mypy_check():
         ["mypy", "."],
         capture_output=True,
         text=True,
+        encoding='utf-8',
+        errors='replace',
         cwd=Path(__file__).parent.parent
     )
     
     if result.returncode != 0:
         print("Mypy check failed:")
-        print(result.stdout)
-        print(result.stderr)
+        print(result.stdout or "")
+        print(result.stderr or "")
         pytest.fail(f"Mypy check failed with exit code {result.returncode}")
     
     assert result.returncode == 0, "Mypy check should pass"
@@ -46,13 +50,15 @@ def test_vulture_check():
         ["vulture", "."],
         capture_output=True,
         text=True,
+        encoding='utf-8',
+        errors='replace',
         cwd=Path(__file__).parent.parent
     )
     
     if result.returncode != 0:
         print("Vulture check failed:")
-        print(result.stdout)
-        print(result.stderr)
+        print(result.stdout or "")
+        print(result.stderr or "")
         pytest.fail(f"Vulture check failed with exit code {result.returncode}")
     
     assert result.returncode == 0, "Vulture check should pass"
@@ -64,13 +70,15 @@ def test_bandit_check():
         ["bandit", "-r", "src"],
         capture_output=True,
         text=True,
+        encoding='utf-8',
+        errors='replace',
         cwd=Path(__file__).parent.parent
     )
     
     if result.returncode != 0:
         print("Bandit check failed:")
-        print(result.stdout)
-        print(result.stderr)
+        print(result.stdout or "")
+        print(result.stderr or "")
         pytest.fail(f"Bandit check failed with exit code {result.returncode}")
     
     assert result.returncode == 0, "Bandit check should pass"
@@ -97,11 +105,16 @@ def test_static_analysis_comprehensive():
             command,
             capture_output=True,
             text=True,
+            encoding='utf-8',
+            errors='replace',
             cwd=root_dir
         )
         
         if result.returncode != 0:
-            failed_tools.append(f"{name}: {result.stdout[:200]}...")
+            stdout = result.stdout or ""
+            stderr = result.stderr or ""
+            output = stdout[:200] if stdout else stderr[:200] if stderr else "No output"
+            failed_tools.append(f"{name}: {output}...")
     
     if failed_tools:
         pytest.fail(f"Static analysis failed for: {'; '.join(failed_tools)}")
