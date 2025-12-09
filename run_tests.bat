@@ -5,8 +5,13 @@ echo.
 REM Set PYTHONPATH to include project root
 set PYTHONPATH=.
 
+REM Suppress Pydantic warnings from DeepEval and other libraries
+set PYTHONWARNINGS=ignore::UserWarning
+set PYTHONWARNINGS=%PYTHONWARNINGS%,ignore::DeprecationWarning
+set PYTHONWARNINGS=%PYTHONWARNINGS%,ignore::PendingDeprecationWarning
+
 REM Check for help flag
-if "%1"=="--help" (
+if "%1"=="--help" goto :help
     echo.
     echo Conjecture Test Runner with Static Analysis Integration
     echo.
@@ -41,14 +46,14 @@ if "%1"=="--help" (
 )
 
 REM Check for collect-only flag
-if "%1"=="--collect-only" (
+if "%1"=="--collect-only" goto :collect_only
     echo Collecting tests...
     python -m pytest --collect-only
     goto :end
 )
 
 REM Check for static analysis flags
-if "%1"=="--static" (
+if "%1"=="--static" goto :static
     echo Running Static Analysis Tests...
     python -m pytest tests/ -v -m static_analysis
     echo.
@@ -178,6 +183,9 @@ if "%1"=="--all" (
 REM Run regular tests by default
 echo Running Regular Tests...
 python -m pytest tests/ -v -m "not static_analysis"
+goto :end
+
+:help
 
 echo.
 echo Test run completed.
