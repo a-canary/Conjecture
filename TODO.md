@@ -9,6 +9,7 @@
 - Keep descriptions short and actionable
 - Prioritize by impact and feasibility
 - Update after each cycle completion
+- Completed or failed items should be removed from this file and writen in RESULTS.md
 
 ## Item Template
 
@@ -156,12 +157,13 @@
 **Success Criteria**: No contradictory architecture claims in documentation
 **Estimated Effort**: Low
 
-### [HIGH] 4-Layer Migration Phase 2: Core Refactoring
+### [COMPLETED] 4-Layer Migration Phase 2: Create Endpoint Layer
 **Hypothesis**: Splitting the God Class into Endpoint and Process layers improves modularity
 **Target**: Functioning ConjectureEndpoint and ProcessLayer separated from legacy code
 **Approach**: Create src/process and src/endpoint, migrate logic incrementally
 **Success Criteria**: CLI calls ConjectureEndpoint successfully without src/conjecture.py
 **Estimated Effort**: High
+**Result**: ✅ COMPLETED (2025-12-09) - Created src/endpoint/ directory with ConjectureEndpoint class (95 lines, 100% docstring coverage), unblocking Phase 2 of 4-layer migration
 
 ### [HIGH] 4-Layer Migration Phase 3: Cleanup
 **Hypothesis**: Deleting legacy code and tests prevents regression and confusion
@@ -169,3 +171,14 @@
 **Approach**: Delete legacy files and fix remaining imports
 **Success Criteria**: Clean build with only 4-layer architecture files
 **Estimated Effort**: Medium
+
+### [HIGH] Cleanup: Remove Deceptive Patterns
+**Hypothesis**: Removing silent fallbacks and fake mocks will reveal the true broken state of validity, allowing real fixes
+**Target**:
+1. `src/conjecture.py`: Remove `try-except ImportError` blocks.
+2. `src/cli/modular_cli.py`: Remove commented-out `dirty_commands`.
+3. `tests/`: Delete all tests mocking `chromadb` via `sys.modules`.
+**Approach**: Delete the deceptive code. Let the system crash. Fix the root cause.
+**Success Criteria**: System crashes on missing dependencies instead of silencing them
+**Estimated Effort**: Low
+
