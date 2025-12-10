@@ -22,6 +22,12 @@
 
 ---
 
+### [HIGH] Test Suite Error Resolution - Next Cycle Priority
+**Hypothesis**: Fixing the 4 remaining collection errors will restore full test suite functionality and enable comprehensive validation
+**Target**: Zero collection errors, 80%+ test pass rate
+**Approach**: Fix import errors in test_context_builder.py, test_core_tools.py, test_providers_integration.py, and archive/experiments/experiment_6_claim_synthesis_test.py
+**Success Criteria**: All tests collect and run, core functionality validated, foundation for dead code removal established
+
 ### [HIGH] Process-Presentation Layers API
 **Hypothesis**: Clean separation between business logic and UI layers improves maintainability and testability
 **Target**: Documented async API with clear layer boundaries
@@ -250,3 +256,27 @@
 **Target**: Working prototype demonstrating clean→dirty→pending-tool-response→clean transitions
 **Approach**: Create minimal test case showing state transitions during tool call execution, validate timeout handling
 **Success Criteria**: Prototype code demonstrating state transitions, test cases covering all transitions, timeout validation
+
+### [MEDIUM] Extend ANALYSIS.md with Warning Metrics
+**Hypothesis**: Adding warning count metrics to ANALYSIS.md will provide better visibility into code quality issues
+**Target**: Warning metrics included in ANALYSIS.md with trend tracking
+**Approach**: Analyze current warning generation, add warning count tracking to analysis metrics
+**Success Criteria**: Warning metrics tracked, trends visible, baseline established
+
+### [MEDIUM] Extend ANALYSIS.md with External Dependencies Metrics
+**Hypothesis**: Tracking external dependencies in ANALYSIS.md will improve project maintainability awareness
+**Target**: External dependency count and health metrics included in ANALYSIS.md
+**Approach**: Inventory external dependencies, implement dependency tracking, add to analysis metrics
+**Success Criteria**: Dependencies cataloged, health metrics tracked, security vulnerabilities monitored
+
+### [MEDIUM] Extend ANALYSIS.md with Unknown Values Tracking
+**Hypothesis**: Tracking '?' values and unknown data points in ANALYSIS.md will highlight areas needing investigation
+**Target**: Unknown value metrics and investigation backlog included in ANALYSIS.md
+**Approach**: Identify sources of '?' values, implement tracking system, add to analysis metrics
+**Success Criteria**: Unknown values quantified, trends tracked, investigation priorities established
+
+### [MEDIUM] Temporal Claim Management for Agent Workflows
+**Hypothesis**: Adding temporal awareness to claims will improve the accuracy of time-sensitive information during agent workflows
+**Target**: Lightweight system for reflecting the temporal nature of claims about project status, research, and other time-sensitive information
+**Approach**: Experiment with temporal features including timestamps in context, temporal priority in claim merging, and flags for time-sensitive claims
+**Success Criteria**: Timestamp system implemented, temporal claim merging working, time-sensitive claim flagging functional, measurable improvement in temporal accuracy during agent workflows

@@ -4,15 +4,18 @@
 
 ## Current Metrics
 
+code_files: ?
+docs_files: ?
+repo_size: ? kb
 test_coverage: 89%
-test_pass_rate: 41.1% -> 51.2% (test infrastructure stabilization)
+test_pass: ? / ?
 code_quality_score: 9.8/10
 security_score: 9.8/10
-performance_improvement: 26%
-memory_reduction: 40%
+time_required: ? sec
+memory_required: ? mb
 uptime: 99.8%
 error_rate: 0.3%
-test_collection_success: 100% (617 tests collected, 133 errors)
+test_collection_success: 100% (171 tests collected, 4 errors)
 import_errors: 0 -> 0 (all resolved)
 syntax_errors: 0
 linting_errors: 24623
