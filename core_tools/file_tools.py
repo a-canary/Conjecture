@@ -15,7 +15,6 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 from src.tools.registry import register_tool
 
-
 @register_tool(name="EditFile", is_core=False)
 def EditFile(file_path: str, old_text: str, new_text: str, 
              encoding: str = 'utf-8', backup: bool = True) -> Dict[str, Any]:
@@ -159,7 +158,6 @@ def EditFile(file_path: str, old_text: str, new_text: str,
             'success': False,
             'error': f'Edit operation failed: {str(e)}'
         }
-
 
 @register_tool(name="GrepFiles", is_core=False)
 def GrepFiles(pattern: str, path: str = ".", file_pattern: str = "*", 
@@ -306,7 +304,6 @@ def GrepFiles(pattern: str, path: str = ".", file_pattern: str = "*",
             'error': f'Search failed: {str(e)}'
         }
 
-
 @register_tool(name="CountLines", is_core=False)
 def CountLines(file_path: str, count_empty: bool = True, encoding: str = 'utf-8') -> Dict[str, Any]:
     """
@@ -387,7 +384,6 @@ def CountLines(file_path: str, count_empty: bool = True, encoding: str = 'utf-8'
             'error': f'Line count failed: {str(e)}'
         }
 
-
 def examples() -> List[str]:
     """
     Return example usage claims for LLM context
@@ -403,7 +399,6 @@ def examples() -> List[str]:
         "CountLines('src/lib.rs', count_empty=False) counts non-empty lines in a Rust library file",
         "EditFile('Cargo.toml', 'version = \"1.0\"', 'version = \"1.1\"') updates version number in Cargo.toml"
     ]
-
 
 if __name__ == "__main__":
     # Test the file tools

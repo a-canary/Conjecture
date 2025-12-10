@@ -214,7 +214,7 @@ tests/                   # Comprehensive test suite
 - **pytest**: Primary testing framework
 - **Markers**: Tests categorized with markers (unit, integration, performance, etc.)
 - **Async tests**: pytest-asyncio for async code testing
-- **Mock providers**: Mock LLM providers for reliable testing
+- **Ban Mock**: Mocking is banned to ensure real-world testing
 
 ### Key Test Files
 - `test_basic_functionality.py` - Core functionality tests

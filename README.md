@@ -318,7 +318,6 @@ start htmlcov/index.html  # Windows
 #### Testing Framework
 - **`tests/pytest.ini`** - Unified test configuration with categorization
 - **Async Testing Support** - Complete async/await testing capabilities
-- **Mock Frameworks** - Comprehensive mock implementations for testing
 - **Test Fixtures** - Reusable test data and resource management
 
 ### Quality Assurance Process

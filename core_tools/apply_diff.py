@@ -16,7 +16,6 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 from src.tools.registry import register_tool
 
-
 @register_tool(name="ApplyDiff", is_core=False)
 def apply_diff(file_path: str, diff_content: str,
                backup_original: bool = True,
@@ -236,7 +235,6 @@ def apply_diff(file_path: str, diff_content: str,
             'execution_time_ms': int((datetime.now() - start_time).total_seconds() * 1000)
         }
 
-
 def _parse_simple_diff(diff_content: str) -> List[Dict[str, Any]]:
     """Parse diff content into simple hunks (basic implementation)"""
     hunks = []
@@ -268,7 +266,6 @@ def _parse_simple_diff(diff_content: str) -> List[Dict[str, Any]]:
     
     return hunks
 
-
 def examples() -> List[str]:
     """
     Return example usage claims for LLM context
@@ -283,7 +280,6 @@ def examples() -> List[str]:
         "apply_diff('script.sh', diff_content, backup_original=False) validates script changes without backup",
         "apply_diff('data.csv', diff_content, dry_run=True) validates CSV diff before applying changes"
     ]
-
 
 if __name__ == "__main__":
     # Test the apply_diff functionality

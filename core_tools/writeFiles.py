@@ -15,7 +15,6 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 from src.tools.registry import register_tool
 
-
 @register_tool(name="WriteFile", is_core=True)
 def writeFile(file_path: str, content: str, create_dirs: bool = True,
               backup: bool = False, encoding: str = 'utf-8') -> Dict[str, Any]:
@@ -120,7 +119,6 @@ def writeFile(file_path: str, content: str, create_dirs: bool = True,
             'write_success': False,
             'error': 'Failed to write file'
         }
-
 
 @register_tool(name="AppendFile", is_core=False)
 def appendFile(file_path: str, content: str, create_dirs: bool = True,
@@ -236,7 +234,6 @@ def appendFile(file_path: str, content: str, create_dirs: bool = True,
             'error': 'Failed to append to file'
         }
 
-
 @register_tool(name="CreateDirectory", is_core=False)
 def createDirectory(dir_path: str, parents: bool = True) -> Dict[str, Any]:
     """
@@ -297,7 +294,6 @@ def createDirectory(dir_path: str, parents: bool = True) -> Dict[str, Any]:
             'error': 'Failed to create directory'
         }
 
-
 def examples() -> List[str]:
     """
     Return example usage claims for LLM context
@@ -314,7 +310,6 @@ def examples() -> List[str]:
         "writeFile('tests/integration_test.rs', test_content) creates test file in tests directory",
         "appendFile('Cargo.toml', '\\n[dependencies]\\nrand = \"0.8\"') adds dependencies to Cargo.toml"
     ]
-
 
 if __name__ == "__main__":
     # Test the write files functionality

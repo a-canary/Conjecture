@@ -18,7 +18,6 @@ _reasoning_log: List[Dict[str, Any]] = []
 _user_messages: List[Dict[str, Any]] = []
 _user_questions: List[Dict[str, Any]] = []
 
-
 @register_tool(name="Reason", is_core=True)
 def Reason(thought_process: str) -> Dict[str, Any]:
     """
@@ -65,7 +64,6 @@ def Reason(thought_process: str) -> Dict[str, Any]:
         'timestamp': timestamp,
         'total_reasoning_steps': len(_reasoning_log)
     }
-
 
 @register_tool(name="TellUser", is_core=True)
 def TellUser(message: str, message_type: str = "info") -> Dict[str, Any]:
@@ -120,7 +118,6 @@ def TellUser(message: str, message_type: str = "info") -> Dict[str, Any]:
         'timestamp': timestamp,
         'total_messages': len(_user_messages)
     }
-
 
 @register_tool(name="AskUser", is_core=True)
 def AskUser(question: str, options: Optional[List[str]] = None, required: bool = False) -> Dict[str, Any]:
@@ -198,7 +195,6 @@ def AskUser(question: str, options: Optional[List[str]] = None, required: bool =
         'pending_response': True
     }
 
-
 @register_tool(name="GetInteractionHistory", is_core=False)
 def GetInteractionHistory(interaction_type: str = "all", limit: int = 50) -> Dict[str, Any]:
     """
@@ -243,7 +239,6 @@ def GetInteractionHistory(interaction_type: str = "all", limit: int = 50) -> Dic
         result['total_questions'] = len(_user_questions)
 
     return result
-
 
 @register_tool(name="RecordClaim", is_core=False)
 def RecordClaim(claim_text: str, confidence: float = 0.8, source: str = "reasoning") -> Dict[str, Any]:
@@ -299,7 +294,6 @@ def RecordClaim(claim_text: str, confidence: float = 0.8, source: str = "reasoni
         'total_recorded_claims': len([m for m in _user_messages if m.get('type') == 'recorded_claim'])
     }
 
-
 # Helper functions not exposed as tools
 def _clear_interaction_log():
     """Clear interaction logs (for testing)."""
@@ -307,7 +301,6 @@ def _clear_interaction_log():
     _reasoning_log = []
     _user_messages = []
     _user_questions = []
-
 
 def examples() -> List[str]:
     """
@@ -324,7 +317,6 @@ def examples() -> List[str]:
         "AskUser('What difficulty level should be the default?', required=True) asks for required user input",
         "GetInteractionHistory('reasoning', limit=10) retrieves the last 10 reasoning steps for review"
     ]
-
 
 if __name__ == "__main__":
     # Test the interaction tools

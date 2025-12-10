@@ -18,14 +18,12 @@ _claim_storage: Dict[str, Dict[str, Any]] = {}
 _support_relationships: Dict[str, Set[str]] = {}
 _next_claim_id = 1
 
-
 def _generate_claim_id() -> str:
     """Generate a unique claim ID."""
     global _next_claim_id
     claim_id = f"claim_{_next_claim_id}"
     _next_claim_id += 1
     return claim_id
-
 
 @register_tool(name="ClaimCreate", is_core=True)
 def ClaimCreate(content: str, confidence: float = 0.8, tags: Optional[List[str]] = None) -> Dict[str, Any]:
@@ -96,7 +94,6 @@ def ClaimCreate(content: str, confidence: float = 0.8, tags: Optional[List[str]]
         'claim': claim
     }
 
-
 @register_tool(name="ClaimAddSupport", is_core=True)
 def ClaimAddSupport(supporter: str, supported: str) -> Dict[str, Any]:
     """
@@ -165,7 +162,6 @@ def ClaimAddSupport(supporter: str, supported: str) -> Dict[str, Any]:
         'relationship_created': True
     }
 
-
 @register_tool(name="ClaimGetSupport", is_core=True)
 def ClaimGetSupport(claim_id: str) -> Dict[str, Any]:
     """
@@ -206,7 +202,6 @@ def ClaimGetSupport(claim_id: str) -> Dict[str, Any]:
         'supports_count': len(supports),
         'supported_by_count': len(supported_by)
     }
-
 
 @register_tool(name="ClaimAddTags", is_core=True)
 def ClaimAddTags(claim_id: str, tags: List[str]) -> Dict[str, Any]:
@@ -260,7 +255,6 @@ def ClaimAddTags(claim_id: str, tags: List[str]) -> Dict[str, Any]:
         'total_tags': len(claim['tags']),
         'claim': claim
     }
-
 
 @register_tool(name="ClaimsQuery", is_core=True)
 def ClaimsQuery(filter_dict: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -327,7 +321,6 @@ def ClaimsQuery(filter_dict: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         'filter_applied': filter_dict
     }
 
-
 # Helper functions not exposed as tools
 def _reset_claim_storage():
     """Reset claim storage (for testing)."""
@@ -335,7 +328,6 @@ def _reset_claim_storage():
     _claim_storage = {}
     _support_relationships = {}
     _next_claim_id = 1
-
 
 def examples() -> List[str]:
     """
@@ -352,7 +344,6 @@ def examples() -> List[str]:
         "ClaimsQuery({'confidence_min': 0.7, 'confidence_max': 0.9}) returns claims with confidence between 0.7 and 0.9",
         "ClaimCreate('WebSearch provides DuckDuckGo search capabilities', confidence=0.95, tags=['tool', 'search']) creates a claim about a tool"
     ]
-
 
 if __name__ == "__main__":
     # Test the claim management functionality

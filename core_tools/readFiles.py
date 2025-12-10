@@ -13,7 +13,6 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 from src.tools.registry import register_tool
 
-
 @register_tool(name="ReadFiles", is_core=True)
 def readFiles(path_pattern: str, max_files: int = 50, encoding: str = 'utf-8') -> List[Dict[str, Any]]:
     """
@@ -125,7 +124,6 @@ def readFiles(path_pattern: str, max_files: int = 50, encoding: str = 'utf-8') -
             'error': 'Failed to process file pattern'
         }]
 
-
 @register_tool(name="ReadFile", is_core=False)
 def readFile(file_path: str, encoding: str = 'utf-8') -> Dict[str, Any]:
     """
@@ -219,7 +217,6 @@ def readFile(file_path: str, encoding: str = 'utf-8') -> Dict[str, Any]:
             'read_success': False,
             'error': 'Failed to read file'
         }
-
 
 @register_tool(name="ListFiles", is_core=False)
 def listFiles(directory: str, pattern: str = "*", recursive: bool = False) -> List[Dict[str, Any]]:
@@ -319,7 +316,6 @@ def listFiles(directory: str, pattern: str = "*", recursive: bool = False) -> Li
             'error': 'Failed to list directory'
         }]
 
-
 def examples() -> List[str]:
     """
     Return example usage claims for LLM context
@@ -335,7 +331,6 @@ def examples() -> List[str]:
         "readFiles('*.rs', max_files=10) returns up to 10 Rust source files to avoid reading too many files",
         "readFiles('README.md') returns project documentation and setup instructions"
     ]
-
 
 if __name__ == "__main__":
     # Test the read files functionality

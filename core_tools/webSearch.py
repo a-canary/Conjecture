@@ -12,7 +12,6 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 from src.tools.registry import register_tool
 
-
 @register_tool(name="WebSearch", is_core=True)
 def webSearch(query: str, max_results: int = 10) -> List[Dict[str, Any]]:
     """
@@ -77,7 +76,6 @@ def webSearch(query: str, max_results: int = 10) -> List[Dict[str, Any]]:
             'source': 'duckduckgo'
         }]
 
-
 def examples() -> List[str]:
     """
     Return example usage claims for LLM context
@@ -92,7 +90,6 @@ def examples() -> List[str]:
         "webSearch('Rust error handling best practices') returns patterns and examples for proper error handling in Rust",
         "webSearch('terminal game input handling Rust') returns methods for handling keyboard input in terminal applications"
     ]
-
 
 if __name__ == "__main__":
     # Test the web search functionality
