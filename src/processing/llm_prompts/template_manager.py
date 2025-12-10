@@ -323,7 +323,7 @@ class PromptTemplateManager:
                 # Validate new content
                 validation_result = await self.validate_template_content(
                     updates['template_content'], 
-                    [v.dict() for v in template.variables]
+                    [v.model_dump() for v in template.variables]
                 )
                 if not validation_result.is_valid:
                     raise ValueError(f"Template content validation failed: {validation_result.errors}")

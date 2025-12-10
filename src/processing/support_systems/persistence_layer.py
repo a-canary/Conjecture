@@ -334,7 +334,7 @@ class PersistenceLayer:
             
             # Store claim data
             key = f"claims/{claim.id}"
-            success = await self.storage_backend.store(key, claim.dict())
+            success = await self.storage_backend.store(key, claim.model_dump())
             
             if success:
                 # Update indexes
@@ -384,7 +384,7 @@ class PersistenceLayer:
             claim.updated = datetime.utcnow()
             
             # Store updated claim
-            return await self.storage_backend.store(f"claims/{claim_id}", claim.dict())
+            return await self.storage_backend.store(f"claims/{claim_id}", claim.model_dump())
         
         except Exception as e:
             logger.error(f"Failed to update claim {claim_id}: {e}")

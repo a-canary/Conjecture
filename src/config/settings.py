@@ -42,7 +42,7 @@ class Settings(BaseModel):
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert settings to dictionary"""
-        return self.dict()
+        return self.model_dump()
 
 # Export the main class and constants
 __all__ = ['Settings', 'DIRTY_FLAG_CONFIDENCE_THRESHOLD', 'DIRTY_FLAG_ENABLED', 'DIRTY_FLAG_AUTO_CLEAN']

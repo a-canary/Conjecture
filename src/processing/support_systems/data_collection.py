@@ -324,7 +324,7 @@ class DataCollector:
                 ttl = self.cache_ttl_seconds
             
             # Serialize data
-            serialized_data = [item.dict() for item in data]
+            serialized_data = [item.model_dump() for item in data]
             data_bytes = json.dumps(serialized_data).encode('utf-8')
             
             # Create cache entry

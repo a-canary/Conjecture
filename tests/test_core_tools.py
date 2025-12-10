@@ -20,7 +20,7 @@ from src.core.models import Claim, ClaimType
 from src.interfaces.llm_interface import LLMInterface
 
 class SimpleLLMProcessor(LLMInterface):
-    """Real
+    """Real implementation of LLM interface for testing"""
     
     def generate_response(self, prompt: str) -> str:
         """Generate test response with tool calls"""

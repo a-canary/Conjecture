@@ -6,6 +6,7 @@ import pytest
 from datetime import datetime, timedelta
 from typing import List
 import re
+from pydantic import ValidationError
 
 from src.core.models import (
     Claim,
@@ -17,6 +18,7 @@ from src.core.models import (
     InvalidClaimError,
     RelationshipError,
     DataLayerError,
+    DataConfig,
     validate_claim_id,
     validate_confidence,
     generate_claim_id,
@@ -186,13 +188,13 @@ class TestClaimModel:
     def test_serialization(self, valid_claim):
         """Test claim serialization to dict and JSON."""
         # Test dict conversion
-        claim_dict = valid_claim.dict()
+        claim_dict = valid_claim.model_dump()
         assert isinstance(claim_dict, dict)
         assert claim_dict["id"] == valid_claim.id
         assert claim_dict["content"] == valid_claim.content
 
         # Test JSON serialization
-        claim_json = valid_claim.json()
+        claim_json = valid_claim.model_dump_json()
         assert isinstance(claim_json, str)
         assert valid_claim.id in claim_json
         assert valid_claim.content in claim_json
@@ -204,7 +206,7 @@ class TestClaimModel:
         assert isinstance(created_at, datetime)
 
         # Test JSON encoding of datetime
-        claim_dict = valid_claim.dict()
+        claim_dict = valid_claim.model_dump()
         assert "created_at" in claim_dict
 
     @pytest.mark.models
@@ -318,7 +320,7 @@ class TestRelationshipModel:
     @pytest.mark.models
     def test_relationship_serialization(self, valid_relationship):
         """Test relationship serialization."""
-        relationship_dict = valid_relationship.dict()
+        relationship_dict = valid_relationship.model_dump()
         assert isinstance(relationship_dict, dict)
         assert "supporter_id" in relationship_dict
         assert "supported_id" in relationship_dict
@@ -391,17 +393,17 @@ class TestClaimFilterModel:
 
         # Invalid bounds
         with pytest.raises(
-            ValueError, match="ensure this value is greater than or equal to 1"
+            ValidationError, match="Input should be greater than or equal to 1"
         ):
             ClaimFilter(limit=0)
 
         with pytest.raises(
-            ValueError, match="ensure this value is less than or equal to 1000"
+            ValidationError, match="Input should be less than or equal to 1000"
         ):
             ClaimFilter(limit=1001)
 
         with pytest.raises(
-            ValueError, match="ensure this value is greater than or equal to 0"
+            ValidationError, match="Input should be greater than or equal to 0"
         ):
             ClaimFilter(offset=-1)
 
@@ -451,22 +453,22 @@ class TestDataConfigModel:
 
         # Invalid bounds
         with pytest.raises(
-            ValueError, match="ensure this value is greater than or equal to 0"
+            ValueError, match="Input should be greater than or equal to 0"
         ):
             DataConfig(cache_size=-1)
 
         with pytest.raises(
-            ValueError, match="ensure this value is greater than or equal to 0"
+            ValueError, match="Input should be greater than or equal to 0"
         ):
             DataConfig(cache_ttl=-1)
 
         with pytest.raises(
-            ValueError, match="ensure this value is greater than or equal to 1"
+            ValueError, match="Input should be greater than or equal to 1"
         ):
             DataConfig(batch_size=0)
 
         with pytest.raises(
-            ValueError, match="ensure this value is less than or equal to 1000"
+            ValueError, match="Input should be less than or equal to 1000"
         ):
             DataConfig(batch_size=1001)
 
@@ -726,7 +728,7 @@ class TestModelPerformance:
         """Benchmark claim serialization performance."""
 
         def serialize_claim():
-            return valid_claim.json()
+            return valid_claim.model_dump_json()
 
         result = benchmark(serialize_claim)
         assert isinstance(result, str)

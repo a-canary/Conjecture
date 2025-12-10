@@ -17,7 +17,7 @@ class ProviderInfo(BaseModel):
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
-        return self.dict()
+        return self.model_dump()
 
 class ProviderDiscovery(BaseModel):
     """Real

@@ -13,7 +13,7 @@ class ValidationResult(BaseModel):
     warnings: List[str] = []
 
 class UnifiedProviderValidator:
-    """Real
+    """Real implementation of provider validator for testing"""
     
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         self.config = config or {}
@@ -52,7 +52,7 @@ class UnifiedProviderValidator:
         )
 
 class UnifiedConfigValidator:
-    """Real
+    """Real implementation of config validator for testing"""
     
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         self.config = config or {}

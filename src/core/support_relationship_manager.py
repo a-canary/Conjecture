@@ -8,7 +8,7 @@ from datetime import datetime
 from dataclasses import dataclass
 from collections import defaultdict, deque
 
-from .models import Claim, create_claim_index
+from .models import Claim
 
 @dataclass
 class RelationshipMetrics:
@@ -45,7 +45,7 @@ class SupportRelationshipManager:
     def __init__(self, claims: List[Claim]):
         """Initialize with a list of claims"""
         self.claims = claims
-        self.claim_index = create_claim_index(claims)
+        self.claim_index = Claim.create_claim_index(claims)
         self._support_map = None
         self._supporter_map = None
         self._relationship_metrics = None
@@ -454,7 +454,7 @@ class SupportRelationshipManager:
     def refresh(self, new_claims: List[Claim]) -> None:
         """Refresh the relationship manager with new claim data"""
         self.claims = new_claims
-        self.claim_index = create_claim_index(new_claims)
+        self.claim_index = Claim.create_claim_index(new_claims)
         self._relationship_metrics = None
         self._build_relationship_maps()
 

@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 import re
 
-from core.models import Claim, create_claim_index
+from core.models import Claim
 from core.support_relationship_manager import SupportRelationshipManager
 from tools.registry import ToolRegistry
 
@@ -56,7 +56,7 @@ class CompleteContextBuilder:
     def __init__(self, claims: List[Claim], include_core_tools: bool = True):
         """Initialize context builder with claim collection"""
         self.claims = claims
-        self.claim_index = create_claim_index(claims)
+        self.claim_index = Claim.create_claim_index(claims)
         self.relationship_manager = SupportRelationshipManager(claims)
         self.include_core_tools = include_core_tools
 
@@ -443,7 +443,7 @@ class CompleteContextBuilder:
     def refresh(self, new_claims: List[Claim]) -> None:
         """Refresh the context builder with new claim data"""
         self.claims = new_claims
-        self.claim_index = create_claim_index(new_claims)
+        self.claim_index = Claim.create_claim_index(new_claims)
         self.relationship_manager.refresh(new_claims)
 
     def build_simple_context(

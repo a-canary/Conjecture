@@ -16,7 +16,7 @@ class LLMRequest(BaseModel):
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
-        return self.dict()
+        return self.model_dump()
 
 class LLMResponse(BaseModel):
     """LLM response model for testing"""
@@ -28,7 +28,7 @@ class LLMResponse(BaseModel):
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
-        return self.dict()
+        return self.model_dump()
 
 class LLMBridge:
     """Real
