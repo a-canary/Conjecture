@@ -9,7 +9,6 @@ from typing import List, Optional
 
 from conjecture import Conjecture
 
-
 class SimpleTUI:
     """Simple TUI implementation using the unified Conjecture API."""
 
@@ -222,7 +221,6 @@ class SimpleTUI:
         stdscr.getch()
         self.current_screen = "menu"
 
-
 def main():
     """Run the simple TUI."""
     try:
@@ -232,7 +230,6 @@ def main():
         print("\n👋 Goodbye!")
     except Exception as e:
         print(f"❌ Error: {e}")
-
 
 if __name__ == "__main__":
     main()

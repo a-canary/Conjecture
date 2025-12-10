@@ -10,7 +10,6 @@ from collections import defaultdict, deque
 
 from .models import Claim, create_claim_index
 
-
 @dataclass
 class RelationshipMetrics:
     """Performance and structure metrics for relationships"""
@@ -23,7 +22,6 @@ class RelationshipMetrics:
     avg_branching_factor: float
     relationship_density: float
 
-
 @dataclass
 class TraversalResult:
     """Result of relationship traversal operation"""
@@ -32,7 +30,6 @@ class TraversalResult:
     traversal_path: List[str]
     depth: int
     cycles: List[List[str]]
-
 
 class SupportRelationshipManager:
     """

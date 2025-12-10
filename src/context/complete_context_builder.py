@@ -12,7 +12,6 @@ from core.models import Claim, create_claim_index
 from core.support_relationship_manager import SupportRelationshipManager
 from tools.registry import ToolRegistry
 
-
 @dataclass
 class ContextAllocation:
     """Token allocation for context building"""
@@ -21,7 +20,6 @@ class ContextAllocation:
     downward_chain_tokens: int  # 30% - supported claims (descendants)
     semantic_tokens: int  # 30% - semantically similar claims
     total_tokens: int
-
 
 @dataclass
 class ContextMetrics:
@@ -36,7 +34,6 @@ class ContextMetrics:
     build_time_ms: float
     coverage_completeness: float
 
-
 @dataclass
 class BuiltContext:
     """Complete built context with metadata"""
@@ -46,7 +43,6 @@ class BuiltContext:
     metrics: ContextMetrics
     included_claims: List[str]
     target_claim_id: str
-
 
 class CompleteContextBuilder:
     """

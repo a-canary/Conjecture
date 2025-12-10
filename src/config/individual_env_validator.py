@@ -11,7 +11,6 @@ from typing import Dict, List, Optional
 from .adapters.base_adapter import BaseAdapter, ValidationResult
 from .common import ProviderConfig
 
-
 class IndividualEnvValidator:
     """Validator for individual environment variable format"""
 
@@ -226,7 +225,6 @@ class IndividualEnvValidator:
                 f"  Status: {'[green]Ready[/green]' if self._is_provider_ready(provider) else '[red]Incomplete[/red]'}"
             )
 
-
 def main():
     """Test the validator"""
     validator = IndividualEnvValidator()
@@ -239,7 +237,6 @@ def main():
     validator.show_configuration_status()
     console.print("\n")
     validator.show_provider_details()
-
 
 if __name__ == "__main__":
     main()

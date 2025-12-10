@@ -50,7 +50,6 @@ from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-
 class ResponseType(str, Enum):
     """Supported response types in JSON frontmatter"""
     CLAIMS = "claims"
@@ -58,7 +57,6 @@ class ResponseType(str, Enum):
     VALIDATION = "validation"
     INSTRUCTION_SUPPORT = "instruction_support"
     ERROR = "error"
-
 
 class JSONClaimData(BaseModel):
     """Individual claim data in JSON frontmatter"""
@@ -90,7 +88,6 @@ class JSONClaimData(BaseModel):
                 logger.warning(f"Unknown claim type: {v}")
         return v
 
-
 class JSONFrontmatterData(BaseModel):
     """Complete JSON frontmatter structure"""
     type: ResponseType = Field(..., description="Response type")
@@ -111,7 +108,6 @@ class JSONFrontmatterData(BaseModel):
                 raise ValueError(f"Invalid timestamp format: {v}")
         return v
 
-
 @dataclass
 class ParseResult:
     """Result of parsing JSON frontmatter"""
@@ -122,7 +118,6 @@ class ParseResult:
     errors: List[str]
     parse_method: str  # 'json_frontmatter', 'fallback_text', 'error'
     processing_time: float
-
 
 class JSONFrontmatterParser:
     """
@@ -319,7 +314,6 @@ class JSONFrontmatterParser:
             'avg_processing_time': 0.0
         }
 
-
 # Global instance for reuse
 _json_parser = None
 
@@ -329,7 +323,6 @@ def get_json_frontmatter_parser() -> JSONFrontmatterParser:
     if _json_parser is None:
         _json_parser = JSONFrontmatterParser()
     return _json_parser
-
 
 def parse_response_with_json_frontmatter(response_text: str) -> ParseResult:
     """
@@ -343,7 +336,6 @@ def parse_response_with_json_frontmatter(response_text: str) -> ParseResult:
     """
     parser = get_json_frontmatter_parser()
     return parser.parse_response(response_text)
-
 
 # Utility functions for creating JSON frontmatter prompts
 def create_json_frontmatter_prompt_template(response_type: ResponseType, examples: List[Dict[str, Any]] = None) -> str:

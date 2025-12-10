@@ -5,7 +5,6 @@ Placeholder for backward compatibility with tests
 
 from typing import Any, Dict, List, Optional
 
-
 class Conjecture:
     """
     Placeholder Conjecture class for backward compatibility

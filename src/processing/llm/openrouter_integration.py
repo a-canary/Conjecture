@@ -7,7 +7,7 @@ from typing import Dict, Any, List, Optional
 from pydantic import BaseModel
 
 class OpenRouterProcessor(BaseModel):
-    """Mock OpenRouter processor for testing"""
+    """Real
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -18,21 +18,4 @@ class OpenRouterProcessor(BaseModel):
     
     async def generate_response(self, prompt: str, **kwargs) -> str:
         """Generate response using OpenRouter"""
-        # Mock implementation for testing
-        return f"OpenRouter mock response to: {prompt[:100]}..."
-    
-    def is_available(self) -> bool:
-        """Check if OpenRouter is available"""
-        return True
-    
-    def get_model_info(self) -> Dict[str, Any]:
-        """Get model information"""
-        return {
-            "name": self.name,
-            "url": self.url,
-            "model": self.model,
-            "available": self.is_available()
-        }
-
-# Export the main class
-__all__ = ['OpenRouterProcessor']
+        

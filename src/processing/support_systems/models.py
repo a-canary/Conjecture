@@ -7,7 +7,6 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 
-
 class DataSource(str, Enum):
     """Data source types"""
     USER_INPUT = "user_input"
@@ -18,7 +17,6 @@ class DataSource(str, Enum):
     EXISTING_CLAIMS = "existing_claims"
     TOOL_RESULT = "tool_result"
     KNOWLEDGE_BASE = "knowledge_base"
-
 
 class DataItem(BaseModel):
     """Represents a piece of collected data"""
@@ -31,7 +29,6 @@ class DataItem(BaseModel):
     relevance_score: Optional[float] = Field(None, description="Relevance to query")
     size_bytes: int = Field(default=0, description="Data size in bytes")
 
-
 class DataSchema(BaseModel):
     """Schema definition for data validation"""
     required_fields: List[str] = Field(default_factory=list)
@@ -40,14 +37,12 @@ class DataSchema(BaseModel):
     validators: Dict[str, str] = Field(default_factory=dict)
     custom_validation: Optional[str] = Field(None, description="Custom validation rule")
 
-
 class ValidationResult(BaseModel):
     """Result of data validation"""
     is_valid: bool = Field(default=False)
     errors: List[str] = Field(default_factory=list)
     warnings: List[str] = Field(default_factory=list)
     transformed_data: Optional[Dict[str, Any]] = Field(None)
-
 
 class ProcessedData(BaseModel):
     """Represents processed data after validation and transformation"""
@@ -56,7 +51,6 @@ class ProcessedData(BaseModel):
     processing_operations: List[str] = Field(default_factory=list)
     validation_result: Optional[ValidationResult] = Field(None)
 
-
 class ContextItemType(str, Enum):
     """Context item types"""
     EXAMPLE = "example"
@@ -64,7 +58,6 @@ class ContextItemType(str, Enum):
     TOOL = "tool"
     DATA = "data"
     KNOWLEDGE = "knowledge"
-
 
 class ContextItem(BaseModel):
     """Represents an item in the context"""
@@ -77,7 +70,6 @@ class ContextItem(BaseModel):
     source: Optional[str] = Field(None, description="Source of the context item")
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-
 class ContextResult(BaseModel):
     """Result of context building"""
     query: str = Field(..., description="Original query")
@@ -88,7 +80,6 @@ class ContextResult(BaseModel):
     optimization_applied: bool = Field(False, description="Whether optimization was applied")
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
-
 class OptimizedContext(BaseModel):
     """Optimized context for LLM consumption"""
     items: List[ContextItem] = Field(..., description="Included context items")
@@ -98,14 +89,12 @@ class OptimizedContext(BaseModel):
     optimization_strategy: str = Field("relevance", description="Optimization strategy")
     optimization_score: float = Field(0.0, description="Optimization quality score")
 
-
 class TokenUsage(BaseModel):
     """Token usage information"""
     input_tokens: int = Field(0)
     output_tokens: int = Field(0)
     total_tokens: int = Field(0)
     context_tokens: int = Field(0)
-
 
 class CacheEntry(BaseModel):
     """Cache entry for data"""

@@ -10,7 +10,6 @@ from typing import Dict, List, Any
 from pathlib import Path
 from datetime import datetime
 
-
 class ConjectureTestCaseGenerator:
     """Generates comprehensive test cases for Conjecture hypothesis testing"""
 
@@ -549,7 +548,6 @@ class ConjectureTestCaseGenerator:
 
         return "\n".join(summary_lines)
 
-
 async def main():
     """Main function to generate comprehensive test cases"""
     generator = ConjectureTestCaseGenerator()
@@ -592,7 +590,6 @@ async def main():
     for category, cases in generated_cases.items():
         print(f"{category.replace('_', ' ').title()}: {len(cases)} cases")
     print("=" * 50)
-
 
 if __name__ == "__main__":
     import asyncio

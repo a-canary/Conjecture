@@ -11,7 +11,6 @@ from datetime import datetime
 from src.cli.base_cli import BaseCLI, DatabaseError, BackendNotAvailableError
 from src.core.models import Claim, generate_claim_id
 
-
 class SimpleBackend(BaseCLI):
     """Simple backend implementation for basic operations"""
     

@@ -11,9 +11,7 @@ import logging
 from ..data.data_manager import DataManager
 from ..core.models import Claim
 
-
 logger = logging.getLogger(__name__)
-
 
 class Context:
     """Context information for LLM prompt building."""
@@ -71,7 +69,6 @@ class Context:
                 self.session_history.pop(0)
             else:
                 break
-
 
 class ContextBuilder:
     """
@@ -397,7 +394,6 @@ class ContextBuilder:
             "cache_ttl_minutes": self.cache_ttl_minutes,
         }
 
-
 class DataManager:
     """
     Enhanced data manager for support systems.
@@ -450,7 +446,6 @@ class DataManager:
         except Exception as e:
             logger.error(f"Error cleaning up expired data: {e}")
             return 0
-
 
 # Import required modules
 from datetime import timedelta

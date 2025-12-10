@@ -22,7 +22,6 @@ from .response_parser import ResponseParser
 from .tool_executor import ToolExecutor
 from ..data.data_manager import DataManager
 
-
 class ClaimScope(Enum):
     """Claim scope enumeration"""
 
@@ -32,7 +31,6 @@ class ClaimScope(Enum):
     TEAM = "team"
     GLOBAL = "global"
 
-
 @dataclass
 class EvaluationEvent:
     """Event emitted during claim evaluation"""
@@ -41,7 +39,6 @@ class EvaluationEvent:
     event_type: str  # started, confidence_updated, tool_called, completed, error
     timestamp: datetime = field(default_factory=datetime.utcnow)
     data: Dict[str, Any] = field(default_factory=dict)
-
 
 @dataclass
 class EvaluationTask:
@@ -57,7 +54,6 @@ class EvaluationTask:
 
     def __lt__(self, other):
         return self.priority < other.priority
-
 
 class AsyncClaimEvaluationService:
     """

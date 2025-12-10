@@ -16,7 +16,6 @@ from datetime import datetime
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-
 def load_environment():
     """Load real environment variables"""
     env_vars = {}
@@ -32,7 +31,6 @@ def load_environment():
                         env_vars[key.strip()] = value.strip()
 
     return env_vars
-
 
 def load_test_cases():
     """Load all test cases"""
@@ -54,7 +52,6 @@ def load_test_cases():
             print(f"Error loading {case_file}: {e}")
 
     return test_cases
-
 
 def create_direct_prompt(test_case):
     """Create direct evaluation prompt - no claim creation"""
@@ -81,7 +78,6 @@ def create_direct_prompt(test_case):
 Context: {context}
 
 Please provide a direct analysis and answer without using any structured evaluation framework."""
-
 
 def call_conjecture_system(test_case, env_vars):
     """Call Conjecture system - all claim creation happens inside"""
@@ -157,7 +153,6 @@ def call_conjecture_system(test_case, env_vars):
             "model": "conjecture_system",
             "approach": "conjecture",
         }
-
 
 def make_direct_llm_call(prompt, model, env_vars):
     """Make direct LLM call without Conjecture"""
@@ -236,7 +231,6 @@ def make_direct_llm_call(prompt, model, env_vars):
 
     except Exception as e:
         return {"success": False, "error": str(e), "model": model, "approach": "direct"}
-
 
 def evaluate_response_quality(response, test_case, approach):
     """Evaluate response quality using enhanced rubric"""
@@ -349,14 +343,12 @@ def evaluate_response_quality(response, test_case, approach):
         "perspective_indicators_found": perspective_count
     }
 
-
 def print_progress_bar(current, total, length=50):
     """Print progress bar"""
     percent = current / total
     filled_length = int(length * percent)
     bar = "#" * filled_length + "-" * (length - filled_length)
     print(f"\rProgress: |{bar}| {percent:.1%} ({current}/{total})", end="", flush=True)
-
 
 def run_comparison_test():
     """Run Direct vs Conjecture comparison"""
@@ -659,7 +651,6 @@ def run_comparison_test():
         print(f"WARNING: Statistical validation failed: {str(e)}")
     
     return results_file
-
 
 if __name__ == "__main__":
     run_comparison_test()

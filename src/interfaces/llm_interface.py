@@ -8,7 +8,6 @@ Provides the contract for LLM providers to generate responses.
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
 
-
 class LLMInterface(ABC):
     """
     Abstract interface for LLM implementations.

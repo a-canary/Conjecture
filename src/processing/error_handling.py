@@ -16,14 +16,12 @@ from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-
 class ErrorSeverity(str, Enum):
     """Error severity levels"""
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
-
 
 class ErrorCategory(str, Enum):
     """Error categories for better classification"""
@@ -37,7 +35,6 @@ class ErrorCategory(str, Enum):
     TIMEOUT_ERROR = "timeout_error"
     UNKNOWN_ERROR = "unknown_error"
 
-
 @dataclass
 class ParsingError:
     """Structured error information"""
@@ -50,7 +47,6 @@ class ParsingError:
     recovery_suggestions: List[str]
     retry_count: int = 0
 
-
 @dataclass
 class ValidationResult:
     """Result of validation operation"""
@@ -58,7 +54,6 @@ class ValidationResult:
     errors: List[ParsingError]
     warnings: List[str]
     data: Optional[Dict[str, Any]] = None
-
 
 class ErrorRecoveryStrategy:
     """Strategies for recovering from parsing errors"""
@@ -104,7 +99,6 @@ class ErrorRecoveryStrategy:
             ])
         
         return actions
-
 
 class EnhancedErrorHandler:
     """Enhanced error handler with recovery and monitoring"""
@@ -674,7 +668,6 @@ class EnhancedErrorHandler:
         if response_text:
             logger.debug(f"Response preview: {response_text[:300]}...")
 
-
 # Global error handler instance
 _error_handler = None
 
@@ -685,7 +678,6 @@ def get_error_handler() -> EnhancedErrorHandler:
         _error_handler = EnhancedErrorHandler()
     return _error_handler
 
-
 def handle_parsing_error(
     error: Exception, 
     context: str = "",
@@ -694,7 +686,6 @@ def handle_parsing_error(
     """Convenience function to handle parsing errors"""
     handler = get_error_handler()
     return handler.handle_parsing_error(error, context, response_text)
-
 
 def validate_json_frontmatter(
     response_text: str,

@@ -18,9 +18,7 @@ from ..core.claim_operations import (
 from ..processing.tool_registry import ToolCall, ToolFunction, get_tool_function, list_tool_functions
 from ..processing.tool_execution import execute_tool_from_registry, create_tool_call
 
-
 logger = logging.getLogger(__name__)
-
 
 @dataclass
 class LLMContext:
@@ -32,7 +30,6 @@ class LLMContext:
     conversation_history: List[Dict[str, Any]]
     metadata: Dict[str, Any]
 
-
 @dataclass
 class LLMResponse:
     """Pure data structure for LLM response."""
@@ -42,7 +39,6 @@ class LLMResponse:
     confidence: float
     metadata: Dict[str, Any]
 
-
 @dataclass
 class ProcessingPlan:
     """Pure data structure for processing plan."""
@@ -50,7 +46,6 @@ class ProcessingPlan:
     planned_claims: List[Claim]
     reasoning: str
     confidence: float
-
 
 # Pure Functions for Context Building
 
@@ -77,7 +72,6 @@ def build_llm_context(session_id: str,
         conversation_history=conversation_history or [],
         metadata=metadata or {}
     )
-
 
 def find_relevant_claims(user_request: str, 
                         all_claims: List[Claim], 
@@ -119,7 +113,6 @@ def find_relevant_claims(user_request: str,
     scored_claims.sort(key=lambda x: x[1], reverse=True)
     return [claim for claim, score in scored_claims[:max_claims]]
 
-
 def format_claims_for_llm(claims: List[Claim]) -> str:
     """Pure function to format claims for LLM consumption."""
     if not claims:
@@ -147,7 +140,6 @@ def format_claims_for_llm(claims: List[Claim]) -> str:
     
     return "\n\n".join(formatted_sections)
 
-
 def format_tools_for_llm(tools: List[ToolFunction]) -> str:
     """Pure function to format tools for LLM consumption."""
     if not tools:
@@ -168,7 +160,6 @@ def format_tools_for_llm(tools: List[ToolFunction]) -> str:
             formatted_tools.append(f"  Description: {tool.description}")
     
     return "\n".join(formatted_tools)
-
 
 # Pure Functions for LLM Reasoning
 
@@ -229,7 +220,6 @@ def create_llm_prompt(context: LLMContext) -> str:
     
     return "\n".join(prompt_parts)
 
-
 def parse_llm_response(response_text: str) -> LLMResponse:
     """Pure function to parse LLM response into structured format."""
     # Extract tool calls if present
@@ -255,7 +245,6 @@ def parse_llm_response(response_text: str) -> LLMResponse:
         confidence=0.8,  # Default confidence
         metadata={"raw_response": response_text}
     )
-
 
 def parse_tool_calls_from_text(text: str) -> List[ToolCall]:
     """Pure function to parse tool calls from text."""
@@ -284,7 +273,6 @@ def parse_tool_calls_from_text(text: str) -> List[ToolCall]:
         logger.error(f"Error parsing tool calls: {e}")
     
     return tool_calls
-
 
 def simulate_llm_interaction(context: LLMContext) -> LLMResponse:
     """Pure function to simulate LLM interaction (for testing)."""
@@ -342,7 +330,6 @@ def simulate_llm_interaction(context: LLMContext) -> LLMResponse:
             metadata={"simulated": True}
         )
 
-
 # Pure Functions for Processing Planning
 
 def create_processing_plan(response: LLMResponse, context: LLMContext) -> ProcessingPlan:
@@ -353,7 +340,6 @@ def create_processing_plan(response: LLMResponse, context: LLMContext) -> Proces
         reasoning=response.response_text,
         confidence=response.confidence
     )
-
 
 def validate_processing_plan(plan: ProcessingPlan, tool_registry) -> Tuple[bool, List[str]]:
     """Pure function to validate processing plan."""
@@ -374,7 +360,6 @@ def validate_processing_plan(plan: ProcessingPlan, tool_registry) -> Tuple[bool,
     
     return len(errors) == 0, errors
 
-
 # Pure Functions for Result Processing
 
 def process_tool_results(tool_results: List[Any], 
@@ -387,7 +372,6 @@ def process_tool_results(tool_results: List[Any],
     # and create/update claims based on tool outputs
     
     return updated_claims
-
 
 def create_claims_from_results(tool_results: List[Any], 
                               context: LLMContext) -> List[Claim]:
@@ -411,7 +395,6 @@ def create_claims_from_results(tool_results: List[Any],
             new_claims.append(new_claim)
     
     return new_claims
-
 
 # Pure Functions for Coordination
 
@@ -465,7 +448,6 @@ def coordinate_three_part_flow(session_id: str,
         "updated_claims": updated_claims,
         "new_claims": new_claims
     }
-
 
 # Import the reference to `plan` used in the functions above
 from .llm_inference import ProcessingPlan

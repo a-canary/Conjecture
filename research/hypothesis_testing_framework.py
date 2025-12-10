@@ -28,7 +28,6 @@ from core.models import Claim, ClaimState, ClaimType
 from processing.llm.llm_manager import LLMManager
 from config.common import ProviderConfig
 
-
 class HypothesisTier(str, Enum):
     """Hypothesis testing priority tiers"""
 
@@ -37,7 +36,6 @@ class HypothesisTier(str, Enum):
     USER_EXPERIENCE = "user_experience"  # Tier 3: UX objectives
     RESEARCH_VALIDATION = "research_validation"  # Tier 4: Research goals
     PERFORMANCE_EFFICIENCY = "performance_efficiency"  # Tier 4: Efficiency targets
-
 
 class HypothesisStatus(str, Enum):
     """Hypothesis testing status"""
@@ -48,7 +46,6 @@ class HypothesisStatus(str, Enum):
     PROVEN = "proven"
     DISPROVEN = "disproven"
 
-
 class EvidenceStrength(str, Enum):
     """Evidence strength levels"""
 
@@ -57,7 +54,6 @@ class EvidenceStrength(str, Enum):
     MODERATE = "moderate"
     STRONG = "strong"
     CONCLUSIVE = "conclusive"
-
 
 @dataclass
 class EvaluationRubric:
@@ -68,7 +64,6 @@ class EvaluationRubric:
     success_threshold: float
     description: str
     score_levels: Dict[int, str]
-
 
 @dataclass
 class HypothesisConfig:
@@ -86,7 +81,6 @@ class HypothesisConfig:
     statistical_power_target: float = 0.8
     alpha_level: float = 0.05
 
-
 @dataclass
 class HypothesisResult:
     """Results from testing a hypothesis"""
@@ -103,7 +97,6 @@ class HypothesisResult:
     blocking_issues: List[str]
     detailed_results: Dict[str, Any]
 
-
 @dataclass
 class IterationResult:
     """Results from a single testing iteration"""
@@ -115,7 +108,6 @@ class IterationResult:
     improvements_made: List[str]
     next_actions: List[str]
     timestamp: datetime
-
 
 class ConjectureTestingFramework:
     """Comprehensive framework for testing Conjecture hypotheses"""
@@ -885,7 +877,6 @@ class ConjectureTestingFramework:
             "last_updated": datetime.utcnow().isoformat(),
         }
 
-
 async def main():
     """Main function to run hypothesis testing framework"""
     from config.common import ProviderConfig
@@ -953,7 +944,6 @@ async def main():
         print(
             f"{status_emoji} {hypothesis_id}: {result.status.value} (confidence: {result.confidence:.2f})"
         )
-
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -7,14 +7,12 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field, field_validator
 
-
 class PromptTemplateStatus(str, Enum):
     """Prompt template status"""
     ACTIVE = "active"
     INACTIVE = "inactive"
     DRAFT = "draft"
     DEPRECATED = "deprecated"
-
 
 class PromptTemplateType(str, Enum):
     """Prompt template types"""
@@ -29,7 +27,6 @@ class PromptTemplateType(str, Enum):
     SYNTHESIS = "synthesis"
     TASK_DECOMPOSITION = "task_decomposition"
 
-
 class PromptVariable(BaseModel):
     """Represents a prompt template variable"""
     name: str = Field(..., description="Variable name")
@@ -38,7 +35,6 @@ class PromptVariable(BaseModel):
     default_value: Optional[Any] = Field(None, description="Default value")
     description: str = Field("", description="Variable description")
     validation_rule: Optional[str] = Field(None, description="Validation rule")
-
 
 class PromptTemplate(BaseModel):
     """Represents a prompt template"""
@@ -123,7 +119,6 @@ class PromptTemplate(BaseModel):
         
         self.updated_at = datetime.utcnow()
 
-
 class PromptValidationResult(BaseModel):
     """Result of prompt validation"""
     is_valid: bool = Field(default=False)
@@ -131,7 +126,6 @@ class PromptValidationResult(BaseModel):
     warnings: List[str] = Field(default_factory=list)
     rendered_preview: Optional[str] = Field(None)
     estimated_tokens: int = Field(default=0)
-
 
 class IntegratedPrompt(BaseModel):
     """Represents an integrated prompt ready for LLM"""
@@ -143,7 +137,6 @@ class IntegratedPrompt(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-
 class OptimizedPrompt(BaseModel):
     """Represents an optimized prompt"""
     original_prompt: str = Field(..., description="Original prompt")
@@ -152,7 +145,6 @@ class OptimizedPrompt(BaseModel):
     token_reduction: int = Field(0, description="Tokens reduced")
     optimization_score: float = Field(0.0, description="Optimization quality score")
     changes_made: List[str] = Field(default_factory=list, description="Changes made")
-
 
 class LLMResponse(BaseModel):
     """Represents an LLM response"""
@@ -163,7 +155,6 @@ class LLMResponse(BaseModel):
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
 
-
 class ResponseSchema(BaseModel):
     """Schema for validating LLM responses"""
     schema_name: str = Field(..., description="Schema name")
@@ -171,7 +162,6 @@ class ResponseSchema(BaseModel):
     field_types: Dict[str, str] = Field(default_factory=dict)
     validation_rules: Dict[str, str] = Field(default_factory=dict)
     custom_validator: Optional[str] = Field(None, description="Custom validator name")
-
 
 class ParsedResponse(BaseModel):
     """Represents a parsed and validated LLM response"""
@@ -183,7 +173,6 @@ class ParsedResponse(BaseModel):
     extracted_claims: List[Dict[str, Any]] = Field(default_factory=list)
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
-
 class FallbackResponse(BaseModel):
     """Represents a fallback response when parsing fails"""
     response_type: str = Field(..., description="Type of fallback")
@@ -193,14 +182,12 @@ class FallbackResponse(BaseModel):
     should_retry: bool = Field(default=False, description="Whether to retry original request")
     retry_hints: List[str] = Field(default_factory=list)
 
-
 class TokenUsage(BaseModel):
     """Token usage tracking"""
     prompt_tokens: int = Field(default=0)
     completion_tokens: int = Field(default=0)
     total_tokens: int = Field(default=0)
     context_tokens: int = Field(default=0)
-
 
 class PromptMetrics(BaseModel):
     """Metrics for prompt performance"""

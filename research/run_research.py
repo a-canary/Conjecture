@@ -40,7 +40,6 @@ from experiments.baseline_comparison import BaselineComparisonSuite, BaselineTyp
 from test_cases.test_case_generator import TestCaseGenerator
 from analysis.experiment_analyzer import ExperimentAnalyzer
 
-
 def substitute_env_vars(config_dict):
     """
     Recursively substitute environment variables in configuration values
@@ -80,7 +79,6 @@ def substitute_env_vars(config_dict):
         return result
     else:
         return config_dict
-
 
 class ResearchRunner:
     """Main orchestrator for Conjecture research"""
@@ -487,7 +485,6 @@ class ResearchRunner:
             import traceback
             traceback.print_exc()
 
-
 async def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(description="Conjecture Research Runner")
@@ -534,7 +531,6 @@ async def main():
         await runner.run_custom_experiment(args.custom)
     elif args.full:
         await runner.run_full_research_suite()
-
 
 if __name__ == "__main__":
     asyncio.run(main())

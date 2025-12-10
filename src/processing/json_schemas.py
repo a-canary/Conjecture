@@ -10,7 +10,6 @@ from enum import Enum
 from pydantic import BaseModel, Field, field_validator
 import json
 
-
 class ResponseSchemaType(str, Enum):
     """Supported response schema types"""
     CLAIMS = "claims"
@@ -21,7 +20,6 @@ class ResponseSchemaType(str, Enum):
     ERROR = "error"
     EXPLORATION = "exploration"
     RESEARCH = "research"
-
 
 class BaseClaimSchema(BaseModel):
     """Base schema for all claim types"""
@@ -50,7 +48,6 @@ class BaseClaimSchema(BaseModel):
             raise ValueError(f"Invalid claim type: {v}. Must be one of: {valid_types}")
         return v.lower()
 
-
 class ClaimsResponseSchema(BaseModel):
     """Schema for claims generation responses"""
     type: str = Field(default="claims", description="Response type identifier")
@@ -66,7 +63,6 @@ class ClaimsResponseSchema(BaseModel):
         if v != "claims":
             raise ValueError(f"Invalid response type for claims schema: {v}")
         return v
-
 
 class AnalysisResponseSchema(BaseModel):
     """Schema for analysis responses"""
@@ -86,7 +82,6 @@ class AnalysisResponseSchema(BaseModel):
         if v != "analysis":
             raise ValueError(f"Invalid response type for analysis schema: {v}")
         return v
-
 
 class ValidationResponseSchema(BaseModel):
     """Schema for claim validation responses"""
@@ -116,7 +111,6 @@ class ValidationResponseSchema(BaseModel):
             raise ValueError(f"Invalid validation result: {v}. Must be one of: {valid_results}")
         return v.lower()
 
-
 class InstructionSupportSchema(BaseModel):
     """Schema for instruction support relationship responses"""
     type: str = Field(default="instruction_support", description="Response type identifier")
@@ -143,7 +137,6 @@ class InstructionSupportSchema(BaseModel):
                 raise ValueError("Each relationship must include 'instruction_claim_id' and 'target_claim_id'")
         return v
 
-
 class RelationshipAnalysisSchema(BaseModel):
     """Schema for relationship analysis responses"""
     type: str = Field(default="relationship_analysis", description="Response type identifier")
@@ -163,7 +156,6 @@ class RelationshipAnalysisSchema(BaseModel):
             raise ValueError(f"Invalid response type for relationship analysis schema: {v}")
         return v
 
-
 class ExplorationResponseSchema(BaseModel):
     """Schema for exploration responses"""
     type: str = Field(default="exploration", description="Response type identifier")
@@ -182,7 +174,6 @@ class ExplorationResponseSchema(BaseModel):
         if v != "exploration":
             raise ValueError(f"Invalid response type for exploration schema: {v}")
         return v
-
 
 class ResearchResponseSchema(BaseModel):
     """Schema for research responses"""
@@ -204,7 +195,6 @@ class ResearchResponseSchema(BaseModel):
             raise ValueError(f"Invalid response type for research schema: {v}")
         return v
 
-
 class ErrorResponseSchema(BaseModel):
     """Schema for error responses"""
     type: str = Field(default="error", description="Response type identifier")
@@ -223,7 +213,6 @@ class ErrorResponseSchema(BaseModel):
             raise ValueError(f"Invalid response type for error schema: {v}")
         return v
 
-
 # Schema registry for easy access
 SCHEMA_REGISTRY = {
     ResponseSchemaType.CLAIMS: ClaimsResponseSchema,
@@ -235,7 +224,6 @@ SCHEMA_REGISTRY = {
     ResponseSchemaType.RESEARCH: ResearchResponseSchema,
     ResponseSchemaType.ERROR: ErrorResponseSchema,
 }
-
 
 def get_schema_examples() -> Dict[str, Dict[str, Any]]:
     """Get example data for each schema type"""
@@ -354,7 +342,6 @@ def get_schema_examples() -> Dict[str, Dict[str, Any]]:
         }
     }
 
-
 def validate_json_response(response_data: Dict[str, Any], response_type: ResponseSchemaType) -> tuple[bool, List[str]]:
     """
     Validate JSON response data against appropriate schema.
@@ -375,12 +362,10 @@ def validate_json_response(response_data: Dict[str, Any], response_type: Respons
     except Exception as e:
         return False, [f"Validation error: {str(e)}"]
 
-
 def get_schema_json(response_type: ResponseSchemaType) -> str:
     """Get JSON schema definition for response type"""
     schema_class = SCHEMA_REGISTRY[response_type]
     return json.dumps(schema_class.schema(), indent=2)
-
 
 def create_prompt_template_for_type(response_type: ResponseSchemaType) -> str:
     """Create a prompt template that explains the required JSON format for a specific type"""

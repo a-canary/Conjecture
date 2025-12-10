@@ -10,14 +10,12 @@ from enum import Enum
 
 from .simple_config import Config
 
-
 class ServiceMode(Enum):
     """Service operation modes"""
     LOCAL = "local"
     EXTERNAL = "external"
     DISABLED = "disabled"
     AUTO = "auto"  # Try local first, fallback to external
-
 
 class LocalConfig(Config):
     """
@@ -359,12 +357,10 @@ Conjecture_CACHE_TTL=3600
 Conjecture_MAX_MEMORY_MB=1024
 """
 
-
 # Factory functions
 def create_local_config() -> LocalConfig:
     """Create local configuration instance"""
     return LocalConfig()
-
 
 def get_local_config() -> LocalConfig:
     """Get global local configuration instance"""
@@ -372,7 +368,6 @@ def get_local_config() -> LocalConfig:
     if '_local_config' not in globals():
         _local_config = LocalConfig()
     return _local_config
-
 
 def validate_and_print_config():
     """Validate configuration and print summary"""
@@ -388,7 +383,6 @@ def validate_and_print_config():
         print("[SUCCESS] Local services configuration is valid!")
     else:
         print("[ERROR] Local services configuration has issues")
-
 
 if __name__ == "__main__":
     validate_and_print_config()

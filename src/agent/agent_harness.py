@@ -16,9 +16,7 @@ from ..core.models import Claim
 from .support_systems import ContextBuilder, DataManager as SupportDataManager
 from .prompt_system import PromptBuilder, ResponseParser
 
-
 logger = logging.getLogger(__name__)
-
 
 class SessionStatus(Enum):
     """Session status enumeration."""
@@ -27,7 +25,6 @@ class SessionStatus(Enum):
     IDLE = "idle"
     ERROR = "error"
     TERMINATED = "terminated"
-
 
 @dataclass
 class Interaction:
@@ -39,7 +36,6 @@ class Interaction:
     parsed_response: Optional[Dict[str, Any]] = None
     execution_time_ms: int = 0
     error: Optional[str] = None
-
 
 @dataclass
 class SessionState:
@@ -54,7 +50,6 @@ class SessionState:
     last_error: Optional[str] = None
     created_at: datetime = field(default_factory=datetime.utcnow)
     last_activity: datetime = field(default_factory=datetime.utcnow)
-
 
 @dataclass
 class Session:
@@ -86,7 +81,6 @@ class Session:
     def get_recent_interactions(self, count: int = 10) -> List[Interaction]:
         """Get recent interactions from the session."""
         return self.interactions[-count:] if self.interactions else []
-
 
 class AgentHarness:
     """

@@ -53,14 +53,14 @@ def test_base_cli():
         try:
             BaseCLI()
             print("[FAIL] BaseCLI should not be instantiable (must be abstract)")
-            return False
+            assert False  # Use assert instead of return
         except TypeError:
             print("[OK] BaseCLI is properly abstract")
         
-        return True
+        assert True  # Use assert instead of return
     except Exception as e:
         print(f"[FAIL] BaseCLI test failed: {e}")
-        return False
+        assert False  # Use assert instead of return
 
 def test_modular_cli_import():
     """Test modular CLI import."""

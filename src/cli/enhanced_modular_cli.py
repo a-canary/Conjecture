@@ -46,7 +46,6 @@ ui_enhancer: Optional[UIEnhancer] = None
 # Global backend instance
 current_backend: Optional[BaseCLI] = None
 
-
 def get_ui_enhancer(
     output_mode: str = "normal",
     verbosity: str = "info",
@@ -89,7 +88,6 @@ def get_ui_enhancer(
 
     ui_enhancer = UIEnhancer(config)
     return ui_enhancer
-
 
 @app.callback()
 def main(
@@ -152,7 +150,6 @@ def main(
             "Try running 'conjecture setup' to configure providers"
         )
         raise typer.Exit(1)
-
 
 @app.command()
 def create(
@@ -238,7 +235,6 @@ def create(
         )
         raise typer.Exit(1)
 
-
 @app.command()
 def get(
     claim_id: str = typer.Argument(..., help="ID of the claim to retrieve"),
@@ -294,7 +290,6 @@ def get(
             "Verify the claim ID and try again"
         )
         raise typer.Exit(1)
-
 
 @app.command()
 def search(
@@ -363,7 +358,6 @@ def search(
             "Try modifying your search query"
         )
         raise typer.Exit(1)
-
 
 @app.command()
 def analyze(
@@ -445,7 +439,6 @@ def analyze(
         )
         raise typer.Exit(1)
 
-
 @app.command()
 def prompt(
     prompt_text: str = typer.Argument(
@@ -491,7 +484,6 @@ def prompt(
             "Check your prompt content and LLM configuration"
         )
         raise typer.Exit(1)
-
 
 @app.command()
 def config():
@@ -559,7 +551,6 @@ def config():
             "Check your configuration files"
         )
         raise typer.Exit(1)
-
 
 @app.command()
 def setup(
@@ -634,7 +625,6 @@ def setup(
             "Check the setup documentation for more details"
         )
         raise typer.Exit(1)
-
 
 @app.command()
 def stats(
@@ -721,7 +711,6 @@ def stats(
         )
         raise typer.Exit(1)
 
-
 @app.command()
 def health():
     """Check system health with enhanced status reporting."""
@@ -777,7 +766,6 @@ def health():
             "Check system configuration and connectivity"
         )
         raise typer.Exit(1)
-
 
 @app.command()
 def quickstart():
@@ -872,14 +860,12 @@ def quickstart():
         )
         ui_enhancer.formatter.print(panel)
 
-
 # Cleanup function
 def cleanup():
     """Clean up UI resources"""
     global ui_enhancer
     if ui_enhancer:
         ui_enhancer.cleanup()
-
 
 if __name__ == "__main__":
     try:

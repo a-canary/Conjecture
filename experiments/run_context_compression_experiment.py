@@ -34,7 +34,6 @@ from config.common import ProviderConfig
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "research"))
 from statistical_analyzer import ConjectureStatisticalAnalyzer
 
-
 @dataclass
 class ExperimentConfig:
     """Configuration for context compression experiment"""
@@ -56,7 +55,6 @@ class ExperimentConfig:
     def __post_init__(self):
         if self.approaches is None:
             self.approaches = ["full_context", "compressed_context"]
-
 
 @dataclass
 class TestResult:
@@ -92,7 +90,6 @@ class TestResult:
     difficulty: str
     reasoning_requirements: List[str]
 
-
 @dataclass
 class ExperimentResults:
     """Complete results from context compression experiment"""
@@ -120,7 +117,6 @@ class ExperimentResults:
     hypothesis_validated: bool
     targets_achieved: Dict[str, bool]
     confidence_in_results: float
-
 
 class ContextCompressionExperiment:
     """Main experiment runner for context compression hypothesis validation"""
@@ -1187,7 +1183,6 @@ class ContextCompressionExperiment:
         except Exception as e:
             self.logger.error(f"Failed to generate report: {e}")
 
-
 async def main():
     """Main function to run context compression experiment"""
     
@@ -1260,7 +1255,6 @@ async def main():
         return 1
     
     return 0
-
 
 if __name__ == "__main__":
     exit_code = asyncio.run(main())

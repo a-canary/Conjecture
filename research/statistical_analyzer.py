@@ -16,7 +16,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-
 @dataclass
 class StatisticalTest:
     """Results of a statistical test"""
@@ -30,7 +29,6 @@ class StatisticalTest:
     interpretation: str
     assumptions: List[str]
 
-
 @dataclass
 class PowerAnalysis:
     """Statistical power analysis results"""
@@ -40,7 +38,6 @@ class PowerAnalysis:
     alpha: float
     power: float
     recommendation: str
-
 
 @dataclass
 class ComparisonResult:
@@ -58,7 +55,6 @@ class ComparisonResult:
     statistical_test: StatisticalTest
     practical_significance: bool
     recommendation: str
-
 
 class ConjectureStatisticalAnalyzer:
     """Comprehensive statistical analysis for Conjecture hypothesis testing"""
@@ -951,7 +947,6 @@ class ConjectureStatisticalAnalyzer:
 
         return "; ".join(summary_parts)
 
-
 def main():
     """Example usage of statistical analyzer"""
     analyzer = ConjectureStatisticalAnalyzer()
@@ -1021,7 +1016,6 @@ def main():
     print(f"Statistical analysis report saved to: {output_path}")
     print("\nKey Findings:")
     print(analyzer._summarize_findings(analysis))
-
 
 if __name__ == "__main__":
     main()

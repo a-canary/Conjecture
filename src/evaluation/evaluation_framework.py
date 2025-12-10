@@ -5,10 +5,14 @@ Provides systematic evaluation using DeepEval's sophisticated metrics
 
 import asyncio
 import logging
+import os
 import sys
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Union
 from datetime import datetime
+
+# Force UTF-8 encoding for the entire process
+os.environ['PYTHONIOENCODING'] = 'utf-8'
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -34,7 +38,6 @@ from .conjecture_llm_wrapper import (
 
 # Configure logging
 logger = logging.getLogger(__name__)
-
 
 class EvaluationFramework:
     """
@@ -101,7 +104,7 @@ class EvaluationFramework:
                 "exact_match": ExactMatchMetric(threshold=0.5)
             }
 
-    def create_test_case(self, 
+    def create_test_case(self,
                       input_text: str,
                       expected_output: str = "",
                       actual_output: str = "",
@@ -118,10 +121,33 @@ class EvaluationFramework:
         Returns:
             DeepEval LLMTestCase instance
         """
+        # Clean Unicode characters that might cause encoding issues
+        def clean_unicode(text: str) -> str:
+            if text:
+                # More robust Unicode handling
+                import unicodedata
+                try:
+                    # Encode to ASCII with fallback, then decode back
+                    cleaned = text.encode('ascii', 'ignore').decode('ascii')
+                    return cleaned
+                except:
+                    # If that fails, try character by character removal
+                    result = []
+                    for char in text:
+                        try:
+                            # Test if character can be encoded
+                            char.encode('ascii')
+                            result.append(char)
+                        except:
+                            # Skip problematic characters
+                            continue
+                    return ''.join(result)
+            return text
+        
         return LLMTestCase(
-            input=input_text,
-            expected_output=expected_output,
-            actual_output=actual_output,
+            input=clean_unicode(input_text),
+            expected_output=clean_unicode(expected_output),
+            actual_output=clean_unicode(actual_output),
             additional_metadata=additional_metadata or {}
         )
 
@@ -209,32 +235,34 @@ class EvaluationFramework:
                     logger.info(f"Evaluating with {metric_name} metric...")
                     metric = self.metrics[metric_name]
                     
-                    # Create dataset for this metric
-                    dataset = EvaluationDataset(goldens=test_cases)
-                    
-                    # Run evaluation
+                    # Run evaluation with minimal parameters
                     eval_results = evaluate(
-                        dataset=dataset,
-                        metrics=[metric],
-                        model=wrapper,
-                        run_async=True
+                        test_cases=test_cases,
+                        metrics=[metric]
                     )
                     
-                    # Process results
-                    if eval_results and len(eval_results) > 0:
-                        result = eval_results[0]
-                        metric_score = result.score if hasattr(result, 'score') else 0.0
-                        metric_success = result.score >= metric.threshold if hasattr(result, 'score') else False
+                    # Process results - handle both single result and list of results
+                    if eval_results:
+                        # Handle single EvaluationResult object
+                        if hasattr(eval_results, 'score'):
+                            result = eval_results
+                        else:
+                            # Handle list of results
+                            result = eval_results[0] if hasattr(eval_results, '__len__') and len(eval_results) > 0 else None
                         
-                        evaluation_results["metrics_results"][metric_name] = {
-                            "score": metric_score,
-                            "threshold": metric.threshold,
-                            "success": metric_success,
-                            "reason": getattr(result, 'reason', 'No reason provided')
-                        }
-                        
-                        metric_scores.append(metric_score)
-                        logger.info(f"Metric {metric_name}: {metric_score:.3f} (success: {metric_success})")
+                        if result:
+                            metric_score = result.score if hasattr(result, 'score') else 0.0
+                            metric_success = result.score >= metric.threshold if hasattr(result, 'score') else False
+                            
+                            evaluation_results["metrics_results"][metric_name] = {
+                                "score": metric_score,
+                                "threshold": metric.threshold,
+                                "success": metric_success,
+                                "reason": getattr(result, 'reason', 'No reason provided')
+                            }
+                            
+                            metric_scores.append(metric_score)
+                            logger.info(f"Metric {metric_name}: {metric_score:.3f} (success: {metric_success})")
                     else:
                         evaluation_results["metrics_results"][metric_name] = {
                             "score": 0.0,
@@ -480,7 +508,6 @@ class EvaluationFramework:
             "description": getattr(metric, '__doc__', 'No description available')
         }
 
-
 # Convenience functions for common evaluation scenarios
 async def evaluate_single_provider(provider_name: str, 
                                test_prompt: str,
@@ -508,7 +535,6 @@ async def evaluate_single_provider(provider_name: str,
     return await framework.evaluate_provider(
         provider_name, [test_case], use_conjecture
     )
-
 
 async def evaluate_all_providers(test_cases: List[Dict[str, Any]],
                              compare_conjecture: bool = True) -> Dict[str, Any]:

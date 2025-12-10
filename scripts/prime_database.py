@@ -17,7 +17,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.conjecture import Conjecture
 from src.core.models import Claim, ClaimState, ClaimType
 
-
 async def prime_database_with_foundational_claims():
     """Prime the Conjecture database with foundational claims"""
     
@@ -81,9 +80,6 @@ async def prime_database_with_foundational_claims():
     except Exception as e:
         print(f"❌ Failed to prime database: {e}")
         return False
-
-
-
 
 if __name__ == "__main__":
     asyncio.run(prime_database_with_foundational_claims())

@@ -11,7 +11,6 @@ from typing import Dict, List, Any, Tuple
 from dataclasses import dataclass
 from experiment_framework import ExperimentFramework, ExperimentConfig, ExperimentType, EvaluationMetric
 
-
 @dataclass
 class ModelCapability:
     """Defines model capabilities for comparison"""
@@ -22,7 +21,6 @@ class ModelCapability:
     expected_weaknesses: List[str]
     context_window: int
     cost_per_token: float
-
 
 class ModelComparisonSuite:
     """Comprehensive model comparison experiments"""
@@ -449,7 +447,6 @@ class ModelComparisonSuite:
         
         return "\n".join(report)
 
-
 async def main():
     """Main function to run model comparison experiments"""
     from config.common import ProviderConfig
@@ -497,7 +494,6 @@ async def main():
     print("MODEL COMPARISON COMPLETE")
     print("="*50)
     print(report)
-
 
 if __name__ == "__main__":
     asyncio.run(main())

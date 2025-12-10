@@ -19,7 +19,6 @@ from ..data.data_manager import DataManager
 
 logger = logging.getLogger(__name__)
 
-
 class ConjectureEndpoint:
     """
     Main endpoint class for the Conjecture system.

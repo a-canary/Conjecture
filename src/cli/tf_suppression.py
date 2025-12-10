@@ -7,7 +7,6 @@ import warnings
 import logging
 from typing import Optional
 
-
 def suppress_tensorflow_warnings() -> bool:
     """
     Suppress TensorFlow deprecation warnings and informational messages.
@@ -73,7 +72,6 @@ def suppress_tensorflow_warnings() -> bool:
     
     return success
 
-
 def setup_ml_logging(level: str = 'ERROR') -> bool:
     """
     Setup consistent logging for machine learning libraries.
@@ -113,7 +111,6 @@ def setup_ml_logging(level: str = 'ERROR') -> bool:
         success = False
     
     return success
-
 
 def get_ml_environment_info() -> dict:
     """
@@ -162,7 +159,6 @@ def get_ml_environment_info() -> dict:
     
     return info
 
-
 def print_ml_environment_info(console=None) -> None:
     """
     Print ML environment information in a formatted way.
@@ -187,7 +183,6 @@ def print_ml_environment_info(console=None) -> None:
                 console.print("    └─ CUDA acceleration available", style="cyan")
         else:
             console.print(f"  • {lib_name.title()}: Not installed", style="dim")
-
 
 # NOTE: TensorFlow suppression is now lazy-loaded to avoid startup performance impact
 # Call suppress_tensorflow_warnings() and setup_ml_logging() explicitly when needed

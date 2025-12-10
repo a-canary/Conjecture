@@ -16,7 +16,6 @@ from .models import (
     create_claim, validate_claim_id, validate_confidence, generate_claim_id
 )
 
-
 class DataSource(str, Enum):
     """Data source types"""
     USER_INPUT = "user_input"
@@ -27,7 +26,6 @@ class DataSource(str, Enum):
     EXISTING_CLAIMS = "existing_claims"
     TOOL_RESULT = "tool_result"
     KNOWLEDGE_BASE = "knowledge_base"
-
 
 class DataItem(BaseModel):
     """Represents a piece of collected data"""
@@ -40,7 +38,6 @@ class DataItem(BaseModel):
     relevance_score: Optional[float] = Field(None, description="Relevance to query")
     size_bytes: int = Field(default=0, description="Data size in bytes")
 
-
 class ContextItemType(str, Enum):
     """Context item types"""
     EXAMPLE = "example"
@@ -48,7 +45,6 @@ class ContextItemType(str, Enum):
     TOOL = "tool"
     DATA = "data"
     KNOWLEDGE = "knowledge"
-
 
 class ContextItem(BaseModel):
     """Represents an item in context"""
@@ -61,7 +57,6 @@ class ContextItem(BaseModel):
     source: Optional[str] = Field(None, description="Source of context item")
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-
 class ContextResult(BaseModel):
     """Result of context building"""
     query: str = Field(..., description="Original query")
@@ -72,14 +67,12 @@ class ContextResult(BaseModel):
     optimization_applied: bool = Field(False, description="Whether optimization was applied")
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
-
 class TokenUsage(BaseModel):
     """Token usage information"""
     input_tokens: int = Field(0)
     output_tokens: int = Field(0)
     total_tokens: int = Field(0)
     context_tokens: int = Field(0)
-
 
 class CacheEntry(BaseModel):
     """Cache entry for data"""
@@ -98,14 +91,12 @@ class CacheEntry(BaseModel):
         """Increment hit count"""
         self.hit_count += 1
 
-
 class PromptTemplateStatus(str, Enum):
     """Prompt template status"""
     ACTIVE = "active"
     INACTIVE = "inactive"
     DRAFT = "draft"
     DEPRECATED = "deprecated"
-
 
 class PromptTemplateType(str, Enum):
     """Prompt template types"""
@@ -116,7 +107,6 @@ class PromptTemplateType(str, Enum):
     GENERAL = "general"
     CUSTOM = "custom"
 
-
 class PromptVariable(BaseModel):
     """Represents a prompt template variable"""
     name: str = Field(..., description="Variable name")
@@ -125,7 +115,6 @@ class PromptVariable(BaseModel):
     default_value: Optional[Any] = Field(None, description="Default value")
     description: str = Field("", description="Variable description")
     validation_rule: Optional[str] = Field(None, description="Validation rule")
-
 
 class PromptTemplate(BaseModel):
     """Represents a prompt template"""
@@ -184,7 +173,6 @@ class PromptTemplate(BaseModel):
         
         return rendered
 
-
 class LLMResponse(BaseModel):
     """Represents an LLM response"""
     content: str = Field(..., description="Response content")
@@ -194,7 +182,6 @@ class LLMResponse(BaseModel):
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
 
-
 class ResponseSchema(BaseModel):
     """Schema for validating LLM responses"""
     schema_name: str = Field(..., description="Schema name")
@@ -202,7 +189,6 @@ class ResponseSchema(BaseModel):
     field_types: Dict[str, str] = Field(default_factory=dict)
     validation_rules: Dict[str, str] = Field(default_factory=dict)
     custom_validator: Optional[str] = Field(None, description="Custom validator name")
-
 
 class ParsedLLMResponse(BaseModel):
     """Represents a parsed and validated LLM response"""
@@ -214,7 +200,6 @@ class ParsedLLMResponse(BaseModel):
     extracted_claims: List[Dict[str, Any]] = Field(default_factory=list)
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
-
 class FallbackResponse(BaseModel):
     """Represents a fallback response when parsing fails"""
     response_type: str = Field(..., description="Type of fallback")
@@ -223,7 +208,6 @@ class FallbackResponse(BaseModel):
     parsing_errors: List[str] = Field(default_factory=list)
     should_retry: bool = Field(default=False, description="Whether to retry original request")
     retry_hints: List[str] = Field(default_factory=list)
-
 
 class PromptMetrics(BaseModel):
     """Metrics for prompt performance"""
@@ -235,7 +219,6 @@ class PromptMetrics(BaseModel):
     last_used: Optional[datetime] = Field(None)
     error_rate: float = Field(default=0.0)
     user_satisfaction_score: Optional[float] = Field(None)
-
 
 # Re-export all models for backward compatibility
 __all__ = [

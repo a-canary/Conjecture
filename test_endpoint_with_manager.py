@@ -16,7 +16,6 @@ sys.path.insert(0, str(project_root))
 from src.utils.endpoint_manager import EndpointManager, TemporaryEndpoint, with_endpoint
 from test_endpoint_app import EndPointAppTester
 
-
 async def test_with_manager():
     """Test using endpoint manager directly"""
     print("Testing with EndpointManager")
@@ -49,7 +48,6 @@ async def test_with_manager():
         await manager.stop()
         print("🛑 Endpoint stopped")
 
-
 async def test_with_context_manager():
     """Test using temporary endpoint context manager"""
     print("Testing with TemporaryEndpoint Context Manager")
@@ -70,7 +68,6 @@ async def test_with_context_manager():
         return passed == total
     
     # Endpoint automatically stopped when exiting context
-
 
 async def test_specific_functionality(manager: EndpointManager):
     """Example of testing specific functionality with endpoint"""
@@ -98,7 +95,6 @@ async def test_specific_functionality(manager: EndpointManager):
     print(f"\nTest Results: {passed}/{total} passed ({(passed/total)*100:.1f}%)")
     
     return passed == total
-
 
 async def main():
     """Main test execution"""
@@ -155,7 +151,6 @@ async def main():
     else:
         print("Some test modes failed")
         return 1
-
 
 if __name__ == "__main__":
     exit_code = asyncio.run(main())

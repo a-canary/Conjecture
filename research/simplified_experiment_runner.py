@@ -26,7 +26,6 @@ try:
 except ImportError:
     print("[FAIL] python-dotenv not available")
 
-
 @dataclass
 class TestResult:
     """Complete test result with quality metrics"""
@@ -57,7 +56,6 @@ class TestResult:
             self.claims_generated = []
         if self.timestamp is None:
             self.timestamp = datetime.now().isoformat()
-
 
 # Simplified test cases
 TEST_CASES = [
@@ -127,7 +125,6 @@ MODELS = {
 
 APPROACHES = ["direct", "true_conjecture"]
 
-
 def make_api_call(
     prompt: str, model_config: Dict, max_tokens: int = 1500
 ) -> Dict[str, Any]:
@@ -170,7 +167,6 @@ def make_api_call(
     except Exception as e:
         return {"status": "error", "error": f"Exception: {str(e)}"}
 
-
 def create_prompt(test_case: Dict, approach: str) -> str:
     """Create prompt based on approach"""
     base_question = test_case["question"]
@@ -195,7 +191,6 @@ Problem:
 
 Generate claims first:"""
 
-
 def parse_claims(response: str) -> List[Dict[str, Any]]:
     """Parse claims from response"""
     claims = []
@@ -208,7 +203,6 @@ def parse_claims(response: str) -> List[Dict[str, Any]]:
         )
 
     return claims
-
 
 def count_reasoning_steps(response: str) -> int:
     """Count reasoning indicators"""
@@ -226,7 +220,6 @@ def count_reasoning_steps(response: str) -> int:
     response_lower = response.lower()
     count = sum(1 for indicator in step_indicators if indicator in response_lower)
     return min(count, 8)
-
 
 def simple_evaluation(result: TestResult) -> TestResult:
     """Simple evaluation without LLM judge"""
@@ -262,7 +255,6 @@ def simple_evaluation(result: TestResult) -> TestResult:
     result.agentic_capability_score = min(agentic_count / 3, 1.0)
 
     return result
-
 
 async def run_single_test(
     model_key: str, model_config: Dict, test_case: Dict, approach: str
@@ -326,7 +318,6 @@ async def run_single_test(
             error=api_result["error"],
         )
 
-
 async def run_model_tests(model_key: str, model_config: Dict) -> List[TestResult]:
     """Run all tests for a single model"""
     print(f"\n{'=' * 50}")
@@ -344,7 +335,6 @@ async def run_model_tests(model_key: str, model_config: Dict) -> List[TestResult
             await asyncio.sleep(0.5)
 
     return results
-
 
 async def run_simplified_experiment():
     """Run simplified experiment"""
@@ -437,7 +427,6 @@ async def run_simplified_experiment():
                 print(f"    Time: {avg_time:.1f}s, Claims: {claim_success:.2f} success")
 
     return all_results
-
 
 if __name__ == "__main__":
     asyncio.run(run_simplified_experiment())

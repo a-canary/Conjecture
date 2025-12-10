@@ -24,7 +24,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 from enhanced_test_generator import ConjectureTestCaseGenerator
 from analysis.statistical_analyzer import StatisticalAnalyzer
 
-
 class HypothesisTier(str, Enum):
     """Hypothesis testing priority tiers"""
 
@@ -34,7 +33,6 @@ class HypothesisTier(str, Enum):
     RESEARCH_VALIDATION = "research_validation"  # Tier 4: Research goals
     PERFORMANCE_EFFICIENCY = "performance_efficiency"  # Tier 4: Efficiency targets
 
-
 class HypothesisStatus(str, Enum):
     """Hypothesis testing status"""
 
@@ -43,7 +41,6 @@ class HypothesisStatus(str, Enum):
     PARTIALLY_PROVEN = "partially_proven"
     PROVEN = "proven"
     DISPROVEN = "disproven"
-
 
 @dataclass
 class Hypothesis:
@@ -65,7 +62,6 @@ class Hypothesis:
     current_score: Optional[float] = None
     improvement_percentage: Optional[float] = None
 
-
 @dataclass
 class TestResult:
     """Individual test result"""
@@ -82,7 +78,6 @@ class TestResult:
     token_usage: int
     error_message: Optional[str] = None
     metadata: Dict[str, Any] = None
-
 
 @dataclass
 class TestingIteration:
@@ -101,7 +96,6 @@ class TestingIteration:
     p_value: Optional[float] = None
     effect_size: Optional[float] = None
     recommendations: List[str] = None
-
 
 class ConjectureTestingFramework:
     """Main framework for hypothesis testing"""
@@ -664,12 +658,10 @@ class ConjectureTestingFramework:
 
         print(f"  Final report saved to: {dashboard_path}")
 
-
 async def main():
     """Main function to run hypothesis testing"""
     framework = ConjectureTestingFramework()
     await framework.run_complete_testing_cycle(max_iterations=3)
-
 
 if __name__ == "__main__":
     asyncio.run(main())

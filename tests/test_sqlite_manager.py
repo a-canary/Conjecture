@@ -17,7 +17,6 @@ from src.data.models import (
     ClaimNotFoundError, InvalidClaimError, RelationshipError, DataLayerError
 )
 
-
 class TestSQLiteManagerInitialization:
     """Test SQLiteManager initialization and setup"""
 
@@ -59,7 +58,8 @@ class TestSQLiteManagerInitialization:
         manager = SQLiteManager(temp_sqlite_db)
         await manager.initialize()
         
-        async with manager.connection_pool.execute("PRAGMA journal_mode") as cursor:
+        async with manager.connection_pool.get_connection() as conn:
+            cursor = await conn.execute("PRAGMA journal_mode")
             result = await cursor.fetchone()
             assert result[0] == "wal"
         
@@ -74,7 +74,6 @@ class TestSQLiteManagerInitialization:
         
         assert manager.connection_pool is None
         assert manager._initialized is False
-
 
 class TestSQLiteManagerClaimsCRUD:
     """Test claim CRUD operations"""
@@ -219,7 +218,6 @@ class TestSQLiteManagerClaimsCRUD:
         
         with pytest.raises(DataLayerError, match="One or more claim IDs already exist"):
             await sqlite_manager.batch_create_claims(claims)
-
 
 class TestSQLiteManagerRelationships:
     """Test relationship management"""
@@ -381,7 +379,6 @@ class TestSQLiteManagerRelationships:
         assert len(supported) == 2
         assert "c0000002" in supported
         assert "c0000003" in supported
-
 
 class TestSQLiteManagerFiltering:
     """Test claim filtering and search"""
@@ -556,7 +553,6 @@ class TestSQLiteManagerFiltering:
         for result in search_results:
             assert "speed" in result['content'].lower()
 
-
 class TestSQLiteManagerStatistics:
     """Test statistics and utility functions"""
 
@@ -629,7 +625,6 @@ class TestSQLiteManagerStatistics:
         # Old claim should be deleted
         retrieved = await sqlite_manager.get_claim("cold00001")
         assert retrieved is None
-
 
 class TestSQLiteManagerErrorHandling:
     """Test error handling and edge cases"""

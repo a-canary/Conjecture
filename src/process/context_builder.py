@@ -16,7 +16,6 @@ from .models import ContextResult, ProcessingConfig
 
 logger = logging.getLogger(__name__)
 
-
 class ProcessContextBuilder:
     """
     Builds processing contexts by traversing claim graphs and collecting

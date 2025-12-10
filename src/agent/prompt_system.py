@@ -10,7 +10,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 class PromptBuilder:
     """
     Builds prompts for LLM by assembling context, skills, and tools.
@@ -198,7 +197,6 @@ When you need to use tools, format your tool calls like this:
 </tool_calls>
 
 Always create claims for important information you discover or generate. Claims should have confidence scores between 0.0 and 1.0, reflecting uncertainty and the provisional nature of knowledge. Higher confidence means more evidence/support, NOT that something is a fact."""
-
 
 class ResponseParser:
     """

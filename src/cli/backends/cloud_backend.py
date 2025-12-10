@@ -12,7 +12,6 @@ import aiohttp
 from src.cli.base_cli import BaseCLI, DatabaseError, BackendNotAvailableError
 from src.core.models import Claim, generate_claim_id
 
-
 class CloudBackend(BaseCLI):
     """Cloud backend implementation for cloud LLM providers"""
     

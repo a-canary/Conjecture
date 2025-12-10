@@ -22,7 +22,6 @@ from src.core.models import (
     generate_claim_id,
 )
 
-
 class TestClaimModel:
     """Test the Claim model validation and behavior."""
 
@@ -271,7 +270,6 @@ class TestClaimModel:
         # Test with custom threshold by checking internal method
         assert uncertain_claim._get_default_threshold() == 0.8  # Default threshold
 
-
 class TestRelationshipModel:
     """Test the Relationship model validation and behavior."""
 
@@ -325,7 +323,6 @@ class TestRelationshipModel:
         assert "supporter_id" in relationship_dict
         assert "supported_id" in relationship_dict
         assert "relationship_type" in relationship_dict
-
 
 class TestClaimFilterModel:
     """Test the ClaimFilter model validation and behavior."""
@@ -408,7 +405,6 @@ class TestClaimFilterModel:
         ):
             ClaimFilter(offset=-1)
 
-
 class TestDataConfigModel:
     """Test the DataConfig model validation and behavior."""
 
@@ -474,7 +470,6 @@ class TestDataConfigModel:
         ):
             DataConfig(batch_size=1001)
 
-
 class TestProcessingResultModel:
     """Test the ProcessingResult model."""
 
@@ -509,7 +504,6 @@ class TestProcessingResultModel:
         assert result.processing_time is None
         assert result.metadata is None
 
-
 class TestBatchResultModel:
     """Test the BatchResult model."""
 
@@ -535,7 +529,6 @@ class TestBatchResultModel:
         assert batch_result.failed_items == 1
         assert len(batch_result.results) == 3
         assert len(batch_result.errors) == 1
-
 
 class TestUtilityFunctions:
     """Test utility validation and helper functions."""
@@ -588,7 +581,6 @@ class TestUtilityFunctions:
         # Test that remaining chars are hex digits
         assert all(c in "0123456789abcdef" for c in claim_id[1:])
 
-
 class TestCustomExceptions:
     """Test custom exception classes."""
 
@@ -628,7 +620,6 @@ class TestCustomExceptions:
 
         with pytest.raises(DataLayerError):
             raise DataLayerError("Test")
-
 
 class TestModelIntegration:
     """Integration tests for model interactions."""
@@ -700,7 +691,6 @@ class TestModelIntegration:
         assert high_conf_filter.confidence_min == 0.8
         assert clean_filter.dirty_only is False
 
-
 # Performance and stress tests for models
 class TestModelPerformance:
     """Performance tests for model operations."""
@@ -741,7 +731,6 @@ class TestModelPerformance:
         result = benchmark(serialize_claim)
         assert isinstance(result, str)
         assert len(result) > 0
-
 
 # Edge cases and boundary tests
 class TestModelEdgeCases:

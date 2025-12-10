@@ -37,7 +37,6 @@ except ImportError:
     logger.warning("New evaluation framework not available, using legacy implementation")
     USE_NEW_FRAMEWORK = False
 
-
 class ConjectureModelWrapper(DeepEvalBaseModel):
     """Wrapper for Conjecture models to work with DeepEval"""
 

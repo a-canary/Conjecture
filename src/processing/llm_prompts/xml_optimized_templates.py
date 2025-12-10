@@ -11,7 +11,6 @@ from datetime import datetime
 
 from .models import PromptTemplate, PromptTemplateType, OptimizedPrompt
 
-
 class XMLOptimizedTemplateManager:
     """
     Manages XML-optimized prompt templates for better LLM performance
@@ -308,7 +307,6 @@ Overall confidence in findings and any calibration adjustments made
                 }
             ]
         )
-    
     
     def _create_analysis_template_xml(self) -> PromptTemplate:
         return PromptTemplate(

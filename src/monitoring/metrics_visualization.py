@@ -25,7 +25,6 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-
 @dataclass
 class ChartConfig:
     """Configuration for chart generation"""
@@ -38,7 +37,6 @@ class ChartConfig:
     save_path: Optional[str] = None
     show_grid: bool = True
     color_palette: str = "viridis"
-
 
 class MetricsVisualizer:
     """Advanced visualization tools for metrics analysis"""
@@ -843,13 +841,11 @@ class MetricsVisualizer:
     }});
     """
 
-
 # Utility functions
 def create_visualizer(output_dir: str = None) -> MetricsVisualizer:
     """Create and initialize a metrics visualizer"""
     output_path = Path(output_dir) if output_dir else None
     return MetricsVisualizer(output_path)
-
 
 def generate_standard_charts(metrics_data: Dict[str, Any], 
                         output_dir: str = None) -> List[str]:

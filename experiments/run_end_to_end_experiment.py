@@ -48,7 +48,6 @@ from statistical_analyzer import ConjectureStatisticalAnalyzer
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tests"))
 from test_llm_judge import LLMJudgeSystem, JudgeConfiguration, EvaluationResult
 
-
 @dataclass
 class ExperimentConfig:
     """Configuration for end-to-end pipeline experiment"""
@@ -92,7 +91,6 @@ class ExperimentConfig:
                 "hallucination_reduction": 0.10
             }
 
-
 @dataclass
 class PipelineStageMetrics:
     """Metrics for individual pipeline stages"""
@@ -104,7 +102,6 @@ class PipelineStageMetrics:
     tokens_processed: int = 0
     cache_hits: int = 0
     quality_score: float = 0.0
-
 
 @dataclass
 class ExperimentResult:
@@ -118,7 +115,6 @@ class ExperimentResult:
     pipeline_stages: List[PipelineStageMetrics]
     evaluation_result: Optional[EvaluationResult] = None
     error_message: Optional[str] = None
-
 
 @dataclass
 class ExperimentSummary:
@@ -142,7 +138,6 @@ class ExperimentSummary:
             self.baseline_results = []
         if self.full_pipeline_results is None:
             self.full_pipeline_results = []
-
 
 class EndToEndPipelineExperiment:
     """Main experiment class for end-to-end pipeline validation"""
@@ -784,7 +779,6 @@ The end-to-end pipeline experiment {'successfully validated' if self.results.hyp
         with open(md_file, 'w', encoding='utf-8') as f:
             f.write(md_content)
 
-
 async def main():
     """Main function to run the end-to-end pipeline experiment"""
     import argparse
@@ -815,7 +809,6 @@ async def main():
     else:
         print(f"\n❌ Experiment failed. Check logs for details.")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     asyncio.run(main())

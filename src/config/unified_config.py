@@ -9,7 +9,6 @@ from typing import Any, Dict, List, Optional, Union
 from .pydantic_config import PydanticConfig, get_pydantic_config, reload_pydantic_config
 from .settings_models import ProviderConfig, ConjectureSettings
 
-
 class UnifiedConfig:
     """
     Unified configuration class that consolidates all config functionality
@@ -106,10 +105,8 @@ class UnifiedConfig:
         """Save current configuration"""
         self.pydantic_config.save_settings(target)
 
-
 # Global configuration instance
 _config = None
-
 
 def get_config() -> UnifiedConfig:
     """Get the global configuration instance"""
@@ -117,7 +114,6 @@ def get_config() -> UnifiedConfig:
     if _config is None:
         _config = UnifiedConfig()
     return _config
-
 
 def validate_config() -> bool:
     """Validate configuration (simplified for JSON-based config)"""
@@ -145,7 +141,6 @@ def validate_config() -> bool:
     except Exception as e:
         print(f"Configuration validation failed: {e}")
         return False
-
 
 def reload_config():
     """Reload configuration from file"""

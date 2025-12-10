@@ -7,7 +7,6 @@ import asyncio
 import tempfile
 import shutil
 from pathlib import Path
-from unittest.mock import Mock, AsyncMock, MagicMock, patch
 from typing import Dict, Any, List, Optional, Generator
 import sys
 import os
@@ -21,24 +20,13 @@ from datetime import datetime
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-# Global mock configuration for performance optimization
-GLOBAL_MOCK_CONFIG = {
-    'chromadb': MagicMock(),
-    'chromadb.config': MagicMock(),
-    'chromadb.api': MagicMock(),
-    'chromadb.api.models': MagicMock(),
-    'sentence_transformers': MagicMock(),
-    'torch': MagicMock(),
-    'tensorflow': MagicMock(),
-    'numpy': MagicMock(),
-    'sklearn': MagicMock(),
-    'sklearn.metrics': MagicMock(),
-    'scipy': MagicMock(),
-    'scipy.spatial': MagicMock(),
-    'faiss': MagicMock(),
-    'requests': MagicMock(),
-    'aiohttp': MagicMock(),
-}
+# Import numpy for embedding tests
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    NUMPY_AVAILABLE = False
+    np = None
 
 @pytest.fixture(scope="session")
 def event_loop():
@@ -46,12 +34,6 @@ def event_loop():
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
-
-@pytest.fixture(scope="session")
-def mock_external_dependencies():
-    """Session-scoped mocking of external dependencies for performance."""
-    with patch.dict('sys.modules', GLOBAL_MOCK_CONFIG):
-        yield
 
 @pytest.fixture(scope="session")
 def temp_data_dir():
@@ -62,7 +44,7 @@ def temp_data_dir():
 
 @pytest.fixture(scope="session")
 def test_config():
-    """Session-scoped test configuration."""
+    """Session-scoped test configuration with real systems."""
     return {
         "database": {
             "type": "sqlite",
@@ -71,9 +53,23 @@ def test_config():
             "pool_size": 1
         },
         "embeddings": {
-            "mock": True,
+            "mock": False,
+            "real": True,
             "dimension": 384,
-            "model": "mock-embedding-model"
+            "model": "all-MiniLM-L6-v2",
+            "cache_dir": "./test_cache/embeddings"
+        },
+        "vector_store": {
+            "type": "local",
+            "use_faiss": False,  # Disable FAISS for simpler testing
+            "db_path": "./test_cache/vector_store.db"
+        },
+        "llm": {
+            "mock": False,
+            "real": True,
+            "provider": "local",
+            "model": "test-model",
+            "timeout": 30.0
         },
         "performance": {
             "max_test_time": 30.0,
@@ -149,25 +145,6 @@ def performance_timer():
     if total_time > 10.0:  # Warn if test takes more than 10 seconds
         pytest.warn(f"Slow test detected: {total_time:.2f}s")
 
-@pytest.fixture(scope="session")
-def mock_embedding_service():
-    """Mock embedding service with realistic responses."""
-    mock_service = AsyncMock()
-
-    async def mock_encode(texts: List[str]) -> List[List[float]]:
-        """Generate mock embeddings with consistent patterns."""
-        embeddings = []
-        for text in texts:
-            # Create deterministic but realistic-looking embeddings
-            hash_val = hash(text) % 1000
-            embedding = [hash_val * 0.001 * (i + 1) for i in range(384)]
-            embeddings.append(embedding)
-        return embeddings
-
-    mock_service.encode = mock_encode
-    mock_service.dimension = 384
-    return mock_service
-
 @pytest.fixture(scope="function")
 def isolated_database(test_config, temp_data_dir):
     """Create isolated database for each test."""
@@ -229,6 +206,146 @@ def test_data_factory():
             ]
 
     return TestDataFactory()
+
+@pytest.fixture(scope="function")
+async def real_embedding_service(test_config, temp_data_dir):
+    """Real embedding service fixture using sentence-transformers."""
+    from src.local.embeddings import LocalEmbeddingManager
+    
+    # Create cache directory
+    cache_dir = temp_data_dir / "embeddings"
+    cache_dir.mkdir(exist_ok=True)
+    
+    # Initialize real embedding manager
+    embedding_manager = LocalEmbeddingManager(
+        model_name=test_config["embeddings"]["model"],
+        cache_dir=str(cache_dir)
+    )
+    
+    try:
+        await embedding_manager.initialize()
+        yield embedding_manager
+    finally:
+        await embedding_manager.close()
+
+@pytest.fixture(scope="function")
+async def real_vector_store(test_config, temp_data_dir):
+    """Real vector store fixture using LocalVectorStore."""
+    from src.local.vector_store import LocalVectorStore
+    
+    # Create vector store with test database
+    db_path = temp_data_dir / "test_vector_store.db"
+    vector_store = LocalVectorStore(
+        db_path=str(db_path),
+        use_faiss=test_config["vector_store"]["use_faiss"]
+    )
+    
+    try:
+        await vector_store.initialize(test_config["embeddings"]["dimension"])
+        yield vector_store
+    finally:
+        # Cleanup is handled by temp_data_dir
+        pass
+
+@pytest.fixture(scope="function")
+async def real_data_manager(test_config, temp_data_dir, real_embedding_service, real_vector_store):
+    """Real data manager fixture using real services."""
+    from src.data.data_manager import DataManager, DataConfig
+    
+    # Create test database path
+    db_path = temp_data_dir / "test_data.db"
+    
+    config = DataConfig(
+        sqlite_path=str(db_path),
+        use_chroma=False,  # Use local vector store instead
+        use_embeddings=True,
+        embedding_service=real_embedding_service,
+        vector_store=real_vector_store
+    )
+    
+    data_manager = DataManager(config)
+    await data_manager.initialize()
+    
+    try:
+        yield data_manager
+    finally:
+        # Cleanup is handled by temp_data_dir
+        pass
+
+@pytest.fixture(scope="function")
+async def real_llm_processor(test_config):
+    """Real LLM processor fixture using actual LLM bridge."""
+    from src.processing.llm.bridge import LLMBridge
+    from src.processing.llm_processor import ProcessLLMProcessor
+    
+    # Create a simple test bridge that returns predictable responses
+    class TestLLMBridge(LLMBridge):
+        def __init__(self):
+            self.call_count = 0
+            
+        async def generate_response(self, prompt: str, **kwargs) -> str:
+            self.call_count += 1
+            # Return predictable test responses based on prompt content
+            if "quantum" in prompt.lower():
+                return """{
+                    "evaluation_score": 0.85,
+                    "reasoning": "Quantum encryption claim shows strong technical merit",
+                    "instructions": [
+                        {
+                            "type": "research",
+                            "description": "Research quantum key distribution protocols",
+                            "confidence": 0.9,
+                            "priority": 1
+                        }
+                    ]
+                }"""
+            elif "hospital" in prompt.lower():
+                return """{
+                    "evaluation_score": 0.78,
+                    "reasoning": "Hospital network security requires validation",
+                    "instructions": [
+                        {
+                            "type": "validation",
+                            "description": "Validate HIPAA compliance requirements",
+                            "confidence": 0.85,
+                            "priority": 2
+                        }
+                    ]
+                }"""
+            else:
+                return """{
+                    "evaluation_score": 0.75,
+                    "reasoning": "General claim requires standard evaluation",
+                    "instructions": [
+                        {
+                            "type": "analysis",
+                            "description": "Perform standard claim analysis",
+                            "confidence": 0.8,
+                            "priority": 1
+                        }
+                    ]
+                }"""
+    
+    bridge = TestLLMBridge()
+    processor = ProcessLLMProcessor(bridge)
+    
+    yield processor
+
+@pytest.fixture(scope="function")
+async def real_context_builder(real_data_manager):
+    """Real context builder fixture using real data manager."""
+    from src.process.context_builder import ContextBuilder
+    
+    context_builder = ContextBuilder(real_data_manager)
+    yield context_builder
+
+@pytest.fixture(scope="function")
+async def real_exploration_engine(real_data_manager):
+    """Real exploration engine fixture using real data manager."""
+    from src.processing.exploration_engine import ExplorationEngine
+    
+    exploration_engine = ExplorationEngine(real_data_manager)
+    yield exploration_engine
 
 @pytest.fixture(scope="session")
 def optimized_pytest_config():
@@ -592,3 +709,94 @@ def static_analysis_runner():
             return results
     
     return StaticAnalysisRunner()
+
+# SQLite Manager fixtures for test_sqlite_manager.py
+@pytest.fixture(scope="function")
+def temp_sqlite_db(temp_data_dir):
+    """Create a temporary SQLite database for testing."""
+    db_path = temp_data_dir / f"test_sqlite_{int(time.time() * 1000)}.db"
+    yield str(db_path)
+    # Cleanup is handled by temp_data_dir
+
+@pytest.fixture(scope="function")
+async def sqlite_manager(temp_sqlite_db):
+    """Create a SQLiteManager instance for testing."""
+    from src.data.optimized_sqlite_manager import OptimizedSQLiteManager as SQLiteManager
+    
+    manager = SQLiteManager(temp_sqlite_db)
+    await manager.initialize()
+    
+    try:
+        yield manager
+    finally:
+        await manager.close()
+
+@pytest.fixture(scope="function")
+def valid_claim():
+    """Create a valid Claim object for testing."""
+    from src.core.models import Claim
+    return Claim(
+        id="c0000001",
+        content="Test claim for SQLite manager testing",
+        confidence=0.8,
+        created_by="test_user",
+        tags=["test", "sqlite"],
+        dirty=False
+    )
+
+@pytest.fixture(scope="function")
+def valid_relationship():
+    """Create a valid Relationship object for testing."""
+    from src.data.models import Relationship
+    return Relationship(
+        supporter_id="c0000001",
+        supported_id="c0000002",
+        relationship_type="supports",
+        created_by="test_user"
+    )
+
+@pytest.fixture(scope="function")
+def sample_claims_data():
+    """Create sample claim data for testing."""
+    return [
+        {
+            "id": "c0000001",
+            "content": "Physics claim about quantum mechanics",
+            "confidence": 0.9,
+            "dirty": True,
+            "tags": ["physics", "quantum"],
+            "created_by": "scientist"
+        },
+        {
+            "id": "c0000002",
+            "content": "Chemistry claim about molecular bonds",
+            "confidence": 0.85,
+            "dirty": False,
+            "tags": ["chemistry", "molecules"],
+            "created_by": "chemist"
+        },
+        {
+            "id": "c0000003",
+            "content": "Mathematics claim about prime numbers",
+            "confidence": 0.95,
+            "dirty": False,
+            "tags": ["mathematics", "number_theory"],
+            "created_by": "mathematician"
+        },
+        {
+            "id": "c0000004",
+            "content": "Biology claim about DNA structure",
+            "confidence": 0.88,
+            "dirty": True,
+            "tags": ["biology", "genetics"],
+            "created_by": "biologist"
+        },
+        {
+            "id": "c0000005",
+            "content": "Computer science claim about algorithms",
+            "confidence": 0.92,
+            "dirty": False,
+            "tags": ["computer_science", "algorithms"],
+            "created_by": "programmer"
+        }
+    ]

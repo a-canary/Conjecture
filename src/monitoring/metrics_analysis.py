@@ -28,7 +28,6 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-
 @dataclass
 class StatisticalTest:
     """Results of statistical significance test"""
@@ -40,7 +39,6 @@ class StatisticalTest:
     confidence_level: float = 0.95
     effect_size: Optional[float] = None
     interpretation: str = ""
-
 
 @dataclass
 class HypothesisTest:
@@ -55,7 +53,6 @@ class HypothesisTest:
     practical_significance: bool
     recommendations: List[str] = field(default_factory=list)
 
-
 @dataclass
 class ModelComparison:
     """Comparison between models across metrics"""
@@ -65,7 +62,6 @@ class ModelComparison:
     overall_winner: str
     confidence: float
     significant_differences: List[str]
-
 
 @dataclass
 class PipelineMetrics:
@@ -84,7 +80,6 @@ class PipelineMetrics:
     timeout_rate: float
     resource_utilization: Dict[str, float]
 
-
 @dataclass
 class RetryStatistics:
     """Detailed retry and error statistics"""
@@ -98,7 +93,6 @@ class RetryStatistics:
     retry_success_rate: float
     error_types: Dict[str, int]
     error_patterns: List[Dict[str, Any]]
-
 
 class MetricsAnalyzer:
     """Advanced metrics analysis and statistical testing"""
@@ -779,13 +773,11 @@ class MetricsAnalyzer:
         
         return report_file, data_file
 
-
 # Utility functions for integration with existing systems
 def create_metrics_analyzer(results_dir: str = None) -> MetricsAnalyzer:
     """Create and initialize a metrics analyzer"""
     results_path = Path(results_dir) if results_dir else None
     return MetricsAnalyzer(results_path)
-
 
 def analyze_hypothesis_results(experiment_files: List[str], 
                             hypothesis_configs: List[Dict[str, Any]]) -> Dict[str, HypothesisTest]:

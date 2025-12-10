@@ -6,7 +6,6 @@ from datetime import datetime
 from typing import List, Optional, Dict, Any, Tuple
 from .models import Claim, DirtyReason
 
-
 def update_confidence(claim: Claim, new_confidence: float) -> Claim:
     """Pure function to update confidence and timestamp"""
     if not 0.0 <= new_confidence <= 1.0:
@@ -29,7 +28,6 @@ def update_confidence(claim: Claim, new_confidence: float) -> Claim:
         dirty_timestamp=claim.dirty_timestamp,
         dirty_priority=claim.dirty_priority
     )
-
 
 def add_support(claim: Claim, supporting_claim_id: str) -> Claim:
     """Pure function to add a supporting claim ID"""
@@ -55,7 +53,6 @@ def add_support(claim: Claim, supporting_claim_id: str) -> Claim:
         dirty_priority=claim.dirty_priority
     )
 
-
 def add_supports(claim: Claim, supported_claim_id: str) -> Claim:
     """Pure function to add a claim this claim supports"""
     supports = claim.supports.copy()
@@ -80,7 +77,6 @@ def add_supports(claim: Claim, supported_claim_id: str) -> Claim:
         dirty_priority=claim.dirty_priority
     )
 
-
 def mark_dirty(claim: Claim, reason: DirtyReason, priority: int = 0) -> Claim:
     """Pure function to mark claim as dirty for re-evaluation"""
     return Claim(
@@ -100,7 +96,6 @@ def mark_dirty(claim: Claim, reason: DirtyReason, priority: int = 0) -> Claim:
         dirty_timestamp=datetime.utcnow(),
         dirty_priority=priority
     )
-
 
 def mark_clean(claim: Claim) -> Claim:
     """Pure function to mark claim as clean (no longer needs re-evaluation)"""
@@ -122,7 +117,6 @@ def mark_clean(claim: Claim) -> Claim:
         dirty_priority=0
     )
 
-
 def set_dirty_priority(claim: Claim, priority: int) -> Claim:
     """Pure function to set dirty priority for evaluation ordering"""
     return Claim(
@@ -143,21 +137,17 @@ def set_dirty_priority(claim: Claim, priority: int) -> Claim:
         dirty_priority=priority if claim.is_dirty else claim.dirty_priority
     )
 
-
 def should_prioritize(claim: Claim, confidence_threshold: float = 0.90) -> bool:
     """Pure function to check if claim should be prioritized for evaluation"""
     return claim.is_dirty and claim.confidence < confidence_threshold
-
 
 def find_supporting_claims(claim: Claim, all_claims: List[Claim]) -> List[Claim]:
     """Pure function to find all supporting claims"""
     return [c for c in all_claims if c.id in claim.supported_by]
 
-
 def find_supported_claims(claim: Claim, all_claims: List[Claim]) -> List[Claim]:
     """Pure function to find all claims supported by this claim"""
     return [c for c in all_claims if c.id in claim.supports]
-
 
 def calculate_support_strength(claim: Claim, all_claims: List[Claim]) -> Tuple[float, int]:
     """Pure function to calculate support strength from supporting claims"""
@@ -170,7 +160,6 @@ def calculate_support_strength(claim: Claim, all_claims: List[Claim]) -> Tuple[f
     avg_confidence = total_confidence / len(supporting_claims)
     
     return avg_confidence, len(supporting_claims)
-
 
 def validate_relationship_integrity(claim: Claim, all_claims: List[Claim]) -> List[str]:
     """Pure function to validate claim relationships"""
@@ -188,7 +177,6 @@ def validate_relationship_integrity(claim: Claim, all_claims: List[Claim]) -> Li
             errors.append(f"Supported claim {claim_id} not found")
     
     return errors
-
 
 def get_claim_hierarchy(claim: Claim, all_claims: List[Claim], max_depth: int = 5) -> Dict[str, Any]:
     """Pure function to get claim hierarchy/relationships"""
@@ -224,7 +212,6 @@ def get_claim_hierarchy(claim: Claim, all_claims: List[Claim], max_depth: int = 
     
     return hierarchy
 
-
 def batch_update_confidence(claims: List[Claim], updates: Dict[str, float]) -> List[Claim]:
     """Pure function to update confidence for multiple claims"""
     updated_claims = []
@@ -235,22 +222,18 @@ def batch_update_confidence(claims: List[Claim], updates: Dict[str, float]) -> L
             updated_claims.append(claim)
     return updated_claims
 
-
 def find_dirty_claims(claims: List[Claim], priority_threshold: int = 0) -> List[Claim]:
     """Pure function to find dirty claims with optional priority filter"""
     return [c for c in claims if c.is_dirty and c.dirty_priority >= priority_threshold]
-
 
 def filter_claims_by_confidence(claims: List[Claim], min_confidence: float = 0.0, max_confidence: float = 1.0) -> List[Claim]:
     """Pure function to filter claims by confidence range"""
     return [c for c in claims if min_confidence <= c.confidence <= max_confidence]
 
-
 def filter_claims_by_type(claims: List[Claim], claim_types: List[str]) -> List[Claim]:
     """Pure function to filter claims by type"""
     target_types = set(claim_types)
     return [c for c in claims if any(t.value in target_types for t in c.type)]
-
 
 def filter_claims_by_tags(claims: List[Claim], tags: List[str], match_all: bool = False) -> List[Claim]:
     """Pure function to filter claims by tags"""
@@ -260,7 +243,6 @@ def filter_claims_by_tags(claims: List[Claim], tags: List[str], match_all: bool 
         return [c for c in claims if target_tags.issubset(set(c.tags))]
     else:
         return [c for c in claims if any(tag in target_tags for tag in c.tags)]
-
 
 def update_claim_with_dirty_propagation(
     updated_claim: Claim,

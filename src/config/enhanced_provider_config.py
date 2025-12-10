@@ -12,7 +12,6 @@ from datetime import datetime
 from .unified_config import get_config
 from ..processing.enhanced_llm_router import ProviderConfig, RoutingStrategy
 
-
 class EnhancedProviderConfig:
     """Enhanced provider configuration management"""
     
@@ -379,10 +378,8 @@ class EnhancedProviderConfig:
             }
         }
 
-
 # Global instance for easy access
 _enhanced_provider_config = None
-
 
 def get_enhanced_provider_config() -> EnhancedProviderConfig:
     """Get global enhanced provider configuration instance"""
@@ -390,7 +387,6 @@ def get_enhanced_provider_config() -> EnhancedProviderConfig:
     if _enhanced_provider_config is None:
         _enhanced_provider_config = EnhancedProviderConfig()
     return _enhanced_provider_config
-
 
 def create_sample_config_file(file_path: Union[str, Path]):
     """Create a sample configuration file"""
@@ -402,7 +398,6 @@ def create_sample_config_file(file_path: Union[str, Path]):
         json.dump(sample_config, f, indent=2)
     
     print(f"[Config] Sample configuration saved to {save_path}")
-
 
 if __name__ == "__main__":
     # Create sample configuration

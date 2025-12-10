@@ -27,14 +27,12 @@ from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-
 class AllocationStrategy(Enum):
     """Context allocation strategies"""
     EQUAL_DISTRIBUTION = "equal"          # Equal distribution across components
     PRIORITY_BASED = "priority"          # Priority-based allocation
     PERFORMANCE_ADAPTIVE = "performance"  # Adaptive based on performance
     HYBRID = "hybrid"                    # Combination of strategies
-
 
 class ComponentType(Enum):
     """Context component types requiring allocation"""
@@ -45,7 +43,6 @@ class ComponentType(Enum):
     EXAMPLES = "examples"
     OUTPUT_FORMAT = "output_format"
     WORKING_MEMORY = "working_memory"
-
 
 @dataclass
 class ResourceMonitor:
@@ -67,7 +64,6 @@ class ResourceMonitor:
                 self.quality_score * 0.4 +
                 (1.0 - self.utilization_rate()) * 0.2)
 
-
 @dataclass
 class AllocationMetrics:
     """Metrics for allocation effectiveness"""
@@ -77,7 +73,6 @@ class AllocationMetrics:
     performance_impact: float
     quality_preservation: float
     allocation_timestamp: datetime
-
 
 @dataclass
 class ComponentRequirement:
@@ -90,7 +85,6 @@ class ComponentRequirement:
     importance_weight: float
     performance_critical: bool = False
     flexible: bool = True
-
 
 class DynamicContextAllocator:
     """
@@ -578,7 +572,6 @@ class DynamicContextAllocator:
             "performance_history_size": len(self.performance_history),
             "recommendations": self.get_allocation_recommendations()
         }
-
 
 # Factory function for easy instantiation
 def create_dynamic_allocator(token_budget: int = 2048) -> DynamicContextAllocator:

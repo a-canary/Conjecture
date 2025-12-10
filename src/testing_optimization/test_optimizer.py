@@ -14,7 +14,6 @@ import subprocess
 import sys
 import os
 
-
 @dataclass
 class TestMetrics:
     """Metrics for individual test performance."""
@@ -28,7 +27,6 @@ class TestMetrics:
     last_run_hash: str
     dependencies: List[str]
 
-
 @dataclass
 class OptimizationResult:
     """Result of test optimization analysis."""
@@ -37,7 +35,6 @@ class OptimizationResult:
     coverage_retained: float
     optimization_strategy: str
     reasoning: str
-
 
 class TestDependencyAnalyzer:
     """Analyzes test dependencies and code coverage relationships."""
@@ -104,7 +101,6 @@ class TestDependencyAnalyzer:
 
         return source_files
 
-
 class TestPerformanceProfiler:
     """Profiles test execution performance."""
 
@@ -160,7 +156,6 @@ class TestPerformanceProfiler:
     def get_critical_tests(self, threshold: float = 0.8) -> List[TestMetrics]:
         """Get tests above criticality threshold."""
         return [m for m in self.metrics.values() if m.criticality_score > threshold]
-
 
 class IntelligentTestSelector:
     """Selects tests based on various optimization criteria."""
@@ -297,7 +292,6 @@ class IntelligentTestSelector:
             reasoning=f"Selected tests by priority levels: {priority_levels}"
         )
 
-
 class TestRunner:
     """Optimized test runner with performance monitoring."""
 
@@ -360,7 +354,6 @@ class TestRunner:
             avg_time = total_time / test_count
             # Update metrics (simplified)
             pass
-
 
 class TestingOptimizationFramework:
     """Main framework for test optimization."""
@@ -448,7 +441,6 @@ class TestingOptimizationFramework:
 
         return ''.join(report)
 
-
 def main():
     """Command-line interface for test optimization."""
     import argparse
@@ -476,7 +468,6 @@ def main():
         )
 
         print(json.dumps(result, indent=2, default=str))
-
 
 if __name__ == "__main__":
     main()

@@ -17,7 +17,6 @@ import aiosqlite
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
-
 @dataclass
 class DatabaseConfig:
     """Configuration for test database."""
@@ -28,7 +27,6 @@ class DatabaseConfig:
     cache_size: int = 2000
     temp_store: str = "MEMORY"
     mmap_size: int = 268435456  # 256MB
-
 
 class DatabaseIsolationManager:
     """Manages database isolation for test execution."""
@@ -137,7 +135,6 @@ class DatabaseIsolationManager:
             loop.run_until_complete(self.cleanup_all())
         finally:
             loop.close()
-
 
 class TestDataManager:
     """Manages test data generation and cleanup for efficiency."""
@@ -270,7 +267,6 @@ class TestDataManager:
                 await conn.execute(statement)
         await conn.commit()
 
-
 class DatabaseConnectionPool:
     """Connection pool for efficient database access in testing."""
 
@@ -321,7 +317,6 @@ class DatabaseConnectionPool:
                 await conn.close()
             self._pool.clear()
             self._created_connections = 0
-
 
 class PerformanceOptimizedTestDatabase:
     """High-performance test database with optimizations."""
@@ -464,10 +459,8 @@ class PerformanceOptimizedTestDatabase:
         await self.isolation_manager.cleanup_database(self.test_id)
         await self.connection_pool.close_all()
 
-
 # Global instances for test usage
 _global_isolation_manager: Optional[DatabaseIsolationManager] = None
-
 
 def get_isolation_manager() -> DatabaseIsolationManager:
     """Get global database isolation manager."""

@@ -17,7 +17,6 @@ from src.tools.registry import get_tool_registry
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
 async def ingest_tool_examples():
     """
     Discover all tools, extract their examples, and save them as Claims.
@@ -81,7 +80,6 @@ async def ingest_tool_examples():
         logger.info("No examples found to ingest.")
 
     await data_manager.close()
-
 
 if __name__ == "__main__":
     asyncio.run(ingest_tool_examples())

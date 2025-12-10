@@ -10,7 +10,6 @@ import sys
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-
 def test_cli_backends():
     """Test CLI backend functionality"""
     print("=" * 60)
@@ -125,7 +124,6 @@ def test_cli_backends():
 
     return results
 
-
 def test_3part_architecture_integration():
     """Test CLI with 3-part architecture integration"""
     print("\n" + "=" * 60)
@@ -219,7 +217,6 @@ def test_3part_architecture_integration():
 
     return results
 
-
 def test_cli_entry_points():
     """Test main CLI entry points"""
     print("\n" + "=" * 60)
@@ -279,7 +276,6 @@ def test_cli_entry_points():
 
     return results
 
-
 def main():
     """Run all CLI functionality tests"""
     print("CLI FUNCTIONALITY TESTS FOR 3-PART ARCHITECTURE")
@@ -336,7 +332,6 @@ def main():
     print("=" * 80)
 
     return total_failed == 0
-
 
 if __name__ == "__main__":
     success = main()

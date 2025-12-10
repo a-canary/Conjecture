@@ -9,7 +9,6 @@ import os
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-
 def test_prompt_command():
     """Test the prompt command functionality."""
     try:
@@ -43,7 +42,6 @@ def test_prompt_command():
 
         traceback.print_exc()
         return False
-
 
 if __name__ == "__main__":
     success = test_prompt_command()

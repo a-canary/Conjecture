@@ -15,7 +15,6 @@ from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-
 @dataclass
 class CompatibilityMetrics:
     """Metrics for monitoring backward compatibility"""
@@ -25,7 +24,6 @@ class CompatibilityMetrics:
     fallback_success: int = 0
     migration_failures: int = 0
     avg_processing_time: float = 0.0
-
 
 class BackwardCompatibilityManager:
     """
@@ -280,7 +278,6 @@ class BackwardCompatibilityManager:
         """Create a hybrid parser that combines both approaches"""
         return HybridClaimParser(self.json_parser, self.legacy_parser)
 
-
 class HybridClaimParser:
     """
     Hybrid parser that combines JSON frontmatter and legacy parsing.
@@ -363,7 +360,6 @@ class HybridClaimParser:
             logger.warning("Hybrid parser: both strategies failed")
             return []
 
-
 class FormatDetector:
     """Intelligent format detection for LLM responses"""
     
@@ -407,7 +403,6 @@ class FormatDetector:
         
         return 'unknown'
 
-
 # Global compatibility manager instance
 _compatibility_manager = None
 
@@ -417,7 +412,6 @@ def get_compatibility_manager() -> BackwardCompatibilityManager:
     if _compatibility_manager is None:
         _compatibility_manager = BackwardCompatibilityManager()
     return _compatibility_manager
-
 
 def parse_with_backward_compatibility(
     response_text: str,
@@ -438,12 +432,10 @@ def parse_with_backward_compatibility(
     manager = get_compatibility_manager()
     return manager.parse_with_compatibility(response_text, prefer_json, enable_fallback)
 
-
 def get_migration_metrics() -> Dict[str, Any]:
     """Get migration metrics"""
     manager = get_compatibility_manager()
     return manager.get_compatibility_metrics()
-
 
 def generate_migration_report() -> str:
     """Generate migration report"""

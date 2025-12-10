@@ -10,7 +10,6 @@ from enum import Enum
 
 from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
 
-
 class ProviderType(str, Enum):
     """Provider type enumeration"""
     OLLAMA = "ollama"
@@ -21,7 +20,6 @@ class ProviderType(str, Enum):
     ANTHROPIC = "anthropic"
     GROQ = "groq"
     GOOGLE = "google"
-
 
 class ProviderConfig(BaseModel):
     """Unified provider configuration using Pydantic"""
@@ -132,7 +130,6 @@ class ProviderConfig(BaseModel):
         
         return cls(**filtered_data)
 
-
 class DatabaseSettings(BaseModel):
     """Database configuration settings"""
     
@@ -157,7 +154,6 @@ class DatabaseSettings(BaseModel):
             return str(Path.cwd() / v)
         return v
 
-
 class LLMSettings(BaseModel):
     """LLM configuration settings"""
     
@@ -173,7 +169,6 @@ class LLMSettings(BaseModel):
     timeout: int = Field(default=30, ge=1, description="Request timeout in seconds")
     max_retries: int = Field(default=3, ge=0, description="Maximum retry attempts")
     retry_delay: float = Field(default=1.0, ge=0.1, description="Retry delay in seconds")
-
 
 class ProcessingSettings(BaseModel):
     """Claim processing configuration settings"""
@@ -203,7 +198,6 @@ class ProcessingSettings(BaseModel):
         if self.confident_threshold > self.confidence_threshold:
             raise ValueError("confident_threshold cannot be greater than confidence_threshold")
         return self
-
 
 class DirtyFlagSettings(BaseModel):
     """Dirty flag system configuration settings"""
@@ -242,7 +236,6 @@ class DirtyFlagSettings(BaseModel):
         description="Priority weights for dirty flag evaluation"
     )
 
-
 class LoggingSettings(BaseModel):
     """Logging configuration settings"""
     
@@ -270,7 +263,6 @@ class LoggingSettings(BaseModel):
             raise ValueError(f"Log level must be one of: {valid_levels}")
         return v.upper()
 
-
 class WorkspaceSettings(BaseModel):
     """Workspace configuration settings"""
     
@@ -292,7 +284,6 @@ class WorkspaceSettings(BaseModel):
         if v and not os.path.isabs(v):
             return str(Path.cwd() / v)
         return v
-
 
 class ConjectureSettings(BaseModel):
     """Main Conjecture settings class using Pydantic BaseSettings"""

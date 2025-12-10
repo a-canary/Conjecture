@@ -20,14 +20,12 @@ from enum import Enum
 from src.conjecture import Conjecture
 from src.config.unified_config import get_config
 
-
 class EvaluationResult(Enum):
     """Evaluation result status"""
     PASSED = "passed"
     FAILED = "failed"
     ERROR = "error"
     TIMEOUT = "timeout"
-
 
 @dataclass
 class SWETask:
@@ -41,7 +39,6 @@ class SWETask:
     version: str
     environment_setup_commit: Optional[str] = None
 
-
 @dataclass
 class EvaluationOutput:
     """Results from model evaluation"""
@@ -52,7 +49,6 @@ class EvaluationOutput:
     tests_passed: int = 0
     tests_total: int = 0
     generated_patch: Optional[str] = None
-
 
 class RealSWEBenchEvaluator:
     """

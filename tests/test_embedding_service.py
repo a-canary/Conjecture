@@ -7,9 +7,8 @@ import pytest_asyncio
 import asyncio
 import numpy as np
 
-from src.data.embedding_service import EmbeddingService, MockEmbeddingService
+from src.data.embedding_service import EmbeddingService
 from src.data.models import DataLayerError
-
 
 class TestEmbeddingService:
     """Test EmbeddingService functionality."""
@@ -175,124 +174,26 @@ class TestEmbeddingService:
 
         with pytest.raises(DataLayerError):
             await service.generate_batch_embeddings(["test1", "test2"])
-
-
-class TestMockEmbeddingService:
-    """Test MockEmbeddingService functionality."""
+ 
 
     @pytest_asyncio.fixture
-    async def mock_service(self):
-        """Create a mock embedding service for testing."""
-        service = MockEmbeddingService("mock-model", 384)
-        await service.initialize()
-        yield service
-        await service.close()
-
-    @pytest.mark.asyncio
-    async def test_mock_initialization(self, mock_service):
-        """Test mock service initialization."""
-        assert mock_service.model_name == "mock-model"
-        assert mock_service.embedding_dim == 384
-        assert mock_service.call_count == 0
-
-    @pytest.mark.asyncio
-    async def test_mock_generate_embedding(self, mock_service):
-        """Test generating mock embeddings."""
-        text = "Test text"
-        embedding = await mock_service.generate_embedding(text)
-
+    async def test_embedding_functionality(self, real_embedding_service):
+        """Test embedding service functionality"""
+        # Test basic embedding
+        test_text = "This is a test claim for embedding"
+        embedding = await real_embedding_service.generate_embedding(test_text)
+        
+        assert embedding is not None
+        assert len(embedding) > 0
         assert isinstance(embedding, list)
-        assert len(embedding) == 384
-        assert all(isinstance(x, float) for x in embedding)
-        assert mock_service.call_count == 1
-
-        # Check that embedding is normalized
-        embedding_array = np.array(embedding)
-        norm = np.linalg.norm(embedding_array)
-        assert abs(norm - 1.0) < 1e-6
-
-    @pytest.mark.asyncio
-    async def test_mock_deterministic_embeddings(self, mock_service):
-        """Test that mock embeddings are deterministic."""
-        text = "Test text"
-
-        # Generate embedding twice
-        emb1 = await mock_service.generate_embedding(text)
-        emb2 = await mock_service.generate_embedding(text)
-
-        # Should be identical
-        assert emb1 == emb2
-        assert mock_service.call_count == 2
-
-    @pytest.mark.asyncio
-    async def test_mock_different_texts_different_embeddings(self, mock_service):
-        """Test that different texts produce different embeddings."""
-        text1 = "First text"
-        text2 = "Second text"
-
-        emb1 = await mock_service.generate_embedding(text1)
-        emb2 = await mock_service.generate_embedding(text2)
-
-        # Should be different
-        assert emb1 != emb2
-        assert mock_service.call_count == 2
-
-    @pytest.mark.asyncio
-    async def test_mock_batch_embeddings(self, mock_service):
-        """Test batch generation of mock embeddings."""
-        texts = ["Text 1", "Text 2", "Text 3"]
-
-        embeddings = await mock_service.generate_batch_embeddings(texts)
-
-        assert len(embeddings) == 3
-        assert all(len(emb) == 384 for emb in embeddings)
-        assert mock_service.call_count == 3
-
-    @pytest.mark.asyncio
-    async def test_mock_similarity_computation(self, mock_service):
-        """Test mock similarity computation."""
-        # Create embeddings
-        emb1 = await mock_service.generate_embedding("Text 1")
-        emb2 = await mock_service.generate_embedding("Text 2")
-
-        similarity = await mock_service.compute_similarity(emb1, emb2)
-
-        assert isinstance(similarity, float)
-        assert 0.0 <= similarity <= 1.0
-
-    @pytest.mark.asyncio
-    async def test_mock_find_most_similar(self, mock_service):
-        """Test finding most similar with mock service."""
-        query_embedding = [0.1] * 384
-        candidate_embeddings = [[0.2] * 384, [0.8] * 384, [0.3] * 384]
-
-        most_similar_idx = await mock_service.find_most_similar(
-            query_embedding, candidate_embeddings
-        )
-
-        assert isinstance(most_similar_idx, int)
-        assert 0 <= most_similar_idx < len(candidate_embeddings)
-
-    @pytest.mark.asyncio
-    async def test_mock_get_model_info(self, mock_service):
-        """Test getting mock model info."""
-        info = mock_service.get_model_info()
-
-        assert isinstance(info, dict)
-        assert info["model_name"] == "mock-model"
-        assert info["embedding_dimension"] == 384
-        assert info["initialized"] is True
-        assert info["call_count"] == mock_service.call_count
-
-    @pytest.mark.asyncio
-    async def test_mock_custom_dimensions(self):
-        """Test mock service with custom dimensions."""
-        service = MockEmbeddingService("custom-model", 768)
-        await service.initialize()
-
-        embedding = await service.generate_embedding("test")
-
-        assert len(embedding) == 768
-        assert service.embedding_dimension == 768
-
-        await service.close()
+        
+        # Test batch embedding
+        test_texts = [
+            "First test claim",
+            "Second test claim",
+            "Third test claim"
+        ]
+        embeddings = await real_embedding_service.generate_batch_embeddings(test_texts)
+        
+        assert len(embeddings) == len(test_texts)
+        assert all(emb is not None for emb in embeddings)

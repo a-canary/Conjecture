@@ -16,9 +16,7 @@ from .models import (
 from ..support_systems.models import ContextResult, ContextItem
 from ..support_systems.context_builder import ContextBuilder
 
-
 logger = logging.getLogger(__name__)
-
 
 class ContextIntegrator:
     """

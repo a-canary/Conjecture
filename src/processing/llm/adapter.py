@@ -6,7 +6,6 @@ Single adapter pattern for all LLM providers using the registry
 from typing import Optional, Dict, Any
 from ...config.config import Config
 
-
 class LLMAdapter:
     """Single adapter for all LLM providers"""
 
@@ -68,7 +67,6 @@ class LLMAdapter:
         elif self._fallback_provider and self._fallback_provider.is_available():
             return self._fallback_provider.name
         return "none"
-
 
 def create_adapter(config: Optional[Config] = None) -> LLMAdapter:
     """Factory function to create adapter"""

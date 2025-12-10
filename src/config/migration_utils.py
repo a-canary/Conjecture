@@ -14,7 +14,6 @@ from .unified_validator import UnifiedConfigValidator, ConfigFormat
 
 console = Console()
 
-
 class ConfigurationMigrator:
     """
     Handles migration from old configuration formats to unified format
@@ -407,24 +406,20 @@ class ConfigurationMigrator:
         else:
             raise ValueError(f"Unsupported export format: {format}")
 
-
 def analyze_migration(env_file: str = ".env") -> Dict[str, Any]:
     """Analyze migration options"""
     migrator = ConfigurationMigrator(env_file)
     return migrator.analyze_migration()
-
 
 def execute_migration(env_file: str = ".env", dry_run: bool = True) -> Dict[str, Any]:
     """Execute migration (or dry run)"""
     migrator = ConfigurationMigrator(env_file)
     return migrator.execute_migration(dry_run=dry_run)
 
-
 def show_migration_analysis(env_file: str = ".env"):
     """Show migration analysis"""
     migrator = ConfigurationMigrator(env_file)
     migrator.show_migration_analysis()
-
 
 if __name__ == "__main__":
     """Test migration utilities when run directly"""

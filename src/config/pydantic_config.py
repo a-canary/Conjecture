@@ -10,7 +10,6 @@ from typing import Any, Dict, List, Optional, Union
 
 from .settings_models import ConjectureSettings, ProviderConfig
 
-
 class ConfigHierarchy:
     """
     Manages configuration file hierarchy: workspace → user → default
@@ -104,7 +103,6 @@ class ConfigHierarchy:
         with open(config_path, 'w', encoding='utf-8') as f:
             json.dump(config_dict, f, indent=2)
 
-
 class PydanticConfig:
     """
     Pydantic-based configuration class for Conjecture
@@ -155,7 +153,6 @@ class PydanticConfig:
             print(f"Error loading config: {e}")
             print("Creating default configuration...")
             return self._create_default_settings()
-
 
     def _create_default_settings(self) -> ConjectureSettings:
         """Create default settings when config loading fails"""
@@ -341,10 +338,8 @@ class PydanticConfig:
         """Convert settings to dictionary"""
         return self.settings.to_dict()
 
-
 # Global configuration instance
 _pydantic_config = None
-
 
 def get_pydantic_config() -> PydanticConfig:
     """Get the global Pydantic configuration instance"""
@@ -353,12 +348,10 @@ def get_pydantic_config() -> PydanticConfig:
         _pydantic_config = PydanticConfig()
     return _pydantic_config
 
-
 def reload_pydantic_config():
     """Reload the global Pydantic configuration"""
     global _pydantic_config
     _pydantic_config = PydanticConfig()
-
 
 def validate_pydantic_config() -> bool:
     """Validate Pydantic configuration"""

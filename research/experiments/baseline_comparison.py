@@ -26,7 +26,6 @@ from .experiment_framework import ExperimentConfig, TestResult, EvaluationResult
 from .llm_judge import LLMJudge, EvaluationCriterion
 from ..analysis.statistical_analyzer import StatisticalAnalyzer, ABTestResult
 
-
 class BaselineType(str, Enum):
     """Types of baseline approaches to compare against"""
     DIRECT_PROMPT = "direct_prompt"
@@ -34,7 +33,6 @@ class BaselineType(str, Enum):
     CHAIN_OF_THOUGHT = "chain_of_thought"
     ZERO_SHOT_COT = "zero_shot_cot"
     TEMPLATE_BASED = "template_based"
-
 
 @dataclass
 class BaselineConfig:
@@ -45,7 +43,6 @@ class BaselineConfig:
     prompt_template: str
     parameters: Dict[str, Any]
     expected_advantages: List[str]
-
 
 @dataclass
 class ComparisonResult:
@@ -61,7 +58,6 @@ class ComparisonResult:
     confidence_in_winner: float
     analysis: str
 
-
 @dataclass
 class ABRunConfig:
     """Configuration for A/B testing runs"""
@@ -73,7 +69,6 @@ class ABRunConfig:
     sample_size_per_condition: int
     randomize_order: bool = True
     statistical_threshold: float = 0.05
-
 
 class BaselineEngine:
     """Engine for executing baseline approaches"""
@@ -222,7 +217,6 @@ Answer:""",
             result.error = error
 
         return result
-
 
 class BaselineComparisonSuite:
     """Suite for running baseline comparison experiments"""
@@ -664,11 +658,9 @@ Based on this analysis:
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(results_data, f, indent=2, ensure_ascii=False)
 
-
 async def main():
     """Example usage of baseline comparison suite"""
     print("Basline comparison example")
-
 
 if __name__ == "__main__":
     asyncio.run(main())

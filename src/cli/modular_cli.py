@@ -69,7 +69,6 @@ app = typer.Typer(
 # Global processing interface instance
 current_processing_interface: ProcessingInterface = None
 
-
 def get_processing_interface(backend_type: str = "auto") -> ProcessingInterface:
     """Get or create the specified processing interface instance."""
     global current_processing_interface
@@ -137,17 +136,14 @@ def get_processing_interface(backend_type: str = "auto") -> ProcessingInterface:
 
         raise typer.Exit(1)
 
-
 def get_backend(backend_type: str = "auto") -> ProcessingInterface:
     """Alias for get_processing_interface for backward compatibility."""
     return get_processing_interface(backend_type)
-
 
 def print_backend_info(backend_type: str = "auto"):
     """Print backend information for backward compatibility."""
     processing_interface = get_processing_interface(backend_type)
     print_processing_interface_info(processing_interface)
-
 
 def print_processing_interface_info(processing_interface: ProcessingInterface):
     """Print information about the current processing interface."""
@@ -177,7 +173,6 @@ def print_processing_interface_info(processing_interface: ProcessingInterface):
     )
     console.print(panel)
 
-
 @app.callback()
 def main(
     backend: str = "auto",
@@ -200,7 +195,6 @@ def main(
     except Exception as e:
         error_console.print(f"[red]Error initializing processing interface: {e}[/red]")
         raise typer.Exit(1)
-
 
 @app.command()
 def create(
@@ -281,7 +275,6 @@ def create(
     except typer.Exit:
         raise
 
-
 @app.command()
 def get(
     claim_id: str = typer.Argument(..., help="ID of the claim to retrieve"),
@@ -347,7 +340,6 @@ def get(
 
     except typer.Exit:
         raise
-
 
 @app.command()
 def search(
@@ -427,7 +419,6 @@ def search(
     except typer.Exit:
         raise
 
-
 @app.command()
 def analyze(
     claim_id: str = typer.Argument(..., help="ID of the claim to analyze"),
@@ -485,7 +476,6 @@ def analyze(
 
     except typer.Exit:
         raise
-
 
 @app.command()
 def prompt(
@@ -568,7 +558,6 @@ def prompt(
     except typer.Exit:
         raise
 
-
 @app.command()
 def config():
     """Show configuration status and validation."""
@@ -611,7 +600,6 @@ def config():
         except Exception as e:
             console.print(f"  • Error checking providers: {e}")
 
-
 @app.command()
 def providers():
     """Show available providers and setup instructions."""
@@ -651,7 +639,6 @@ def providers():
 
     except Exception as e:
         console.print(f"[red]Error loading providers: {e}[/red]")
-
 
 @app.command()
 def setup(
@@ -724,7 +711,6 @@ def setup(
                 console.print("1. Copy template: [cyan]cp .env.example .env[/cyan]")
                 console.print("2. Edit the file [cyan].env[/cyan]")
                 console.print("3. Run: [cyan]conjecture config[/cyan] to validate")
-
 
 @app.command()
 def stats(
@@ -800,7 +786,6 @@ def stats(
     except typer.Exit:
         raise
 
-
 @app.command()
 def backends():
     """Show available processing interface information."""
@@ -825,7 +810,6 @@ def backends():
     table.add_row("Event Streaming", "Supported", "Real-time processing events")
     
     console.print(table)
-
 
 @app.command()
 def health():
@@ -868,7 +852,6 @@ def health():
         console.print(f"[bold red]System Status: Error - {e}[/bold red]")
 
     console.print("\n[bold]Health Check Complete[/bold]")
-
 
 @app.command()
 def quickstart():
@@ -918,7 +901,6 @@ def quickstart():
     console.print("  • Provider options: [cyan]conjecture providers[/cyan]")
     console.print("  • Backend status: [cyan]conjecture backends[/cyan]")
     console.print("  • System health: [cyan]conjecture health[/cyan]")
-
 
 if __name__ == "__main__":
     try:

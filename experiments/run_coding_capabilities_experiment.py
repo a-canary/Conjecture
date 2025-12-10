@@ -52,7 +52,6 @@ from config.common import ProviderConfig
 from test_coding_capabilities import CodingCapabilitiesEvaluator, CodingTestResult
 from statistical_analyzer import ConjectureStatisticalAnalyzer
 
-
 @dataclass
 class CodingExperimentConfig:
     """Configuration for coding capabilities experiment"""
@@ -101,7 +100,6 @@ class CodingExperimentConfig:
                 "testing": 0.5,                # Test coverage and quality
                 "error_handling": 0.5           # Robust error handling
             }
-
 
 class CodingCapabilitiesExperiment:
     """Main experiment runner for coding capabilities evaluation"""
@@ -555,7 +553,6 @@ class CodingCapabilitiesExperiment:
         
         self.logger.info(f"Raw results saved to {results_file}")
 
-
 async def main():
     """Main entry point for coding capabilities experiment"""
     print("=" * 80)
@@ -605,7 +602,6 @@ async def main():
     except Exception as e:
         print(f"\nExperiment failed with error: {e}")
         return 1
-
 
 if __name__ == "__main__":
     import sys

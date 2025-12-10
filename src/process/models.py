@@ -12,7 +12,6 @@ from pydantic import BaseModel, Field
 
 from src.core.models import Claim
 
-
 class InstructionType(str, Enum):
     """Types of instructions that can be identified during claim processing."""
     
@@ -26,7 +25,6 @@ class InstructionType(str, Enum):
     GENERATE_CONTEXT = "generate_context"
     CUSTOM_ACTION = "custom_action"
 
-
 class ProcessingStatus(str, Enum):
     """Status of processing operations."""
     
@@ -36,7 +34,6 @@ class ProcessingStatus(str, Enum):
     FAILED = "failed"
     CANCELLED = "cancelled"
     RETRYING = "retrying"
-
 
 class ContextResult(BaseModel):
     """Result of context building operations."""
@@ -53,7 +50,6 @@ class ContextResult(BaseModel):
             datetime: lambda v: v.isoformat()
         }
 
-
 class Instruction(BaseModel):
     """Instruction identified during claim processing."""
     
@@ -69,7 +65,6 @@ class Instruction(BaseModel):
         json_encoders = {
             datetime: lambda v: v.isoformat()
         }
-
 
 class ProcessingResult(BaseModel):
     """Result of claim processing operations."""
@@ -89,7 +84,6 @@ class ProcessingResult(BaseModel):
             datetime: lambda v: v.isoformat()
         }
 
-
 class ProcessingConfig(BaseModel):
     """Configuration for processing operations."""
     
@@ -102,7 +96,6 @@ class ProcessingConfig(BaseModel):
     
     class Config:
         extra = "allow"
-
 
 class ProcessingRequest(BaseModel):
     """Request for claim processing."""
@@ -118,7 +111,6 @@ class ProcessingRequest(BaseModel):
         json_encoders = {
             datetime: lambda v: v.isoformat()
         }
-
 
 class ProcessingBatch(BaseModel):
     """Batch of processing requests for bulk operations."""

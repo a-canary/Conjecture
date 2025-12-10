@@ -15,9 +15,7 @@ from .models import (
     LLMResponse, ResponseSchema, ParsedResponse, FallbackResponse
 )
 
-
 logger = logging.getLogger(__name__)
-
 
 class ResponseProcessor:
     """

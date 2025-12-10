@@ -17,7 +17,6 @@ from .llm.common import GenerationConfig, LLMProcessingResult
 from src.config.unified_config import get_config
 from src.core.models import Claim
 
-
 class ProviderStatus(str, Enum):
     """Provider status enumeration"""
     HEALTHY = "healthy"
@@ -25,14 +24,12 @@ class ProviderStatus(str, Enum):
     UNHEALTHY = "unhealthy"
     DISABLED = "disabled"
 
-
 class RoutingStrategy(str, Enum):
     """Routing strategy enumeration"""
     PRIORITY = "priority"  # Use highest priority available provider
     ROUND_ROBIN = "round_robin"  # Rotate through available providers
     LOAD_BALANCED = "load_balanced"  # Route to least loaded provider
     FASTEST_RESPONSE = "fastest_response"  # Route to fastest responding provider
-
 
 @dataclass
 class ProviderMetrics:
@@ -73,7 +70,6 @@ class ProviderMetrics:
         if self.total_requests > 0:
             self.success_rate = self.successful_requests / self.total_requests
             self.average_response_time = self.total_response_time / self.total_requests
-
 
 @dataclass
 class ProviderConfig:
@@ -117,7 +113,6 @@ class ProviderConfig:
             "max_tokens": self.max_tokens,
             "top_p": self.top_p
         }
-
 
 class EnhancedLLMRouter:
     """Enhanced LLM router with intelligent routing and health monitoring"""
@@ -658,10 +653,8 @@ class EnhancedLLMRouter:
         
         self.logger.info("Enhanced LLM router shutdown complete")
 
-
 # Global instance for easy access
 _enhanced_llm_router = None
-
 
 def get_enhanced_llm_router() -> EnhancedLLMRouter:
     """Get global enhanced LLM router instance"""

@@ -6,7 +6,6 @@ Optimized settings for small LLMs to achieve SOTA reasoning with Conjecture meth
 from typing import Dict, Any, Optional
 from dataclasses import dataclass
 
-
 @dataclass
 class TinyModelConfig:
     """Configuration optimized for tiny models like IBM Granite Tiny"""
@@ -69,7 +68,6 @@ class TinyModelConfig:
             "use_json_frontmatter": self.use_json_frontmatter,
             "enable_confidence_boosting": self.enable_confidence_boosting
         }
-
 
 class TinyModelPromptTemplates:
     """Optimized prompt templates for tiny models"""
@@ -141,7 +139,6 @@ Check:
 
 Respond with validation result."""
 
-
 # Default tiny model configuration
 DEFAULT_TINY_MODEL_CONFIG = TinyModelConfig()
 
@@ -160,7 +157,6 @@ LM_STUDIO_CONFIG = {
     "optimized_for_tiny_models": True
 }
 
-
 def is_tiny_model(model_name: str) -> bool:
     """Check if model is a tiny model requiring special handling"""
     tiny_model_patterns = [
@@ -169,13 +165,11 @@ def is_tiny_model(model_name: str) -> bool:
     model_lower = model_name.lower()
     return any(pattern in model_lower for pattern in tiny_model_patterns)
 
-
 def get_tiny_model_config(model_name: str) -> Optional[TinyModelConfig]:
     """Get optimized configuration for tiny models"""
     if is_tiny_model(model_name):
         return DEFAULT_TINY_MODEL_CONFIG
     return None
-
 
 def optimize_prompt_for_tiny_model(prompt: str, model_name: str) -> str:
     """Optimize prompt for tiny models"""

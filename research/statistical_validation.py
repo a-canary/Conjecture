@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Any
 from datetime import datetime
 
-
 def calculate_cohens_d(group1: List[float], group2: List[float]) -> float:
     """
     Calculate Cohen's d effect size between two groups
@@ -37,7 +36,6 @@ def calculate_cohens_d(group1: List[float], group2: List[float]) -> float:
         return 0.0
     
     return (mean2 - mean1) / pooled_sd
-
 
 def calculate_wilcoxon_signed_rank(group1: List[float], group2: List[float]) -> Tuple[float, float]:
     """
@@ -122,7 +120,6 @@ def calculate_wilcoxon_signed_rank(group1: List[float], group2: List[float]) -> 
     
     return W, p_value
 
-
 def calculate_bootstrap_confidence_interval(values: List[float], confidence: float = 0.95, iterations: int = 1000) -> Tuple[float, float]:
     """
     Calculate bootstrap confidence interval
@@ -157,7 +154,6 @@ def calculate_bootstrap_confidence_interval(values: List[float], confidence: flo
     upper_idx = int(upper_percentile * iterations / 100)
     
     return bootstrap_means[lower_idx], bootstrap_means[upper_idx]
-
 
 def analyze_comparison_results(results_file: Path) -> Dict[str, Any]:
     """
@@ -252,7 +248,6 @@ def analyze_comparison_results(results_file: Path) -> Dict[str, Any]:
     
     return analysis
 
-
 def interpret_effect_size(cohens_d: float) -> str:
     """Interpret Cohen's d effect size"""
     abs_d = abs(cohens_d)
@@ -266,7 +261,6 @@ def interpret_effect_size(cohens_d: float) -> str:
     else:
         return "large"
 
-
 def interpret_p_value(p_value: float) -> str:
     """Interpret p-value significance"""
     if p_value >= 0.1:
@@ -278,7 +272,6 @@ def interpret_p_value(p_value: float) -> str:
     else:
         return "highly significant"
 
-
 def interpret_confidence_interval(lower: float, upper: float) -> str:
     """Interpret confidence interval"""
     if lower > 0:
@@ -287,7 +280,6 @@ def interpret_confidence_interval(lower: float, upper: float) -> str:
         return "negative effect"
     else:
         return "no clear effect"
-
 
 def evaluate_practical_significance(mean_improvement: float, ci_lower: float, ci_upper: float, metric: str) -> Dict[str, Any]:
     """Evaluate practical significance of improvement"""
@@ -322,7 +314,6 @@ def evaluate_practical_significance(mean_improvement: float, ci_lower: float, ci
         "mean_improvement": mean_improvement,
         "percentage_improvement": (mean_improvement / (1 - mean_improvement)) * 100 if mean_improvement < 1 else mean_improvement * 100
     }
-
 
 def generate_statistical_report(results_file: Path, analysis: Dict[str, Any], output_file: Path = None) -> str:
     """Generate a comprehensive statistical report"""
@@ -414,7 +405,6 @@ def generate_statistical_report(results_file: Path, analysis: Dict[str, Any], ou
         f.write("*This report was generated automatically using statistical validation methods.*\n")
     
     return str(output_file)
-
 
 if __name__ == "__main__":
     # Example usage

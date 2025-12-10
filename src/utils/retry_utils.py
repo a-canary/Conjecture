@@ -16,7 +16,6 @@ from functools import wraps
 # Configure logging
 logger = logging.getLogger(__name__)
 
-
 class RetryErrorType(Enum):
     """Types of errors that can occur during LLM processing"""
     NETWORK_ERROR = "network_error"
@@ -28,7 +27,6 @@ class RetryErrorType(Enum):
     CONNECTION_ERROR = "connection_error"
     HTTP_ERROR = "http_error"
     UNKNOWN_ERROR = "unknown_error"
-
 
 @dataclass
 class EnhancedRetryConfig:
@@ -63,7 +61,6 @@ class EnhancedRetryConfig:
         RetryErrorType.AUTHENTICATION_ERROR,
         RetryErrorType.VALIDATION_ERROR
     ])
-
 
 class RetryStats:
     """Statistics tracking for retry operations"""
@@ -106,7 +103,6 @@ class RetryStats:
             "average_delay": self.total_delay_time / self.retry_count if self.retry_count > 0 else 0.0,
             "error_counts": dict(self.error_counts)
         }
-
 
 class EnhancedRetryHandler:
     """Enhanced retry handler with comprehensive exponential backoff"""
@@ -264,10 +260,8 @@ class EnhancedRetryHandler:
         """Reset retry statistics"""
         self.stats = RetryStats()
 
-
 # Global retry handler instance
 default_retry_handler = EnhancedRetryHandler()
-
 
 def with_enhanced_retry(config: Optional[EnhancedRetryConfig] = None, 
                        handler: Optional[EnhancedRetryHandler] = None):
@@ -288,7 +282,6 @@ def with_enhanced_retry(config: Optional[EnhancedRetryConfig] = None,
     
     return decorator
 
-
 # Convenience decorators
 def with_llm_retry(max_attempts: int = 5, base_delay: float = 10.0, max_delay: float = 600.0):
     """Convenience decorator for LLM operations with standard 10s-10min range"""
@@ -299,7 +292,6 @@ def with_llm_retry(max_attempts: int = 5, base_delay: float = 10.0, max_delay: f
     )
     return with_enhanced_retry(config)
 
-
 def with_network_retry(max_attempts: int = 3, base_delay: float = 5.0):
     """Convenience decorator for network operations"""
     config = EnhancedRetryConfig(
@@ -309,7 +301,6 @@ def with_network_retry(max_attempts: int = 3, base_delay: float = 5.0):
         network_multiplier=2.0
     )
     return with_enhanced_retry(config)
-
 
 def with_rate_limit_retry(max_attempts: int = 5, base_delay: float = 30.0):
     """Convenience decorator for rate-limited operations"""

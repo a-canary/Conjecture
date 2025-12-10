@@ -25,7 +25,6 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-
 class LocalVectorStore:
     """
     Lightweight vector store combining FAISS for fast similarity search
@@ -646,75 +645,3 @@ class LocalVectorStore:
             
         except Exception as e:
             logger.error(f"Error closing vector store: {e}")
-
-
-# Mock vector store for testing
-class MockVectorStore:
-    """Mock vector store for testing and development."""
-    
-    def __init__(self, dimension: int = 384):
-        self.dimension = dimension
-        self._vectors = {}
-        self._initialized = True
-        self.call_count = 0
-    
-    async def initialize(self, dimension: Optional[int] = None) -> None:
-        """Initialize mock store."""
-        if dimension:
-            self.dimension = dimension
-    
-    async def add_vector(self, claim_id: str, content: str, 
-                        embedding: List[float], metadata: Optional[Dict[str, Any]] = None) -> bool:
-        """Add mock vector."""
-        self._vectors[claim_id] = {
-            'content': content,
-            'embedding': embedding,
-            'metadata': metadata or {}
-        }
-        return True
-    
-    async def search_similar(self, query_embedding: List[float], 
-                           limit: int = 10, threshold: float = 0.0) -> List[Dict[str, Any]]:
-        """Mock similarity search."""
-        self.call_count += 1
-        results = []
-        
-        for claim_id, data in self._vectors.items():
-            # Simple mock similarity based on hash
-            similarity = (hash(query_embedding[0] + len(data['content'])) % 100) / 100.0
-            
-            if similarity >= threshold:
-                results.append({
-                    'id': claim_id,
-                    'content': data['content'],
-                    'metadata': data['metadata'],
-                    'similarity': similarity,
-                    'distance': 1 - similarity
-                })
-        
-        # Sort and limit
-        results.sort(key=lambda x: x['similarity'], reverse=True)
-        return results[:limit]
-    
-    async def get_stats(self) -> Dict[str, Any]:
-        """Get mock stats."""
-        return {
-            'initialized': True,
-            'total_vectors': len(self._vectors),
-            'dimension': self.dimension,
-            'service': 'mock_vector_store',
-            'call_count': self.call_count
-        }
-    
-    async def health_check(self) -> Dict[str, Any]:
-        """Mock health check."""
-        return {
-            'service': 'mock_vector_store',
-            'status': 'healthy',
-            'initialized': True,
-            'vectors': len(self._vectors)
-        }
-    
-    async def close(self) -> None:
-        """Close mock store."""
-        pass

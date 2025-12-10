@@ -15,7 +15,6 @@ from functools import wraps
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
 class ErrorType(Enum):
     """Types of errors that can occur during LLM processing"""
     NETWORK_ERROR = "network_error"
@@ -25,7 +24,6 @@ class ErrorType(Enum):
     VALIDATION_ERROR = "validation_error"
     TIMEOUT_ERROR = "timeout_error"
     UNKNOWN_ERROR = "unknown_error"
-
 
 @dataclass
 class RetryConfig:
@@ -47,14 +45,12 @@ class RetryConfig:
     network_multiplier: float = 1.5  # Multiplier for network errors
     timeout_multiplier: float = 1.0  # Multiplier for timeout errors
 
-
 @dataclass
 class CircuitBreakerConfig:
     """Configuration for circuit breaker pattern"""
     failure_threshold: int = 5  # Number of failures before opening circuit
     recovery_timeout: float = 60.0  # Seconds to wait before trying again
     expected_exception: Type[Exception] = Exception
-
 
 class CircuitBreaker:
     """Circuit breaker pattern implementation"""
@@ -101,7 +97,6 @@ class CircuitBreaker:
         
         if self.failure_count >= self.config.failure_threshold:
             self.state = "OPEN"
-
 
 class RetryHandler:
     """Enhanced retry handler with exponential backoff"""
@@ -184,7 +179,6 @@ class RetryHandler:
             delay += random.uniform(-jitter_range, jitter_range)
         
         return max(0, delay)  # Ensure non-negative
-
 
 class LLMErrorHandler:
     """Enhanced error handler for LLM operations"""
@@ -294,10 +288,8 @@ class LLMErrorHandler:
             cb.state = "CLOSED"
             cb.last_failure_time = None
 
-
 # Global error handler instance
 default_error_handler = LLMErrorHandler()
-
 
 def with_error_handling(operation_type: str = "generation", 
                       error_handler: Optional[LLMErrorHandler] = None):
@@ -317,19 +309,16 @@ def with_error_handling(operation_type: str = "generation",
     
     return decorator
 
-
 # Convenience decorators
 @with_error_handling("generation")
 def handle_generation_errors(func: Callable) -> Callable:
     """Convenience decorator for generation operations"""
     return func
 
-
 @with_error_handling("processing")
 def handle_processing_errors(func: Callable) -> Callable:
     """Convenience decorator for processing operations"""
     return func
-
 
 @with_error_handling("analysis")
 def handle_analysis_errors(func: Callable) -> Callable:

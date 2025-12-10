@@ -11,9 +11,7 @@ import logging
 
 from ..core.models import ToolCall, ParsedResponse
 
-
 logger = logging.getLogger(__name__)
-
 
 class ResponseParser:
     """

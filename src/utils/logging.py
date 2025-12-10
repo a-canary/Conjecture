@@ -6,7 +6,6 @@ import logging
 import sys
 from typing import Optional
 
-
 def get_logger(name: Optional[str] = None) -> logging.Logger:
     """
     Get a configured logger instance.
@@ -31,7 +30,6 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
     
     return logger
 
-
 def setup_logging(level: str = "INFO", format_string: Optional[str] = None):
     """
     Setup global logging configuration.
@@ -49,16 +47,13 @@ def setup_logging(level: str = "INFO", format_string: Optional[str] = None):
         handlers=[logging.StreamHandler(sys.stdout)]
     )
 
-
 class ClaimParseError(Exception):
     """Exception raised for claim parsing errors"""
     pass
 
-
 class ClaimValidationError(Exception):
     """Exception raised for claim validation errors"""
     pass
-
 
 class ClaimFormatError(Exception):
     """Exception raised for claim format errors"""

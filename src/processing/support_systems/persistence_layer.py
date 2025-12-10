@@ -16,9 +16,7 @@ import uuid
 from ...core.models import Claim, ClaimBatch
 from .models import CacheEntry
 
-
 logger = logging.getLogger(__name__)
-
 
 class StorageBackend:
     """Abstract storage backend base class"""
@@ -46,7 +44,6 @@ class StorageBackend:
     async def restore(self, backup_id: str) -> bool:
         """Restore from backup"""
         raise NotImplementedError
-
 
 class FileSystemBackend(StorageBackend):
     """File system-based storage backend"""
@@ -289,7 +286,6 @@ class FileSystemBackend(StorageBackend):
             return self.storage_directory / f"hashed_{key_hash}"
         
         return self.storage_directory / key
-
 
 class PersistenceLayer:
     """

@@ -15,7 +15,6 @@ from ..data.data_manager import DataManager
 
 logger = logging.getLogger(__name__)
 
-
 class ProcessContextBuilder:
     """
     Context builder for Process Layer operations.

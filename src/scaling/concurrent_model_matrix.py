@@ -22,14 +22,12 @@ from ..monitoring import get_performance_monitor
 
 logger = logging.getLogger(__name__)
 
-
 class ProviderStatus(Enum):
     """Provider status enumeration"""
     AVAILABLE = "available"
     BUSY = "busy"
     FAILED = "failed"
     RATE_LIMITED = "rate_limited"
-
 
 @dataclass
 class ProviderMetrics:
@@ -44,7 +42,6 @@ class ProviderMetrics:
     concurrent_requests: int = 0
     max_concurrent: int = 3
 
-
 @dataclass
 class ModelMatrixResult:
     """Result from concurrent model matrix execution"""
@@ -56,7 +53,6 @@ class ModelMatrixResult:
     consensus_found: bool
     error_count: int
     metadata: Dict[str, Any] = field(default_factory=dict)
-
 
 class ConcurrentModelMatrix:
     """
@@ -573,7 +569,6 @@ class ConcurrentModelMatrix:
         """Cleanup resources"""
         self.executor.shutdown(wait=True)
         logger.info("ConcurrentModelMatrix cleanup completed")
-
 
 # Convenience function for easy access
 async def get_concurrent_model_matrix(**kwargs) -> ConcurrentModelMatrix:

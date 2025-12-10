@@ -32,7 +32,6 @@ except ImportError as e:
     print("Please install with: pip install aiohttp datasets")
     sys.exit(1)
 
-
 @dataclass
 class ModelTestResult:
     """Result of testing a model on a specific task"""
@@ -53,7 +52,6 @@ class ModelTestResult:
         if self.timestamp is None:
             self.timestamp = datetime.now().isoformat()
 
-
 @dataclass
 class ComparisonSummary:
     """Summary statistics for model comparison"""
@@ -72,14 +70,12 @@ class ComparisonSummary:
         if self.timestamp is None:
             self.timestamp = datetime.now().isoformat()
 
-
 class ModelProvider:
     """Interface for different model providers"""
 
     async def call_model(self, prompt: str, model_name: str) -> Tuple[str, float, int]:
         """Make a call to the model and return (response, time, tokens)"""
         raise NotImplementedError
-
 
 class LMStudioProvider(ModelProvider):
     """Provider for LM Studio local models"""
@@ -121,7 +117,6 @@ class LMStudioProvider(ModelProvider):
 
                 tokens_used = data.get("usage", {}).get("total_tokens", 0)
                 return content, response_time, tokens_used
-
 
 class ChutesProvider(ModelProvider):
     """Provider for ZAI API models"""
@@ -175,7 +170,6 @@ class ChutesProvider(ModelProvider):
                 tokens_used = data.get("usage", {}).get("total_tokens", 0)
                 return content, response_time, tokens_used
 
-
 class ConjectureProvider(ModelProvider):
     """Provider for models through Conjecture"""
 
@@ -218,7 +212,6 @@ class ConjectureProvider(ModelProvider):
 
                 tokens_used = data.get("usage", {}).get("total_tokens", 0)
                 return content, response_time, tokens_used
-
 
 class ModelComparisonTest:
     """Main test class for 4-model comparison"""
@@ -677,7 +670,6 @@ Provide a balanced assessment with confidence levels."""
 
         print("-" * 80)
 
-
 async def main():
     """Main entry point"""
     # Check environment
@@ -711,7 +703,6 @@ async def main():
     # Run the comparison
     test_runner = ModelComparisonTest()
     await test_runner.run_comparison()
-
 
 if __name__ == "__main__":
     asyncio.run(main())

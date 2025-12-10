@@ -18,7 +18,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import uvicorn
 
-
 class CustomJSONEncoder(json.JSONEncoder):
     """Custom JSON encoder for datetime objects"""
     def default(self, obj):
@@ -43,7 +42,6 @@ from src.core.models import Claim, ClaimFilter, ClaimState
 from src.processing.simplified_llm_manager import SimplifiedLLMManager
 from src.processing.enhanced_llm_router import get_enhanced_llm_router
 
-
 # API Request/Response Models
 class ClaimCreateRequest(BaseModel):
     """Request model for claim creation"""
@@ -52,24 +50,20 @@ class ClaimCreateRequest(BaseModel):
     tags: Optional[List[str]] = Field(None, description="Optional tags for categorization")
     session_id: Optional[str] = Field(None, description="Optional session ID for context")
 
-
 class ClaimUpdateRequest(BaseModel):
     """Request model for claim updates"""
     updates: Dict[str, Any] = Field(..., description="Dictionary of fields to update")
     session_id: Optional[str] = Field(None, description="Optional session ID for context")
 
-
 class ClaimEvaluateRequest(BaseModel):
     """Request model for claim evaluation"""
     session_id: Optional[str] = Field(None, description="Optional session ID for context")
-
 
 class ToolExecuteRequest(BaseModel):
     """Request model for tool execution"""
     tool_name: str = Field(..., description="Name of tool to execute")
     parameters: Dict[str, Any] = Field(..., description="Tool parameters")
     session_id: Optional[str] = Field(None, description="Optional session ID for context")
-
 
 class ContextRequest(BaseModel):
     """Request model for context building"""
@@ -78,23 +72,19 @@ class ContextRequest(BaseModel):
     max_samples: int = Field(10, ge=1, le=50, description="Maximum number of samples to include")
     session_id: Optional[str] = Field(None, description="Optional session ID for context")
 
-
 class SessionCreateRequest(BaseModel):
     """Request model for session creation"""
     user_data: Optional[Dict[str, Any]] = Field(None, description="Optional user-specific data")
-
 
 class BatchClaimsRequest(BaseModel):
     """Request model for batch claim creation"""
     claims_data: List[Dict[str, Any]] = Field(..., description="List of claim creation data")
     session_id: Optional[str] = Field(None, description="Optional session ID for context")
 
-
 class BatchEvaluateRequest(BaseModel):
     """Request model for batch claim evaluation"""
     claim_ids: List[str] = Field(..., description="List of claim IDs to evaluate")
     session_id: Optional[str] = Field(None, description="Optional session ID for context")
-
 
 class ProviderManagementRequest(BaseModel):
     """Request model for provider management"""
@@ -102,12 +92,10 @@ class ProviderManagementRequest(BaseModel):
     provider_name: Optional[str] = Field(None, description="Provider name for enable/disable actions")
     routing_strategy: Optional[str] = Field(None, description="Routing strategy (priority, round_robin, load_balanced, fastest_response)")
 
-
 class ProviderTestRequest(BaseModel):
     """Request model for provider testing"""
     prompt: str = Field(default="Hello, please respond with a brief greeting.", description="Test prompt")
     provider_name: Optional[str] = Field(None, description="Specific provider to test (optional)")
-
 
 # Response Models
 class APIResponse(BaseModel):
@@ -122,7 +110,6 @@ class APIResponse(BaseModel):
             datetime: lambda v: v.isoformat()
         }
 
-
 class ErrorResponse(BaseModel):
     """Error response model"""
     success: bool = Field(False, description="Request success status")
@@ -135,10 +122,8 @@ class ErrorResponse(BaseModel):
             datetime: lambda v: v.isoformat()
         }
 
-
 # Global ProcessingInterface instance
 processing_interface: Optional[ProcessingInterface] = None
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -173,7 +158,6 @@ async def lifespan(app: FastAPI):
             print("Stopping Conjecture EndPoint App...")
             await processing_interface.stop_services()
             print("EndPoint App stopped")
-
 
 # Create FastAPI app
 app = FastAPI(
@@ -249,10 +233,8 @@ class WebSocketManager:
         for conn in disconnected:
             self.disconnect(conn)
 
-
 # Global WebSocket manager
 websocket_manager = WebSocketManager()
-
 
 # Helper functions
 def get_processing_interface() -> ProcessingInterface:
@@ -262,26 +244,21 @@ def get_processing_interface() -> ProcessingInterface:
         raise HTTPException(status_code=503, detail="ProcessingInterface not initialized")
     return processing_interface
 
-
 def create_api_response(success: bool, data: Any = None, message: str = "") -> APIResponse:
     """Create standardized API response"""
     return APIResponse(success=success, data=data, message=message)
-
 
 def create_error_response(error: str, details: Optional[Dict[str, Any]] = None) -> ErrorResponse:
     """Create standardized error response"""
     return ErrorResponse(error=error, details=details)
 
-
 # Event streaming subscription management
 event_subscriptions: Dict[str, str] = {}
-
 
 async def event_callback(event: ProcessingEvent):
     """Callback for ProcessingInterface events"""
     # Broadcast to WebSocket connections
     await websocket_manager.broadcast_event(event)
-
 
 # Core API Endpoints
 
@@ -314,7 +291,6 @@ async def create_claim(request: ClaimCreateRequest, background_tasks: Background
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-
 @app.get("/claims/{claim_id}", response_model=APIResponse)
 async def get_claim(claim_id: str, session_id: Optional[str] = None):
     """
@@ -338,7 +314,6 @@ async def get_claim(claim_id: str, session_id: Optional[str] = None):
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.put("/claims/{claim_id}", response_model=APIResponse)
 async def update_claim(claim_id: str, request: ClaimUpdateRequest):
@@ -369,7 +344,6 @@ async def update_claim(claim_id: str, request: ClaimUpdateRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-
 @app.delete("/claims/{claim_id}", response_model=APIResponse)
 async def delete_claim(claim_id: str, session_id: Optional[str] = None):
     """
@@ -395,7 +369,6 @@ async def delete_claim(claim_id: str, session_id: Optional[str] = None):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.get("/claims/search", response_model=APIResponse)
 async def search_claims(
@@ -441,7 +414,6 @@ async def search_claims(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.post("/evaluate", response_model=APIResponse)
 async def evaluate_claim_endpoint(request: ClaimEvaluateRequest, claim_id: str):
     """
@@ -465,7 +437,6 @@ async def evaluate_claim_endpoint(request: ClaimEvaluateRequest, claim_id: str):
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.get("/context", response_model=APIResponse)
 async def get_context_endpoint(request: ContextRequest):
@@ -496,7 +467,6 @@ async def get_context_endpoint(request: ContextRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 # Session Management Endpoints
 
 @app.post("/sessions", response_model=APIResponse)
@@ -519,7 +489,6 @@ async def create_session_endpoint(request: SessionCreateRequest):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.post("/sessions/{session_id}/resume", response_model=APIResponse)
 async def resume_session_endpoint(session_id: str):
@@ -544,7 +513,6 @@ async def resume_session_endpoint(session_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 # Tool Management Endpoints
 
 @app.get("/tools", response_model=APIResponse)
@@ -567,7 +535,6 @@ async def get_available_tools(session_id: Optional[str] = None):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.post("/tools/execute", response_model=APIResponse)
 async def execute_tool_endpoint(request: ToolExecuteRequest):
@@ -598,7 +565,6 @@ async def execute_tool_endpoint(request: ToolExecuteRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 # Batch Processing Endpoints
 
 @app.post("/claims/batch", response_model=APIResponse)
@@ -623,7 +589,6 @@ async def batch_create_claims_endpoint(request: BatchClaimsRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-
 @app.post("/claims/batch/evaluate", response_model=APIResponse)
 async def batch_evaluate_claims_endpoint(request: BatchEvaluateRequest):
     """
@@ -645,7 +610,6 @@ async def batch_evaluate_claims_endpoint(request: BatchEvaluateRequest):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 # Event Streaming Endpoints
 
@@ -700,7 +664,6 @@ async def stream_events(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.websocket("/events/ws")
 async def websocket_events_endpoint(websocket: WebSocket):
     """
@@ -749,7 +712,6 @@ async def websocket_events_endpoint(websocket: WebSocket):
         if websocket.client_state != "disconnected":
             await websocket.close(code=1000, reason=str(e))
 
-
 # Health and Status Endpoints
 
 @app.get("/health", response_model=APIResponse)
@@ -775,7 +737,6 @@ async def health_check():
             message="Health check failed"
         )
 
-
 @app.get("/stats", response_model=APIResponse)
 async def get_statistics(session_id: Optional[str] = None):
     """
@@ -796,7 +757,6 @@ async def get_statistics(session_id: Optional[str] = None):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 # Configuration Endpoints
 
@@ -828,7 +788,6 @@ async def get_config_info():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 # Provider Management Endpoints
 
 @app.get("/providers/status", response_model=APIResponse)
@@ -849,7 +808,6 @@ async def get_providers_status():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.get("/providers/metrics", response_model=APIResponse)
 async def get_providers_metrics():
     """
@@ -867,7 +825,6 @@ async def get_providers_metrics():
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.post("/providers/manage", response_model=APIResponse)
 async def manage_providers(request: ProviderManagementRequest):
@@ -927,7 +884,6 @@ async def manage_providers(request: ProviderManagementRequest):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.post("/providers/test", response_model=APIResponse)
 async def test_provider(request: ProviderTestRequest):
@@ -1003,7 +959,6 @@ async def test_provider(request: ProviderTestRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.get("/providers/health", response_model=APIResponse)
 async def check_providers_health():
     """
@@ -1051,7 +1006,6 @@ async def check_providers_health():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 # Root endpoint
 @app.get("/", response_model=APIResponse)
 async def root():
@@ -1091,7 +1045,6 @@ async def root():
         message="Conjecture EndPoint API is running"
     )
 
-
 # Error handlers
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc: HTTPException):
@@ -1105,7 +1058,6 @@ async def http_exception_handler(request, exc: HTTPException):
         content=error_response.model_dump()
     )
 
-
 @app.exception_handler(Exception)
 async def general_exception_handler(request, exc: Exception):
     """Handle general exceptions"""
@@ -1118,7 +1070,6 @@ async def general_exception_handler(request, exc: Exception):
         status_code=500,
         content=error_response.model_dump()
     )
-
 
 # Main execution
 if __name__ == "__main__":

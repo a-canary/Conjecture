@@ -10,7 +10,6 @@ from typing import List, Optional
 
 from conjecture import Conjecture
 
-
 class SimpleGUI:
     """Simple GUI implementation using the unified Conjecture API."""
 
@@ -278,7 +277,6 @@ class SimpleGUI:
         """Run the GUI application."""
         self.root.mainloop()
 
-
 def main():
     """Run the simple GUI."""
     try:
@@ -286,7 +284,6 @@ def main():
         gui.run()
     except Exception as e:
         messagebox.showerror("Error", f"Failed to start GUI: {str(e)}")
-
 
 if __name__ == "__main__":
     main()

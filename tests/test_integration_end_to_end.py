@@ -14,8 +14,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from src.core.models import Claim, ClaimType, ClaimState
 from src.config.unified_config import UnifiedConfig as Config
-# from enhanced_conjecture import EnhancedConjecture, ExplorationResult  # Commented out as file doesn't exist
-
+from src.conjecture import Conjecture, ExplorationResult
 
 class EndToEndIntegrationTest:
     """Complete end-to-end integration test for Conjecture"""
@@ -34,8 +33,8 @@ class EndToEndIntegrationTest:
 
         # Setup test configuration
         self.config = Config()
-        self.config.database_type = "mock"  # Use mock for testing
-        self.config.llm_provider = "mock"  # Use mock for testing
+        self.config.database_type = "sqlite"  # Use mock for testing
+        self.config.llm_provider = "local"  # Use mock for testing
 
         print("Setup complete")
 
@@ -106,11 +105,11 @@ class EndToEndIntegrationTest:
         try:
             # Test with mock configuration
             config = Config()
-            config.database_type = "mock"
-            config.llm_provider = "mock"
+            config.database_type = "sqlite"
+            config.llm_provider = "local"
 
             # Create Enhanced Conjecture instance
-            cf = EnhancedConjecture(config=config)
+            cf = Conjecture(config=config)
             assert cf is not None
             assert cf.config == config
             print("✅ Enhanced Conjecture creation successful")
@@ -138,17 +137,15 @@ class EndToEndIntegrationTest:
 
         try:
             config = Config()
-            config.database_type = "mock"
-            config.llm_provider = "mock"
+            config.database_type = "sqlite"
+            config.llm_provider = "local"
 
             async with EnhancedConjecture(config=config) as cf:
                 # Test basic claim creation
-                claim = await cf.add_claim(
+                claim = await cf.create_claim(
                     content="Test claim for integration testing",
                     confidence=0.8,
-                    claim_type="concept",
                     tags=["integration", "test"],
-                    auto_evaluate=False,  # Disable auto-evaluation for simpler testing
                 )
 
                 assert claim is not None
@@ -158,7 +155,7 @@ class EndToEndIntegrationTest:
                 print("✅ Basic claim creation successful")
 
                 # Test claim relationships
-                claim2 = await cf.add_claim(
+                claim2 = await cf.create_claim(
                     content="Supporting claim for integration testing",
                     confidence=0.75,
                     claim_type="example",
@@ -448,7 +445,6 @@ def execute(param: str) -> dict:
         passed = sum(1 for _, success, _ in self.test_results if success)
         return passed == len(self.test_results)
 
-
 async def main():
     """Main test runner"""
     tester = EndToEndIntegrationTest()
@@ -460,7 +456,6 @@ async def main():
     else:
         print("\n💥 Some integration tests failed. Please review the report above.")
         return 1
-
 
 if __name__ == "__main__":
     exit_code = asyncio.run(main())

@@ -25,7 +25,6 @@ from .models import (
 
 logger = logging.getLogger(__name__)
 
-
 class ProcessLLMProcessor:
     """
     Processes claims using language models to evaluate claims and identify

@@ -12,7 +12,6 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from ...core.basic_models import BasicClaim, ClaimState, ClaimType
 
-
 @dataclass
 class LLMEvaluationResult:
     """Single LLM evaluation metric result"""
@@ -22,7 +21,6 @@ class LLMEvaluationResult:
     max_score: float
     details: str
     passed_threshold: bool
-
 
 @dataclass
 class LLMProcessingResult:
@@ -34,7 +32,6 @@ class LLMProcessingResult:
     processing_time: float
     tokens_used: int
     model_used: str
-
 
 @dataclass
 class LLMEvaluation:
@@ -48,7 +45,6 @@ class LLMEvaluation:
     performance_summary: Dict[str, float]
     recommendation: str
     cost_estimate: Optional[float] = None
-
 
 class LLMInterface(ABC):
     """Abstract interface for all LLM implementations to test"""
@@ -86,7 +82,6 @@ class LLMInterface(ABC):
     def close(self):
         """Cleanup resources"""
         pass
-
 
 class LLMEvaluator:
     """Systematic evaluator for LLM integrations"""
@@ -620,7 +615,6 @@ class LLMEvaluator:
                     print(f"{metric:25} | {value}")
 
         print(f"\n{'=' * 60}\n")
-
 
 def compare_llm_evaluations(
     evaluations: List[LLMEvaluation],

@@ -10,7 +10,6 @@ import subprocess
 import argparse
 from pathlib import Path
 
-
 def check_dependencies():
     """Check if required dependencies are installed"""
     try:
@@ -24,7 +23,6 @@ def check_dependencies():
         print("Please install with: pip install -r requirements_endpoint.txt")
         return False
 
-
 def setup_environment():
     """Setup environment for endpoint app"""
     # Ensure PYTHONPATH includes project root
@@ -37,7 +35,6 @@ def setup_environment():
     
     print(f"Project root: {project_root}")
     print(f"Python path includes: {project_root}")
-
 
 def run_endpoint_app(host="0.0.0.0", port=8000, reload=False, log_level="info"):
     """Run the endpoint app"""
@@ -67,7 +64,6 @@ def run_endpoint_app(host="0.0.0.0", port=8000, reload=False, log_level="info"):
     except KeyboardInterrupt:
         print("\n🛑 Server stopped by user")
         sys.exit(0)
-
 
 def main():
     """Main entry point"""
@@ -159,7 +155,6 @@ Examples:
     except Exception as e:
         print(f"❌ Fatal error: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

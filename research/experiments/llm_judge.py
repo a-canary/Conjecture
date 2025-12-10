@@ -22,7 +22,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 from processing.llm.llm_manager import LLMManager
 from config.common import ProviderConfig
 
-
 class EvaluationCriterion(str, Enum):
     """Evaluation criteria for LLM-as-a-Judge"""
     CORRECTNESS = "correctness"
@@ -36,14 +35,12 @@ class EvaluationCriterion(str, Enum):
     EFFICIENCY = "efficiency"
     CREATIVITY = "creativity"
 
-
 class JudgeMode(str, Enum):
     """Judging modes"""
     SINGLE_JUDGE = "single_judge"
     MULTIPLE_JUDGE = "multiple_judge"
     CONSENSUS = "consensus"
     ADVERSARIAL = "adversarial"
-
 
 @dataclass
 class EvaluationRubric:
@@ -53,7 +50,6 @@ class EvaluationRubric:
     score_levels: Dict[int, str]  # score -> description
     weight: float = 1.0
     evaluation_prompt: str = ""
-
 
 @dataclass
 class JudgeEvaluation:
@@ -66,7 +62,6 @@ class JudgeEvaluation:
     evaluation_time_seconds: float
     metadata: Optional[Dict[str, Any]] = None
 
-
 @dataclass
 class ConsensusEvaluation:
     """Consensus evaluation from multiple judges"""
@@ -75,7 +70,6 @@ class ConsensusEvaluation:
     individual_evaluations: List[JudgeEvaluation]
     consensus_strength: float  # 0.0 to 1.0
     disagreement_analysis: str
-
 
 class LLMJudge:
     """LLM-as-a-Judge evaluation system"""
@@ -542,7 +536,6 @@ Be objective, thorough, and fair in your evaluation. Focus specifically on the {
         
         self.evaluation_history = [JudgeEvaluation(**data) for data in history_data]
 
-
 async def main():
     """Example usage of the LLM Judge system"""
     from config.common import ProviderConfig
@@ -595,7 +588,6 @@ async def main():
     print(f"Total evaluations: {stats['total_evaluations']}")
     print(f"Average confidence: {stats['average_confidence']:.3f}")
     print(f"Average evaluation time: {stats['average_evaluation_time']:.2f}s")
-
 
 if __name__ == "__main__":
     asyncio.run(main())

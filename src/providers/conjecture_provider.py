@@ -30,7 +30,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-
 class ChatRequest(BaseModel):
     model: str
     messages: list
@@ -38,26 +37,22 @@ class ChatRequest(BaseModel):
     temperature: float = 0.7
     stream: bool = False
 
-
 class TellUserRequest(BaseModel):
     message: str
 
-
 class AskUserRequest(BaseModel):
     question: str
-
 
 class ModelInfo(BaseModel):
     name: str
     description: str
     capabilities: list
 
-
 @app.post("/v1/chat/completions")
 async def chat_completion(request: ChatRequest):
     """Main chat completion endpoint"""
     try:
-        # Simple mock response for testing
+        # Simple test response for testing
         response_text = f"Processed request with {len(request.messages)} messages for model {request.model}"
         
         return {
@@ -84,7 +79,6 @@ async def chat_completion(request: ChatRequest):
         logger.error(f"Chat completion error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.post("/tools/tell_user")
 async def tell_user(request: TellUserRequest):
     """TellUser tool - provides information to user"""
@@ -100,7 +94,6 @@ async def tell_user(request: TellUserRequest):
         logger.error(f"TellUser error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.post("/tools/ask_user")
 async def ask_user(request: AskUserRequest):
     """AskUser tool - asks questions to user"""
@@ -115,7 +108,6 @@ async def ask_user(request: AskUserRequest):
     except Exception as e:
         logger.error(f"AskUser error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.get("/models")
 async def list_models():
@@ -135,7 +127,6 @@ async def list_models():
         logger.error(f"List models error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
@@ -144,7 +135,6 @@ async def health_check():
         "timestamp": datetime.now().isoformat(),
         "version": "1.0.0"
     }
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Conjecture Local Provider")

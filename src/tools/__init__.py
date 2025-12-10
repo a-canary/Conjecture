@@ -10,7 +10,6 @@ import re
 import ast
 from typing import Dict, Any, List, Optional
 
-
 # Add ToolManager for backward compatibility with tests
 class ToolManager:
     """Simple tool manager for backward compatibility"""
@@ -88,7 +87,7 @@ class ToolManager:
             if tool_name in self.tools:
                 tool_info = self.tools[tool_name]
                 
-                # Handle default tools with mock responses
+                # Handle default tools with test responses
                 if tool_name == "WebSearch":
                     query = parameters.get("query", "")
                     max_results = parameters.get("max_results", 5)
@@ -209,6 +208,5 @@ class ToolManager:
                     continue
         
         return tool_calls
-
 
 __all__ = ["register_tool", "ToolRegistry", "ToolManager"]

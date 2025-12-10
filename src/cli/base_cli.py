@@ -9,21 +9,17 @@ from typing import Any, Dict, List, Optional
 
 from src.core.models import Claim, ClaimFilter
 
-
 class ClaimValidationError(Exception):
     """Exception raised for claim validation errors"""
     pass
-
 
 class DatabaseError(Exception):
     """Exception raised for database operation errors"""
     pass
 
-
 class BackendNotAvailableError(Exception):
     """Exception raised when a backend is not available"""
     pass
-
 
 class BaseCLI(ABC):
     """Abstract base class for CLI implementations"""

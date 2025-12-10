@@ -15,7 +15,6 @@ from .common import GenerationConfig, LLMProcessingResult
 from src.core.models import Claim
 from src.utils.retry_utils import EnhancedRetryConfig, with_enhanced_retry
 
-
 class OpenAICompatibleProcessor:
     """Unified processor for all OpenAI-compatible LLM endpoints"""
 
@@ -522,7 +521,6 @@ Return your analysis as structured JSON data for each claim."""
                 "last_check": datetime.now().isoformat(),
                 "error": str(e),
             }
-
 
 # Convenience function to create processor from config
 def create_openai_compatible_processor(

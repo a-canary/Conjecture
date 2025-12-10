@@ -26,7 +26,6 @@ from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-
 class TinyModelProcessor:
     """
     Specialized processor for tiny models like IBM Granite Tiny.
@@ -494,7 +493,6 @@ Focus on:
             'json_frontmatter_rate': self.stats['json_frontmatter_success'] / total,
             'fallback_rate': self.stats['fallback_success'] / total
         }
-
 
 def create_tiny_model_processor(model_name: str) -> Optional[TinyModelProcessor]:
     """Create tiny model processor if model is a tiny model"""

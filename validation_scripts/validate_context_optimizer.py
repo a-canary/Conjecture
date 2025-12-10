@@ -30,7 +30,6 @@ from src.processing.context_optimization_system import (
 from src.processing.advanced_context_optimizer import TaskType
 from src.processing.dynamic_context_allocator import ComponentType
 
-
 class ContextOptimizerValidator:
     """Comprehensive validator for context optimization system"""
 
@@ -845,7 +844,6 @@ class ContextOptimizerValidator:
 
         print(f"\n📊 Validation results exported to: {file_path}")
 
-
 async def main():
     """Main validation script entry point"""
     parser = argparse.ArgumentParser(description="Validate Context Window Optimizer")
@@ -866,7 +864,6 @@ async def main():
     # Export results if requested
     if args.export:
         validator.export_results(args.output)
-
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -27,7 +27,6 @@ from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-
 class TaskType(Enum):
     """Task types requiring different context optimization strategies"""
     REASONING = "reasoning"           # Complex logical reasoning
@@ -37,7 +36,6 @@ class TaskType(Enum):
     CREATION = "creation"            # Content creation
     COMPARISON = "comparison"        # Comparative analysis
 
-
 class InformationCategory(Enum):
     """Information categories for intelligent prioritization"""
     CRITICAL = "critical"            # Essential for task completion
@@ -45,7 +43,6 @@ class InformationCategory(Enum):
     MEDIUM = "medium"                # Moderately relevant
     LOW = "low"                      # Minimally relevant
     REDUNDANT = "redundant"          # Duplicate information
-
 
 @dataclass
 class ContextMetrics:
@@ -56,7 +53,6 @@ class ContextMetrics:
     novelty_score: float = 0.0       # Novel information ratio
     compression_quality: float = 0.0 # Quality preservation score
     token_efficiency: float = 0.0    # Tokens per unit information
-
 
 @dataclass
 class OptimizationTarget:
@@ -69,7 +65,6 @@ class OptimizationTarget:
     compression_strategies: List[str] = field(default_factory=list)
     priority_weights: Dict[str, float] = field(default_factory=dict)
 
-
 @dataclass
 class ContextChunk:
     """Chunk of context with optimization metadata"""
@@ -81,7 +76,6 @@ class ContextChunk:
     keywords: Set[str]
     dependencies: Set[str] = field(default_factory=set)
     metadata: Dict[str, Any] = field(default_factory=dict)
-
 
 class InformationTheoreticOptimizer:
     """
@@ -203,7 +197,6 @@ class InformationTheoreticOptimizer:
         )
 
         return min(relevance, 1.0)
-
 
 class TinyLLMContextOptimizer:
     """
@@ -564,7 +557,6 @@ class TinyLLMContextOptimizer:
             token_efficiency=(original_tokens - optimized_tokens) / max(original_tokens, 1)
         )
 
-
 class ContextPerformanceEvaluator:
     """
     Evaluates context optimization performance and provides tuning recommendations
@@ -644,7 +636,6 @@ class ContextPerformanceEvaluator:
             )
 
         return recommendations
-
 
 # Factory function for easy instantiation
 def create_tiny_llm_optimizer(model_name: str = "ibm/granite-4-h-tiny") -> TinyLLMContextOptimizer:

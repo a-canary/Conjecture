@@ -11,7 +11,6 @@ from typing import Dict, List, Optional
 from .adapters.base_adapter import BaseAdapter, ValidationResult
 from .common import ProviderConfig
 
-
 class SimpleProviderValidator:
     """Simple validator for the new provider format"""
 
@@ -203,7 +202,6 @@ class SimpleProviderValidator:
         )
         console.print(f"[yellow]Note:[/yellow] Empty API_KEY for local services")
 
-
 def main():
     """Test the validator"""
     validator = SimpleProviderValidator()
@@ -215,7 +213,6 @@ def main():
 
     console.print("\n")
     validator.show_provider_examples()
-
 
 if __name__ == "__main__":
     main()

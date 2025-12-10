@@ -21,7 +21,6 @@ import os
 from scipy import stats
 import pandas as pd
 
-
 @dataclass
 class ExperimentConfig:
     """Configuration for claims-based reasoning experiment"""
@@ -32,7 +31,6 @@ class ExperimentConfig:
     power_target: float = 0.8
     tiny_model: str = "lms/granite-4-h-tiny"
     judge_model: str = "zai/GLM-4.6"
-
 
 @dataclass
 class TestResult:
@@ -74,7 +72,6 @@ class TestResult:
             self.reasoning_requirements = []
         if self.timestamp is None:
             self.timestamp = datetime.utcnow()
-
 
 class SimpleLLMClient:
     """Simple LLM client for experiment"""
@@ -119,7 +116,6 @@ class SimpleLLMClient:
                 
         except Exception as e:
             return f"Error generating response: {str(e)}"
-
 
 class ClaimsBasedReasoningExperiment:
     """Main experiment runner for claims-based reasoning hypothesis validation"""
@@ -667,7 +663,6 @@ Then provide your final comprehensive solution based on these claims.
         except Exception as e:
             self.logger.error(f"Failed to save report: {e}")
 
-
 async def main():
     """Main function to run the claims-based reasoning experiment"""
     
@@ -704,7 +699,6 @@ async def main():
         print(f"Experiment failed: {e}")
         import traceback
         traceback.print_exc()
-
 
 if __name__ == "__main__":
     import random  # Add this import for the evaluation heuristics

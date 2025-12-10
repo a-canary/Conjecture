@@ -24,7 +24,6 @@ except ImportError:
     WebSearch = None
     ReadFiles = None
 
-
 class ToolValidator:
     """Validates tool security and functionality"""
 
@@ -167,7 +166,6 @@ class ToolValidator:
             issues.append(f"Security check error: {e}")
 
         return len(issues) == 0, issues
-
 
 class DynamicToolCreator:
     """

@@ -18,7 +18,7 @@ class DirtyClaimBatch(BaseModel):
     timestamp: datetime = datetime.now()
 
 class DirtyEvaluator:
-    """Mock dirty evaluator for testing"""
+    """Real
     
     def __init__(self, config: Optional[DirtyEvaluationConfig] = None):
         self.config = config or DirtyEvaluationConfig()

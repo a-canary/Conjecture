@@ -18,7 +18,6 @@ import os
 import requests
 from scipy import stats
 
-
 @dataclass
 class TestResult:
     """Result from a single test case execution"""
@@ -38,7 +37,6 @@ class TestResult:
     # Metadata
     timestamp: datetime
     difficulty: str
-
 
 async def main():
     """Run the local task decomposition experiment"""
@@ -289,7 +287,6 @@ Then provide your final comprehensive solution based on these claims.
     
     print(f"\nResults saved to: {results_file}")
     print("Experiment completed successfully!")
-
 
 if __name__ == "__main__":
     asyncio.run(main())

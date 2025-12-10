@@ -7,7 +7,6 @@ This module provides SkillManager for managing skills in the Conjecture system.
 from typing import Dict, Any, List, Optional
 import re
 
-
 class SkillManager:
     """Simple skill manager for backward compatibility with tests"""
 
@@ -135,6 +134,5 @@ class SkillManager:
                 prompt_parts.append(f"  {i}. {step}")
         
         return "\n".join(prompt_parts)
-
 
 __all__ = ["SkillManager"]

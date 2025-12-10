@@ -34,7 +34,6 @@ except ImportError:
     def unified_get_primary_provider():
         return "mock"
 
-
 # Import old validator classes for deprecation
 from .simple_provider_validator import (
     SimpleProviderValidator as OldSimpleProviderValidator,
@@ -47,7 +46,6 @@ from .unified_provider_validator import (
 )
 from .simple_validator import SimpleValidator as OldSimpleValidator
 
-
 @dataclass
 class CompatibilityConfig:
     """Configuration for backward compatibility behavior"""
@@ -56,7 +54,6 @@ class CompatibilityConfig:
     auto_migrate_suggestions: bool = True
     maintain_old_apis: bool = True
     log_api_usage: bool = False
-
 
 class CompatibilityLayer:
     """
@@ -99,7 +96,6 @@ class CompatibilityLayer:
 
             logger = logging.getLogger(__name__)
             logger.info(f"Legacy API used: {api_name} with env_file: {env_file}")
-
 
 class SimpleProviderValidator(CompatibilityLayer):
     """
@@ -179,7 +175,6 @@ class SimpleProviderValidator(CompatibilityLayer):
                     for ex in example:
                         console.print(f"  {ex}")
 
-
 class IndividualEnvValidator(CompatibilityLayer):
     """
     Backward compatible wrapper for IndividualEnvValidator
@@ -243,7 +238,6 @@ class IndividualEnvValidator(CompatibilityLayer):
                     console.print(f"\n[cyan]{provider.name}[/cyan]")
                     console.print(f"  API URL: {provider.base_url}")
                     console.print(f"  Models: {', '.join(provider.models or [])}")
-
 
 class UnifiedProviderValidator(CompatibilityLayer):
     """
@@ -320,7 +314,6 @@ class UnifiedProviderValidator(CompatibilityLayer):
                 if isinstance(example, list):
                     for line in example:
                         console.print(f"  {line}")
-
 
 class SimpleValidator(CompatibilityLayer):
     """
@@ -432,10 +425,8 @@ class SimpleValidator(CompatibilityLayer):
             "optional_vars": {"api_key": provider.api_key},
         }
 
-
 # Global compatibility layer instance
 _global_compatibility = None
-
 
 def get_compatibility_layer(
     config: Optional[CompatibilityConfig] = None,
@@ -446,17 +437,14 @@ def get_compatibility_layer(
         _global_compatibility = CompatibilityLayer(config)
     return _global_compatibility
 
-
 # Convenience functions that wrap the old APIs with deprecation warnings
 def create_simple_provider_validator(env_file: str = ".env") -> SimpleProviderValidator:
     """Create SimpleProviderValidator with deprecation warning"""
     return SimpleProviderValidator(env_file)
 
-
 def create_individual_env_validator(env_file: str = ".env") -> IndividualEnvValidator:
     """Create IndividualEnvValidator with deprecation warning"""
     return IndividualEnvValidator(env_file)
-
 
 def create_unified_provider_validator(
     env_file: str = ".env",
@@ -464,11 +452,9 @@ def create_unified_provider_validator(
     """Create UnifiedProviderValidator with deprecation warning"""
     return UnifiedProviderValidator(env_file)
 
-
 def create_simple_validator() -> SimpleValidator:
     """Create SimpleValidator with deprecation warning"""
     return SimpleValidator()
-
 
 # Migration helper functions
 def show_migration_suggestions(env_file: str = ".env"):
@@ -493,7 +479,6 @@ def show_migration_suggestions(env_file: str = ".env"):
                 for error in migration["errors"]:
                     console.print(f"  [red]Error: {error}[/red]")
 
-
 def check_api_usage(env_file: str = ".env") -> Dict[str, Any]:
     """Check which APIs are being used and provide recommendations"""
     unified = get_unified_validator(env_file)
@@ -510,13 +495,11 @@ def check_api_usage(env_file: str = ".env") -> Dict[str, Any]:
         "migration_available": bool(result.migration_suggestions),
     }
 
-
 # Enable/disable deprecation warnings globally
 def configure_warnings(show_warnings: bool = True):
     """Configure deprecation warnings"""
     compatibility = get_compatibility_layer()
     compatibility.config.show_deprecation_warnings = show_warnings
-
 
 def main():
     """Test backward compatibility when run directly"""
@@ -545,7 +528,6 @@ def main():
 
     except Exception as e:
         console.print(f"[red]❌ Error in compatibility layer: {e}[/red]")
-
 
 if __name__ == "__main__":
     main()

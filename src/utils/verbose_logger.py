@@ -10,13 +10,11 @@ from enum import Enum
 
 from .emoji_support import emoji_printer
 
-
 class VerboseLevel(Enum):
     NONE = 0  # No verbose output
     USER = 1  # User tools + confidence assessments
     TOOLS = 2  # All tool calls with parameters
     DEBUG = 3  # Process logging + per-evaluation debugging
-
 
 class VerboseLogger:
     def __init__(self, level: VerboseLevel = VerboseLevel.NONE):

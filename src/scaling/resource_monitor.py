@@ -23,7 +23,6 @@ from ..monitoring import get_performance_monitor
 
 logger = logging.getLogger(__name__)
 
-
 class ResourceType(Enum):
     """Resource types for monitoring"""
     CPU = "cpu"
@@ -34,7 +33,6 @@ class ResourceType(Enum):
     ACTIVE_EVALUATIONS = "active_evaluations"
     LLM_REQUESTS = "llm_requests"
 
-
 class LoadBalancingStrategy(Enum):
     """Load balancing strategies"""
     ROUND_ROBIN = "round_robin"
@@ -43,14 +41,12 @@ class LoadBalancingStrategy(Enum):
     RESOURCE_BASED = "resource_based"
     ADAPTIVE = "adaptive"
 
-
 class AlertLevel(Enum):
     """Alert severity levels"""
     INFO = "info"
     WARNING = "warning"
     CRITICAL = "critical"
     EMERGENCY = "emergency"
-
 
 @dataclass
 class ResourceMetric:
@@ -62,7 +58,6 @@ class ResourceMetric:
     tags: Dict[str, str] = field(default_factory=dict)
     threshold_warning: Optional[float] = None
     threshold_critical: Optional[float] = None
-
 
 @dataclass
 class LoadBalancingTarget:
@@ -77,7 +72,6 @@ class LoadBalancingTarget:
     health_score: float = 1.0
     metadata: Dict[str, Any] = field(default_factory=dict)
 
-
 @dataclass
 class Alert:
     """System alert"""
@@ -90,7 +84,6 @@ class Alert:
     timestamp: datetime = field(default_factory=datetime.utcnow)
     resolved: bool = False
     resolved_at: Optional[datetime] = None
-
 
 class ResourceMonitor:
     """
@@ -424,7 +417,6 @@ class ResourceMonitor:
             }
         }
 
-
 class LoadBalancer:
     """
     Intelligent load balancer with multiple strategies and adaptive behavior
@@ -722,7 +714,6 @@ class LoadBalancer:
                 ])
             }
         }
-
 
 class ScalingOrchestrator:
     """

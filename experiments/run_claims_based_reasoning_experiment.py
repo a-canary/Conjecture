@@ -34,7 +34,6 @@ from config.common import ProviderConfig
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "research"))
 from statistical_analyzer import ConjectureStatisticalAnalyzer
 
-
 @dataclass
 class ExperimentConfig:
     """Configuration for claims-based reasoning experiment"""
@@ -55,7 +54,6 @@ class ExperimentConfig:
     def __post_init__(self):
         if self.approaches is None:
             self.approaches = ["direct", "claims_based"]
-
 
 @dataclass
 class TestResult:
@@ -90,7 +88,6 @@ class TestResult:
     difficulty: str
     reasoning_requirements: List[str]
 
-
 @dataclass
 class ExperimentResults:
     """Complete results from claims-based reasoning experiment"""
@@ -121,7 +118,6 @@ class ExperimentResults:
     hypothesis_validated: bool
     target_achieved: bool
     confidence_in_results: float
-
 
 class ClaimsBasedReasoningExperiment:
     """Main experiment runner for claims-based reasoning hypothesis validation"""
@@ -1132,7 +1128,6 @@ Score: """
         except Exception as e:
             self.logger.error(f"Failed to save report: {e}")
 
-
 async def main():
     """Main function to run the claims-based reasoning experiment"""
     
@@ -1194,7 +1189,6 @@ async def main():
         print(f"Experiment failed: {e}")
         import traceback
         traceback.print_exc()
-
 
 if __name__ == "__main__":
     asyncio.run(main())

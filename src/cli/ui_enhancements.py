@@ -41,7 +41,6 @@ except ImportError:
 import sys
 import os
 
-
 class OutputMode(Enum):
     """Output formatting modes for different use cases"""
     NORMAL = "normal"        # Balanced output with helpful formatting
@@ -50,7 +49,6 @@ class OutputMode(Enum):
     JSON = "json"            # Machine-readable JSON output
     MARKDOWN = "markdown"    # Markdown formatted output
     ACCESSIBLE = "accessible" # Screen reader friendly output
-
 
 class VerbosityLevel(Enum):
     """Verbosity levels for controlling output detail"""
@@ -63,7 +61,6 @@ class VerbosityLevel(Enum):
 
     def __str__(self):
         return self.name.lower()
-
 
 @dataclass
 class UIConfig:
@@ -78,7 +75,6 @@ class UIConfig:
     compact_mode: bool = False
     show_tips: bool = True
     auto_save: bool = True
-
 
 class EnhancedProgressTracker:
     """
@@ -218,7 +214,6 @@ class EnhancedProgressTracker:
         if self._live:
             self._live.stop()
             self._active = False
-
 
 class EnhancedOutputFormatter:
     """
@@ -472,7 +467,6 @@ class EnhancedOutputFormatter:
         """Print info message"""
         self.print(content, style="blue")
 
-
 class InteractivePrompter:
     """
     Enhanced interactive prompts with better UX and accessibility
@@ -575,7 +569,6 @@ class InteractivePrompter:
 
         return FloatPrompt.ask(question, default=default)
 
-
 class ContextualHelp:
     """
     Contextual help system with tips and suggestions
@@ -623,7 +616,6 @@ class ContextualHelp:
             tip = self.get_random_tip(command)
             if tip:
                 formatter.print_info(tip)
-
 
 class UIEnhancer:
     """
@@ -685,7 +677,6 @@ class UIEnhancer:
         """Clean up resources"""
         self.progress.finish_all()
 
-
 # Convenience functions for quick access
 def create_ui_enhancer(
     output_mode: str = "normal",
@@ -720,7 +711,6 @@ def create_ui_enhancer(
         **kwargs
     )
     return UIEnhancer(config)
-
 
 # Example usage and testing
 if __name__ == "__main__":

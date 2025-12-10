@@ -27,7 +27,6 @@ from .settings import (
     DIRTY_FLAG_CACHE_INVALIDATION_MINUTES
 )
 
-
 @dataclass
 class DirtyFlagConfig:
     """Configuration for dirty flag system"""
@@ -203,7 +202,6 @@ class DirtyFlagConfig:
         """Detailed string representation"""
         return f"DirtyFlagConfig({self.to_dict()})"
 
-
 class DirtyFlagConfigManager:
     """Manager for dirty flag configuration"""
     
@@ -274,7 +272,6 @@ class DirtyFlagConfigManager:
     def get_config_history(self) -> list:
         """Get configuration change history"""
         return self._config_history.copy()
-
 
 # Global configuration manager instance
 _config_manager = None

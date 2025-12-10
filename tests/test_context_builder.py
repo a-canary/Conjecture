@@ -13,7 +13,6 @@ sys.path.insert(0, project_root)
 from src.context.complete_context_builder import CompleteContextBuilder
 from src.core.models import Claim, ClaimType, ClaimState
 
-
 def create_test_claims():
     """Create test claims for verification"""
     claims = [
@@ -88,7 +87,6 @@ def create_test_claims():
     ]
     
     return claims
-
 
 def test_context_builder():
     """Test the updated CompleteContextBuilder implementation"""
@@ -179,7 +177,6 @@ def test_context_builder():
         traceback.print_exc()
         return False
 
-
 def test_claim_formatters():
     """Test the Claim model formatting methods"""
     print("\nTesting Claim formatting methods...")
@@ -215,7 +212,6 @@ def test_claim_formatters():
         print("  ✓ format_for_llm_analysis() includes all required fields")
     else:
         print(f"  ✗ format_for_llm_analysis() missing fields: {missing_fields}")
-
 
 if __name__ == "__main__":
     print("🧪 TESTING UPDATED CONTEXT BUILDER IMPLEMENTATION")

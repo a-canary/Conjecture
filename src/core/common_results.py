@@ -7,7 +7,6 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 
-
 @dataclass
 class ProcessingResult:
     """Unified result structure for processing operations"""
@@ -77,7 +76,6 @@ class ProcessingResult:
             if self.completed_at
             else None,
         }
-
 
 @dataclass
 class BatchResult:

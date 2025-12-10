@@ -27,7 +27,6 @@ try:
 except ImportError:
     print("[FAIL] python-dotenv not available")
 
-
 @dataclass
 class TestResult:
     """Complete test result with quality metrics"""
@@ -60,7 +59,6 @@ class TestResult:
             self.claims_generated = []
         if self.timestamp is None:
             self.timestamp = datetime.now().isoformat()
-
 
 # Enhanced test cases with coding tasks
 TEST_CASES = [
@@ -233,7 +231,6 @@ APPROACHES = [
     "conjecture_natural",
 ]
 
-
 def make_api_call(
     prompt: str, model_config: Dict, max_tokens: int = 2000
 ) -> Dict[str, Any]:
@@ -276,7 +273,6 @@ def make_api_call(
     except Exception as e:
         return {"status": "error", "error": f"Exception: {str(e)}"}
 
-
 def create_prompt(test_case: Dict, approach: str) -> str:
     """Create prompt based on approach"""
     base_question = test_case["question"]
@@ -297,7 +293,6 @@ Your answer:"""
     else:
         return f"Answer this question: {base_question}"
 
-
 def parse_claims(response: str, format_type: str) -> Tuple[List[Dict[str, Any]], bool]:
     """Parse claims from response using specific format pattern"""
     if format_type not in CLAIM_FORMATS:
@@ -313,7 +308,6 @@ def parse_claims(response: str, format_type: str) -> Tuple[List[Dict[str, Any]],
         )
 
     return claims, len(claims) > 0
-
 
 def count_reasoning_steps(response: str) -> int:
     """Count reasoning indicators"""
@@ -340,7 +334,6 @@ def count_reasoning_steps(response: str) -> int:
     count = sum(1 for indicator in step_indicators if indicator in response_lower)
     return min(count, 10)
 
-
 def evaluate_coding_response(response: str, test_case_id: str) -> float:
     """Evaluate coding task responses"""
     if not test_case_id.startswith("coding_"):
@@ -365,7 +358,6 @@ def evaluate_coding_response(response: str, test_case_id: str) -> float:
         score += 0.3
 
     return min(score, 1.0)
-
 
 def enhanced_evaluation(result: TestResult) -> TestResult:
     """Enhanced evaluation with coding assessment"""
@@ -412,7 +404,6 @@ def enhanced_evaluation(result: TestResult) -> TestResult:
     result.coding_score = evaluate_coding_response(response, result.test_case_id)
 
     return result
-
 
 async def run_single_test(
     model_key: str, model_config: Dict, test_case: Dict, approach: str
@@ -485,7 +476,6 @@ async def run_single_test(
             error=api_result["error"],
         )
 
-
 async def run_model_tests(model_key: str, model_config: Dict) -> List[TestResult]:
     """Run all tests for a single model"""
     print(f"\n{'=' * 60}")
@@ -503,7 +493,6 @@ async def run_model_tests(model_key: str, model_config: Dict) -> List[TestResult
             await asyncio.sleep(0.5)
 
     return results
-
 
 async def run_iteration_2():
     """Run iteration 2 with improved claim formats"""
@@ -566,7 +555,6 @@ async def run_iteration_2():
     await generate_iteration_analysis(all_results)
 
     return all_results
-
 
 async def generate_iteration_analysis(results: List[TestResult]):
     """Generate analysis for iteration 2"""
@@ -679,7 +667,6 @@ Reason: {format_compliance[best_format[0]]:.1%} compliance rate - highest among 
         f.write(report)
 
     print(f"[OK] Analysis saved to: {filepath}")
-
 
 if __name__ == "__main__":
     asyncio.run(run_iteration_2())

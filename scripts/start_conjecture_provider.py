@@ -16,7 +16,6 @@ script_dir = Path(__file__).parent
 project_root = script_dir.parent
 sys.path.insert(0, str(project_root / "src"))
 
-
 def check_port_available(port):
     """Check if port is available"""
     import socket
@@ -27,7 +26,6 @@ def check_port_available(port):
             return True
         except:
             return False
-
 
 def start_provider():
     """Start the Conjecture provider server"""
@@ -69,7 +67,6 @@ def start_provider():
     except Exception as e:
         print(f"Error starting provider: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     start_provider()

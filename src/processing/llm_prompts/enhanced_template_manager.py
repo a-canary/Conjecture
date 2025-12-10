@@ -18,7 +18,6 @@ from .models import (
 from .template_manager import PromptTemplateManager
 from .xml_optimized_templates import XMLOptimizedTemplateManager
 
-
 class EnhancedTemplateManager(PromptTemplateManager):
     """
     Enhanced template manager with XML optimization and improved performance tracking

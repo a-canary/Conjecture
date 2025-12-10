@@ -16,7 +16,6 @@ from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-
 class ClaimImportance(Enum):
     """Claim importance categories"""
     CRITICAL = "critical"      # Essential for task completion
@@ -24,7 +23,6 @@ class ClaimImportance(Enum):
     MEDIUM = "medium"         # Moderately relevant
     LOW = "low"             # Weakly relevant, low confidence
     BACKGROUND = "background"    # Contextual information only
-
 
 @dataclass
 class SelectionCriteria:
@@ -35,14 +33,12 @@ class SelectionCriteria:
     recency_weight: float = 0.1           # Temporal relevance
     transfer_weight: float = 0.1           # Cross-task transfer potential
 
-
 @dataclass
 class SelectionResult:
     """Result of claim selection process"""
     selected_claims: List[Claim]
     selection_metadata: Dict[str, Any]
     performance_metrics: Dict[str, float]
-
 
 class IntelligentClaimSelector:
     """
@@ -403,7 +399,6 @@ class IntelligentClaimSelector:
             'top_claim_accuracy': 0.0
         }
 
-
 # Global instance for reuse
 _intelligent_selector = None
 
@@ -413,7 +408,6 @@ def get_intelligent_selector() -> IntelligentClaimSelector:
     if _intelligent_selector is None:
         _intelligent_selector = IntelligentClaimSelector()
     return _intelligent_selector
-
 
 def select_claims_intelligent(context_claims: List[Claim], task: str, 
                          context_limit: int = 5, strategy: str = "balanced") -> SelectionResult:

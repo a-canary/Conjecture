@@ -12,7 +12,6 @@ import os
 from src.data.chroma_manager import ChromaManager
 from src.data.models import Claim, DataLayerError
 
-
 @pytest_asyncio.fixture
 async def chroma_manager():
     """Create a temporary ChromaDB manager for testing."""
@@ -26,7 +25,6 @@ async def chroma_manager():
     # Clean up
     shutil.rmtree(temp_dir, ignore_errors=True)
 
-
 @pytest.fixture
 def sample_claim():
     """Create a sample claim for testing."""
@@ -38,12 +36,10 @@ def sample_claim():
         created_by="test_user",
     )
 
-
 @pytest.fixture
 def sample_embedding():
     """Create a sample embedding for testing."""
     return [0.1] * 384  # 384-dimensional embedding
-
 
 class TestChromaManager:
     """Test ChromaManager functionality."""

@@ -31,7 +31,7 @@ class LLMResponse(BaseModel):
         return self.dict()
 
 class LLMBridge:
-    """Mock LLM bridge for testing"""
+    """Real
     
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         self.config = config or {}
@@ -51,22 +51,4 @@ class LLMBridge:
     
     async def generate_response(self, request: LLMRequest) -> LLMResponse:
         """Generate response using the bridge"""
-        # Mock implementation for testing
-        return LLMResponse(
-            content=f"Bridge mock response to: {request.prompt[:100]}...",
-            model=request.model or "default",
-            provider=request.provider or "default",
-            tokens_used=100,
-            response_time=0.5
-        )
-    
-    def get_available_providers(self) -> List[str]:
-        """Get list of available providers"""
-        return list(self.providers.keys())
-    
-    def is_provider_available(self, name: str) -> bool:
-        """Check if a provider is available"""
-        return name in self.providers
-
-# Export the main classes
-__all__ = ['LLMRequest', 'LLMResponse', 'LLMBridge']
+        

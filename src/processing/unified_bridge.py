@@ -27,7 +27,6 @@ except ImportError:
 # Configure logging
 logger = logging.getLogger(__name__)
 
-
 @dataclass
 class LLMRequest:
     """Standardized LLM request structure"""
@@ -37,7 +36,6 @@ class LLMRequest:
     max_tokens: int = 2048
     temperature: float = 0.7
     task_type: str = "general"  # explore, validate, analyze
-
 
 @dataclass
 class LLMResponse:
@@ -50,7 +48,6 @@ class LLMResponse:
     errors: List[str]
     processing_time: float
     tokens_used: int
-
 
 class UnifiedLLMBridge:
     """
@@ -213,10 +210,8 @@ class UnifiedLLMBridge:
         if self.llm_manager:
             self.llm_manager.failed_providers.clear()
 
-
 # Global instance for easy access
 _unified_bridge = None
-
 
 def get_unified_bridge() -> UnifiedLLMBridge:
     """Get the global unified bridge instance"""

@@ -26,7 +26,6 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-
 class LanceDBManager:
     """
     Unified vector and embedding manager using LanceDB.
@@ -300,7 +299,6 @@ class LanceDBManager:
         self.table = None
         self._initialized = False
         logger.info("LanceDB manager closed")
-
 
 # Factory function for easy replacement
 async def create_lancedb_manager(db_path: str = "data/conjecture_lancedb.lance",

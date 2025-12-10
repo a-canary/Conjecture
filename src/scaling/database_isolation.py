@@ -22,7 +22,6 @@ import weakref
 
 logger = logging.getLogger(__name__)
 
-
 class IsolationLevel(Enum):
     """Database isolation levels"""
     READ_UNCOMMITTED = "READ UNCOMMITTED"
@@ -30,14 +29,12 @@ class IsolationLevel(Enum):
     REPEATABLE_READ = "REPEATABLE READ"
     SERIALIZABLE = "SERIALIZABLE"
 
-
 class TransactionStatus(Enum):
     """Transaction status enumeration"""
     ACTIVE = "active"
     COMMITTED = "committed"
     ROLLED_BACK = "rolled_back"
     FAILED = "failed"
-
 
 @dataclass
 class TransactionMetrics:
@@ -51,7 +48,6 @@ class TransactionMetrics:
     locks_held: List[str] = field(default_factory=list)
     retry_count: int = 0
 
-
 @dataclass
 class ConnectionMetrics:
     """Metrics for database connections"""
@@ -62,7 +58,6 @@ class ConnectionMetrics:
     operations_count: int = 0
     is_available: bool = True
     pool_name: str = "default"
-
 
 class DatabaseConnectionPool:
     """
@@ -273,7 +268,6 @@ class DatabaseConnectionPool:
                 for conn_id, metrics in self._connection_metrics.items()
             }
         }
-
 
 class ConcurrentTransactionManager:
     """
@@ -569,7 +563,6 @@ class ConcurrentTransactionManager:
     async def rollback_transaction(self, transaction_id: str):
         """Explicitly rollback a transaction"""
         await self._cancel_transaction(transaction_id)
-
 
 class ConcurrentDataManager:
     """

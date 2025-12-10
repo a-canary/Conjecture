@@ -11,7 +11,6 @@ from datetime import datetime
 from .llm.openai_compatible_provider import OpenAICompatibleProcessor, create_openai_compatible_processor
 from src.core.models import Claim
 
-
 class SimplifiedLLMManager:
     """Simplified LLM manager supporting only OpenAI-compatible providers"""
 
@@ -451,10 +450,8 @@ class SimplifiedLLMManager:
         print("[LLM] Reset failed providers list")
         self._set_primary_provider()
 
-
 # Global instance for easy access
 _simplified_llm_manager = None
-
 
 def get_simplified_llm_manager() -> SimplifiedLLMManager:
     """Get the global simplified LLM manager instance"""

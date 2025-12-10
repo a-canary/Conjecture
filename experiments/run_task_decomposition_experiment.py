@@ -33,7 +33,6 @@ from config.common import ProviderConfig
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "research"))
 from statistical_analyzer import ConjectureStatisticalAnalyzer
 
-
 @dataclass
 class ExperimentConfig:
     """Configuration for task decomposition experiment"""
@@ -54,7 +53,6 @@ class ExperimentConfig:
     def __post_init__(self):
         if self.approaches is None:
             self.approaches = ["direct", "conjecture"]
-
 
 @dataclass
 class TestResult:
@@ -83,7 +81,6 @@ class TestResult:
     difficulty: str
     reasoning_requirements: List[str]
 
-
 @dataclass
 class ExperimentResults:
     """Complete results from task decomposition experiment"""
@@ -110,7 +107,6 @@ class ExperimentResults:
     hypothesis_validated: bool
     target_achieved: bool
     confidence_in_results: float
-
 
 class TaskDecompositionExperiment:
     """Main experiment runner for task decomposition hypothesis validation"""
@@ -970,7 +966,6 @@ Be objective and thorough in your evaluation.
         except Exception as e:
             self.logger.error(f"Failed to generate report: {e}")
 
-
 async def main():
     """Main function to run the task decomposition experiment"""
     
@@ -1038,7 +1033,6 @@ async def main():
         return 1
     
     return 0
-
 
 if __name__ == "__main__":
     exit_code = asyncio.run(main())

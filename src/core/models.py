@@ -8,30 +8,25 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-
 class RelationshipError(Exception):
     """Exception raised for relationship-related errors"""
 
     pass
-
 
 class DataLayerError(Exception):
     """Exception raised for data layer operation errors"""
 
     pass
 
-
 class ClaimNotFoundError(Exception):
     """Exception raised when a claim is not found"""
 
     pass
 
-
 class InvalidClaimError(Exception):
     """Exception raised for invalid claim data"""
 
     pass
-
 
 class ClaimState(str, Enum):
     """Claim state enumeration"""
@@ -40,7 +35,6 @@ class ClaimState(str, Enum):
     VALIDATED = "Validated"
     ORPHANED = "Orphaned"
     QUEUED = "Queued"
-
 
 class ClaimType(str, Enum):
     """Claim type enumeration - All claims are impressions, assumptions, observations, or conjectures with variable truth"""
@@ -58,7 +52,6 @@ class ClaimType(str, Enum):
     HYPOTHESIS = "hypothesis"  # Proposed explanation for investigation
     QUESTION = "question"  # Query seeking information
     TASK = "task"  # Action item or work to be done
-
 
 class ClaimScope(str, Enum):
     """Claim scope enumeration - simplified for local-first design"""
@@ -109,7 +102,6 @@ class ClaimScope(str, Enum):
         except ValueError:
             return -1  # Invalid scope
 
-
 class DirtyReason(str, Enum):
     """Dirty flag reason enumeration"""
 
@@ -120,7 +112,6 @@ class DirtyReason(str, Enum):
     MANUAL_MARK = "manual_mark"
     BATCH_EVALUATION = "batch_evaluation"
     SYSTEM_TRIGGER = "system_trigger"
-
 
 class Claim(BaseModel):
     """Core claim model with validation"""
@@ -255,6 +246,20 @@ class Claim(BaseModel):
     def __repr__(self) -> str:
         return f"Claim(id={self.id}, confidence={self.confidence}, state={self.state.value}, dirty={self.is_dirty})"
 
+    @classmethod
+    def create_claim_index(cls, claims: List['Claim']) -> Dict[str, 'Claim']:
+        """Create claim index for fast lookups"""
+        return {claim.id: claim for claim in claims}
+    
+    @classmethod
+    def get_orphaned_claims(cls, claims: List['Claim']) -> List['Claim']:
+        """Get claims that are not supported by any other claims"""
+        supported_ids = set()
+        for claim in claims:
+            supported_ids.update(claim.supports)
+        
+        return [claim for claim in claims if claim.id not in supported_ids]
+    
     @property
     def dirty(self) -> bool:
         """Backward compatibility property for dirty flag"""
@@ -296,11 +301,9 @@ class Claim(BaseModel):
             # Fallback if config not available
             return 0.8
 
-
 # Backward compatibility alias for BasicClaim
 # BasicClaim was the old name for Claim before the model consolidation
 BasicClaim = Claim
-
 
 class ClaimBatch(BaseModel):
     """Batch model for processing multiple claims"""
@@ -319,7 +322,6 @@ class ClaimBatch(BaseModel):
         metadatas = [claim.to_chroma_metadata() for claim in self.claims]
         return ids, documents, embeddings, metadatas
 
-
 class ProcessingResult(BaseModel):
     """Result of claim processing"""
 
@@ -332,7 +334,6 @@ class ProcessingResult(BaseModel):
     )
     message: str = Field(default="", description="Processing message")
 
-
 # Tool execution models (moved from unified_models)
 class ToolCall(BaseModel):
     """Represents a tool invocation."""
@@ -341,7 +342,6 @@ class ToolCall(BaseModel):
     parameters: Dict[str, Any] = Field(
         default_factory=dict, description="Tool parameters"
     )
-
 
 class ExecutionResult(BaseModel):
     """Result of tool execution."""
@@ -354,7 +354,6 @@ class ExecutionResult(BaseModel):
         default_factory=dict, description="Additional metadata"
     )
 
-
 class ParsedResponse(BaseModel):
     """Represents a parsed response from LLM"""
 
@@ -362,7 +361,6 @@ class ParsedResponse(BaseModel):
         default_factory=list, description="Extracted tool calls"
     )
     errors: List[str] = Field(default_factory=list, description="Parsing errors")
-
 
 class ClaimFilter(BaseModel):
     """Filter for querying claims"""
@@ -405,7 +403,6 @@ class ClaimFilter(BaseModel):
             raise ValueError("confidence_max must be >= confidence_min")
         return self
 
-
 class Relationship(BaseModel):
     """Relationship between claims"""
 
@@ -446,7 +443,6 @@ class Relationship(BaseModel):
         """Backward compatibility property for created timestamp"""
         return self.created
 
-
 class DataConfig(BaseModel):
     """Configuration for data layer"""
 
@@ -459,136 +455,60 @@ class DataConfig(BaseModel):
     )
     max_tokens: int = Field(default=8000, ge=1000, description="Maximum context tokens")
     max_connections: Optional[int] = Field(default=10, ge=1, description="Maximum database connections")
-    use_mock_embeddings: bool = Field(default=False, description="Use mock embeddings for testing")
+    
 
-    @field_validator("max_tokens")
-    @classmethod
-    def validate_max_tokens(cls, v):
-        """Validate max_tokens is reasonable"""
-        if v < 1000:
-            raise ValueError("max_tokens must be at least 1000")
-        return v
-
-
-# Import common result classes to maintain backward compatibility
-try:
-    from .common_results import ProcessingResult, BatchResult
-except ImportError:
-    # Handle relative import issues for test compatibility
-    import sys
-    import os
-    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-    from core.common_results import ProcessingResult, BatchResult
-
-
-# Helper functions for working with Claim collections
-def create_claim_index(claims: List[Claim]) -> Dict[str, Claim]:
-    """Create an index mapping claim IDs to claim objects for efficient lookup"""
-    return {claim.id: claim for claim in claims}
-
-
+# Helper functions for claim management
 def get_orphaned_claims(claims: List[Claim]) -> List[Claim]:
-    """Get all orphaned claims (no relationships)"""
-    return [claim for claim in claims if not claim.supported_by and not claim.supports]
-
+    """Get claims that are not supported by any other claims"""
+    supported_ids = set()
+    for claim in claims:
+        supported_ids.update(claim.supports)
+    
+    return [claim for claim in claims if claim.id not in supported_ids]
 
 def get_root_claims(claims: List[Claim]) -> List[Claim]:
-    """Get all root claims (support others but not supported)"""
-    return [claim for claim in claims if claim.supports and not claim.supported_by]
-
+    """Get claims that don't support any other claims (root claims)"""
+    supporting_ids = set()
+    for claim in claims:
+        supporting_ids.update(claim.supports)
+    
+    return [claim for claim in claims if claim.id not in supporting_ids]
 
 def get_leaf_claims(claims: List[Claim]) -> List[Claim]:
-    """Get all leaf claims (supported but don't support others)"""
-    return [claim for claim in claims if claim.supported_by and not claim.supports]
-
+    """Get claims that are not supported by any other claims (leaf claims)"""
+    supported_by_ids = set()
+    for claim in claims:
+        supported_by_ids.update(claim.supported_by)
+    
+    return [claim for claim in claims if claim.id not in supported_by_ids]
 
 def filter_claims_by_tags(claims: List[Claim], tags: List[str]) -> List[Claim]:
-    """Filter claims by tag presence (claims must have at least one of the tags)"""
-    if not tags:
-        return claims
+    """Filter claims by tags"""
+    return [claim for claim in claims if any(tag in claim.tags for tag in tags)]
 
-    tag_set = set(tags)
-    return [claim for claim in claims if any(tag in tag_set for tag in claim.tags)]
-
-
-def filter_claims_by_confidence(
-    claims: List[Claim], min_confidence: float = 0.0, max_confidence: float = 1.0
-) -> List[Claim]:
+def filter_claims_by_confidence(claims: List[Claim], min_confidence: float, max_confidence: float = 1.0) -> List[Claim]:
     """Filter claims by confidence range"""
-    return [
-        claim
-        for claim in claims
-        if min_confidence <= claim.confidence <= max_confidence
-    ]
+    return [claim for claim in claims if min_confidence <= claim.confidence <= max_confidence]
 
+def create_claim(content: str, confidence: float = 0.5, **kwargs) -> Claim:
+    """Create a new claim with auto-generated ID"""
+    claim_id = generate_claim_id()
+    return Claim(id=claim_id, content=content, confidence=confidence, **kwargs)
 
-# Factory functions for common use cases
-def create_claim(
-    content: str,
-    tag: str = "concept",
-    confidence: float = 0.8,
-    tags: Optional[List[str]] = None,
-) -> Claim:
-    """Create a claim with the specified tag"""
-    # Generate default tags based on the provided tag
-    if tag == "instruction":
-        default_tags = ["instruction", "guidance"]
-    elif tag == "evidence":
-        default_tags = ["evidence", "observation"]
-    elif tag == "tool_example":
-        default_tags = ["tool_example", "example"]
-    else:  # default to concept
-        default_tags = [tag] if tag else ["concept"]
-
-    claim_tags = tags if tags is not None else default_tags
-
-    return Claim(
-        id=generate_claim_id(),
-        content=content,
-        confidence=confidence,
-        tags=claim_tags,
-    )
-
+def generate_claim_id() -> str:
+    """Generate a new claim ID"""
+    import time
+    import random
+    timestamp = int(time.time() * 1000)
+    random_suffix = random.randint(1000, 9999)
+    return f"c{timestamp}{random_suffix}"
 
 def validate_claim_id(claim_id: str) -> bool:
     """Validate claim ID format"""
     import re
-
-    return bool(re.match(r"^c[a-f0-9]{7}$", claim_id))
-
+    pattern = r'^c\d{13,}$'
+    return re.match(pattern, claim_id) is not None
 
 def validate_confidence(confidence: float) -> bool:
-    """Validate confidence score"""
+    """Validate confidence value"""
     return 0.0 <= confidence <= 1.0
-
-
-def generate_claim_id() -> str:
-    """Generate a new claim ID"""
-    import uuid
-
-    return f"c{uuid.uuid4().hex[:7]}"
-
-
-# Custom exceptions
-class ClaimNotFoundError(Exception):
-    """Raised when a claim is not found"""
-
-    pass
-
-
-class InvalidClaimError(Exception):
-    """Raised when a claim is invalid"""
-
-    pass
-
-
-class RelationshipError(Exception):
-    """Raised when a relationship operation fails"""
-
-    pass
-
-
-class DataLayerError(Exception):
-    """Raised when a data layer operation fails"""
-
-    pass

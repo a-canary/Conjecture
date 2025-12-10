@@ -42,7 +42,6 @@ from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-
 @dataclass
 class OptimizationRequest:
     """Request for context optimization"""
@@ -52,7 +51,6 @@ class OptimizationRequest:
     performance_requirements: Dict[str, float]
     active_components: List[ComponentType]
     custom_parameters: Dict[str, Any] = None
-
 
 @dataclass
 class OptimizationResult:
@@ -67,7 +65,6 @@ class OptimizationResult:
     processing_time_ms: float
     recommendations: List[str]
 
-
 @dataclass
 class SystemConfiguration:
     """Configuration for the optimization system"""
@@ -80,7 +77,6 @@ class SystemConfiguration:
     cache_optimizations: bool = True
     cache_size_limit: int = 1000
     monitoring_enabled: bool = True
-
 
 class ContextOptimizationSystem:
     """
@@ -490,12 +486,10 @@ class ContextOptimizationSystem:
 
         logger.info(f"Performance data exported to {file_path}")
 
-
 # Factory function for easy instantiation
 def create_context_optimization_system(config: SystemConfiguration = None) -> ContextOptimizationSystem:
     """Create complete context optimization system"""
     return ContextOptimizationSystem(config)
-
 
 # Utility function for quick optimization
 async def optimize_context_for_tiny_llm(

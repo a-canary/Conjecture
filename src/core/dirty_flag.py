@@ -10,7 +10,6 @@ from collections import defaultdict
 
 from .models import Claim, DirtyReason
 
-
 class DirtyFlagSystem:
     """Core dirty flag management system for claims"""
 

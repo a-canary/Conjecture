@@ -62,7 +62,7 @@ class ModelIntegration:
         except Exception as e:
             elapsed_time = time.time() - start_time
             print(f"[ERROR] {model_name} failed after {elapsed_time:.3f}s: {e}")
-            # Real error handling - no mock responses
+            # Real error handling - no test responses
             raise Exception(f"LLM call failed for {model_name}: {str(e)}")
 
     def _enhance_prompt_for_benchmark(self, prompt: str) -> str:

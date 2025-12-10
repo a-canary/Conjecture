@@ -16,14 +16,12 @@ from src.core.models import Claim, ClaimType, ClaimState
 
 logger = logging.getLogger(__name__)
 
-
 class EvidenceCorrelation(Enum):
     """Evidence correlation types"""
     COMPLEMENTARY = "complementary"
     CONTRADICTORY = "contradictory"
     REDUNDANT = "redundant"
     INDEPENDENT = "independent"
-
 
 @dataclass
 class EvidenceCluster:
@@ -33,7 +31,6 @@ class EvidenceCluster:
     aggregate_confidence: float
     cluster_weight: float
     primary_modality: str
-
 
 class AdvancedClaimSynthesizer:
     """Advanced multi-modal claim synthesizer with evidence integration"""

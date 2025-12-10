@@ -25,9 +25,7 @@ import inspect
 
 from ..core.models import ExecutionResult, ToolCall
 
-
 logger = logging.getLogger(__name__)
-
 
 @dataclass
 class ExecutionLimits:
@@ -59,7 +57,6 @@ class ExecutionLimits:
                 "decimal",
                 "typing",
             ]
-
 
 class SecurityValidator:
     """Validates code for security violations before execution."""
@@ -279,7 +276,6 @@ class SecurityValidator:
                 errors.append(f"Dangerous pattern detected: {pattern}")
 
         return errors
-
 
 class SafeExecutor:
     """Executes Python code in a safe, restricted environment."""
@@ -543,7 +539,6 @@ print(json.dumps(result))
 
         return result
 
-
 class ToolExecutor:
     """
     Main tool execution engine that coordinates safe execution.
@@ -690,7 +685,6 @@ class ToolExecutor:
             "average_execution_time_ms": avg_execution_time,
             "most_used_tools": most_used_tools,
         }
-
 
 # Import required modules
 import re

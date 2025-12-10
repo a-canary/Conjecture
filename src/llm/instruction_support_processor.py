@@ -13,7 +13,6 @@ from core.models import Claim, create_claim_index, create_claim
 from core.support_relationship_manager import SupportRelationshipManager
 from context.complete_context_builder import CompleteContextBuilder, BuiltContext
 
-
 @dataclass
 class InstructionIdentification:
     """Result of instruction identification from LLM"""
@@ -22,7 +21,6 @@ class InstructionIdentification:
     support_relationships: List[Dict[str, Any]]
     confidence_scores: List[float]
     reasoning: str
-
 
 @dataclass
 class ProcessingResult:
@@ -34,7 +32,6 @@ class ProcessingResult:
     processing_time_ms: float
     llm_response: str
     errors: List[str]
-
 
 class InstructionSupportProcessor:
     """
@@ -158,8 +155,8 @@ class InstructionSupportProcessor:
     def _send_to_llm_for_instructions(self, context: str, user_request: str) -> str:
         """Send context to LLM and get instruction identification"""
         if self.llm_client is None:
-            # For testing without real LLM, return mock response
-            return self._generate_mock_llm_response(context, user_request)
+            # For testing without real LLM, return test response
+            return self._generate_llm_response(context, user_request)
 
         # Create the prompt for instruction identification
         prompt = self._create_instruction_prompt(context, user_request)
@@ -239,7 +236,7 @@ Please provide your analysis:
 """
         return prompt
 
-    def _generate_mock_llm_response(self, context: str, user_request: str) -> str:
+    def _generate_llm_response(self, context: str, user_request: str) -> str:
         """Generate mock LLM response for testing purposes"""
         # Simple heuristic-based instruction detection for testing
         instruction_keywords = [

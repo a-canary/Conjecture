@@ -20,7 +20,6 @@ from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-
 @dataclass
 class ParsedClaim:
     """Represents a parsed claim before conversion to standard format"""
@@ -30,7 +29,6 @@ class ParsedClaim:
     claim_type: Optional[str] = None
     raw_format: Optional[str] = None
     raw_text: Optional[str] = None
-
 
 class UnifiedClaimParser:
     """
@@ -404,7 +402,6 @@ class UnifiedClaimParser:
             'errors': 0
         }
 
-
 # Global instance for reuse
 _unified_parser = None
 
@@ -414,7 +411,6 @@ def get_unified_parser() -> UnifiedClaimParser:
     if _unified_parser is None:
         _unified_parser = UnifiedClaimParser()
     return _unified_parser
-
 
 def parse_claims_from_response(response_text: str) -> List[Claim]:
     """
@@ -428,7 +424,6 @@ def parse_claims_from_response(response_text: str) -> List[Claim]:
     """
     parser = get_unified_parser()
     return parser.parse_claims_from_response(response_text)
-
 
 def format_claim_for_output(claim: Claim) -> str:
     """

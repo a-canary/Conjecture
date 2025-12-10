@@ -26,7 +26,6 @@ from processing.support_systems.context_builder import ContextBuilder
 from processing.llm.llm_manager import LLMManager
 from config.common import ProviderConfig
 
-
 class ExperimentType(str, Enum):
     """Types of experiments to run"""
     TASK_DECOMPOSITION = "task_decomposition"
@@ -35,7 +34,6 @@ class ExperimentType(str, Enum):
     CLAIMS_REASONING = "claims_reasoning"
     END_TO_END = "end_to_end"
 
-
 class EvaluationMetric(str, Enum):
     """Evaluation metrics for experiments"""
     CORRECTNESS = "correctness"
@@ -43,7 +41,6 @@ class EvaluationMetric(str, Enum):
     EFFICIENCY = "efficiency"
     COHERENCE = "coherence"
     CONFIDENCE_CALIBRATION = "confidence_calibration"
-
 
 @dataclass
 class ExperimentConfig:
@@ -59,7 +56,6 @@ class ExperimentConfig:
     parameters: Dict[str, Any]
     max_runtime_minutes: int = 30
 
-
 @dataclass
 class TestResult:
     """Result from a single test case"""
@@ -72,7 +68,6 @@ class TestResult:
     error: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
 
-
 @dataclass
 class EvaluationResult:
     """Result from LLM-as-a-Judge evaluation"""
@@ -82,7 +77,6 @@ class EvaluationResult:
     score: float  # 0.0 to 1.0
     reasoning: str
     confidence: float
-
 
 @dataclass
 class ExperimentRun:
@@ -100,7 +94,6 @@ class ExperimentRun:
             self.test_results = []
         if self.evaluation_results is None:
             self.evaluation_results = []
-
 
 class ExperimentFramework:
     """Main experiment framework for Conjecture research"""

@@ -13,7 +13,6 @@ from dataclasses import dataclass
 import warnings
 warnings.filterwarnings('ignore')
 
-
 @dataclass
 class StatisticalTest:
     """Results of a statistical test"""
@@ -24,7 +23,6 @@ class StatisticalTest:
     is_significant: bool
     confidence_interval: Tuple[float, float]
     interpretation: str
-
 
 @dataclass
 class ABTestResult:
@@ -40,7 +38,6 @@ class ABTestResult:
     statistical_tests: Dict[str, StatisticalTest]
     recommendation: str
     confidence: float
-
 
 class StatisticalAnalyzer:
     """Advanced statistical analysis for baseline comparisons"""
@@ -497,7 +494,6 @@ class StatisticalAnalyzer:
         
         return summary
 
-
 def main():
     """Example usage of statistical analyzer"""
     # Example data
@@ -519,7 +515,6 @@ def main():
     print("\nStatistical tests:")
     for test_name, test_result in result.statistical_tests.items():
         print(f"  {test_name}: {test_result.interpretation}")
-
 
 if __name__ == "__main__":
     main()

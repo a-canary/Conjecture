@@ -18,9 +18,7 @@ from .models import (
 )
 from utils.id_generator import generate_context_id
 
-
 logger = logging.getLogger(__name__)
-
 
 class DataCollector:
     """

@@ -24,7 +24,6 @@ from scipy import stats
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-
 @dataclass
 class TestResult:
     """Result from a single test case execution"""
@@ -44,7 +43,6 @@ class TestResult:
     # Metadata
     timestamp: datetime
     difficulty: str
-
 
 @dataclass
 class ExperimentResults:
@@ -67,7 +65,6 @@ class ExperimentResults:
     hypothesis_validated: bool
     target_achieved: bool
     confidence_in_results: float
-
 
 class SimpleTaskDecompositionExperiment:
     """Simplified experiment runner for task decomposition hypothesis validation"""
@@ -696,7 +693,6 @@ Be objective and thorough in your evaluation.
         except Exception as e:
             self.logger.error(f"Failed to generate report: {e}")
 
-
 async def main():
     """Main function to run the simple task decomposition experiment"""
     
@@ -737,7 +733,6 @@ async def main():
         return 1
     
     return 0
-
 
 if __name__ == "__main__":
     exit_code = asyncio.run(main())

@@ -17,7 +17,6 @@ from .models import (
     ParsedResponse,
     Relationship,
     DataConfig,
-    create_claim_index,
     get_orphaned_claims,
     get_root_claims,
     get_leaf_claims,
@@ -66,7 +65,6 @@ __all__ = [
     "DataConfig",
     
     # Helper functions
-    "create_claim_index",
     "get_orphaned_claims",
     "get_root_claims",
     "get_leaf_claims",

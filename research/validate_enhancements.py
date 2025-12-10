@@ -8,7 +8,6 @@ import json
 import sys
 from pathlib import Path
 
-
 def test_configuration_files():
     """Test that all configuration files are properly set up"""
     print("Testing Configuration Files...")
@@ -85,7 +84,6 @@ def test_configuration_files():
     
     return True
 
-
 def test_new_files_created():
     """Test that new enhancement files are created"""
     print("🧪 Testing New Enhancement Files...")
@@ -110,7 +108,6 @@ def test_new_files_created():
             all_exist = False
     
     return all_exist
-
 
 def test_statistical_analyzer_structure():
     """Test statistical analyzer structure without imports"""
@@ -160,7 +157,6 @@ def test_statistical_analyzer_structure():
     print(f"  ✅ Statistical analyzer imports validated")
     
     return True
-
 
 def test_baseline_comparison_structure():
     """Test baseline comparison structure without imports"""
@@ -219,7 +215,6 @@ def test_baseline_comparison_structure():
     
     return True
 
-
 def test_research_runner_integration():
     """Test research runner integration"""
     print("🧪 Testing Research Runner Integration...")
@@ -255,7 +250,6 @@ def test_research_runner_integration():
     print(f"  ✅ Research runner integration validated ({len(required_elements)} elements)")
     
     return True
-
 
 def main():
     """Run all validation tests"""
@@ -320,7 +314,6 @@ def main():
     print("=" * 60)
     
     return passed == total
-
 
 if __name__ == "__main__":
     success = main()

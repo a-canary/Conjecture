@@ -21,7 +21,6 @@ sys.path.insert(0, str(project_root / "src"))
 
 from dataclasses import dataclass
 
-
 @dataclass
 class Evaluation:
     """Evaluation result from the judge model"""
@@ -30,7 +29,6 @@ class Evaluation:
     hallucination_risk: int
     response_quality: int
     overall_score: int
-
 
 class Provider:
     """Base class for model providers"""
@@ -282,7 +280,6 @@ Overall Score: X/15
                 overall_score=0,
             )
 
-
 async def main():
     """Test different providers with a sample prompt"""
     test_prompt = (
@@ -372,7 +369,6 @@ async def main():
         print(f"  Model: {provider.model}")
         print(f"  URL: {provider.url}")
         # Add more summary metrics as needed
-
 
 if __name__ == "__main__":
     asyncio.run(main())

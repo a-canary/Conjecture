@@ -16,9 +16,7 @@ from ..processing.tool_registry import create_tool_registry, load_all_tools_from
 from ..processing.tool_execution import execute_tool_from_registry, create_execution_summary
 from .llm_inference import coordinate_three_part_flow, LLMContext, LLMResponse
 
-
 logger = logging.getLogger(__name__)
-
 
 @dataclass
 class AgentSession:
@@ -31,7 +29,6 @@ class AgentSession:
     created_at: datetime = field(default_factory=datetime.utcnow)
     last_activity: datetime = field(default_factory=datetime.utcnow)
     metadata: Dict[str, Any] = field(default_factory=dict)
-
 
 @dataclass
 class CoordinationResult:
@@ -46,7 +43,6 @@ class CoordinationResult:
     execution_summary: Dict[str, Any] = field(default_factory=dict)
     errors: List[str] = field(default_factory=list)
     metadata: Dict[str, Any] = field(default_factory=dict)
-
 
 # Pure Functions for Session Management
 
@@ -63,7 +59,6 @@ def create_agent_session(user_request: str,
         metadata=metadata or {}
     )
 
-
 def update_session_claims(session: AgentSession, claims: List[Claim]) -> AgentSession:
     """Pure function to update session claims."""
     return AgentSession(
@@ -76,7 +71,6 @@ def update_session_claims(session: AgentSession, claims: List[Claim]) -> AgentSe
         last_activity=datetime.utcnow(),
         metadata=session.metadata.copy()
     )
-
 
 def add_conversation_item(session: AgentSession, 
                          user_msg: str, 
@@ -99,7 +93,6 @@ def add_conversation_item(session: AgentSession,
         last_activity=datetime.utcnow(),
         metadata=session.metadata.copy()
     )
-
 
 # Pure Functions for 3-Part Coordination
 
@@ -181,7 +174,6 @@ def process_user_request(user_request: str,
             metadata={"execution_time_ms": execution_time}
         )
 
-
 def process_research_request(query: str,
                             existing_claims: List[Claim],
                             tool_registry) -> CoordinationResult:
@@ -195,7 +187,6 @@ def process_research_request(query: str,
         metadata={"request_type": "research"}
     )
 
-
 def process_code_request(description: str,
                         existing_claims: List[Claim],
                         tool_registry) -> CoordinationResult:
@@ -208,7 +199,6 @@ def process_code_request(description: str,
         tool_registry=tool_registry,
         metadata={"request_type": "code"}
     )
-
 
 def process_evaluation_request(claim_ids: List[str],
                              existing_claims: List[Claim],
@@ -229,7 +219,6 @@ def process_evaluation_request(claim_ids: List[str],
         tool_registry=tool_registry,
         metadata={"request_type": "evaluation", "claim_ids": claim_ids}
     )
-
 
 # Pure Functions for Claim Management
 
@@ -259,7 +248,6 @@ def reconcile_claim_differences(original_claims: List[Claim],
     
     return changed_claims, new_claims, removed_claims
 
-
 def apply_claim_updates(original_claims: List[Claim],
                        updates: List[Claim]) -> List[Claim]:
     """Pure function to apply claim updates."""
@@ -280,7 +268,6 @@ def apply_claim_updates(original_claims: List[Claim],
             result_claims.append(updated_claim)
     
     return result_claims
-
 
 # Pure Functions for System Initialization
 
@@ -313,7 +300,6 @@ def initialize_agent_system(tools_directory: str = "tools",
             "initialized_at": datetime.utcnow().isoformat()
         }
 
-
 def get_system_status(tool_registry, claims: List[Claim]) -> Dict[str, Any]:
     """Pure function to get system status."""
     dirty_claims = find_dirty_claims(claims)
@@ -329,7 +315,6 @@ def get_system_status(tool_registry, claims: List[Claim]) -> Dict[str, Any]:
         "system_health": "healthy" if len(dirty_claims) == 0 else "needs_attention",
         "status_timestamp": datetime.utcnow().isoformat()
     }
-
 
 # Async Functions (when needed for external tool execution)
 
@@ -348,4 +333,3 @@ async def process_user_request_async(user_request: str,
         conversation_history=conversation_history,
         metadata=metadata
     )
-

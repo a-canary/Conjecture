@@ -25,7 +25,6 @@ try:
 except ImportError:
     HAS_RICH = False
 
-
 class TerminalSupport:
     """Simple Unicode detection based on platform and terminal."""
 
@@ -42,7 +41,6 @@ class TerminalSupport:
                 in ["xterm-256color", "alacritty", "rxvt-unicode"]
             )
         return True  # Unix-like systems generally support Unicode
-
 
 class UnifiedEmojiPrinter:
     """
@@ -292,16 +290,13 @@ class UnifiedEmojiPrinter:
             print(f"{fallback} {message}")
             return False
 
-
 # Global instance for easy use
 emoji_printer = UnifiedEmojiPrinter()
-
 
 # Backward compatibility functions
 def safe_print(message: str, emoji: str = "") -> bool:
     """Backward compatibility: safe print with emoji fallback."""
     return emoji_printer.safe_print(message, emoji)
-
 
 def get_emoji_or_fallback(preferred: str) -> str:
     """Backward compatibility: get emoji or fallback."""
@@ -315,7 +310,6 @@ def get_emoji_or_fallback(preferred: str) -> str:
     except (UnicodeEncodeError, LookupError, AttributeError):
         return emoji_printer.EMOJI_FALLBACKS.get(preferred, preferred)
 
-
 def rich_print(message: str, emoji: str = "", style: str = "default"):
     """Backward compatibility: Rich print."""
     if emoji:
@@ -324,22 +318,18 @@ def rich_print(message: str, emoji: str = "", style: str = "default"):
         text = message
     emoji_printer.print(text, use_rich=True, style=style)
 
-
 # Convenience functions (from terminal_emoji.py)
 def success(message: str = ""):
     """Print success message."""
     emoji_printer.print(f":thumbs_up: {message}" if message else ":thumbs_up:")
 
-
 def error(message: str = ""):
     """Print error message."""
     emoji_printer.print(f":x: {message}" if message else ":x:")
 
-
 def warning(message: str = ""):
     """Print warning message."""
     emoji_printer.print(f":warning: {message}" if message else ":warning:")
-
 
 def info(message: str = ""):
     """Print info message."""
@@ -347,11 +337,9 @@ def info(message: str = ""):
         f":information_source: {message}" if message else ":information_source:"
     )
 
-
 def target(message: str = ""):
     """Print target message."""
     emoji_printer.print(f":target: {message}" if message else ":target:")
-
 
 def loading(message: str = ""):
     """Print loading message."""
@@ -359,13 +347,11 @@ def loading(message: str = ""):
         f":hourglass_flowing_sand: {message}" if message else ":hourglass_flowing_sand:"
     )
 
-
 def tool(message: str = ""):
     """Print tool message."""
     emoji_printer.print(
         f":hammer_and_wrench: {message}" if message else ":hammer_and_wrench:"
     )
-
 
 def chat(message: str = ""):
     """Print chat message."""
@@ -373,16 +359,13 @@ def chat(message: str = ""):
         f":speech_balloon: {message}" if message else ":speech_balloon:"
     )
 
-
 def resolved(message: str = ""):
     """Print resolved message."""
     emoji_printer.print(f":check_mark: {message}" if message else ":check_mark:")
 
-
 def stats(message: str = ""):
     """Print stats message."""
     emoji_printer.print(f":bar_chart: {message}" if message else ":bar_chart:")
-
 
 # Test function
 def test_emoji_support():
@@ -416,7 +399,6 @@ def test_emoji_support():
         print("⚠️  Basic emoji support (install 'emoji' package for shortcodes)")
     else:
         print("⚠️  Using ASCII fallbacks (upgrade your terminal for emojis)")
-
 
 if __name__ == "__main__":
     test_emoji_support()

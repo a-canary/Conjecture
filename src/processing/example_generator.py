@@ -15,9 +15,7 @@ from ..core.models import Claim, ExecutionResult
 from ..data.data_manager import DataManager
 from ..data.models import ClaimNotFoundError
 
-
 logger = logging.getLogger(__name__)
-
 
 class ExampleQualityAssessor:
     """Assesses the quality of generated examples."""
@@ -230,7 +228,6 @@ class ExampleQualityAssessor:
         """Check if two parameter signatures are similar."""
         # Simple similarity check - could be made more sophisticated
         return sig1 == sig2
-
 
 class ExampleGenerator:
     """

@@ -6,7 +6,6 @@ Start simple, only extend when needed
 import re
 from typing import Any, Dict, List, Union
 
-
 def safe_yaml_serialize(obj: Any, indent: int = 0) -> str:
     """
     Serialize object to YAML-like format without external dependencies
@@ -53,7 +52,6 @@ def safe_yaml_serialize(obj: Any, indent: int = 0) -> str:
         # Fallback for other types
         return str(obj)
 
-
 def dump(obj: Any, default_flow_style: bool = False) -> str:
     """
     Dump object to YAML format
@@ -69,7 +67,6 @@ def dump(obj: Any, default_flow_style: bool = False) -> str:
             return "[ " + ", ".join(items) + " ]"
 
     return safe_yaml_serialize(obj)
-
 
 def format_claim_context(context: Dict[str, Any]) -> str:
     """
@@ -112,7 +109,6 @@ def format_claim_context(context: Dict[str, Any]) -> str:
         lines.pop()
 
     return "\n".join(lines)
-
 
 def test_simple_yaml():
     """Test the simple YAML formatter"""
@@ -172,7 +168,6 @@ def test_simple_yaml():
 
     print("🎉 All simple YAML tests passed!")
     return True
-
 
 if __name__ == "__main__":
     success = test_simple_yaml()

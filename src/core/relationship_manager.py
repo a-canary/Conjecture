@@ -12,7 +12,6 @@ from .claim_operations import (
     find_supported_claims, validate_relationship_integrity
 )
 
-
 @dataclass
 class RelationshipAnalysis:
     """Pure data structure for relationship analysis results."""
@@ -25,7 +24,6 @@ class RelationshipAnalysis:
     relationship_depth: int
     completeness_score: float
 
-
 @dataclass
 class RelationshipChange:
     """Pure data structure for relationship changes."""
@@ -34,7 +32,6 @@ class RelationshipChange:
     related_claim_id: str
     timestamp: datetime
     metadata: Dict[str, Any]
-
 
 # Pure Functions for Relationship Management
 
@@ -46,7 +43,6 @@ def establish_bidirectional_relationship(claim: Claim, related_claim: Claim) -> 
     updated_related = add_support(related_claim, claim.id)
     
     return updated_claim, updated_related
-
 
 def remove_support_relationship(claim: Claim, supporting_claim_id: str) -> Claim:
     """Pure function to remove a support relationship."""
@@ -70,7 +66,6 @@ def remove_support_relationship(claim: Claim, supporting_claim_id: str) -> Claim
         dirty_priority=claim.dirty_priority
     )
 
-
 def remove_supports_relationship(claim: Claim, supported_claim_id: str) -> Claim:
     """Pure function to remove a supports relationship."""
     new_supports = [cid for cid in claim.supports if cid != supported_claim_id]
@@ -93,7 +88,6 @@ def remove_supports_relationship(claim: Claim, supported_claim_id: str) -> Claim
         dirty_priority=claim.dirty_priority
     )
 
-
 def create_support_map(claims: List[Claim]) -> Dict[str, Set[str]]:
     """Pure function to create a support relationship map."""
     support_map = {}
@@ -107,7 +101,6 @@ def create_support_map(claims: List[Claim]) -> Dict[str, Set[str]]:
     
     return support_map
 
-
 def create_supporter_map(claims: List[Claim]) -> Dict[str, Set[str]]:
     """Pure function to create a supporter relationship map."""
     supporter_map = {}
@@ -120,7 +113,6 @@ def create_supporter_map(claims: List[Claim]) -> Dict[str, Set[str]]:
                 supporter_map[claim.id].add(supporter_id)
     
     return supporter_map
-
 
 def detect_circular_dependencies(support_map: Dict[str, Set[str]]) -> List[List[str]]:
     """Pure function to detect circular dependencies using DFS."""
@@ -156,14 +148,12 @@ def detect_circular_dependencies(support_map: Dict[str, Set[str]]) -> List[List[
     
     return cycles
 
-
 def find_orphaned_claims(claims: List[Claim]) -> List[Claim]:
     """Pure function to find claims that have no relationships."""
     return [
         claim for claim in claims
         if not claim.supported_by and not claim.supports
     ]
-
 
 def find_root_claims(claims: List[Claim]) -> List[Claim]:
     """Pure function to find root claims (claims that support others but are not supported)."""
@@ -172,14 +162,12 @@ def find_root_claims(claims: List[Claim]) -> List[Claim]:
         if claim.supports and not claim.supported_by
     ]
 
-
 def find_leaf_claims(claims: List[Claim]) -> List[Claim]:
     """Pure function to find leaf claims (claims that are supported but don't support others)."""
     return [
         claim for claim in claims
         if claim.supported_by and not claim.supports
     ]
-
 
 def calculate_relationship_depth(support_map: Dict[str, Set[str]], root_claim_id: str) -> int:
     """Pure function to calculate the maximum depth from a root claim."""
@@ -200,7 +188,6 @@ def calculate_relationship_depth(support_map: Dict[str, Set[str]], root_claim_id
         return max_depth + 1
     
     return dfs_depth(root_claim_id, set())
-
 
 def analyze_claim_relationships(claim: Claim, all_claims: List[Claim]) -> RelationshipAnalysis:
     """Pure function to analyze a claim's relationships."""
@@ -249,7 +236,6 @@ def analyze_claim_relationships(claim: Claim, all_claims: List[Claim]) -> Relati
         completeness_score=completeness
     )
 
-
 def suggest_support_relationships(claim: Claim, all_claims: List[Claim], max_suggestions: int = 5) -> List[Tuple[Claim, float]]:
     """Pure function to suggest support relationships based on content similarity."""
     # Simple content-based suggestion (could be enhanced with embeddings)
@@ -272,7 +258,6 @@ def suggest_support_relationships(claim: Claim, all_claims: List[Claim], max_sug
     # Sort by similarity and return top suggestions
     suggestions.sort(key=lambda x: x[1], reverse=True)
     return suggestions[:max_suggestions]
-
 
 def validate_relationship_consistency(claims: List[Claim]) -> List[str]:
     """Pure function to validate overall relationship consistency."""
@@ -300,7 +285,6 @@ def validate_relationship_consistency(claims: List[Claim]) -> List[str]:
         errors.append(f"Found {len(orphaned_validated)} validated claims with no relationships")
     
     return errors
-
 
 def propagate_confidence_updates(claim_updates: Dict[str, float], all_claims: List[Claim], propagation_factor: float = 0.1) -> List[Claim]:
     """Pure function to propagate confidence updates through support relationships."""
@@ -343,7 +327,6 @@ def propagate_confidence_updates(claim_updates: Dict[str, float], all_claims: Li
     
     return updated_claims
 
-
 def create_relationship_heatmap(claims: List[Claim]) -> Dict[str, Dict[str, float]]:
     """Pure function to create a relationship strength heatmap."""
     heatmap = {}
@@ -357,7 +340,6 @@ def create_relationship_heatmap(claims: List[Claim]) -> Dict[str, Dict[str, floa
             heatmap[claim.id][supporter.id] = supporter.confidence
     
     return heatmap
-
 
 def get_relationship_statistics(claims: List[Claim]) -> Dict[str, Any]:
     """Pure function to get comprehensive relationship statistics."""

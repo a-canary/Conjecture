@@ -22,7 +22,6 @@ sys.path.insert(0, os.path.join(project_root, "src"))
 PROVIDER_URL = "http://127.0.0.1:5678"
 TIMEOUT = 30  # seconds
 
-
 async def test_endpoint(
     session: aiohttp.ClientSession,
     method: str,
@@ -71,7 +70,6 @@ async def test_endpoint(
     except Exception as e:
         return {"status": -3, "success": False, "data": f"Exception: {str(e)}"}
 
-
 async def test_health_endpoint():
     """Test the health check endpoint"""
     print("\n🔍 Testing Health Check Endpoint...")
@@ -91,7 +89,6 @@ async def test_health_endpoint():
         else:
             print(f"❌ Health check failed: {result['data']}")
             return False
-
 
 async def test_models_endpoint():
     """Test the models listing endpoint"""
@@ -113,7 +110,6 @@ async def test_models_endpoint():
         else:
             print(f"❌ Models endpoint failed: {result['data']}")
             return False
-
 
 async def test_chat_completion_endpoint():
     """Test the chat completions endpoint"""
@@ -152,7 +148,6 @@ async def test_chat_completion_endpoint():
             print(f"❌ Chat completion failed: {result['data']}")
             return False
 
-
 async def test_tell_user_tool():
     """Test the TellUser tool endpoint"""
     print("\n🔍 Testing TellUser Tool...")
@@ -175,7 +170,6 @@ async def test_tell_user_tool():
         else:
             print(f"❌ TellUser tool failed: {result['data']}")
             return False
-
 
 async def test_ask_user_tool():
     """Test the AskUser tool endpoint"""
@@ -202,7 +196,6 @@ async def test_ask_user_tool():
             print(f"❌ AskUser tool failed: {result['data']}")
             return False
 
-
 async def test_root_endpoint():
     """Test the root endpoint"""
     print("\n🔍 Testing Root Endpoint...")
@@ -219,7 +212,6 @@ async def test_root_endpoint():
         else:
             print(f"❌ Root endpoint failed: {result['data']}")
             return False
-
 
 async def main():
     """Main test runner"""
@@ -275,7 +267,6 @@ async def main():
     else:
         print("⚠️ Some tests failed. Please check the provider configuration.")
         return False
-
 
 if __name__ == "__main__":
     # Check if provider is running

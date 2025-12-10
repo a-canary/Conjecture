@@ -8,7 +8,6 @@ from typing import Any, Dict, List, Optional
 from datetime import datetime
 from enum import Enum
 
-
 class ContextItemType(str, Enum):
     """Simplified context item types"""
     CLAIM = "claim"
@@ -16,7 +15,6 @@ class ContextItemType(str, Enum):
     KNOWLEDGE = "knowledge"
     EXAMPLE = "example"
     TOOL = "tool"
-
 
 @dataclass
 class ContextItem:
@@ -43,7 +41,6 @@ class ContextItem:
             "source": self.source,
             "created_at": self.created_at.isoformat(),
         }
-
 
 @dataclass
 class ContextResult:
@@ -78,7 +75,6 @@ class ContextResult:
             collection_method=self.collection_method,
             metadata={**self.metadata, "filtered": True, "min_score": min_score}
         )
-
 
 @dataclass
 class PromptTemplate:

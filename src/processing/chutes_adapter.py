@@ -13,7 +13,6 @@ from .llm.chutes_integration import ChutesProcessor, GenerationConfig
 from ..core.models import Claim, ClaimType, ClaimState
 from ..config.simple_config import Config
 
-
 class ChutesAdapter(LLMProvider):
     """
     Chutes.ai adapter implementing LLMProvider interface
@@ -208,7 +207,6 @@ class ChutesAdapter(LLMProvider):
             base_stats["processor_stats"] = processor_stats
 
         return base_stats
-
 
 def create_chutes_adapter_from_config() -> ChutesAdapter:
     """

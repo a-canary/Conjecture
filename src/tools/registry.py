@@ -9,7 +9,6 @@ from typing import Dict, List, Any, Callable, Optional
 from pathlib import Path
 from dataclasses import dataclass
 
-
 @dataclass
 class ToolInfo:
     """Information about a registered tool"""
@@ -19,7 +18,6 @@ class ToolInfo:
     signature: str
     is_core: bool
     module: str
-
 
 class ToolRegistry:
     """Registry for managing tools and their availability"""
@@ -135,7 +133,6 @@ class ToolRegistry:
             return self.optional_tools[tool_name]
         return None
 
-
 def register_tool(is_core: bool = False, name: Optional[str] = None):
     """Decorator to register a function as a tool"""
     def decorator(func: Callable) -> Callable:
@@ -167,7 +164,6 @@ def register_tool(is_core: bool = False, name: Optional[str] = None):
         return func
     
     return decorator
-
 
 # Global registry instance
 _tool_registry = None

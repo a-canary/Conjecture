@@ -16,9 +16,7 @@ from ..processing.tool_execution import execute_tool_from_registry
 from .agent_coordination import process_user_request, initialize_agent_system
 from .llm_inference import build_llm_context, create_llm_prompt
 
-
 logger = logging.getLogger(__name__)
-
 
 def demonstrate_data_flow():
     """Demonstrate the pure 3-part data flow."""
@@ -79,7 +77,6 @@ def demonstrate_data_flow():
     
     return result
 
-
 def create_sample_claims() -> List[Claim]:
     """Create sample claims for demonstration."""
     return [
@@ -137,7 +134,6 @@ def create_sample_claims() -> List[Claim]:
         )
     ]
 
-
 def print_claims_summary(claims: List[Claim]):
     """Print summary of claims showing pure data nature."""
     print("   Claims are pure data structures:")
@@ -149,7 +145,6 @@ def print_claims_summary(claims: List[Claim]):
         print(f"     {claim.content}")
     print("   ✓ No execution methods - pure data only")
 
-
 def print_tools_summary(tools: List[Dict[str, Any]]):
     """Print summary of available tools."""
     print("   Tools are pure functions:")
@@ -158,7 +153,6 @@ def print_tools_summary(tools: List[Dict[str, Any]]):
         print(f"   - {tool['name']}({', '.join(params)})")
         print(f"     {tool['description'] or 'No description'}")
     print(f"   ✓ No embedded logic - pure function registration")
-
 
 def print_results_summary(result: Dict[str, Any], original_claims: List[Claim]):
     """Print comprehensive results summary."""
@@ -219,7 +213,6 @@ def print_results_summary(result: Dict[str, Any], original_claims: List[Claim]):
         for error in result['errors']:
             print(f"     - {error}")
 
-
 def demonstrate_relationship_handling():
     """Demonstrate claim relationship handling."""
     print("\n=== CLAIM RELATIONSHIP HANDLING DEMONSTRATION ===\n")
@@ -273,7 +266,6 @@ def demonstrate_relationship_handling():
     
     print("✅ Relationship handling is pure functional")
 
-
 def demonstrate_architectural_violations_fixed():
     """Show that architectural violations have been fixed."""
     print("\n=== ARCHITECTURAL VIOLATIONS FIXED ===\n")
@@ -318,7 +310,6 @@ def demonstrate_architectural_violations_fixed():
     print(f"✅ Tool registry is pure data structure with {len(registry.tools)} tools")
     
     print("\n🎯 SUCCESS: 3-Part Architecture Implementation Complete!")
-
 
 if __name__ == "__main__":
     """Run the complete demonstration."""

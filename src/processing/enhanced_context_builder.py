@@ -17,7 +17,6 @@ from src.data.data_manager import DataManager
 from src.processing.dynamic_priming_engine import DynamicPrimingEngine, PrimingDomain
 from src.processing.context_collector import ContextCollector
 
-
 @dataclass
 class ContextMetrics:
     """Metrics for context building performance"""
@@ -29,7 +28,6 @@ class ContextMetrics:
     quality_score: float = 0.0
     evidence_utilization: float = 0.0
     cross_task_knowledge_transfer: int = 0
-
 
 class EnhancedContextBuilder:
     """

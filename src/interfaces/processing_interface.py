@@ -17,7 +17,6 @@ from pydantic import BaseModel
 
 from ..core.models import Claim, ClaimFilter, ClaimState
 
-
 class EventType(str, Enum):
     """Event types for processing layer events"""
     
@@ -33,7 +32,6 @@ class EventType(str, Enum):
     ERROR_OCCURRED = "error_occurred"
     PROGRESS_UPDATE = "progress_update"
 
-
 class SessionState(str, Enum):
     """Session state enumeration"""
     
@@ -41,7 +39,6 @@ class SessionState(str, Enum):
     PAUSED = "paused"
     COMPLETED = "completed"
     ERROR = "error"
-
 
 @dataclass
 class ProcessingEvent:
@@ -68,7 +65,6 @@ class ProcessingEvent:
             "message": self.message,
             "progress": self.progress,
         }
-
 
 @dataclass
 class EvaluationResult:
@@ -104,7 +100,6 @@ class EvaluationResult:
             "errors": self.errors,
         }
 
-
 @dataclass
 class ToolResult:
     """Result of tool execution"""
@@ -131,7 +126,6 @@ class ToolResult:
             "errors": self.errors,
         }
 
-
 @dataclass
 class Context:
     """Context data for claim processing"""
@@ -157,7 +151,6 @@ class Context:
             "relevance_scores": self.relevance_scores,
             "total_tokens": self.total_tokens,
         }
-
 
 class Session(BaseModel):
     """Session for tracking processing operations"""
@@ -188,7 +181,6 @@ class Session(BaseModel):
             "metadata": self.metadata,
             "user_data": self.user_data,
         }
-
 
 class ProcessingInterface(ABC):
     """

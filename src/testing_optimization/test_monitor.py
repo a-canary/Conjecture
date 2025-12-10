@@ -15,7 +15,6 @@ import statistics
 import traceback
 from datetime import datetime, timedelta
 
-
 @dataclass
 class TestExecutionMetric:
     """Metrics for a single test execution."""
@@ -32,7 +31,6 @@ class TestExecutionMetric:
     markers: List[str] = field(default_factory=list)
     coverage_lines: int = 0
     coverage_percentage: float = 0.0
-
 
 @dataclass
 class TestSessionMetrics:
@@ -54,7 +52,6 @@ class TestSessionMetrics:
     coverage_overall: float = 0.0
     performance_score: float = 0.0
     optimization_score: float = 0.0
-
 
 class RealTimeMonitor:
     """Real-time monitoring of test execution."""
@@ -156,7 +153,6 @@ class RealTimeMonitor:
             "peak_process_memory_mb": max(m["process_memory_mb"] for m in recent_metrics),
             "peak_process_cpu": max(m["process_cpu"] for m in recent_metrics)
         }
-
 
 class TestPerformanceAnalyzer:
     """Analyzes test performance and identifies optimization opportunities."""
@@ -324,7 +320,6 @@ class TestPerformanceAnalyzer:
         }
 
         return comparison
-
 
 class TestReportGenerator:
     """Generates comprehensive test reports."""
@@ -543,7 +538,6 @@ class TestReportGenerator:
 
         return report_file
 
-
 class ComprehensiveTestMonitor:
     """Main monitoring system that coordinates all components."""
 
@@ -666,10 +660,8 @@ class ComprehensiveTestMonitor:
         """Add callback for real-time monitoring updates."""
         self.real_time_monitor.add_callback(callback)
 
-
 # Global monitor instance
 _global_monitor: Optional[ComprehensiveTestMonitor] = None
-
 
 def get_test_monitor(output_dir: Optional[Path] = None) -> ComprehensiveTestMonitor:
     """Get global test monitor instance."""

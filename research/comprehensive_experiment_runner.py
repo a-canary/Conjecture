@@ -27,7 +27,6 @@ try:
 except ImportError:
     print("[FAIL] python-dotenv not available")
 
-
 @dataclass
 class TestResult:
     """Complete test result with quality metrics"""
@@ -60,7 +59,6 @@ class TestResult:
             self.claims_generated = []
         if self.timestamp is None:
             self.timestamp = datetime.now().isoformat()
-
 
 # Enhanced test cases focusing on reasoning and agentic capabilities
 TEST_CASES = [
@@ -221,7 +219,6 @@ MODELS = {
 
 APPROACHES = ["direct", "true_conjecture", "chain_of_thought"]
 
-
 def make_api_call(
     prompt: str, model_config: Dict, max_tokens: int = 2000
 ) -> Dict[str, Any]:
@@ -292,7 +289,6 @@ def make_api_call(
     except Exception as e:
         return {"status": "error", "error": f"Exception: {str(e)}"}
 
-
 def create_prompt(test_case: Dict, approach: str) -> str:
     """Create prompt based on approach"""
     base_question = test_case["question"]
@@ -324,7 +320,6 @@ First, generate your claims, then evaluate them:"""
 
 Work through this step by step:"""
 
-
 def parse_claims(response: str) -> List[Dict[str, Any]]:
     """Parse claims from Conjecture response"""
     claims = []
@@ -337,7 +332,6 @@ def parse_claims(response: str) -> List[Dict[str, Any]]:
         )
 
     return claims
-
 
 def count_reasoning_steps(response: str) -> int:
     """Count reasoning indicators in response"""
@@ -363,7 +357,6 @@ def count_reasoning_steps(response: str) -> int:
     response_lower = response.lower()
     count = sum(1 for indicator in step_indicators if indicator in response_lower)
     return min(count, 10)  # Cap at 10 for normalization
-
 
 async def evaluate_with_llm_judge(test_result: TestResult) -> TestResult:
     """Evaluate test result using LLM-as-a-Judge"""
@@ -440,7 +433,6 @@ Provide scores in JSON format:
 
     return test_result
 
-
 async def run_single_test(
     model_key: str, model_config: Dict, test_case: Dict, approach: str
 ) -> TestResult:
@@ -509,7 +501,6 @@ async def run_single_test(
             error=api_result["error"],
         )
 
-
 async def run_model_tests(model_key: str, model_config: Dict) -> List[TestResult]:
     """Run all tests for a single model (prevents reloading)"""
     print(f"\n{'=' * 60}")
@@ -531,7 +522,6 @@ async def run_model_tests(model_key: str, model_config: Dict) -> List[TestResult
             await asyncio.sleep(1)
 
     return results
-
 
 async def run_comprehensive_experiment():
     """Run comprehensive experiment with all models"""
@@ -568,7 +558,6 @@ async def run_comprehensive_experiment():
 
     return all_results
 
-
 async def test_model_connectivity():
     """Test connectivity to all models"""
     for model_key, config in MODELS.items():
@@ -583,7 +572,6 @@ async def test_model_connectivity():
             print(f"    [OK] Connected")
         else:
             print(f"    [FAIL] {result['error']}")
-
 
 async def save_results(results: List[TestResult]):
     """Save results to file"""
@@ -607,7 +595,6 @@ async def save_results(results: List[TestResult]):
         json.dump(data, f, indent=2)
 
     print(f"\n[OK] Results saved to: {filepath}")
-
 
 async def generate_analysis(results: List[TestResult]):
     """Generate analysis report"""
@@ -690,7 +677,6 @@ This experiment evaluated {len(MODELS)} models using {len(APPROACHES)} approache
         f.write(report)
 
     print(f"[OK] Analysis report saved to: {filepath}")
-
 
 if __name__ == "__main__":
     asyncio.run(run_comprehensive_experiment())

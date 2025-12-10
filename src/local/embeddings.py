@@ -22,7 +22,6 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-
 class LocalEmbeddingManager:
     """
     Lightweight local embedding manager using sentence-transformers.
@@ -276,88 +275,3 @@ class LocalEmbeddingManager:
 
         return health
 
-
-class MockEmbeddingManager:
-    """Mock embedding manager for testing and development."""
-
-    def __init__(self, embedding_dim: int = 384):
-        self.embedding_dim = embedding_dim
-        self._initialized = True
-        self.call_count = 0
-
-    async def initialize(self) -> None:
-        """Initialize mock service."""
-        pass
-
-    async def close(self) -> None:
-        """Close mock service."""
-        pass
-
-    async def generate_embedding(self, text: str) -> List[float]:
-        """Generate deterministic mock embedding."""
-        if not text or not text.strip():
-            raise ValueError("Text cannot be empty")
-
-        self.call_count += 1
-        # Generate deterministic but pseudo-random embedding based on text
-        hash_val = hash(text) % (2 ** 31)
-        np.random.seed(hash_val)
-        embedding = np.random.normal(0, 1, self.embedding_dim)
-        # Normalize to unit vector
-        embedding = embedding / np.linalg.norm(embedding)
-        return embedding.astype(np.float32).tolist()
-
-    async def generate_embeddings_batch(self, texts: List[str], batch_size: int = 8) -> List[List[float]]:
-        """Generate mock embeddings for multiple texts."""
-        return [await self.generate_embedding(text) for text in texts if text and text.strip()]
-
-    async def compute_similarity(self, embedding1: List[float], embedding2: List[float]) -> float:
-        """Compute cosine similarity."""
-        try:
-            emb1 = np.array(embedding1, dtype=np.float32)
-            emb2 = np.array(embedding2, dtype=np.float32)
-
-            dot_product = np.dot(emb1, emb2)
-            norm1 = np.linalg.norm(emb1)
-            norm2 = np.linalg.norm(emb2)
-
-            if norm1 == 0 or norm2 == 0:
-                return 0.0
-
-            similarity = float(dot_product / (norm1 * norm2))
-            return max(0.0, min(1.0, similarity))
-        except Exception:
-            return 0.0
-
-    async def find_most_similar(self, query_embedding: List[float],
-                              candidate_embeddings: List[List[float]]) -> int:
-        """Find index of most similar embedding."""
-        if not candidate_embeddings:
-            return -1
-
-        similarities = []
-        for candidate in candidate_embeddings:
-            similarity = await self.compute_similarity(query_embedding, candidate)
-            similarities.append(similarity)
-
-        return int(np.argmax(similarities))
-
-    def get_model_info(self) -> Dict[str, Any]:
-        """Get mock model info."""
-        return {
-            "service": "mock_embeddings",
-            "model_name": f"mock-dim{self.embedding_dim}",
-            "embedding_dimension": self.embedding_dim,
-            "initialized": True,
-            "call_count": self.call_count
-        }
-
-    async def health_check(self) -> Dict[str, Any]:
-        """Health check for mock service."""
-        return {
-            'service': 'mock_embeddings',
-            'status': 'healthy',
-            'initialized': True,
-            'embedding_dimension': self.embedding_dim,
-            'call_count': self.call_count
-        }

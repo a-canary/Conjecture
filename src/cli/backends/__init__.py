@@ -7,7 +7,6 @@ Provides pluggable backend system for different LLM providers
 from typing import Dict, Type, Any, List
 from src.cli.base_cli import BaseCLI, BackendNotAvailableError
 
-
 class BackendRegistry:
     """Registry for managing CLI backends"""
     
@@ -48,10 +47,8 @@ class BackendRegistry:
                 pass
         return available
 
-
 # Global backend registry instance
 BACKEND_REGISTRY = BackendRegistry()
-
 
 # Import and register backends
 try:

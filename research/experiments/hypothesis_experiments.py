@@ -9,7 +9,6 @@ from experiment_framework import (
     ExperimentFramework, ExperimentConfig, ExperimentType, EvaluationMetric
 )
 
-
 class HypothesisExperiments:
     """Collection of experiments to validate Conjecture's core hypotheses"""
     
@@ -310,7 +309,6 @@ class HypothesisExperiments:
         
         return "\n".join(report)
 
-
 async def main():
     """Main function to run hypothesis validation experiments"""
     from config.common import ProviderConfig
@@ -358,7 +356,6 @@ async def main():
     print("HYPOTHESIS VALIDATION COMPLETE")
     print("="*50)
     print(report)
-
 
 if __name__ == "__main__":
     asyncio.run(main())

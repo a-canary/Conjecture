@@ -14,12 +14,10 @@ from enum import Enum
 
 logger = logging.getLogger(__name__)
 
-
 class ModelProvider(Enum):
     """Available local model providers."""
     OLLAMA = "ollama"
     LM_STUDIO = "lm_studio"
-
 
 @dataclass
 class ModelInfo:
@@ -32,7 +30,6 @@ class ModelInfo:
     parameters: Optional[str] = None
     quantization: Optional[str] = None
 
-
 @dataclass
 class GenerationConfig:
     """Configuration for text generation."""
@@ -42,7 +39,6 @@ class GenerationConfig:
     max_tokens: int = 2048
     stream: bool = False
     stop: Optional[List[str]] = None
-
 
 class OllamaClient:
     """
@@ -479,7 +475,6 @@ class OllamaClient:
         """Async context manager exit."""
         await self.close()
 
-
 async def create_ollama_client(base_url: str = "http://localhost:11434",
                               timeout: int = 60,
                               provider: ModelProvider = ModelProvider.OLLAMA) -> OllamaClient:
@@ -497,7 +492,6 @@ async def create_ollama_client(base_url: str = "http://localhost:11434",
     client = OllamaClient(base_url, timeout, provider)
     await client.initialize()
     return client
-
 
 # Test functions
 async def test_ollama_client():
@@ -529,7 +523,6 @@ async def test_ollama_client():
     
     except Exception as e:
         print(f"LM Studio test failed: {e}")
-
 
 if __name__ == "__main__":
     asyncio.run(test_ollama_client())

@@ -18,9 +18,7 @@ from .models import (
 )
 from utils.id_generator import generate_template_id
 
-
 logger = logging.getLogger(__name__)
-
 
 class PromptTemplateManager:
     """

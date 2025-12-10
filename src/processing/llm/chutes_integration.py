@@ -9,13 +9,11 @@ from dataclasses import dataclass, field
 
 from .common import GenerationConfig as BaseGenerationConfig, LLMProcessingResult
 
-
 @dataclass
 class GenerationConfig(BaseGenerationConfig):
     """Extended generation config for Chutes.ai"""
     # Chutes-specific parameters can be added here
     pass
-
 
 @dataclass
 class ChutesClaim:
@@ -28,7 +26,6 @@ class ChutesClaim:
     tags: List[str] = field(default_factory=list)
     metadata: Dict[str, Any] = field(default_factory=dict)
 
-
 @dataclass
 class ChutesProcessingResult:
     """Result from Chutes.ai processing"""
@@ -39,7 +36,6 @@ class ChutesProcessingResult:
     processing_time_ms: int
     errors: List[str] = field(default_factory=list)
     metadata: Dict[str, Any] = field(default_factory=dict)
-
 
 class ChutesProcessor:
     """
@@ -64,119 +60,63 @@ class ChutesProcessor:
         self._stats["requests_processed"] += 1
 
         try:
-            # Mock implementation for now - in real scenario this would call Chutes.ai API
-            # For testing purposes, we'll create a mock response
+            # Make API request to Chutes.ai
+            import requests
             
-            mock_claim = ChutesClaim(
-                id="mock_001",
-                content=f"Mock response to: {prompt[:100]}...",
-                confidence=0.85,
-                type="fact",  # Would be ClaimType.FACT in real implementation
-                state="validated",  # Would be ClaimState.VALIDATED in real implementation
-                tags=["mock", "test"],
-                metadata={"model": self.model_name}
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            data = {
+                "model": self.model_name,
+                "prompt": prompt,
+                "max_tokens": config.max_tokens if hasattr(config, 'max_tokens') else 1000,
+                "temperature": config.temperature if hasattr(config, 'temperature') else 0.7
+            }
+            
+            response = requests.post(
+                f"{self.api_url}/chat/completions",
+                headers=headers,
+                json=data,
+                timeout=config.timeout if hasattr(config, 'timeout') else 30
             )
-
-            processing_time = (time.time() - start_time) * 1000
+            
+            response.raise_for_status()
+            result = response.json()
+            
+            # Extract response content
+            content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+            tokens_used = result.get("usage", {}).get("total_tokens", 0)
+            
+            # Update stats
             self._stats["successful_requests"] += 1
-            self._stats["total_tokens"] += 150  # Mock token count
-            self._stats["total_time"] += processing_time / 1000
-
+            self._stats["total_tokens"] += tokens_used
+            
+            processing_time = (time.time() - start_time) * 1000
+            self._stats["total_time"] += processing_time
+            
             return ChutesProcessingResult(
                 success=True,
-                processed_claims=[mock_claim],
+                processed_claims=[ChutesClaim(
+                    id="generated",
+                    content=content,
+                    confidence=0.8,
+                    type=None,
+                    state=None
+                )],
                 model_used=self.model_name,
-                tokens_used=150,
-                processing_time_ms=int(processing_time),
-                metadata={"api_url": self.api_url}
+                tokens_used=tokens_used,
+                processing_time_ms=int(processing_time)
             )
-
+            
         except Exception as e:
             processing_time = (time.time() - start_time) * 1000
-            self._stats["total_time"] += processing_time / 1000
-
             return ChutesProcessingResult(
                 success=False,
                 processed_claims=[],
                 model_used=self.model_name,
                 tokens_used=0,
                 processing_time_ms=int(processing_time),
-                errors=[f"Chutes.ai API error: {str(e)}"]
+                errors=[str(e)]
             )
-
-    def process_claims(self, claims: List[Any], task: str, config: GenerationConfig) -> ChutesProcessingResult:
-        """Process existing claims through Chutes.ai"""
-        start_time = time.time()
-        self._stats["requests_processed"] += 1
-
-        try:
-            # Mock implementation for processing claims
-            processed_claims = []
-            
-            for i, claim in enumerate(claims):
-                # Create a processed version of the claim
-                processed_claim = ChutesClaim(
-                    id=f"processed_{claim.id if hasattr(claim, 'id') else i}",
-                    content=f"Processed: {claim.content if hasattr(claim, 'content') else str(claim)}",
-                    confidence=claim.confidence if hasattr(claim, 'confidence') else 0.8,
-                    type=claim.type if hasattr(claim, 'type') else "observation",
-                    state=claim.state if hasattr(claim, 'state') else "validated",
-                    tags=getattr(claim, 'tags', []) + ["processed"],
-                    metadata={"task": task, "original_id": getattr(claim, 'id', None)}
-                )
-                processed_claims.append(processed_claim)
-
-            processing_time = (time.time() - start_time) * 1000
-            self._stats["successful_requests"] += 1
-            self._stats["total_tokens"] += len(claims) * 100  # Estimate tokens
-            self._stats["total_time"] += processing_time / 1000
-
-            return ChutesProcessingResult(
-                success=True,
-                processed_claims=processed_claims,
-                model_used=self.model_name,
-                tokens_used=len(claims) * 100,
-                processing_time_ms=int(processing_time),
-                metadata={"task": task, "claims_processed": len(claims)}
-            )
-
-        except Exception as e:
-            processing_time = (time.time() - start_time) * 1000
-            self._stats["total_time"] += processing_time / 1000
-
-            return ChutesProcessingResult(
-                success=False,
-                processed_claims=[],
-                model_used=self.model_name,
-                tokens_used=0,
-                processing_time_ms=int(processing_time),
-                errors=[f"Chutes.ai claim processing error: {str(e)}"]
-            )
-
-    def get_stats(self) -> Dict[str, Any]:
-        """Get processor statistics"""
-        if self._stats["requests_processed"] > 0:
-            success_rate = self._stats["successful_requests"] / self._stats["requests_processed"]
-            avg_time = self._stats["total_time"] / self._stats["requests_processed"]
-            avg_tokens = self._stats["total_tokens"] / self._stats["successful_requests"] if self._stats["successful_requests"] > 0 else 0
-        else:
-            success_rate = 0.0
-            avg_time = 0.0
-            avg_tokens = 0.0
-
-        return {
-            "requests_processed": self._stats["requests_processed"],
-            "successful_requests": self._stats["successful_requests"],
-            "success_rate": success_rate,
-            "total_tokens": self._stats["total_tokens"],
-            "average_tokens_per_request": avg_tokens,
-            "average_processing_time": avg_time,
-            "total_processing_time": self._stats["total_time"],
-            "model": self.model_name,
-            "api_url": self.api_url
-        }
-
-
-def create_chutes_processor(api_key: str, api_url: str = "https://llm.chutes.ai/v1", model_name: str = "zai-org/GLM-4.6") -> ChutesProcessor:
-    """Factory function to create ChutesProcessor"""
-    return ChutesProcessor(api_key=api_key, api_url=api_url, model_name=model_name)

@@ -31,7 +31,6 @@ except ImportError:
     from src.core.models import Claim
     from src.config.unified_config import UnifiedConfig
 
-
 class UnifiedLLMManager:
     """Unified LLM manager supporting all providers with intelligent fallback"""
 
@@ -387,10 +386,8 @@ class UnifiedLLMManager:
 
         return info
 
-
 # Global instance for easy access
 _unified_llm_manager = None
-
 
 def get_unified_llm_manager() -> UnifiedLLMManager:
     """Get the global unified LLM manager instance"""

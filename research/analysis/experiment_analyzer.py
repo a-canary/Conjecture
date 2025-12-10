@@ -15,7 +15,6 @@ import seaborn as sns
 import pandas as pd
 from scipy import stats
 
-
 @dataclass
 class ExperimentSummary:
     """Summary statistics for an experiment"""
@@ -31,7 +30,6 @@ class ExperimentSummary:
     hypothesis_supported: bool
     confidence_level: float
 
-
 @dataclass
 class ComparisonResult:
     """Result of comparing two experiments or models"""
@@ -43,7 +41,6 @@ class ComparisonResult:
     statistical_significance: float
     effect_size: float
     interpretation: str
-
 
 class ExperimentAnalyzer:
     """Comprehensive experiment analysis and reporting"""
@@ -466,7 +463,6 @@ class ExperimentAnalyzer:
         print(f"Analysis saved for {summary.experiment_name}")
         return summary
 
-
 def main():
     """Main function to analyze experiments"""
     analyzer = ExperimentAnalyzer()
@@ -494,7 +490,6 @@ def main():
     for summary in summaries:
         status = "✅" if summary.hypothesis_supported else "❌"
         print(f"  {status} {summary.experiment_name}: {summary.success_rate:.1%} success rate")
-
 
 if __name__ == "__main__":
     main()

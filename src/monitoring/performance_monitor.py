@@ -17,7 +17,6 @@ import functools
 
 logger = logging.getLogger(__name__)
 
-
 @dataclass
 class PerformanceMetric:
     """Individual performance metric data point"""
@@ -28,14 +27,12 @@ class PerformanceMetric:
     tags: Dict[str, str] = field(default_factory=dict)
     metadata: Dict[str, Any] = field(default_factory=dict)
 
-
 @dataclass
 class PerformanceSnapshot:
     """Snapshot of performance metrics at a point in time"""
     timestamp: datetime
     metrics: Dict[str, PerformanceMetric] = field(default_factory=dict)
     system_info: Dict[str, Any] = field(default_factory=dict)
-
 
 class PerformanceMonitor:
     """
@@ -456,10 +453,8 @@ class PerformanceMonitor:
         except Exception as e:
             logger.error(f"Failed to export metrics: {e}")
 
-
 # Global performance monitor instance
 _global_monitor: Optional[PerformanceMonitor] = None
-
 
 def get_performance_monitor() -> PerformanceMonitor:
     """Get the global performance monitor instance"""
@@ -468,7 +463,6 @@ def get_performance_monitor() -> PerformanceMonitor:
         _global_monitor = PerformanceMonitor()
         _global_monitor.start_monitoring()
     return _global_monitor
-
 
 def monitor_performance(operation_name: str, tags: Optional[Dict[str, str]] = None):
     """Decorator for automatic performance monitoring"""

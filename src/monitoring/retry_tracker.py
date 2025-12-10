@@ -18,7 +18,6 @@ import uuid
 
 logger = logging.getLogger(__name__)
 
-
 @dataclass
 class RetryEvent:
     """Individual retry event data"""
@@ -36,7 +35,6 @@ class RetryEvent:
     resolved: bool = False
     resolution_time_ms: Optional[int] = None
 
-
 @dataclass
 class ErrorPattern:
     """Pattern analysis for errors"""
@@ -49,7 +47,6 @@ class ErrorPattern:
     success_rate_after_retry: float
     common_contexts: List[Dict[str, Any]]
     recommendations: List[str]
-
 
 @dataclass
 class RetryStatistics:
@@ -67,7 +64,6 @@ class RetryStatistics:
     error_breakdown: Dict[str, int]
     retry_patterns: Dict[str, Any]
     time_to_resolution: Dict[str, float]
-
 
 class RetryTracker:
     """Advanced retry tracking and error analysis system"""
@@ -758,12 +754,10 @@ class RetryTracker:
         
         return "\n".join(report_lines)
 
-
 # Utility functions for integration
 def create_retry_tracker(max_events: int = 10000) -> RetryTracker:
     """Create and initialize a retry tracker"""
     return RetryTracker(max_events=max_events)
-
 
 # Context manager for retry tracking
 class RetryContext:

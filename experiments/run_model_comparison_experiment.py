@@ -42,7 +42,6 @@ from statistical_analyzer import ConjectureStatisticalAnalyzer
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tests"))
 from test_llm_judge import LLMJudgeSystem, JudgeConfiguration, EvaluationResult
 
-
 @dataclass
 class ExperimentConfig:
     """Configuration for model comparison experiment"""
@@ -85,7 +84,6 @@ class ExperimentConfig:
                 "hallucination_reduction": 1.3
             }
 
-
 @dataclass
 class TestResult:
     """Result from a single test case execution"""
@@ -113,7 +111,6 @@ class TestResult:
     # Metadata
     timestamp: datetime
     error_message: Optional[str] = None
-
 
 class ModelComparisonExperiment:
     """Main experiment runner for model comparison"""
@@ -756,7 +753,6 @@ Provide a clear, comprehensive answer with step-by-step reasoning. Focus on accu
         
         self.logger.info(f"Raw results saved to {results_file}")
 
-
 async def main():
     """Main entry point for the model comparison experiment"""
     print("=" * 80)
@@ -798,7 +794,6 @@ async def main():
         return 1
     
     return 0
-
 
 if __name__ == "__main__":
     import sys

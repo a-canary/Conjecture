@@ -20,7 +20,6 @@ import threading
 
 logger = logging.getLogger(__name__)
 
-
 class BenchmarkType(Enum):
     """Types of benchmarks"""
     THROUGHPUT = "throughput"
@@ -31,7 +30,6 @@ class BenchmarkType(Enum):
     ENDURANCE = "endurance"
     RESOURCE_UTILIZATION = "resource_utilization"
 
-
 class BenchmarkStatus(Enum):
     """Benchmark execution status"""
     PENDING = "pending"
@@ -39,7 +37,6 @@ class BenchmarkStatus(Enum):
     COMPLETED = "completed"
     FAILED = "failed"
     CANCELLED = "cancelled"
-
 
 @dataclass
 class BenchmarkMetric:
@@ -50,7 +47,6 @@ class BenchmarkMetric:
     timestamp: datetime = field(default_factory=datetime.utcnow)
     tags: Dict[str, str] = field(default_factory=dict)
     metadata: Dict[str, Any] = field(default_factory=dict)
-
 
 @dataclass
 class BenchmarkResult:
@@ -66,7 +62,6 @@ class BenchmarkResult:
     configuration: Dict[str, Any] = field(default_factory=dict)
     system_info: Dict[str, Any] = field(default_factory=dict)
 
-
 @dataclass
 class CapacityPlan:
     """Capacity planning recommendation"""
@@ -77,7 +72,6 @@ class CapacityPlan:
     cost_estimate: Optional[float] = None
     implementation_timeline: Optional[str] = None
     risks: List[str] = field(default_factory=list)
-
 
 class ScalingBenchmark:
     """

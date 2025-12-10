@@ -22,7 +22,6 @@ try:
 except ImportError:
     print("[FAIL] python-dotenv not available")
 
-
 def make_api_call(prompt: str, model_name: str, max_tokens: int = 500) -> dict:
     """Simple API call to LM Studio"""
     try:
@@ -54,7 +53,6 @@ def make_api_call(prompt: str, model_name: str, max_tokens: int = 500) -> dict:
 
     except Exception as e:
         return {"status": "error", "error": f"Exception: {str(e)}"}
-
 
 def test_claim_formats():
     """Test different claim formats with simple example"""
@@ -100,7 +98,6 @@ def test_claim_formats():
 
         print("-" * 30)
         time.sleep(1)
-
 
 if __name__ == "__main__":
     test_claim_formats()

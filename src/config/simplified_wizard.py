@@ -15,7 +15,6 @@ from .simplified_config import (
     get_config_manager
 )
 
-
 class SimplifiedConfigWizard:
     """Simplified configuration wizard for OpenAI-compatible providers"""
 
@@ -354,7 +353,6 @@ class SimplifiedConfigWizard:
         
         print(f"✅ Configuration directory created: {config_dir}")
 
-
 def main():
     """Main entry point for the configuration wizard"""
     import argparse
@@ -394,7 +392,6 @@ def main():
     except Exception as e:
         print(f"\n❌ Configuration wizard error: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

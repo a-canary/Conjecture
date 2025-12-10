@@ -26,7 +26,6 @@ try:
 except ImportError:
     print("[FAIL] python-dotenv not available")
 
-
 @dataclass
 class TestResult:
     """Complete test result with quality metrics"""
@@ -60,7 +59,6 @@ class TestResult:
             self.tool_call_names = []
         if self.timestamp is None:
             self.timestamp = datetime.now().isoformat()
-
 
 # Enhanced test cases with coding tasks
 TEST_CASES = [
@@ -175,7 +173,6 @@ MODELS = {
 
 APPROACHES = ["direct", "conjecture_tool_calls"]
 
-
 def make_api_call(
     prompt: str, model_config: Dict, max_tokens: int = 2000
 ) -> Dict[str, Any]:
@@ -245,7 +242,6 @@ def make_api_call(
     except Exception as e:
         return {"status": "error", "error": f"Exception: {str(e)}"}
 
-
 def create_prompt(test_case: Dict, approach: str) -> str:
     """Create prompt based on approach"""
     base_question = test_case["question"]
@@ -293,7 +289,6 @@ Your answer:"""
     else:
         return f"Answer this question: {base_question}"
 
-
 def parse_tool_calls(response: str) -> Tuple[List[Dict[str, Any]], bool]:
     """Parse tool calls from JSON response"""
     tool_calls = []
@@ -328,7 +323,6 @@ def parse_tool_calls(response: str) -> Tuple[List[Dict[str, Any]], bool]:
 
     return tool_calls, len(tool_calls) > 0
 
-
 def count_reasoning_steps(response: str) -> int:
     """Count reasoning indicators"""
     step_indicators = [
@@ -357,7 +351,6 @@ def count_reasoning_steps(response: str) -> int:
     count = sum(1 for indicator in step_indicators if indicator in response_lower)
     return min(count, 10)
 
-
 def evaluate_coding_response(response: str, test_case_id: str) -> float:
     """Evaluate coding task responses"""
     if not test_case_id.startswith("coding_"):
@@ -383,7 +376,6 @@ def evaluate_coding_response(response: str, test_case_id: str) -> float:
         score += 0.3
 
     return min(score, 1.0)
-
 
 def enhanced_evaluation(result: TestResult) -> TestResult:
     """Enhanced evaluation with coding assessment"""
@@ -435,7 +427,6 @@ def enhanced_evaluation(result: TestResult) -> TestResult:
     result.coding_score = evaluate_coding_response(response, result.test_case_id)
 
     return result
-
 
 async def run_single_test(
     model_key: str, model_config: Dict, test_case: Dict, approach: str
@@ -511,7 +502,6 @@ async def run_single_test(
             error=api_result["error"],
         )
 
-
 async def run_model_tests(model_key: str, model_config: Dict) -> List[TestResult]:
     """Run all tests for a single model"""
     print(f"\n{'=' * 60}")
@@ -529,7 +519,6 @@ async def run_model_tests(model_key: str, model_config: Dict) -> List[TestResult
             await asyncio.sleep(0.5)
 
     return results
-
 
 async def run_iteration_3():
     """Run iteration 3 with proper JSON tool calls"""
@@ -589,7 +578,6 @@ async def run_iteration_3():
     await generate_iteration_analysis(all_results)
 
     return all_results
-
 
 async def generate_iteration_analysis(results: List[TestResult]):
     """Generate analysis for iteration 3"""
@@ -711,7 +699,6 @@ Tested {len(MODELS)} models with proper JSON tool calls format on {len(TEST_CASE
         f.write(report)
 
     print(f"[OK] Analysis saved to: {filepath}")
-
 
 if __name__ == "__main__":
     asyncio.run(run_iteration_3())

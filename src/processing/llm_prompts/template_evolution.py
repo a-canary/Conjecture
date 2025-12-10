@@ -19,7 +19,6 @@ import re
 from .models import PromptTemplate, PromptTemplateType, PromptMetrics
 from .tiny_llm_optimizer import OptimizationMetrics, TaskDescription
 
-
 class MutationType(str, Enum):
     """Types of mutations for template evolution"""
     WORD_SUBSTITUTION = "word_substitution"
@@ -29,7 +28,6 @@ class MutationType(str, Enum):
     FORMAT_CHANGE = "format_change"
     EXAMPLE_MODIFICATION = "example_modification"
     INSTRUCTION_SIMPLIFICATION = "instruction_simplification"
-
 
 @dataclass
 class EvolutionConfig:
@@ -47,7 +45,6 @@ class EvolutionConfig:
     min_template_length: int = 50   # Minimum tokens
     preferred_structures: List[str] = field(default_factory=lambda: ["xml", "json", "plain"])
 
-
 @dataclass
 class TemplateGenome:
     """Represents a template's genetic material"""
@@ -61,7 +58,6 @@ class TemplateGenome:
     parent_ids: List[str] = field(default_factory=list)
     mutation_history: List[str] = field(default_factory=list)
 
-
 @dataclass
 class EvolutionStats:
     """Statistics for evolution process"""
@@ -73,7 +69,6 @@ class EvolutionStats:
     convergence_rate: float
     mutations_applied: int
     templates_tested: int
-
 
 class TemplateMutator:
     """Handles mutation of template genomes"""
@@ -289,7 +284,6 @@ class TemplateMutator:
 
         return genome
 
-
 class TemplateCrossover:
     """Handles crossover between template genomes"""
 
@@ -393,7 +387,6 @@ class TemplateCrossover:
 
         return combined_metadata
 
-
 class TemplateSelector:
     """Handles selection of templates for next generation"""
 
@@ -437,7 +430,6 @@ class TemplateSelector:
             attempts += 1
 
         return parent1, parent2
-
 
 class TemplateEvolution:
     """Main template evolution system using genetic algorithms"""

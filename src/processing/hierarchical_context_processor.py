@@ -15,14 +15,12 @@ from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-
 class ContextLevel(Enum):
     """Context processing levels"""
     EXECUTIVE = "summary"          # 2-3 sentences, highest level
     KEY_CLAIMS = "key_claims"     # Key claims with confidence
     DETAILED_EVIDENCE = "detailed_evidence"  # Evidence with sources
     FULL_CONTEXT = "full_context"      # Complete context (accessed on-demand)
-
 
 @dataclass
 class LevelConfig:
@@ -31,7 +29,6 @@ class LevelConfig:
     min_confidence: float     # Minimum confidence threshold
     compression_ratio: float     # Compression ratio for this level
     description: str          # Human-readable description
-
 
 class HierarchicalContextProcessor:
     """
@@ -216,7 +213,6 @@ class HierarchicalContextProcessor:
             'compression_achieved': 0
         }
 
-
 # Global instance for reuse
 _hierarchical_processor = None
 
@@ -226,7 +222,6 @@ def get_hierarchical_processor() -> HierarchicalContextProcessor:
     if _hierarchical_processor is None:
         _hierarchical_processor = HierarchicalContextProcessor()
     return _hierarchical_processor
-
 
 def process_context_hierarchical(context_claims: List[Claim], task_complexity: str = "medium") -> Dict[str, Any]:
     """
@@ -241,7 +236,6 @@ def process_context_hierarchical(context_claims: List[Claim], task_complexity: s
     """
     processor = get_hierarchical_processor()
     return processor.process_large_context(context_claims, task_complexity)
-
 
 def access_context_level(processed_context: Dict[str, Any], level: str, 
                      start_index: int = 0, count: int = 5) -> List[Dict[str, Any]]:

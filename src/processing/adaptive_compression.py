@@ -16,7 +16,6 @@ from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-
 class TaskComplexity(Enum):
     """Task complexity levels for compression decisions"""
     SIMPLE = "simple"
@@ -24,14 +23,12 @@ class TaskComplexity(Enum):
     COMPLEX = "complex"
     ENTERPRISE = "enterprise"
 
-
 @dataclass
 class CompressionConfig:
     """Configuration for compression levels"""
     target_ratio: float  # Target compression ratio (0.0-1.0)
     min_confidence: float  # Minimum confidence threshold
     max_context_size: int  # Maximum context size in tokens
-
 
 class AdaptiveCompressionEngine:
     """
@@ -304,7 +301,6 @@ class AdaptiveCompressionEngine:
             'compression_applied': 0
         }
 
-
 # Global instance for reuse
 _adaptive_compressor = None
 
@@ -314,7 +310,6 @@ def get_adaptive_compressor() -> AdaptiveCompressionEngine:
     if _adaptive_compressor is None:
         _adaptive_compressor = AdaptiveCompressionEngine()
     return _adaptive_compressor
-
 
 def compress_context_adaptive(context_claims: List[Claim], task: str, 
                            max_tokens: Optional[int] = None) -> Tuple[List[Claim], Dict[str, Any]]:

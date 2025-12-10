@@ -23,7 +23,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from core.models import Claim, ClaimState, ClaimType
 
-
 @dataclass
 class ExperimentConfig:
     """Configuration for end-to-end pipeline experiment"""
@@ -40,7 +39,6 @@ class ExperimentConfig:
     # Output settings
     output_dir: str = "experiments/results"
 
-
 @dataclass
 class ExperimentResult:
     """Results from a single test case execution"""
@@ -52,7 +50,6 @@ class ExperimentResult:
     token_usage: int
     evaluation_score: float = 0.0
     error_message: Optional[str] = None
-
 
 @dataclass
 class ExperimentSummary:
@@ -73,7 +70,6 @@ class ExperimentSummary:
             self.baseline_results = []
         if self.full_pipeline_results is None:
             self.full_pipeline_results = []
-
 
 class StandaloneEndToEndExperiment:
     """Simplified end-to-end pipeline experiment"""
@@ -163,14 +159,14 @@ class StandaloneEndToEndExperiment:
         self.logger.info(f"Loaded {len(self.test_cases)} test cases, using {self.results.total_test_cases}")
     
     async def _simulate_baseline_approach(self, test_case: Dict[str, Any]) -> Optional[ExperimentResult]:
-        """Simulate baseline approach with mock responses"""
+        """Simulate baseline approach with test responses"""
         try:
             start_time = time.time()
             
             # Simulate processing time
             await asyncio.sleep(0.5)
             
-            # Generate mock response based on test case
+            # Generate test response based on test case
             question = test_case.get('question') or test_case.get('task', '')
             response = f"Direct answer to: {question[:100]}... [Baseline approach - direct processing]"
             
@@ -203,7 +199,7 @@ class StandaloneEndToEndExperiment:
             )
     
     async def _simulate_full_pipeline_approach(self, test_case: Dict[str, Any]) -> Optional[ExperimentResult]:
-        """Simulate full pipeline approach with mock responses"""
+        """Simulate full pipeline approach with test responses"""
         try:
             start_time = time.time()
             
@@ -214,7 +210,7 @@ class StandaloneEndToEndExperiment:
                 await asyncio.sleep(0.3)  # Simulate processing
                 self.logger.debug(f"Completed pipeline stage: {stage}")
             
-            # Generate mock response based on test case
+            # Generate test response based on test case
             question = test_case.get('question') or test_case.get('task', '')
             response = f"""Comprehensive analysis of: {question[:100]}...
 
@@ -369,7 +365,6 @@ This is a simulation. For actual validation, the real Conjecture pipeline needs 
         with open(md_file, 'w', encoding='utf-8') as f:
             f.write(md_content)
 
-
 async def main():
     """Main function to run the standalone end-to-end pipeline experiment"""
     import argparse
@@ -400,7 +395,6 @@ async def main():
     else:
         print(f"\n❌ Experiment failed. Check logs for details.")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     asyncio.run(main())

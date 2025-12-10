@@ -9,7 +9,6 @@ import ctypes
 from pathlib import Path
 from typing import Optional
 
-
 def ensure_utf8_encoding() -> bool:
     """
     Ensure UTF-8 encoding for console output on all platforms.
@@ -41,7 +40,6 @@ def ensure_utf8_encoding() -> bool:
     except Exception:
         return False
 
-
 def get_safe_console() -> 'SafeConsole':
     """
     Get a console instance with Unicode error handling.
@@ -51,7 +49,6 @@ def get_safe_console() -> 'SafeConsole':
     """
     from rich.console import Console
     return SafeConsole()
-
 
 class SafeConsole:
     """
@@ -140,7 +137,6 @@ class SafeConsole:
             print(content)
             print(border)
 
-
 def setup_unicode_environment() -> bool:
     """
     Setup the complete Unicode environment for the application.
@@ -165,7 +161,6 @@ def setup_unicode_environment() -> bool:
             pass  # Keep system default
     
     return success
-
 
 def get_unicode_error_context(error: Exception) -> str:
     """
@@ -207,7 +202,6 @@ SOLUTION: Ensure files are saved with UTF-8 encoding
 
 Try setting PYTHONIOENCODING=utf-8 environment variable.
 """
-
 
 # Initialize Unicode environment when module is imported
 setup_unicode_environment()

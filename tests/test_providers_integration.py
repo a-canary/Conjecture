@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Provider Integration Testing Script
-Tests all configured LLM providers with real or mock responses
+Tests all configured LLM providers with real or test responses
 """
 
 import os
@@ -19,7 +19,6 @@ from src.core.models import BasicClaim, ClaimState, ClaimType
 from src.processing.llm.llm_manager import LLMManager
 from src.config.unified_provider_validator import UnifiedProviderValidator
 
-
 @dataclass
 class ProviderTestResult:
     """Results from testing a specific provider"""
@@ -35,7 +34,6 @@ class ProviderTestResult:
     processing_error: Optional[str]
     response_quality_score: Optional[float]
     total_tokens_used: int
-
 
 class ProviderIntegrationTester:
     """Comprehensive provider integration tester"""
@@ -457,7 +455,6 @@ class ProviderIntegrationTester:
             }
         }
 
-
 def main():
     """Main testing function"""
     print("🧪 LLM Provider Integration Tester")
@@ -488,7 +485,6 @@ def main():
         import traceback
         traceback.print_exc()
         return 1
-
 
 if __name__ == "__main__":
     exit(main())

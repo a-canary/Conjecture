@@ -9,17 +9,16 @@ from datetime import datetime
 from typing import List, Optional, Tuple
 
 from ..core.basic_models import BasicClaim, ClaimState
-from ..data.mock_chroma import MockChromaDB
-
+from ..data.data_manager import DataManager
 
 class ExplorationEngine:
     """Manages claim exploration and prioritization"""
 
-    def __init__(self, db: MockChromaDB):
-        self.db = db
+    def __init__(self, data_manager: DataManager):
+        self.data_manager = data_manager
         self.similarity_threshold = 0.7
 
-    def get_next_exploration(self, root_claim: BasicClaim) -> Optional[BasicClaim]:
+    async def get_next_exploration(self, root_claim: BasicClaim) -> Optional[BasicClaim]:
         """
         Select claim with confidence < 0.95 and highest semantic similarity to root claim
         Implements weighted scoring: 70% semantic similarity + 30% support relationship
@@ -30,15 +29,22 @@ class ExplorationEngine:
             all_claims = []
 
             # Filter candidates by confidence and state
-            for claim_id in self.db.claims.keys():
-                claim = self.db.get_claim(claim_id)
-                if (
-                    claim
-                    and claim.confidence < 0.95
-                    and claim.state != ClaimState.ORPHANED
-                ):
-                    candidates.append(claim)
-                all_claims.append(claim)
+            all_claims_dicts = await self.data_manager.get_statistics()
+            all_claims = []
+            
+            # Get all claims from the data manager
+            if hasattr(self.data_manager, 'sqlite_manager') and self.data_manager.sqlite_manager:
+                # Get all claims from SQLite
+                claims_data = await self.data_manager.sqlite_manager.get_all_claims()
+                for claim_dict in claims_data:
+                    claim = BasicClaim(**claim_dict)
+                    all_claims.append(claim)
+                    
+                    if (
+                        claim.confidence < 0.95
+                        and claim.state != ClaimState.ORPHANED
+                    ):
+                        candidates.append(claim)
 
             if not candidates:
                 return None
@@ -85,7 +91,7 @@ class ExplorationEngine:
 
         return len(intersection) / len(union) if union else 0.0
 
-    def get_exploration_queue(
+    async def get_exploration_queue(
         self, root_claim: BasicClaim, max_claims: int = 10
     ) -> List[BasicClaim]:
         """
@@ -94,7 +100,9 @@ class ExplorationEngine:
         """
         try:
             # Get low confidence claims
-            low_conf_claims = self.db.get_low_confidence_claims(0.95)
+            filter_obj = ClaimFilter(confidence_max=0.95)
+            low_conf_claims_dicts = await self.data_manager.filter_claims(filter_obj)
+            low_conf_claims = [BasicClaim(**claim_dict) for claim_dict in low_conf_claims_dicts]
 
             # Filter out orphaned claims
             active_claims = [
@@ -125,7 +133,7 @@ class ExplorationEngine:
             print(f"❌ Error getting exploration queue: {e}")
             return []
 
-    def update_claim_states(self, claim: BasicClaim) -> bool:
+    async def update_claim_states(self, claim: BasicClaim) -> bool:
         """
         Update claim state based on confidence and relationships
         Implements state transition logic
@@ -145,7 +153,7 @@ class ExplorationEngine:
                 # Get supporting claims
                 supporting_claims = []
                 for sup_id in claim.supported_by:
-                    sup_claim = self.db.get_claim(sup_id)
+                    sup_claim = await self.data_manager.get_claim(sup_id)
                     if sup_claim:
                         supporting_claims.append(sup_claim)
 
@@ -182,7 +190,8 @@ class ExplorationEngine:
             claim.updated = datetime.utcnow()
 
             # Save changes
-            if self.db.update_claim(claim):
+            updates = {"state": claim.state.value, "updated": claim.updated}
+            if await self.data_manager.update_claim(claim.id, updates):
                 if old_state != claim.state:
                     print(
                         f"🔄 Claim {claim.id}: {old_state.value} → {claim.state.value}"
@@ -195,11 +204,11 @@ class ExplorationEngine:
             print(f"❌ Error updating claim state for {claim.id}: {e}")
             return False
 
-    def get_claim_statistics(self) -> dict:
+    async def get_claim_statistics(self) -> dict:
         """Get statistics about claim states and distribution"""
         try:
             stats = {
-                "total_claims": self.db.get_claim_count(),
+                "total_claims": 0,
                 "by_state": {},
                 "by_type": {},
                 "avg_confidence": 0.0,
@@ -207,7 +216,13 @@ class ExplorationEngine:
                 "low_confidence_count": 0,
             }
 
-            claims = list(self.db.claims.values())
+            # Get all claims from data manager
+            claims_data = await self.data_manager.get_statistics()
+            claims = []
+            if hasattr(self.data_manager, 'sqlite_manager') and self.data_manager.sqlite_manager:
+                claims_dicts = await self.data_manager.sqlite_manager.get_all_claims()
+                claims = [BasicClaim(**claim_dict) for claim_dict in claims_dicts]
+                stats["total_claims"] = len(claims)
             if not claims:
                 return stats
 
@@ -238,48 +253,48 @@ class ExplorationEngine:
             print(f"❌ Error generating claim statistics: {e}")
             return {}
 
-
-def test_exploration_engine():
+async def test_exploration_engine():
     """Test exploration engine functionality"""
     print("🧪 Testing Exploration Engine")
     print("=" * 40)
 
     # Setup
-    db = MockChromaDB("./data/exploration_test.json")
-    db.clear_all()
-    engine = ExplorationEngine(db)
+    from ..data.data_manager import DataManager, DataConfig
+    config = DataConfig(
+        sqlite_path="./data/exploration_test.db",
+        use_chroma=False,  # Disable Chroma for testing
+        use_embeddings=False  # Disable embeddings for testing
+    )
+    data_manager = DataManager(config)
+    await data_manager.initialize()
+    
+    engine = ExplorationEngine(data_manager)
 
     # Create sample claims
-    root_claim = BasicClaim(
-        id="exp_root_001",
+    root_claim = await data_manager.create_claim(
         content="Quantum encryption can prevent hospital data breaches through photon-based key distribution",
         confidence=0.3,
-        type=["thesis"],
-        tags=["quantum", "encryption", "healthcare"],
+        claim_id="exp_root_001"
     )
-    db.add_claim(root_claim)
     print("✅ Root claim created")
 
     # Create candidate claims
-    candidates = [
-        BasicClaim(
-            id="exp_cand_" + str(i),
+    candidates = []
+    for i in range(5):
+        claim = await data_manager.create_claim(
             content=f"Quantum key distribution using photon polarization for secure hospital communication #{i}",
             confidence=0.4 + (i * 0.1),
-            type=["concept"],
-            tags=["quantum", "encryption", "hospital"],
+            claim_id=f"exp_cand_{i}"
         )
-        for i in range(5)
-    ]
-
-    for claim in candidates:
-        db.add_claim(claim)
-        claim.supports = [root_claim.id]
+        candidates.append(claim)
+        
+        # Add relationship
+        await data_manager.add_relationship(claim.id, root_claim.id)
 
     print(f"✅ Created {len(candidates)} candidate claims")
 
     # Test get_next_exploration
-    next_claim = engine.get_next_exploration(root_claim)
+    next_claim = await engine.get_next_exploration(root_claim)
     if next_claim:
         print(f"✅ get_next_exploration: PASS (selected {next_claim.id})")
     else:
@@ -287,26 +302,32 @@ def test_exploration_engine():
         return False
 
     # Test exploration queue
-    queue = engine.get_exploration_queue(root_claim, max_claims=3)
+    queue = await engine.get_exploration_queue(root_claim, max_claims=3)
     print(f"✅ Exploration queue: PASS (found {len(queue)} claims)")
 
     # Test state updates
     high_conf_claim = candidates[-1]
-    high_conf_claim.update_confidence(0.95)
-    if engine.update_claim_states(high_conf_claim):
+    # Update confidence through data manager
+    await data_manager.update_claim(high_conf_claim.id, {"confidence": 0.95})
+    high_conf_claim = await data_manager.get_claim(high_conf_claim.id)
+    
+    if await engine.update_claim_states(high_conf_claim):
         print("✅ State promotion: PASS")
     else:
         print("❌ State promotion: FAIL")
         return False
 
     # Test statistics
-    stats = engine.get_claim_statistics()
+    stats = await engine.get_claim_statistics()
     print(f"✅ Statistics: PASS (total: {stats['total_claims']})")
 
+    # Cleanup
+    await data_manager.close()
+    
     print("🎉 All exploration engine tests passed!")
     return True
 
-
 if __name__ == "__main__":
-    success = test_exploration_engine()
+    import asyncio
+    success = asyncio.run(test_exploration_engine())
     exit(0 if success else 1)

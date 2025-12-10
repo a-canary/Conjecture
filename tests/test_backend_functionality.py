@@ -7,8 +7,7 @@ import sys
 import os
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
-
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 def test_backend_imports():
     """Test backend imports individually."""
@@ -87,7 +86,6 @@ def test_backend_imports():
         traceback.print_exc()
         return False
 
-
 def test_base_functionality():
     """Test base CLI functionality."""
     try:
@@ -141,7 +139,6 @@ def test_base_functionality():
 
         traceback.print_exc()
         return False
-
 
 if __name__ == "__main__":
     print("Testing backend functionality...")

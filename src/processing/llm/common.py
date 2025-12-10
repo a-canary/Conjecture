@@ -6,7 +6,6 @@ Consolidated configuration classes to reduce duplication
 from dataclasses import dataclass
 from typing import Optional, List, Dict, Any
 
-
 @dataclass
 class GenerationConfig:
     """Unified configuration for LLM generation across all providers"""
@@ -48,7 +47,6 @@ class GenerationConfig:
             base_params["stop"] = self.stop_sequences
 
         return base_params
-
 
 @dataclass
 class LLMProcessingResult:

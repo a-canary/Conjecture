@@ -17,7 +17,7 @@ class ConfigUpdate(BaseModel):
         return self.dict()
 
 class ConfigUpdater(BaseModel):
-    """Mock config updater for testing"""
+    """Real
     
     def __init__(self, config_path: Optional[str] = None):
         self.config_path = config_path
@@ -48,31 +48,4 @@ class ConfigUpdater(BaseModel):
     
     def save_config(self, path: Optional[str] = None) -> bool:
         """Save configuration to file"""
-        # Mock implementation for testing
-        save_path = path or self.config_path
-        if save_path:
-            # In a real implementation, this would save to file
-            return True
-        return False
-    
-    def load_config(self, path: Optional[str] = None) -> bool:
-        """Load configuration from file"""
-        # Mock implementation for testing
-        load_path = path or self.config_path
-        if load_path:
-            # In a real implementation, this would load from file
-            self.current_config = {}
-            return True
-        return False
-    
-    def get_pending_updates(self) -> List[ConfigUpdate]:
-        """Get pending updates"""
-        return self.updates.copy()
-    
-    def clear_pending_updates(self) -> bool:
-        """Clear pending updates"""
-        self.updates.clear()
-        return True
-
-# Export the main classes
-__all__ = ['ConfigUpdater', 'ConfigUpdate']
+        

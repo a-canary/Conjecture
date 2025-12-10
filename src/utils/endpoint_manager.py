@@ -16,7 +16,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 class EndpointManager:
     """Manages Conjecture EndPoint App as a subprocess"""
     
@@ -179,7 +178,6 @@ class EndpointManager:
         """Async context manager exit"""
         await self.stop()
 
-
 # Context manager for temporary endpoint usage
 class TemporaryEndpoint:
     """Context manager for temporary endpoint usage during tests"""
@@ -198,7 +196,6 @@ class TemporaryEndpoint:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Stop endpoint after use"""
         await self.manager.stop()
-
 
 # Utility function for common usage patterns
 async def with_endpoint(func, host: str = "127.0.0.1", port: int = 8001, 
@@ -219,7 +216,6 @@ async def with_endpoint(func, host: str = "127.0.0.1", port: int = 8001,
     async with TemporaryEndpoint(host, port, log_level) as manager:
         return await func(manager, **kwargs)
 
-
 # Signal handling for graceful shutdown
 def setup_signal_handlers(manager: EndpointManager):
     """Setup signal handlers for graceful shutdown"""
@@ -230,7 +226,6 @@ def setup_signal_handlers(manager: EndpointManager):
     
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
-
 
 # Import os for environment setup
 import os

@@ -25,7 +25,6 @@ from .models import (
 )
 from ..json_frontmatter_parser import JSONFrontmatterParser
 
-
 class OptimizationStrategy(str, Enum):
     """Prompt optimization strategies for tiny LLMs"""
     MINIMAL_TOKENS = "minimal_tokens"
@@ -34,14 +33,12 @@ class OptimizationStrategy(str, Enum):
     ADAPTIVE = "adaptive"
     CHUNKED = "chunked"
 
-
 class TaskComplexity(str, Enum):
     """Task complexity levels"""
     SIMPLE = "simple"
     MODERATE = "moderate"
     COMPLEX = "complex"
     VERY_COMPLEX = "very_complex"
-
 
 @dataclass
 class TinyModelCapabilities:
@@ -55,7 +52,6 @@ class TinyModelCapabilities:
     known_limitations: List[str] = field(default_factory=list)
     optimal_task_types: List[str] = field(default_factory=list)
 
-
 @dataclass
 class TaskDescription:
     """Task description for optimization"""
@@ -66,7 +62,6 @@ class TaskDescription:
     token_budget: Optional[int] = None
     context_requirements: List[str] = field(default_factory=list)
     performance_priority: str = "balanced"  # speed, quality, efficiency
-
 
 @dataclass
 class OptimizationMetrics:
@@ -79,7 +74,6 @@ class OptimizationMetrics:
     strategy_used: OptimizationStrategy
     model_specific_gains: Dict[str, float] = field(default_factory=dict)
 
-
 @dataclass
 class PerformanceHistory:
     """Performance history for adaptive optimization"""
@@ -91,7 +85,6 @@ class PerformanceHistory:
     response_times: List[int]
     timestamps: List[datetime]
     quality_scores: List[float]
-
 
 class TinyModelCapabilityProfiler:
     """Profiles tiny model capabilities and limitations"""
@@ -155,7 +148,6 @@ class TinyModelCapabilityProfiler:
             known_limitations=["complex_tasks"],
             optimal_task_types=["simple_tasks"]
         )
-
 
 class AdaptiveTemplateGenerator:
     """Generates adaptive templates for tiny models"""
@@ -486,7 +478,6 @@ class AdaptiveTemplateGenerator:
             "include_constraints": True
         }
 
-
 class PromptPerformanceAnalyzer:
     """Analyzes prompt performance and provides optimization feedback"""
 
@@ -633,7 +624,6 @@ class PromptPerformanceAnalyzer:
             }
 
         return trends
-
 
 class TinyLLMPromptOptimizer:
     """Main optimizer for tiny LLM prompt engineering"""

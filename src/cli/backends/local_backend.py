@@ -13,7 +13,6 @@ import os
 from src.cli.base_cli import BaseCLI, DatabaseError, BackendNotAvailableError
 from src.core.models import Claim, generate_claim_id
 
-
 class LocalBackend(BaseCLI):
     """Local backend implementation for local LLM providers"""
     

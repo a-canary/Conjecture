@@ -23,9 +23,7 @@ except ImportError:
     from src.core.models import Claim
     from src.data.data_manager import DataManager
 
-
 logger = logging.getLogger(__name__)
-
 
 class ContextRelevanceScorer:
     """Scores relevance of skills and samples to a given claim."""
@@ -159,7 +157,6 @@ class ContextRelevanceScorer:
                 score += 0.25
 
         return min(1.0, score)
-
 
 class ContextCollector:
     """
