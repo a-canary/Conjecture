@@ -35,12 +35,14 @@ if "%1"=="--help" goto :help
     echo   --all                     Run all tests including static analysis
     echo   --quick                   Run quick tests (unit + critical only)
     echo   --full                    Run full test suite with all analysis
+    echo   --phased                  Run 3-phase testing system (30s timeouts)
     echo.
     echo Examples:
     echo   run_tests.bat --static    Run static analysis tests
     echo   run_tests.bat --ruff      Run ruff linting
     echo   run_tests.bat --coverage  Run tests with coverage
     echo   run_tests.bat --full      Run complete test suite
+    echo   run_tests.bat --phased    Run 3-phase testing system
     echo.
     goto :end
 )
@@ -180,6 +182,13 @@ if "%1"=="--all" (
     goto :end
 )
 
+REM Check for phased testing flag
+if "%1"=="--phased" (
+    echo Running 3-Phase Testing System...
+    call run_phased_tests.bat
+    goto :end
+)
+
 REM Run regular tests by default
 echo Running Regular Tests...
 python -m pytest tests/ -v -m "not static_analysis"
@@ -196,5 +205,6 @@ echo   run_tests.bat              - Run regular tests only
 echo   run_tests.bat --static     - Run static analysis tests only
 echo   run_tests.bat --all        - Run all tests including static analysis
 echo   run_tests.bat --full       - Run full test suite with static analysis and coverage
+echo   run_tests.bat --phased     - Run 3-phase testing system with dynamic timeouts
 
 :end

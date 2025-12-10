@@ -30,12 +30,14 @@ if [ "$1" == "--help" ]; then
     echo "  --all                     Run all tests including static analysis"
     echo "  --quick                   Run quick tests (unit + critical only)"
     echo "  --full                    Run full test suite with all analysis"
+    echo "  --phased                  Run 3-phase testing system (30s timeouts)"
     echo
     echo "Examples:"
     echo "  ./run_tests.sh --static    Run static analysis tests"
     echo "  ./run_tests.sh --ruff      Run ruff linting"
     echo "  ./run_tests.sh --coverage  Run tests with coverage"
     echo "  ./run_tests.sh --full      Run complete test suite"
+    echo "  ./run_tests.sh --phased    Run 3-phase testing system"
     echo
     exit 0
 fi
@@ -178,6 +180,16 @@ if [ "$1" == "--all" ]; then
     exit 0
 fi
 
+# Check for phased testing flag
+if [ "$1" == "--phased" ]; then
+    echo "Running 3-Phase Testing System..."
+    ./run_phased_tests.sh
+    exit_code=$?
+    echo
+    echo "Testing completed."
+    exit $exit_code
+fi
+
 # Run regular tests by default
 echo "Running Regular Tests..."
 python -m pytest tests/ -v -m "not static_analysis"
@@ -191,3 +203,4 @@ echo "  ./run_tests.sh              - Run regular tests only"
 echo "  ./run_tests.sh --static     - Run static analysis tests only"
 echo "  ./run_tests.sh --all        - Run all tests including static analysis"
 echo "  ./run_tests.sh --full       - Run full test suite with static analysis and coverage"
+echo "  ./run_tests.sh --phased     - Run 3-phase testing system with dynamic timeouts"

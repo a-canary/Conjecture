@@ -1,0 +1,31 @@
+{
+  "phases": {
+    "unit_e2e": {
+      "name": "Unit and End-to-End Tests",
+      "timeout_seconds": 30.0,
+      "marker": "unit or integration",
+      "description": "Core functionality tests",
+      "success_rate": 0.0,
+      "last_run_time": 0.3749539852142334,
+      "time_adjustment_factor": 1.0
+    },
+    "static_analysis": {
+      "name": "Static Code Analysis",
+      "timeout_seconds": 30.0,
+      "marker": "static_analysis",
+      "description": "Code quality and security analysis",
+      "success_rate": 0.0,
+      "last_run_time": 0.0,
+      "time_adjustment_factor": 1.0
+    },
+    "benchmarks": {
+      "name": "Benchmarks and Performance Tests",
+      "timeout_seconds": 30.0,
+      "marker": "performance or benchmark",
+      "description": "Performance and stress testing",
+      "success_rate": 0.0,
+      "last_run_time": 0.0,
+      "time_adjustment_factor": 1.0
+    }
+  }
+}
