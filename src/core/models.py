@@ -135,6 +135,10 @@ class Claim(BaseModel):
         default_factory=list, description="Claims this claim supports"
     )
     tags: List[str] = Field(default_factory=list, description="Topic tags")
+    type: List[ClaimType] = Field(
+        default_factory=lambda: [ClaimType.CONCEPT],
+        description="Claim type classification"
+    )
     scope: ClaimScope = Field(
         default=ClaimScope.USER_WORKSPACE,
         description="Claim scope: user-workspace (personal), team-workspace (project), team-wide (global team), or public (shareable)",
@@ -187,6 +191,7 @@ class Claim(BaseModel):
             "supported_by": self.supported_by,
             "supports": self.supports,
             "tags": self.tags,
+            "type": [t.value for t in self.type],
             "created": self.created.isoformat(),
             "updated": self.updated.isoformat(),
             "is_dirty": self.is_dirty,
@@ -210,6 +215,7 @@ class Claim(BaseModel):
             supported_by=metadata.get("supported_by", []),
             supports=metadata.get("supports", []),
             tags=metadata.get("tags", []),
+            type=[ClaimType(t) for t in metadata.get("type", ["concept"])],
             created=datetime.fromisoformat(metadata["created"]),
             updated=datetime.fromisoformat(metadata["updated"]),
             is_dirty=metadata.get("is_dirty", False),
@@ -443,18 +449,6 @@ class Relationship(BaseModel):
         """Backward compatibility property for created timestamp"""
         return self.created
 
-class DataConfig(BaseModel):
-    """Configuration for data layer"""
-
-    sqlite_path: str = Field(
-        default="./data/conjecture.db", description="SQLite database path"
-    )
-    chroma_path: str = Field(default="data/chroma", description="ChromaDB path")
-    embedding_model: str = Field(
-        default="all-MiniLM-L6-v2", description="Embedding model name"
-    )
-    max_tokens: int = Field(default=8000, ge=1000, description="Maximum context tokens")
-    max_connections: Optional[int] = Field(default=10, ge=1, description="Maximum database connections")
     
 
 # Helper functions for claim management

@@ -12,9 +12,12 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from .models import (
     Claim, ClaimState, ClaimType, ClaimScope, DirtyReason,
     ClaimBatch, ProcessingResult, ToolCall, ExecutionResult,
-    ParsedResponse, ClaimFilter, Relationship, DataConfig,
+    ParsedResponse, ClaimFilter, Relationship,
     create_claim, validate_claim_id, validate_confidence, generate_claim_id
 )
+
+# DataConfig from data layer (single source of truth)
+from src.data.models import DataConfig
 
 class DataSource(str, Enum):
     """Data source types"""

@@ -16,7 +16,6 @@ from .models import (
     ExecutionResult,
     ParsedResponse,
     Relationship,
-    DataConfig,
     get_orphaned_claims,
     get_root_claims,
     get_leaf_claims,
@@ -27,6 +26,9 @@ from .models import (
     validate_claim_id,
     validate_confidence,
 )
+
+# DataConfig from data layer (single source of truth)
+from src.data.models import DataConfig
 
 # Unified models (consolidated from multiple sources)
 from .unified_models import (
