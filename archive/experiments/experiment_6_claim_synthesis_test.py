@@ -35,4 +35,24 @@ async def test_enhanced_claim_synthesis():
         print("\n2. Creating Comprehensive Test Data...")
         
         test_text = "Analyze the performance metrics from the quarterly report and identify key trends"
-        test_images = [b"
+        test_images = [b"fake_image_data"]
+        
+        # Process the multi-modal data
+        print("\n3. Processing Multi-Modal Data...")
+        result = await processor.process_multimodal_data(test_text, test_images)
+        
+        # Display results
+        print("\n4. Results:")
+        print(f"   + Claims Generated: {len(result.get('claims', []))}")
+        print(f"   + Processing Time: {result.get('processing_time', 0):.2f}s")
+        print(f"   + Success: {result.get('success', False)}")
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error in enhanced claim synthesis test: {e}")
+        print(f"\nERROR: {e}")
+        return {"success": False, "error": str(e)}
+
+if __name__ == "__main__":
+    asyncio.run(test_enhanced_claim_synthesis())

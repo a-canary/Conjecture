@@ -1,32 +1,39 @@
 # TODO.md - Future Development Cycles
 
-**Intent**: Concise inventory of future cycles' concepts and expectations for iterative development.
+**Intent**: Concise inventory of future cycles' concepts and expectations for iterative development. Completed cycles are moved to RESULTS.md
 
 ---
 
-## ✅ COMPLETED
-
-### [CRITICAL] Critical Syntax Error Resolution
-**Status**: ✅ Completed (be82f3d - Fix critical syntax errors blocking static analysis tools)
-**Hypothesis**: Fixing syntax errors in critical files will unblock static analysis and enable proper code evaluation
-**Target**: Zero syntax errors blocking analysis tools
-**Approach**: Fix syntax errors in 5 identified critical files, validate with static analysis tools
-**Success Criteria**: All syntax errors resolved, static analysis tools run without blocking errors
-
-### [HIGH] 4-Layer Migration Phase 4: Cleanup
-**Status**: ✅ Completed (8f3df23 - Validate and commit Processing Interface implementation)
-**Hypothesis**: Deleting legacy code and tests prevents regression and confusion
-**Target**: Zero references to src/conjecture.py or inflated tests
-**Approach**: Delete legacy files and fix remaining imports
-**Success Criteria**: Clean build with only 4-layer architecture files
-
 ---
+### [HIGH] Add Missing Test Fixtures
+**Hypothesis**: Adding the missing `sample_claim_data` fixture to conftest.py will resolve test collection errors
+**Target**: Zero fixture-related collection errors
+**Approach**: Define `sample_claim_data` fixture in tests/conftest.py with proper claim structure
+**Success Criteria**: All tests requiring the fixture collect successfully
 
-### [HIGH] Test Suite Error Resolution - Next Cycle Priority
-**Hypothesis**: Fixing the 4 remaining collection errors will restore full test suite functionality and enable comprehensive validation
-**Target**: Zero collection errors, 80%+ test pass rate
-**Approach**: Fix import errors in test_context_builder.py, test_core_tools.py, test_providers_integration.py, and archive/experiments/experiment_6_claim_synthesis_test.py
-**Success Criteria**: All tests collect and run, core functionality validated, foundation for dead code removal established
+### [HIGH] Fix DataConfig Model Attributes
+**Hypothesis**: Adding the missing `use_chroma` attribute to DataConfig will resolve model validation errors
+**Target**: Zero DataConfig attribute errors in tests
+**Approach**: Update DataConfig model in src/config/unified_config.py to include use_chroma field
+**Success Criteria**: All DataConfig tests pass without attribute errors
+
+### [MEDIUM] Update EmbeddingService Tests
+**Hypothesis**: Updating EmbeddingService test interface will match the current API implementation
+**Target**: Zero EmbeddingService interface mismatch errors
+**Approach**: Review current EmbeddingService implementation and update test expectations
+**Success Criteria**: All EmbeddingService tests pass with current API
+
+### [MEDIUM] Sync RoutingStrategy Enum Values
+**Hypothesis**: Adding the missing `LEAST_LOADED` value to RoutingStrategy enum will resolve test failures
+**Target**: Zero RoutingStrategy enum mismatch errors
+**Approach**: Update RoutingStrategy enum in src/core/models.py to include LEAST_LOADED value
+**Success Criteria**: All routing strategy tests pass with complete enum values
+
+### [MEDIUM] Fix Claim Field Validation
+**Hypothesis**: Adding missing `confidence` field validation to Claim creation tests will resolve test failures
+**Target**: Zero Claim field validation errors
+**Approach**: Update Claim creation tests to include required confidence field with valid values
+**Success Criteria**: All Claim creation tests pass with proper field validation
 
 ### [HIGH] Process-Presentation Layers API
 **Hypothesis**: Clean separation between business logic and UI layers improves maintainability and testability
@@ -46,11 +53,23 @@
 **Approach**: Develop test scenarios using EndPoint app for all core workflows
 **Success Criteria**: 95% test coverage, all critical paths validated, benchmark baseline established
 
-### [HIGH] Test Suite Error Resolution
-**Hypothesis**: Systematic fixes for remaining test errors will restore full test functionality
-**Target**: All 761+ tests collecting and running without critical errors
-**Approach**: Fix missing fixtures, import issues, and async context problems
-**Success Criteria**: 95%+ test collection success rate, core test suites passing
+### [HIGH] DataConfig Model Fix
+**Hypothesis**: Fixing the DataConfig model will resolve validation errors affecting 38 tests
+**Target**: Zero DataConfig-related test failures
+**Approach**: Update DataConfig model in src/config/unified_config.py to include missing attributes and proper validation
+**Success Criteria**: All DataConfig tests pass, model validation errors eliminated
+
+### [HIGH] Missing Imports and Model Classes
+**Hypothesis**: Adding missing imports and model classes will resolve import errors across the test suite
+**Target**: Zero import-related test failures
+**Approach**: Identify and add missing imports, create missing model classes, update import statements
+**Success Criteria**: All tests run without import errors, missing classes properly defined
+
+### [HIGH] Pydantic v2 Migration
+**Hypothesis**: Migrating from deprecated Pydantic v1 methods to v2 will resolve compatibility issues
+**Target**: Zero Pydantic deprecation warnings or errors
+**Approach**: Replace deprecated Pydantic v1 methods with v2 equivalents across the codebase
+**Success Criteria**: All Pydantic-related tests pass, no deprecation warnings, v2 compatibility achieved
 
 ### [HIGH] Cycle Regression Prevention
 **Hypothesis**: Automated regression testing prevents issue recurrence across development cycles
@@ -168,34 +187,11 @@
 **Approach**: Implement async optimizations, caching, and batch processing
 **Success Criteria**: Processing time reduced, quality maintained, no regressions
 
-### [CRITICAL] Async Test Configuration Fix
-**Status**: ✅ Completed (2025-12-09 - Fixed async test configuration in quick_discovery_test.py)
-**Hypothesis**: Fixing async test configuration in quick_discovery_test.py will restore full test suite functionality
-**Target**: All async tests properly configured with pytest-asyncio markers
-**Approach**: Add @pytest.mark.asyncio decorator to async test functions
-**Success Criteria**: Async tests collect and run without configuration errors
-
-### [HIGH] Orphaned Module Import Cleanup
-**Status**: ✅ Completed (2025-12-09 - Fixed all critical import errors blocking test suite)
-**Hypothesis**: Removing orphaned module imports will eliminate test failures and improve system stability
-**Target**: Zero import errors from deprecated modules
-**Approach**: Remove imports for `local.unified_manager`, `cli.backends.hybrid_backend`, `src.config.adapters` and update dependent code
-**Success Criteria**: All import errors resolved, tests pass, system stability improved
-
-
-
 ### [MEDIUM] Unicode Encoding Security Fix
 **Hypothesis**: Resolving Unicode encoding issues will enable comprehensive security scanning
 **Target**: Security scanning tools run without Unicode-related failures
 **Approach**: Fix encoding issues in security scanning configuration and test files
 **Success Criteria**: Security analysis completes successfully, no Unicode-related errors
-
-### [MEDIUM] Test Infrastructure Stabilization
-**Status**: ✅ Completed (2025-12-09 - Fixed 3 critical test infrastructure issues)
-**Hypothesis**: Targeted fixes for critical test infrastructure issues will restore test suite functionality from 41.1% to 80%+ pass rate
-**Target**: 80%+ test pass rate through infrastructure fixes
-**Approach**: Fix async test configuration, Claim validation, and DeepEval API compatibility
-**Success Criteria**: Test infrastructure stabilized, core functionality tests passing
 
 ### [MEDIUM] Endpoint Provider Management Test Fixes
 **Hypothesis**: Fixing endpoint provider management test failures will restore API functionality testing

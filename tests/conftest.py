@@ -3,6 +3,13 @@ Comprehensive pytest configuration and fixtures for optimized testing.
 Provides shared fixtures, mocking strategies, and performance optimization.
 """
 import pytest
+
+# Register custom markers to ensure they're recognized
+def pytest_configure(config):
+    """Register custom markers."""
+    config.addinivalue_line("markers", "models: Marks tests for Pydantic model validation and behavior")
+    config.addinivalue_line("markers", "error_handling: Marks tests for error handling and edge cases")
+    config.addinivalue_line("markers", "test_marker_fix: Test marker to verify configuration is working")
 import asyncio
 import tempfile
 import shutil
@@ -250,7 +257,8 @@ async def real_vector_store(test_config, temp_data_dir):
 @pytest.fixture(scope="function")
 async def real_data_manager(test_config, temp_data_dir, real_embedding_service, real_vector_store):
     """Real data manager fixture using real services."""
-    from src.data.data_manager import DataManager, DataConfig
+    from src.data.data_manager import DataManager
+    from src.data.models import DataConfig
     
     # Create test database path
     db_path = temp_data_dir / "test_data.db"
@@ -800,3 +808,15 @@ def sample_claims_data():
             "created_by": "programmer"
         }
     ]
+
+@pytest.fixture(scope="function")
+def sample_claim_data():
+    """Create a single sample claim data for testing."""
+    return {
+        "id": "c0000001",
+        "content": "Test claim for model validation",
+        "confidence": 0.95,
+        "dirty": True,
+        "tags": ["astronomy", "science", "physics"],
+        "created_by": "test_user"
+    }

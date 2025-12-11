@@ -8,7 +8,7 @@ for claim evaluation, instruction identification, and processing workflow.
 from enum import Enum
 from typing import List, Dict, Any, Optional, Union
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict, field_serializer
 
 from src.core.models import Claim
 
@@ -45,10 +45,11 @@ class ContextResult(BaseModel):
     build_time_ms: int = Field(default=0, description="Time taken to build context in milliseconds")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional context metadata")
     
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    model_config = ConfigDict()
+    
+    @field_serializer('context_claims')
+    def serialize_context_claims(self, value: List[Claim]) -> List[Dict[str, Any]]:
+        return [claim.to_dict() for claim in value]
 
 class Instruction(BaseModel):
     """Instruction identified during claim processing."""
@@ -61,10 +62,11 @@ class Instruction(BaseModel):
     source_claim_id: Optional[str] = Field(None, description="ID of claim that generated this instruction")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="When this instruction was created")
     
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    model_config = ConfigDict()
+    
+    @field_serializer('created_at')
+    def serialize_created_at(self, value: datetime) -> str:
+        return value.isoformat()
 
 class ProcessingResult(BaseModel):
     """Result of claim processing operations."""
@@ -79,10 +81,15 @@ class ProcessingResult(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional processing metadata")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="When processing was completed")
     
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    model_config = ConfigDict()
+    
+    @field_serializer('created_at')
+    def serialize_created_at(self, value: datetime) -> str:
+        return value.isoformat()
+    
+    @field_serializer('instructions')
+    def serialize_instructions(self, value: List[Instruction]) -> List[Dict[str, Any]]:
+        return [instruction.model_dump() for instruction in value]
 
 class ProcessingConfig(BaseModel):
     """Configuration for processing operations."""
@@ -94,8 +101,7 @@ class ProcessingConfig(BaseModel):
     timeout_seconds: int = Field(default=300, description="Timeout for processing operations")
     retry_attempts: int = Field(default=3, description="Number of retry attempts for failed operations")
     
-    class Config:
-        extra = "allow"
+    model_config = ConfigDict(extra="allow")
 
 class ProcessingRequest(BaseModel):
     """Request for claim processing."""
@@ -107,10 +113,15 @@ class ProcessingRequest(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional request metadata")
     requested_at: datetime = Field(default_factory=datetime.utcnow, description="When the request was made")
     
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    model_config = ConfigDict()
+    
+    @field_serializer('requested_at')
+    def serialize_requested_at(self, value: datetime) -> str:
+        return value.isoformat()
+    
+    @field_serializer('instruction_types')
+    def serialize_instruction_types(self, value: List[InstructionType]) -> List[str]:
+        return [instruction_type.value for instruction_type in value]
 
 class ProcessingBatch(BaseModel):
     """Batch of processing requests for bulk operations."""
@@ -120,7 +131,12 @@ class ProcessingBatch(BaseModel):
     config: Optional[ProcessingConfig] = Field(None, description="Batch-level configuration")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="When the batch was created")
     
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    model_config = ConfigDict()
+    
+    @field_serializer('created_at')
+    def serialize_created_at(self, value: datetime) -> str:
+        return value.isoformat()
+    
+    @field_serializer('requests')
+    def serialize_requests(self, value: List[ProcessingRequest]) -> List[Dict[str, Any]]:
+        return [request.model_dump() for request in value]

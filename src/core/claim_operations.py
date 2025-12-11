@@ -18,7 +18,7 @@ def update_confidence(claim: Claim, new_confidence: float) -> Claim:
         state=claim.state,
         supported_by=claim.supported_by.copy(),
         supports=claim.supports.copy(),
-        type=claim.type.copy(),
+        scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
         updated=datetime.utcnow(),
@@ -42,14 +42,14 @@ def add_support(claim: Claim, supporting_claim_id: str) -> Claim:
         state=claim.state,
         supported_by=supported_by,
         supports=claim.supports.copy(),
-        type=claim.type.copy(),
+        scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
         updated=datetime.utcnow(),
         embedding=claim.embedding,
-        is_dirty=claim.is_dirty,
-        dirty_reason=claim.dirty_reason,
-        dirty_timestamp=claim.dirty_timestamp,
+        is_dirty=True,  # Mark as dirty when support is added
+        dirty_reason=DirtyReason.SUPPORTING_CLAIM_CHANGED,
+        dirty_timestamp=datetime.utcnow(),
         dirty_priority=claim.dirty_priority
     )
 
@@ -66,14 +66,14 @@ def add_supports(claim: Claim, supported_claim_id: str) -> Claim:
         state=claim.state,
         supported_by=claim.supported_by.copy(),
         supports=supports,
-        type=claim.type.copy(),
+        scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
         updated=datetime.utcnow(),
         embedding=claim.embedding,
-        is_dirty=claim.is_dirty,
-        dirty_reason=claim.dirty_reason,
-        dirty_timestamp=claim.dirty_timestamp,
+        is_dirty=True,  # Mark as dirty when support is added
+        dirty_reason=DirtyReason.SUPPORTING_CLAIM_CHANGED,
+        dirty_timestamp=datetime.utcnow(),
         dirty_priority=claim.dirty_priority
     )
 
@@ -86,7 +86,7 @@ def mark_dirty(claim: Claim, reason: DirtyReason, priority: int = 0) -> Claim:
         state=claim.state,
         supported_by=claim.supported_by.copy(),
         supports=claim.supports.copy(),
-        type=claim.type.copy(),
+        scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
         updated=datetime.utcnow(),
@@ -106,7 +106,7 @@ def mark_clean(claim: Claim) -> Claim:
         state=claim.state,
         supported_by=claim.supported_by.copy(),
         supports=claim.supports.copy(),
-        type=claim.type.copy(),
+        scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
         updated=datetime.utcnow(),
@@ -126,7 +126,7 @@ def set_dirty_priority(claim: Claim, priority: int) -> Claim:
         state=claim.state,
         supported_by=claim.supported_by.copy(),
         supports=claim.supports.copy(),
-        type=claim.type.copy(),
+        scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
         updated=datetime.utcnow(),

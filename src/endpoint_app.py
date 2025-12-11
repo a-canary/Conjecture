@@ -15,7 +15,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, BackgroundTasks
 from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict, field_serializer
 import uvicorn
 
 class CustomJSONEncoder(json.JSONEncoder):
@@ -104,11 +104,12 @@ class APIResponse(BaseModel):
     data: Optional[Any] = Field(None, description="Response data")
     message: str = Field("", description="Response message")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Response timestamp")
-
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    
+    model_config = ConfigDict()
+    
+    @field_serializer('timestamp')
+    def serialize_timestamp(self, value: datetime) -> str:
+        return value.isoformat()
 
 class ErrorResponse(BaseModel):
     """Error response model"""
@@ -116,11 +117,12 @@ class ErrorResponse(BaseModel):
     error: str = Field(..., description="Error message")
     details: Optional[Dict[str, Any]] = Field(None, description="Additional error details")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Error timestamp")
-
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    
+    model_config = ConfigDict()
+    
+    @field_serializer('timestamp')
+    def serialize_timestamp(self, value: datetime) -> str:
+        return value.isoformat()
 
 # Global ProcessingInterface instance
 processing_interface: Optional[ProcessingInterface] = None
