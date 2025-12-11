@@ -97,7 +97,7 @@ class Conjecture(ProcessingInterface):
 
         # Initialize processing components
         self.context_collector = ContextCollector(data_manager=self.data_manager)
-        self.tool_creator = DynamicToolCreator()
+        self.tool_creator = DynamicToolCreator(llm_bridge=self.llm_bridge)
         self.async_evaluation = AsyncClaimEvaluationService(
             llm_bridge=self.llm_bridge,
             context_collector=self.context_collector,
