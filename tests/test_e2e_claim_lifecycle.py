@@ -50,7 +50,8 @@ class TestClaimLifecycleE2E:
         """Create Conjecture instance with test configuration"""
         return Conjecture(config=temp_config)
 
-    def test_complete_claim_lifecycle(self, conjecture_instance):
+    @pytest.mark.asyncio
+    async def test_complete_claim_lifecycle(self, conjecture_instance):
         """Test complete claim lifecycle from creation to validation"""
         
         # Step 1: Create initial claim
@@ -85,7 +86,7 @@ class TestClaimLifecycleE2E:
             dirty_reason=None
         )
         
-        update_result = conjecture_instance.update_claim(processed_claim)
+        update_result = conjecture_instance.update_claim_sync(processed_claim)
         assert update_result.success is True
         
         # Step 4: Add supporting claims
@@ -116,7 +117,7 @@ class TestClaimLifecycleE2E:
         
         # Step 5: Verify relationships and dirty flag propagation
         # Get the main claim and check it was marked dirty due to new supporters
-        updated_main_claim = conjecture_instance.get_claim("lifecycle_test")
+        updated_main_claim = conjecture_instance.get_claim_sync("lifecycle_test")
         assert updated_main_claim is not None
         assert updated_main_claim.supported_by in [["supporter1"], ["supporter2"], ["supporter1", "supporter2"]]
         assert updated_main_claim.is_dirty is True  # Should be dirty due to relationship changes
@@ -139,7 +140,7 @@ class TestClaimLifecycleE2E:
         assert final_result.success is True
         
         # Step 7: Verify final state
-        final_verified = conjecture_instance.get_claim("lifecycle_test")
+        final_verified = conjecture_instance.get_claim_sync("lifecycle_test")
         assert final_verified.confidence == 0.95
         assert final_verified.state == ClaimState.VALIDATED
         assert final_verified.is_dirty is False
@@ -202,8 +203,8 @@ class TestClaimLifecycleE2E:
         assert update_result.success is True
         
         # Check that B and C are marked dirty
-        dirty_b = conjecture_instance.get_claim("cascade_b")
-        dirty_c = conjecture_instance.get_claim("cascade_c")
+        dirty_b = conjecture_instance.get_claim_sync("cascade_b")
+        dirty_c = conjecture_instance.get_claim_sync("cascade_c")
         
         assert dirty_b.is_dirty is True
         assert dirty_c.is_dirty is True
@@ -271,7 +272,7 @@ class TestClaimLifecycleE2E:
             assert update_result.success is True
         
         # Verify final state
-        final_claim_1 = conjecture_instance.get_claim("batch_1")
+        final_claim_1 = conjecture_instance.get_claim_sync("batch_1")
         if final_claim_1:
             assert final_claim_1.confidence >= 0.8
             assert final_claim_1.state == ClaimState.VALIDATED

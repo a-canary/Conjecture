@@ -742,14 +742,15 @@ async def sqlite_manager(temp_sqlite_db):
 @pytest.fixture(scope="function")
 def valid_claim():
     """Create a valid Claim object for testing."""
-    from src.core.models import Claim
+    from src.core.models import Claim, ClaimType, ClaimScope
     return Claim(
         id="c0000001",
         content="Test claim for SQLite manager testing",
         confidence=0.8,
-        created_by="test_user",
         tags=["test", "sqlite"],
-        dirty=False
+        is_dirty=False,
+        type=[ClaimType.CONCEPT],
+        scope=ClaimScope.USER_WORKSPACE
     )
 
 @pytest.fixture(scope="function")
@@ -758,65 +759,71 @@ def valid_relationship():
     from src.data.models import Relationship
     return Relationship(
         supporter_id="c0000001",
-        supported_id="c0000002",
-        relationship_type="supports",
-        created_by="test_user"
+        supported_id="c0000002"
     )
 
 @pytest.fixture(scope="function")
 def sample_claims_data():
     """Create sample claim data for testing."""
+    from src.core.models import Claim, ClaimType, ClaimScope
     return [
-        {
-            "id": "c0000001",
-            "content": "Physics claim about quantum mechanics",
-            "confidence": 0.9,
-            "dirty": True,
-            "tags": ["physics", "quantum"],
-            "created_by": "scientist"
-        },
-        {
-            "id": "c0000002",
-            "content": "Chemistry claim about molecular bonds",
-            "confidence": 0.85,
-            "dirty": False,
-            "tags": ["chemistry", "molecules"],
-            "created_by": "chemist"
-        },
-        {
-            "id": "c0000003",
-            "content": "Mathematics claim about prime numbers",
-            "confidence": 0.95,
-            "dirty": False,
-            "tags": ["mathematics", "number_theory"],
-            "created_by": "mathematician"
-        },
-        {
-            "id": "c0000004",
-            "content": "Biology claim about DNA structure",
-            "confidence": 0.88,
-            "dirty": True,
-            "tags": ["biology", "genetics"],
-            "created_by": "biologist"
-        },
-        {
-            "id": "c0000005",
-            "content": "Computer science claim about algorithms",
-            "confidence": 0.92,
-            "dirty": False,
-            "tags": ["computer_science", "algorithms"],
-            "created_by": "programmer"
-        }
+        Claim(
+            id="c0000001",
+            content="Physics claim about quantum mechanics",
+            confidence=0.9,
+            is_dirty=True,
+            tags=["physics", "quantum"],
+            type=[ClaimType.CONJECTURE],
+            scope=ClaimScope.USER_WORKSPACE
+        ),
+        Claim(
+            id="c0000002",
+            content="Chemistry claim about molecular bonds",
+            confidence=0.85,
+            is_dirty=False,
+            tags=["chemistry", "molecules"],
+            type=[ClaimType.ASSERTION],
+            scope=ClaimScope.USER_WORKSPACE
+        ),
+        Claim(
+            id="c0000003",
+            content="Mathematics claim about prime numbers",
+            confidence=0.95,
+            is_dirty=False,
+            tags=["mathematics", "number_theory"],
+            type=[ClaimType.CONCEPT],
+            scope=ClaimScope.USER_WORKSPACE
+        ),
+        Claim(
+            id="c0000004",
+            content="Biology claim about DNA structure",
+            confidence=0.88,
+            is_dirty=True,
+            tags=["biology", "genetics"],
+            type=[ClaimType.OBSERVATION],
+            scope=ClaimScope.USER_WORKSPACE
+        ),
+        Claim(
+            id="c0000005",
+            content="Computer science claim about algorithms",
+            confidence=0.92,
+            is_dirty=False,
+            tags=["computer_science", "algorithms"],
+            type=[ClaimType.CONCEPT],
+            scope=ClaimScope.USER_WORKSPACE
+        )
     ]
 
 @pytest.fixture(scope="function")
 def sample_claim_data():
     """Create a single sample claim data for testing."""
-    return {
-        "id": "c0000001",
-        "content": "Test claim for model validation",
-        "confidence": 0.95,
-        "dirty": True,
-        "tags": ["astronomy", "science", "physics"],
-        "created_by": "test_user"
-    }
+    from src.core.models import Claim, ClaimType, ClaimScope
+    return Claim(
+        id="c0000001",
+        content="Test claim for model validation",
+        confidence=0.95,
+        is_dirty=True,
+        tags=["astronomy", "science", "physics"],
+        type=[ClaimType.CONCEPT],
+        scope=ClaimScope.USER_WORKSPACE
+    )

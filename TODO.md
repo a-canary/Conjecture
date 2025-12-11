@@ -1,21 +1,32 @@
 # TODO.md - Future Development Cycles
+### [HIGH] SWEBench Benchmarking for GraniteTiny + Conjecture
+**Hypothesis**: Context engineering and prompt refinement will boost GraniteTiny+Conjecture performance on SWEBench to ≥70%.
+**Target**: ≥70% accuracy on SWEBench; comparable improvements on AIME2025 and LiveCodeBench v6.
+**Approach**: 
+- Set up SWEBench harness for GraniteTiny model.
+- Run baseline evaluation.
+- Iteratively refine prompts, context selection, and agent harness.
+- Track metrics on AIME2025 and LiveCodeBench v6 as secondary benchmarks.
+**Success Criteria**: Achieve ≥70% on SWEBench and maintain/improve scores on the other benchmarks.
+
+
 
 **Intent**: Concise inventory of future cycles' concepts and expectations for iterative development. Completed cycles are moved to RESULTS.md
 
 ---
 
 ---
+### [COMPLETED] Fix DataConfig Import Path Issues
+**Hypothesis**: Correcting BatchResult import path will resolve test collection errors and improve test suite stability
+**Target**: Zero import-related collection errors
+**Approach**: Fixed BatchResult import in src/data/data_manager.py to import from src.core.common_results instead of src.data.models
+**Success Criteria**: All tests collect successfully without import errors, test infrastructure stability improved
+
 ### [HIGH] Add Missing Test Fixtures
 **Hypothesis**: Adding the missing `sample_claim_data` fixture to conftest.py will resolve test collection errors
 **Target**: Zero fixture-related collection errors
 **Approach**: Define `sample_claim_data` fixture in tests/conftest.py with proper claim structure
 **Success Criteria**: All tests requiring the fixture collect successfully
-
-### [HIGH] Fix DataConfig Model Attributes
-**Hypothesis**: Adding the missing `use_chroma` attribute to DataConfig will resolve model validation errors
-**Target**: Zero DataConfig attribute errors in tests
-**Approach**: Update DataConfig model in src/config/unified_config.py to include use_chroma field
-**Success Criteria**: All DataConfig tests pass without attribute errors
 
 ### [MEDIUM] Update EmbeddingService Tests
 **Hypothesis**: Updating EmbeddingService test interface will match the current API implementation

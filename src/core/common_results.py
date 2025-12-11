@@ -77,6 +77,11 @@ class ProcessingResult:
             else None,
         }
 
+    @property
+    def processed_claims(self) -> int:
+        """Alias for processed_items for test compatibility"""
+        return self.processed_items
+
 @dataclass
 class BatchResult:
     """Result for batch processing operations"""
@@ -105,3 +110,13 @@ class BatchResult:
     def get_summary(self) -> str:
         """Get batch summary"""
         return f"Batch: {self.successful_operations}/{len(self.results)} operations successful ({self.get_success_rate():.1f}%)"
+
+    @property
+    def processed_claims(self) -> int:
+        """Alias for total_items for test compatibility"""
+        return self.total_items
+
+    @property
+    def success(self) -> bool:
+        """Alias for success check for test compatibility"""
+        return self.failed_operations == 0
