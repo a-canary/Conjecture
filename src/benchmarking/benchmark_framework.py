@@ -123,6 +123,7 @@ class AIME25Benchmark(Benchmark):
 
     def __init__(self):
         super().__init__("AIME25")
+        self.dataset = None
         self.sample_tasks = [
             BenchmarkTask(
                 task_id="aime25_1",
@@ -139,14 +140,85 @@ class AIME25Benchmark(Benchmark):
         ]
 
     async def load_tasks(self) -> List[BenchmarkTask]:
-        # For now, return sample tasks. In production, load from official AIME data
-        return self.sample_tasks
+        """Load real AIME 2025 tasks from Hugging Face dataset"""
+        try:
+            # Try to load from Hugging Face
+            from datasets import load_dataset
+
+            print("Loading AIME 2025 dataset from Hugging Face...")
+            # Load both AIME 2025-I and AIME 2025-II
+            dataset_i = load_dataset("opencompass/AIME2025", "AIME2025-I", split="test")
+            dataset_ii = load_dataset("opencompass/AIME2025", "AIME2025-II", split="test")
+
+            tasks = []
+
+            # Process AIME 2025-I problems
+            for i, example in enumerate(dataset_i):
+                task = BenchmarkTask(
+                    task_id=f"aime25_i_{i+1:03d}",
+                    prompt=example["question"],
+                    expected_answer=str(example["answer"]),
+                    metadata={
+                        "source": "AIME 2025-I",
+                        "difficulty": "hard",
+                        "category": "mathematics",
+                        "exam": "I"
+                    }
+                )
+                tasks.append(task)
+
+            # Process AIME 2025-II problems
+            for i, example in enumerate(dataset_ii):
+                task = BenchmarkTask(
+                    task_id=f"aime25_ii_{i+1:03d}",
+                    prompt=example["question"],
+                    expected_answer=str(example["answer"]),
+                    metadata={
+                        "source": "AIME 2025-II",
+                        "difficulty": "hard",
+                        "category": "mathematics",
+                        "exam": "II"
+                    }
+                )
+                tasks.append(task)
+
+            print(f"Loaded {len(tasks)} AIME 2025 problems ({len(dataset_i)} from I, {len(dataset_ii)} from II)")
+            return tasks
+
+        except Exception as e:
+            print(f"Failed to load AIME 2025 dataset: {e}")
+            print("Falling back to sample tasks...")
+            return self.sample_tasks
 
     def evaluate_response(self, task: BenchmarkTask, response: str) -> bool:
         """Check if response contains the correct numerical answer"""
         if not task.expected_answer:
             return False
-        return task.expected_answer in response
+
+        # For mathematical answers, we need to be more sophisticated
+        # Extract numbers from response and check if the expected answer is present
+        import re
+
+        # Clean the expected answer (remove whitespace)
+        expected_clean = task.expected_answer.strip()
+
+        # Look for the exact answer in the response
+        # Check for patterns like "Answer: 42", "42", "The answer is 42", etc.
+        patterns = [
+            rf"(?:answer[:\s]+|is[:\s]+|=[:\s]+){re.escape(expected_clean)}\b",
+            rf"\b{re.escape(expected_clean)}\b",
+            rf"(?:final answer|result)[:\s]+{re.escape(expected_clean)}\b"
+        ]
+
+        for pattern in patterns:
+            if re.search(pattern, response, re.IGNORECASE):
+                return True
+
+        # As a fallback, check if the number appears anywhere in the response
+        if expected_clean in response:
+            return True
+
+        return False
 
 class GPQABenchmark(Benchmark):
     """GPQA (Graduate-Level Google-Proof Q&A) Benchmark"""

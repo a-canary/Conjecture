@@ -1,10 +1,44 @@
-# TODO.md - Future Development Cycles
-### [HIGH] SWEBench Benchmarking for GraniteTiny + Conjecture
+# TODO.md - Systematic Improvement Cycles
+
+## **Current Focus: 100-Cycle Systematic Improvement**
+
+### **Cycle 1 - Domain-Adaptive System Prompt [UNTESTED]**
+**Hypothesis**: Problem type detection + specialized prompts will improve accuracy by matching reasoning approach to problem domain
+**Target**: +15% accuracy on math problems, +10% on logic problems, reduce latency gap
+**Files**: `src/benchmarking/improved_prompts.py`, `src/benchmarking/prompt_prototype_framework.py`
+**Status**: Concept developed, ready for testing
+**Next**: Validate improvement through benchmarking
+
+### **High Priority Concepts [UNTESTED]**
+- Context optimization for mathematical reasoning
+- Logic-focused prompt engineering
+- Hybrid adaptive strategies
+- Chain-of-thought structure enhancement
+
+### **Proven Concepts [COMPLETED]**
+- Database reset utility for clean benchmarking
+- Fast prototype testing framework
+- Baseline performance measurement
+
+### **Failed Concepts [NONE YET]**
+- *Will be populated as cycles progress*
+
+---
+
+## Legacy Items
 **Hypothesis**: Context engineering and prompt refinement will boost GraniteTiny+Conjecture performance on SWEBench to ≥70%.
 **Target**: ≥70% accuracy on SWEBench; comparable improvements on AIME2025 and LiveCodeBench v6.
 **Approach**: 
 - Set up SWEBench harness for GraniteTiny model.
 - Run baseline evaluation.
+- [ ] Set up SWEBench harness for GraniteTiny model
+- [ ] Run baseline evaluation and record metrics
+- [ ] Analyze failure modes and identify context engineering opportunities
+- [ ] Refine prompts and context selection strategies
+- [ ] Implement agent harness improvements (e.g., tool integration, state management)
+- [ ] Re‑evaluate on SWEBench, aim for ≥70% accuracy
+- [ ] Run secondary benchmarks (AIME2025, LiveCodeBench v6) and compare progress
+- [ ] Document results and update RESULTS.md
 - Iteratively refine prompts, context selection, and agent harness.
 - Track metrics on AIME2025 and LiveCodeBench v6 as secondary benchmarks.
 **Success Criteria**: Achieve ≥70% on SWEBench and maintain/improve scores on the other benchmarks.

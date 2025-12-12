@@ -29,8 +29,25 @@ pytest_runtime: 567.76s (9:27)
 ci_cd_readiness: 100%
 data_layer_imports_fixed: 100% (BatchResult import path corrected)
 test_infrastructure_stability: improved (critical import errors resolved)
-benchmark-AIME25 = ?
+benchmark-AIME25 = 20.0% (Direct), 0.0% (Conjecture)
 benchmark-SWEBench-Lite = ?
+
+## 🔄 **Systematic Improvement Cycle Tracking**
+
+### **Current Baseline (Pre-Cycle 1)**
+- **AIME2025 (GraniteTiny)**: Direct 20.0% vs Conjecture 0.0% (-20% gap)
+- **Simple Math**: Direct 50.0% vs Conjecture 50.0% (0% gap, +1.0s latency)
+- **Mixed Complexity**: Direct 66.7% vs Conjecture 66.7% (0% gap, +7.7s latency)
+
+### **Key Finding**: Current Conjecture adds latency without accuracy improvement
+
+---
+
+## **Cycle 1 - Domain-Adaptive System Prompt [UNTESTED]**
+**Hypothesis**: Problem type detection + specialized prompts improves accuracy
+**Target**: +15% accuracy math, +10% logic, reduce latency gap
+**Status**: Concept developed, ready for testing
+**Files**: `src/benchmarking/improved_prompts.py`, `src/benchmarking/prompt_prototype_framework.py`
 
 ## Summary
 

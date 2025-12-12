@@ -1,39 +1,43 @@
 {
   "providers": [
     {
-      "url": "http://localhost:11434",
-      "api": "",
-      "model": "llama2",
-      "name": "ollama"
-    },
-    {
       "url": "https://api.z.ai/api/coding/paas/v4",
       "api": "70e6e12e4d7c46e2a4d0b85503d51f38.LQHl8d98kDJChttb",
       "model": "glm-4.6",
-      "name": "gemini"
+      "name": "glm-4.6",	
+	  "max_tokens": 200000
+    },
+	{
+      "url": "https://api.z.ai/api/coding/paas/v4",
+      "api": "70e6e12e4d7c46e2a4d0b85503d51f38.LQHl8d98kDJChttb",
+      "model": "glm-4.5-air",
+      "name": "glm-4.5-air",
+	  "is_local": false,	
+	  "max_tokens": 200000      	  
     },
     {
       "url": "https://openrouter.ai/api/v1",
-      "api": "sk-or-your-api-key-here",
-      "model": "openai/gpt-3.5-turbo",
-      "name": "openrouter"
-    },
-    {
-      "url": "https://api.openai.com/v1",
-      "api": "sk-your-openai-key-here",
-      "model": "gpt-3.5-turbo",
-      "name": "openai"
+      "key": "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",
+      "model": "openai/gpt-oss-20b",
+      "name": "gpt-oss-20b",
+      "priority": 1,
+      "is_local": false,
+      "description": "Primary model for fast iteration and Conjecture testing",
+      "max_tokens": 128000,
+      "temperature": 0.2,
+      "timeout": 30,
+      "max_retries": 5
     },
     {
       "url": "http://localhost:1234/v1",
       "api": "",
       "model": "ibm/granite-4-h-tiny",
-      "name": "lm_studio",
+      "name": "GraniteTiny",
       "priority": 1,
       "is_local": true,
-      "description": "IBM Granite Tiny model for SOTA reasoning research",
-      "max_tokens": 512,
-      "temperature": 0.3
+      "description": "IBM Granite Tiny model for Tiny SOTA reasoning research",
+      "max_tokens": 42000,
+      "temperature": 0.1
     }
   ],
   "confidence_threshold": 0.90,
