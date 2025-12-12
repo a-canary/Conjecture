@@ -74,7 +74,7 @@ class TestLanceDBAdapter:
         ]
 
     @pytest.mark.asyncio
-    async def test_adapter_initialization(self):
+    async async def test_adapter_initialization(self):
         """Test adapter initialization"""
         with tempfile.TemporaryDirectory() as temp_dir:
             db_path = os.path.join(temp_dir, "test_init.lance")

@@ -201,7 +201,7 @@ class TestProcessContextBuilder:
         return ProcessContextBuilder(claim_repo, config)
 
     @pytest.mark.asyncio
-    async def test_build_context_success(self, repositories, sample_claims, context_builder):
+    async async def test_build_context_success(self, repositories, sample_claims, context_builder):
         """Test successful context building"""
         claim_repo, relationship_repo = repositories
         main_claim, supporting_claim, related_claim = sample_claims

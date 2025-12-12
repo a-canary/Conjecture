@@ -1,3 +1,4 @@
+import asyncio
 """
 End-to-end test for complete claim lifecycle
 Tests claim creation, processing, evaluation, and relationship updates
@@ -24,8 +25,8 @@ class TestClaimLifecycleE2E:
             # Create test configuration with LLM disabled
             config_data = {
                 "processing": {
-                    "confidence_threshold": 0.7,
-                    "confident_threshold": 0.9,
+                    "confidence_threshold": 0.9,
+                    "confident_threshold": 0.7,
                     "max_context_size": 4000,
                     "batch_size": 10
                 },

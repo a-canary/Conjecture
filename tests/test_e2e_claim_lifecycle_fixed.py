@@ -33,7 +33,7 @@ class TestClaimLifecycleE2EFixed:
             await manager.close()
 
     @pytest.mark.asyncio
-    async def test_complete_claim_lifecycle(self, db_manager):
+    async async def test_complete_claim_lifecycle(self, db_manager):
         """Test complete claim lifecycle from creation to validation"""
 
         # Step 1: Create initial claim

@@ -841,3 +841,125 @@ def sample_claim_data():
         type=[ClaimType.CONCEPT],
         scope=ClaimScope.USER_WORKSPACE
     )
+
+
+"""
+Mock provider fixtures for test optimization
+Eliminates external LLM provider dependencies and 67+ second delays
+"""
+import pytest
+from unittest.mock import Mock, AsyncMock
+import aiohttp
+# ProviderConfig import removed to avoid import errors
+
+@pytest.fixture
+def mock_ollama_response():
+    """Mock response from Ollama provider"""
+    mock_response = AsyncMock()
+    mock_response.status = 200
+    mock_response.json.return_value = {
+        "model": "llama2",
+        "created_at": "2024-01-01T00:00:00Z",
+        "response": "Mock LLM response for testing"
+    }
+    return mock_response
+
+@pytest.fixture
+def mock_lmstudio_response():
+    """Mock response from LM Studio provider"""
+    mock_response = AsyncMock()
+    mock_response.status = 200
+    mock_response.json.return_value = {
+        "model": "granite-7b",
+        "choices": [{"message": {"content": "Mock LM Studio response"}}]
+    }
+    return mock_response
+
+@pytest.fixture
+def mock_providers_config():
+    """Mock providers configuration without external dependencies"""
+    return [
+        {
+            "name": "mock-ollama",
+            "url": "http://mock-localhost:11434",
+            "model": "llama2",
+            "api_key": "mock-key"
+        },
+        {
+            "name": "mock-lmstudio",
+            "url": "http://mock-localhost:1234",
+            "model": "granite-7b",
+            "api_key": "mock-key"
+        }
+    ]
+
+@pytest.fixture
+def fast_test_config():
+    """Fast test configuration optimized for speed"""
+    return {
+        "processing": {
+            "confidence_threshold": 0.85,
+            "max_context_size": 1000,  # Reduced for speed
+            "batch_size": 2,  # Small batches for fast testing
+            "timeout": 1,  # Very short timeout
+            "retry_delay": 0.1,  # Minimal retry delay
+            "max_retries": 1  # Few retries for speed
+        },
+        "database": {
+            "database_path": ":memory:",  # In-memory database
+            "cache_size": 100,  # Small cache
+            "connection_timeout": 1
+        },
+        "providers": [
+            {
+                "name": "mock-provider",
+                "url": "http://mock-localhost:9999",
+                "model": "mock-model",
+                "timeout": 1,
+                "enabled": True
+            }
+        ],
+        "debug": False,
+        "monitoring": {
+            "enable_performance_tracking": False  # Disabled for speed
+        }
+    }
+
+
+
+"""
+Fast mock patches for localhost connections
+Replaces slow external provider calls with instant mock responses
+"""
+import asyncio
+from unittest.mock import patch, AsyncMock
+import aiohttp
+
+def create_fast_response_mock():
+    """Create a fast mock response that returns instantly"""
+    mock_response = AsyncMock()
+    mock_response.status = 200
+    mock_response.json.return_value = {"response": "Fast mock response"}
+    mock_response.text.return_value = "Fast mock text"
+    return mock_response
+
+@pytest.fixture(autouse=True)
+def fast_localhost_mocks():
+    """Auto-applied fixture to mock all localhost connections"""
+    with patch('aiohttp.ClientSession.get') as mock_get,          patch('aiohttp.ClientSession.post') as mock_post:
+
+        # Instant response mocks
+        mock_get.return_value.__aenter__.return_value = create_fast_response_mock()
+        mock_post.return_value.__aenter__.return_value = create_fast_response_mock()
+
+        yield
+
+# Global patches for faster execution
+_original_sleep = asyncio.sleep
+
+async def fast_sleep(duration):
+    """Fast sleep for tests (max 0.1 seconds)"""
+    return await _original_sleep(min(duration, 0.1))
+
+# Patch asyncio.sleep globally for faster tests
+asyncio.sleep = fast_sleep

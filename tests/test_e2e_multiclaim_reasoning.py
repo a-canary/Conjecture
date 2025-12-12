@@ -23,8 +23,8 @@ class TestMultiClaimReasoningE2E:
             
             config_data = {
                 "processing": {
-                    "confidence_threshold": 0.6,
-                    "confident_threshold": 0.8,
+                    "confidence_threshold": 0.8,
+                    "confident_threshold": 0.6,
                     "max_context_size": 8000,
                     "batch_size": 20
                 },

@@ -75,7 +75,7 @@ class TestLanceDBClaimRepository:
         ]
 
     @pytest.mark.asyncio
-    async def test_create_claim_success(self, repository, sample_claim):
+    async async def test_create_claim_success(self, repository, sample_claim):
         """Test successful claim creation"""
         result = await repository.create_claim(sample_claim)
 

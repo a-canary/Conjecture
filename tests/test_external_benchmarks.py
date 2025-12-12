@@ -206,7 +206,7 @@ class TestExternalBenchmarks:
         """Test individual task evaluation"""
 
         @pytest.mark.asyncio
-        async def test_evaluate_task_structure(self, benchmarks):
+        async async def test_evaluate_task_structure(self, benchmarks):
             """Test task evaluation returns proper structure"""
             task = ExternalBenchmarkTask(
                 task_id="test_001",

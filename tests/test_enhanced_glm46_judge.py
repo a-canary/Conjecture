@@ -211,7 +211,7 @@ class TestEnhancedGLM46Judge:
         """Test evaluation caching"""
 
         @pytest.mark.asyncio
-        async def test_caching_mechanism(self, judge_config):
+        async async def test_caching_mechanism(self, judge_config):
             """Test that evaluations are cached"""
             judge = EnhancedGLM46Judge(judge_config)
 

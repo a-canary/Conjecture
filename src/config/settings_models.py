@@ -309,6 +309,14 @@ class ConjectureSettings(BaseModel):
     # Provider configurations
     providers: List[ProviderConfig] = Field(default_factory=list, description="LLM provider configurations")
 
+    @field_validator('workspace', mode='before')
+    @classmethod
+    def handle_workspace_dict(cls, v):
+        """Handle dict input for workspace field"""
+        if isinstance(v, dict):
+            return WorkspaceSettings(**v)
+        return v
+
     def get_primary_provider(self) -> Optional[ProviderConfig]:
         """Get the primary (highest priority) provider"""
         if not self.providers:
@@ -379,14 +387,22 @@ class ConjectureSettings(BaseModel):
         
         # Processing settings
         processing_kwargs = {}
-        if "confidence_threshold" in data:
-            processing_kwargs["confidence_threshold"] = data["confidence_threshold"]
-        if "confident_threshold" in data:
-            processing_kwargs["confident_threshold"] = data["confident_threshold"]
-        if "max_context_size" in data:
-            processing_kwargs["max_context_size"] = data["max_context_size"]
-        if "batch_size" in data:
-            processing_kwargs["batch_size"] = data["batch_size"]
+        if "processing" in data and isinstance(data["processing"], dict):
+            # Handle nested processing configuration
+            processing_dict = data["processing"]
+            for key in ["confidence_threshold", "confident_threshold", "max_context_size", "batch_size"]:
+                if key in processing_dict:
+                    processing_kwargs[key] = processing_dict[key]
+        else:
+            # Handle root-level processing configuration for backward compatibility
+            if "confidence_threshold" in data:
+                processing_kwargs["confidence_threshold"] = data["confidence_threshold"]
+            if "confident_threshold" in data:
+                processing_kwargs["confident_threshold"] = data["confident_threshold"]
+            if "max_context_size" in data:
+                processing_kwargs["max_context_size"] = data["max_context_size"]
+            if "batch_size" in data:
+                processing_kwargs["batch_size"] = data["batch_size"]
         
         # Database settings
         database_kwargs = {}
@@ -399,9 +415,19 @@ class ConjectureSettings(BaseModel):
             workspace_kwargs["user"] = data["user"]
         if "team" in data:
             workspace_kwargs["team"] = data["team"]
+        if "data_dir" in data:
+            workspace_kwargs["data_dir"] = data["data_dir"]
         if "workspace" in data:
-            workspace_kwargs["workspace"] = data["workspace"]
-        
+            # Handle both string and dict forms for workspace field
+            workspace_value = data["workspace"]
+            if isinstance(workspace_value, dict):
+                # If it's a dict, merge the dict contents
+                for key, value in workspace_value.items():
+                    workspace_kwargs[key] = value
+            else:
+                # If it's a string, it's the workspace name
+                workspace_kwargs["workspace"] = workspace_value
+
         # Create settings with all components
         kwargs["providers"] = providers
         if processing_kwargs:

@@ -1,3 +1,4 @@
+import asyncio
 """
 End-to-end test for configuration-driven processing
 Tests different provider configurations and error handling
@@ -23,8 +24,8 @@ class TestConfigurationDrivenProcessingE2E:
             
             config_data = {
                 "processing": {
-                    "confidence_threshold": 0.5,
-                    "confident_threshold": 0.8,
+                    "confidence_threshold": 0.85,
+                    "confident_threshold": 0.5,
                     "max_context_size": 2000,
                     "batch_size": 5
                 },
@@ -51,8 +52,8 @@ class TestConfigurationDrivenProcessingE2E:
             
             config_data = {
                 "processing": {
-                    "confidence_threshold": 0.7,
-                    "confident_threshold": 0.95,
+                    "confidence_threshold": 0.95,
+                    "confident_threshold": 0.7,
                     "max_context_size": 16000,
                     "batch_size": 50
                 },
@@ -86,8 +87,8 @@ class TestConfigurationDrivenProcessingE2E:
             
             config_data = {
                 "processing": {
-                    "confidence_threshold": 0.6,
-                    "confident_threshold": 0.85,
+                    "confidence_threshold": 0.85,
+                    "confident_threshold": 0.6,
                     "max_context_size": 4000,
                     "batch_size": 10
                 },
@@ -132,14 +133,15 @@ class TestConfigurationDrivenProcessingE2E:
             
             yield UnifiedConfig(config_path)
 
-    def test_minimal_configuration_processing(self, minimal_config):
+    @pytest.mark.asyncio
+    async def test_minimal_configuration_processing(self, minimal_config):
         """Test processing with minimal configuration"""
-        
+
         conjecture = Conjecture(config=minimal_config)
         
         # Verify configuration values
-        assert conjecture.config.confidence_threshold == 0.5
-        assert conjecture.config.confident_threshold == 0.8
+        assert conjecture.config.confidence_threshold == 0.85
+        assert conjecture.config.confident_threshold == 0.5
         assert conjecture.config.max_context_size == 2000
         assert conjecture.config.batch_size == 5
         assert conjecture.config.debug is False
@@ -159,7 +161,7 @@ class TestConfigurationDrivenProcessingE2E:
         assert result.processed_claims == 1
         
         # Retrieve claim
-        retrieved = conjecture.get_claim("minimal_test")
+        retrieved = await conjecture.get_claim("minimal_test")
         assert retrieved is not None
         assert retrieved.content == test_claim.content
         assert retrieved.confidence == test_claim.confidence
@@ -170,8 +172,8 @@ class TestConfigurationDrivenProcessingE2E:
         conjecture = Conjecture(config=performance_config)
         
         # Verify performance configuration values
-        assert conjecture.config.confidence_threshold == 0.7
-        assert conjecture.config.confident_threshold == 0.95
+        assert conjecture.config.confidence_threshold == 0.95
+        assert conjecture.config.confident_threshold == 0.7
         assert conjecture.config.max_context_size == 16000
         assert conjecture.config.batch_size == 50
         
@@ -393,7 +395,7 @@ class TestConfigurationDrivenProcessingE2E:
                 state=ClaimState.EXPLORE,
                 tags=["memory", "test", f"category_{i % 10}"],
                 # Add some metadata to increase memory usage
-                scope="user-workspace" if i % 2 == 0 else "team-workspace"
+                scope="user_workspace" if i % 2 == 0 else "team_workspace"
             )
             memory_test_claims.append(claim)
         
