@@ -1,4 +1,52 @@
 
+    def _quick_self_critique(self, response: str, problem_type: str) -> Dict[str, Any]:
+        """Lightweight self-critique layer for common reasoning errors"""
+        critiques = []
+        confidence_boost = 1.0
+
+        # Mathematical critiques
+        if "math" in problem_type or any(word in response.lower() for word in ["multiply", "add", "calculate", "×", "+"]):
+            # Check for calculation consistency
+            if "×" in response and "=" in response:
+                # Look for inconsistent multiplication patterns
+                lines = response.split('\n')
+                for line in lines:
+                    if "×" in line and "=" in line:
+                        if "=>" not in line:  # Not a step-by-step explanation
+                            # Check if calculation makes sense
+                            if any(num in line for num in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]):
+                                critiques.append("Consider showing calculation steps for clarity")
+                                confidence_boost *= 0.95
+
+        # Logical critiques
+        if "logic" in problem_type or any(word in response.lower() for word in ["if", "then", "conclude"]):
+            # Check for clear premise-conclusion structure
+            if not any(marker in response.lower() for marker in ["premise", "conclusion", "therefore", "thus"]):
+                critiques.append("Logic reasoning could benefit from clearer premise-conclusion structure")
+                confidence_boost *= 0.9
+
+        # General quality critiques
+        if len(response) < 50:
+            critiques.append("Response appears too brief - consider more detailed explanation")
+            confidence_boost *= 0.85
+        elif len(response) > 1000:
+            critiques.append("Response is quite long - consider focusing on key points")
+            confidence_boost *= 0.97
+
+        # Quality scoring
+        quality_score = confidence_boost
+        if not critiques:
+            quality_score *= 1.1  # Bonus for no issues found
+        quality_score = min(1.0, quality_score)
+
+        return {
+            "critiques": critiques,
+            "confidence_boost": confidence_boost,
+            "quality_score": quality_score,
+            "needs_revision": len(critiques) > 2
+        }
+
+
     def _get_self_verification_prompt(self, problem_text: str, answer: str) -> str:
         """Get self-verification prompt for error detection and correction"""
         problem_lower = problem_text.lower()
