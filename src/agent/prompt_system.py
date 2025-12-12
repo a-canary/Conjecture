@@ -1,3 +1,48 @@
+    def _get_context_for_problem_type(self, problem_text: str) -> str:
+        """Get problem-type-specific context scaffolding"""
+        problem_lower = problem_text.lower()
+
+        # Mathematical context
+        if any(word in problem_lower for word in ['calculate', 'multiply', 'add', 'subtract', 'divide', 'percent', 'what is', 'how many']):
+            return """MATHEMATICAL CONTEXT:
+- Break down calculations into clear steps
+- Write out intermediate results
+- Double-check arithmetic operations
+- Consider estimation to verify reasonableness
+- Use standard mathematical notation
+
+USEFUL FRAMEWORKS:
+1. Identify the operation needed
+2. Extract all numbers and values
+3. Set up the calculation
+4. Execute step-by-step
+5. Verify the result makes sense"""
+
+        # Logical context
+        elif any(word in problem_lower for word in ['if', 'then', 'conclude', 'logic', 'premise', 'assume', 'yes or no']):
+            return """LOGICAL CONTEXT:
+- Identify premises and conclusions
+- Check for hidden assumptions
+- Consider counterexamples
+- Distinguish between necessary and sufficient conditions
+- Avoid logical fallacies
+
+USEFUL FRAMEWORKS:
+1. List all given premises
+2. Identify what needs to be proven
+3. Consider if the conclusion necessarily follows
+4. Look for alternative interpretations
+5. Provide clear logical justification"""
+
+        # Default mixed context
+        else:
+            return """MIXED PROBLEM CONTEXT:
+- Identify the dominant domain (math or logic)
+- Apply appropriate reasoning strategies
+- Break complex problems into simpler parts
+- Consider multiple solution approaches
+- Provide clear justification for conclusions"""
+
 """
 Prompt System - Core LLM prompt assembly and response parsing for Conjecture.
 Handles the communication layer between the agent and LLM.
@@ -35,8 +80,9 @@ class PromptBuilder:
             
             # System prompt with context integration
             system_prompt = self.system_prompt
-            if hasattr(context, 'user_request') and context.user_request:
-                context_info = self._get_context_for_problem_type(context.user_request)
+            # Use the user_request parameter directly for context detection
+            if user_request:
+                context_info = self._get_context_for_problem_type(user_request)
                 system_prompt += f"\n\n{context_info}"
             prompt_parts.append(system_prompt)
             prompt_parts.append("")
@@ -411,3 +457,51 @@ When solving problems, identify the domain first, then apply the most appropriat
             "parameter_patterns": len(self.parameter_pattern.pattern),
             "claim_patterns": 5  # Number of claim extraction patterns
         }
+
+    def _get_context_for_problem_type(self, problem_text: str) -> str:
+        """Get problem-type-specific context scaffolding"""
+        problem_lower = problem_text.lower()
+
+        # Mathematical context
+        if any(word in problem_lower for word in ['calculate', 'multiply', 'add', 'subtract', 'divide', 'percent', 'what is', 'how many']):
+            return """MATHEMATICAL CONTEXT:
+- Break down calculations into clear steps
+- Write out intermediate results
+- Double-check arithmetic operations
+- Consider estimation to verify reasonableness
+- Use standard mathematical notation
+
+USEFUL FRAMEWORKS:
+1. Identify the operation needed
+2. Extract all numbers and values
+3. Set up the calculation
+4. Execute step-by-step
+5. Verify the result makes sense"""
+
+        # Logical context
+        elif any(word in problem_lower for word in ['if', 'then', 'conclude', 'logic', 'premise', 'assume', 'yes or no']):
+            return """LOGICAL CONTEXT:
+- Identify premises and conclusions
+- Check for hidden assumptions
+- Consider counterexamples
+- Distinguish between necessary and sufficient conditions
+- Avoid logical fallacies
+
+USEFUL FRAMEWORKS:
+1. List all given premises
+2. Identify what needs to be proven
+3. Consider if the conclusion necessarily follows
+4. Look for alternative interpretations
+5. Provide clear logical justification"""
+
+        # Default mixed context
+        else:
+            return """MIXED PROBLEM CONTEXT:
+- Identify the dominant domain (math or logic)
+- Apply appropriate reasoning strategies
+- Break complex problems into simpler parts
+- Consider multiple solution approaches
+- Provide clear justification for conclusions"""
+
+# Alias for backward compatibility
+ResponseParser = PromptBuilder
