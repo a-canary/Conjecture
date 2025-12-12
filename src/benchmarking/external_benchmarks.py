@@ -29,7 +29,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from src.agent.prompt_system import PromptSystem
 from src.processing.llm_bridge import LLMBridge
-from src.config.unified_config import Config
+from src.config.unified_config import UnifiedConfig as Config
 
 @dataclass
 class ExternalBenchmarkTask:
