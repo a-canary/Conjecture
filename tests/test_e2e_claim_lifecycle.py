@@ -20,8 +20,8 @@ class TestClaimLifecycleE2E:
         """Create temporary configuration for testing"""
         with tempfile.TemporaryDirectory() as temp_dir:
             config_path = Path(temp_dir) / "test_config.json"
-            
-            # Create test configuration
+
+            # Create test configuration with LLM disabled
             config_data = {
                 "processing": {
                     "confidence_threshold": 0.7,
@@ -36,13 +36,18 @@ class TestClaimLifecycleE2E:
                 "workspace": {
                     "data_dir": temp_dir
                 },
+                "llm": {
+                    "enabled": False,
+                    "mock_mode": True,
+                    "timeout": 1.0
+                },
                 "debug": True
             }
-            
+
             import json
             with open(config_path, 'w') as f:
                 json.dump(config_data, f)
-            
+
             yield UnifiedConfig(config_path)
 
     @pytest.fixture

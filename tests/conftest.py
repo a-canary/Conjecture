@@ -26,6 +26,7 @@ from datetime import datetime
 
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+from src.data.file_utils import file_handler
 
 # Import numpy for embedding tests
 try:
@@ -44,10 +45,10 @@ def event_loop():
 
 @pytest.fixture(scope="session")
 def temp_data_dir():
-    """Session-scoped temporary directory for test data."""
-    temp_dir = tempfile.mkdtemp(prefix="conjecture_test_")
-    yield Path(temp_dir)
-    shutil.rmtree(temp_dir, ignore_errors=True)
+    """Session-scoped temporary directory for test data with cross-platform support."""
+    temp_dir = file_handler.get_safe_temp_dir("conjecture_test_")
+    yield temp_dir
+    file_handler.safe_remove_dir(temp_dir)
 
 @pytest.fixture(scope="session")
 def test_config():
@@ -154,7 +155,7 @@ def performance_timer():
 
 @pytest.fixture(scope="function")
 def isolated_database(test_config, temp_data_dir):
-    """Create isolated database for each test."""
+    """Create isolated database for each test with improved file handling."""
     db_path = temp_data_dir / f"test_db_{int(time.time() * 1000)}.db"
 
     class IsolatedDatabase:
@@ -166,8 +167,17 @@ def isolated_database(test_config, temp_data_dir):
             return f"sqlite:///{self.path}"
 
         def cleanup(self):
-            if self.path.exists():
-                self.path.unlink()
+            try:
+                if self.path.exists():
+                    self.path.unlink()
+            except PermissionError:
+                # File might be locked, try once more after delay
+                time.sleep(0.1)
+                try:
+                    if self.path.exists():
+                        self.path.unlink()
+                except:
+                    pass
 
     db = IsolatedDatabase(db_path)
     yield db
@@ -506,13 +516,17 @@ def pytest_configure(config):
     pytest_ini_path = Path(__file__).parent.parent / "pytest.ini"
     if pytest_ini_path.exists():
         parser = configparser.ConfigParser()
-        parser.read(pytest_ini_path)
-        
-        # Update static analysis configuration from pytest.ini
-        if 'pytest-static-analysis' in parser:
-            config._static_analysis_auto_discovery = parser.getboolean('pytest-static-analysis', 'auto_discovery', fallback=True)
-        else:
-            config._static_analysis_auto_discovery = True
+        try:
+            parser.read(pytest_ini_path, encoding='utf-8')
+
+            # Update static analysis configuration from pytest.ini
+            if 'pytest-static-analysis' in parser:
+                config._static_analysis_auto_discovery = parser.getboolean('pytest-static-analysis', 'auto_discovery', fallback=True)
+            else:
+                config._static_analysis_auto_discovery = True
+        except (configparser.Error, UnicodeDecodeError):
+            # If pytest.ini can't be parsed as config, skip auto-discovery
+            config._static_analysis_auto_discovery = False
 
 def pytest_collection_modifyitems(config, items):
     """Modify test collection for optimization and static analysis integration."""
@@ -635,17 +649,17 @@ def pytest_report_header(config):
 def pytest_terminal_summary(terminalreporter, exitstatus, config):
     """Add performance and static analysis summary to terminal output."""
     terminalreporter.write_sep("=", "Test Suite Summary")
-    terminalreporter.write_line("• Parallel execution: Enabled")
-    terminalreporter.write_line("• Database isolation: Enforced")
-    terminalreporter.write_line("• UTF-8 compliance: Validated")
-    terminalreporter.write_line("• Memory monitoring: Active")
-    terminalreporter.write_line("• Performance timing: Enabled")
+    terminalreporter.write_line("[+] Parallel execution: Enabled")
+    terminalreporter.write_line("[+] Database isolation: Enforced")
+    terminalreporter.write_line("[+] UTF-8 compliance: Validated")
+    terminalreporter.write_line("[+] Memory monitoring: Active")
+    terminalreporter.write_line("[+] Performance timing: Enabled")
     
     # Add static analysis summary
     if hasattr(config, '_static_analysis_results') and config._static_analysis_results:
         terminalreporter.write_sep("-", "Static Analysis Results")
         for tool_name, results in config._static_analysis_results.items():
-            status = "✓ PASSED" if results['success'] else "✗ FAILED"
+            status = "[PASS]" if results['success'] else "[FAIL]"
             terminalreporter.write_line(f"• {tool_name}: {status}")
             
             if not results['success'] and results['stderr']:
