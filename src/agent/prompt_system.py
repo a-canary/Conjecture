@@ -33,8 +33,12 @@ class PromptBuilder:
         try:
             prompt_parts = []
             
-            # System prompt
-            prompt_parts.append(self.system_prompt)
+            # System prompt with context integration
+            system_prompt = self.system_prompt
+            if hasattr(context, 'user_request') and context.user_request:
+                context_info = self._get_context_for_problem_type(context.user_request)
+                system_prompt += f"\n\n{context_info}"
+            prompt_parts.append(system_prompt)
             prompt_parts.append("")
             
             # Context section

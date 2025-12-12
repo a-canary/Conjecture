@@ -87,6 +87,9 @@ class ImprovementCycleAgent:
             if cycle_config['number'] == 1:
                 # Cycle 1: Domain-adaptive system prompt
                 return await self._implement_cycle_1(cycle_config)
+            elif cycle_config['number'] == 2:
+                # Cycle 2: Enhanced context integration
+                return await self._implement_cycle_2(cycle_config)
             else:
                 return {"success": False, "error": f"Cycle {cycle_config['number']} not implemented yet"}
         except Exception as e:
@@ -154,6 +157,97 @@ When solving problems, identify the domain first, then apply the most appropriat
                 f.write(new_content)
 
             return {"success": True, "message": "Updated system prompt to be domain-adaptive"}
+
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    async def _implement_cycle_2(self, cycle_config: Dict[str, Any]) -> Dict[str, Any]:
+        """Implement Cycle 2: Enhanced context integration"""
+        try:
+            # Update the prompt system to add context integration
+            prompt_system_path = Path(__file__).parent.parent / "agent" / "prompt_system.py"
+
+            # Read current file
+            with open(prompt_system_path, 'r') as f:
+                content = f.read()
+
+            # First, add the context method
+            context_method = '''    def _get_context_for_problem_type(self, problem_text: str) -> str:
+        """Get problem-type-specific context scaffolding"""
+        problem_lower = problem_text.lower()
+
+        # Mathematical context
+        if any(word in problem_lower for word in ['calculate', 'multiply', 'add', 'subtract', 'divide', 'percent', 'what is', 'how many']):
+            return """MATHEMATICAL CONTEXT:
+- Break down calculations into clear steps
+- Write out intermediate results
+- Double-check arithmetic operations
+- Consider estimation to verify reasonableness
+- Use standard mathematical notation
+
+USEFUL FRAMEWORKS:
+1. Identify the operation needed
+2. Extract all numbers and values
+3. Set up the calculation
+4. Execute step-by-step
+5. Verify the result makes sense"""
+
+        # Logical context
+        elif any(word in problem_lower for word in ['if', 'then', 'conclude', 'logic', 'premise', 'assume', 'yes or no']):
+            return """LOGICAL CONTEXT:
+- Identify premises and conclusions
+- Check for hidden assumptions
+- Consider counterexamples
+- Distinguish between necessary and sufficient conditions
+- Avoid logical fallacies
+
+USEFUL FRAMEWORKS:
+1. List all given premises
+2. Identify what needs to be proven
+3. Consider if the conclusion necessarily follows
+4. Look for alternative interpretations
+5. Provide clear logical justification"""
+
+        # Default mixed context
+        else:
+            return """MIXED PROBLEM CONTEXT:
+- Identify the dominant domain (math or logic)
+- Apply appropriate reasoning strategies
+- Break complex problems into simpler parts
+- Consider multiple solution approaches
+- Provide clear justification for conclusions"""
+
+''' + content
+
+            # Write enhanced content back to file
+            with open(prompt_system_path, 'w') as f:
+                f.write(context_method)
+
+            # Now modify the assemble_prompt method to include context
+            content = content  # Reload the content after our changes
+
+            # Find and replace the assemble_prompt method to include context integration
+            # Look for the line after "System prompt" in assemble_prompt
+            old_assemble = '''            # System prompt
+            prompt_parts.append(self.system_prompt)
+            prompt_parts.append("")'''
+
+            new_assemble = '''            # System prompt with context integration
+            system_prompt = self.system_prompt
+            if hasattr(context, 'user_request') and context.user_request:
+                context_info = self._get_context_for_problem_type(context.user_request)
+                system_prompt += f"\\n\\n{context_info}"
+            prompt_parts.append(system_prompt)
+            prompt_parts.append("")'''
+
+            if old_assemble in content:
+                content = content.replace(old_assemble, new_assemble)
+
+                # Write the modified content back
+                with open(prompt_system_path, 'w') as f:
+                    f.write(content)
+
+            return {"success": True, "message": "Added enhanced context integration for problem types"}
 
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -346,5 +440,37 @@ async def run_cycle_1():
 
     return result
 
+async def run_cycle_2():
+    """Run Cycle 2"""
+    agent = ImprovementCycleAgent()
+
+    cycle_config = {
+        "number": 2,
+        "title": "Enhanced Context Integration",
+        "hypothesis": "Problem-type-specific context engineering (formulas, patterns, templates) will add +10% accuracy",
+        "target": "Additional +10% accuracy, better multi-step reasoning, mathematical scaffolding",
+        "files_modified": ["src/agent/prompt_system.py"]
+    }
+
+    result = await agent.run_cycle(cycle_config)
+
+    print(f"\n{'='*80}")
+    print(f"CYCLE 2 COMPLETE: {result['success']}")
+    if result['success']:
+        print("[SUCCESS] Context integration improvement validated and committed!")
+    else:
+        print("[FAILED] Cycle failed - no improvement or error occurred")
+    print(f"{'='*80}")
+
+    return result
+
+async def run_cycle_2_only():
+    """Run only Cycle 2"""
+    return await run_cycle_2()
+
 if __name__ == "__main__":
-    asyncio.run(run_cycle_1())
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "cycle2":
+        asyncio.run(run_cycle_2_only())
+    else:
+        asyncio.run(run_cycle_1())
