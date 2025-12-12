@@ -17,13 +17,9 @@ from prompt_prototype_framework import (
     MATH_PROBLEMS,
     LOGIC_PROBLEMS
 )
-from improved_prompts import (
+from prompt_prototype_framework import (
     BASELINE_STRATEGY,
     DIRECT_STRATEGY,
-    MATH_SPECIALIZED_STRATEGY,
-    LOGIC_SPECIALIZED_STRATEGY,
-    MATH_CONTEXT_ENHANCED_STRATEGY,
-    ENHANCED_CONJECTURE_MATH_STRATEGY
 )
 from config_aware_integration import gpt_oss_20b_direct
 

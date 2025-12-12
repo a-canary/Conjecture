@@ -1,0 +1,2601 @@
+{
+  "test_config": {
+    "timestamp": "2025-12-12T02:43:42.752144",
+    "model": "openai/gpt-oss-20b",
+    "api_endpoint": "https://openrouter.ai/api/v1",
+    "problems_tested": 50,
+    "claim_thresholds": [
+      0,
+      5,
+      10,
+      25
+    ]
+  },
+  "results": {
+    "baseline": {
+      "correct_answers": 35,
+      "accuracy_percent": 70.0,
+      "total_time_seconds": 85.78884673118591,
+      "total_tokens": 12973,
+      "details": [
+        {
+          "problem_id": "math_001",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "15 % of 240 is **36**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.6753456592559814,
+          "token_usage": 179,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_002",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "x = 7",
+          "is_correct": true,
+          "execution_time_seconds": 0.9903101921081543,
+          "token_usage": 205,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_003",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "106",
+          "is_correct": true,
+          "execution_time_seconds": 1.1685984134674072,
+          "token_usage": 208,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_004",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "12",
+          "is_correct": true,
+          "execution_time_seconds": 1.87681245803833,
+          "token_usage": 172,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_005",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "60",
+          "is_correct": true,
+          "execution_time_seconds": 1.3271517753601074,
+          "token_usage": 206,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_006",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "\\(x = 10\\)",
+          "is_correct": true,
+          "execution_time_seconds": 1.8241815567016602,
+          "token_usage": 182,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_007",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "269",
+          "is_correct": false,
+          "execution_time_seconds": 0.7514755725860596,
+          "token_usage": 210,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_008",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "20 % of 150 = 0.20 × 150 = **30**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.2414827346801758,
+          "token_usage": 212,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_009",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "\\(x = 5\\)",
+          "is_correct": true,
+          "execution_time_seconds": 2.4784889221191406,
+          "token_usage": 192,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_010",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The cube root of 27 is **3**.",
+          "is_correct": true,
+          "execution_time_seconds": 0.9769454002380371,
+          "token_usage": 182,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_001",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "No.  \nThe fact that all cats are animals and that some animals are pets does **not** guarantee that any cats are pets. The pets could be entirely non‑cat animals.",
+          "is_correct": true,
+          "execution_time_seconds": 0.9875991344451904,
+          "token_usage": 298,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_002",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Yes.  \nIf \\(A \\implies B\\) and \\(B \\implies C\\), then by transitivity of implication \\(A \\implies C\\).",
+          "is_correct": true,
+          "execution_time_seconds": 1.2843570709228516,
+          "token_usage": 249,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_003",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Yes.  \nBecause there is at least one doctor who is rich, and every rich person drives a car, that particular doctor must drive a car. Thus we can conclude that some doctors drive cars.",
+          "is_correct": false,
+          "execution_time_seconds": 2.2811639308929443,
+          "token_usage": 395,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_004",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Yes. Since all mammals are warm‑blooded and whales are mammals, whales are warm‑blooded.",
+          "is_correct": true,
+          "execution_time_seconds": 0.9830367565155029,
+          "token_usage": 251,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_005",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Yes.  \nGiven the premises “All birds can fly” and “Penguins are birds,” the logical conclusion is that penguins can fly.",
+          "is_correct": false,
+          "execution_time_seconds": 0.8888053894042969,
+          "token_usage": 307,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_006",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Yes. Because there is at least one student who is an athlete, and every athlete is disciplined, that",
+          "is_correct": true,
+          "execution_time_seconds": 3.3511505126953125,
+          "token_usage": 329,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_007",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "No.  \nSince every triangle is a square and no square is a circle, no triangle can be a circle.",
+          "is_correct": true,
+          "execution_time_seconds": 1.8782970905303955,
+          "token_usage": 301,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_008",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Yes.  \nBecause “If P is true, then Q is false” means \\(P \\rightarrow \\lnot Q\\).  \nSince \\(Q\\) is true, \\(\\lnot Q\\) is false, so the implication would be \\(P \\rightarrow \\text{false}\\).  \nThat can only hold if \\(P\\) is false. Thus \\(P\\) is false.",
+          "is_correct": true,
+          "execution_time_seconds": 6.449601888656616,
+          "token_usage": 326,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_009",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "No.  \nFrom\n\n1",
+          "is_correct": true,
+          "execution_time_seconds": 0.8785555362701416,
+          "token_usage": 330,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_010",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Because \\((A \\land B) \\rightarrow C\\) is true, the antecedent \\(A \\land B\\) must be false whenever \\(C\\) is false.  \nSince \\(A\\) is",
+          "is_correct": false,
+          "execution_time_seconds": 2.2019765377044678,
+          "token_usage": 334,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_001",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "At standard pressure (1 atm), water boils at 100 °C and turns from liquid into vapor (steam).",
+          "is_correct": false,
+          "execution_time_seconds": 1.4649782180786133,
+          "token_usage": 252,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_002",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Plants primarily produce **oxygen (O₂)** during photosynthesis.",
+          "is_correct": true,
+          "execution_time_seconds": 1.2297916412353516,
+          "token_usage": 190,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_003",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The force that keeps planets orbiting the Sun is **gravity**—the Sun’s gravitational attraction pulls each planet toward it, while the planet’s inertia keeps it moving forward, resulting in an orbit.",
+          "is_correct": true,
+          "execution_time_seconds": 1.4772765636444092,
+          "token_usage": 214,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_004",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The chemical formula for water is **H₂O**.",
+          "is_correct": false,
+          "execution_time_seconds": 0.5678389072418213,
+          "token_usage": 178,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_005",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The speed of light in vacuum is exactly **299 792 458 m/s**.",
+          "is_correct": false,
+          "execution_time_seconds": 0.5098905563354492,
+          "token_usage": 207,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_006",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The process that turns liquid water into water vapor is **evaporation** (and, when the water reaches its boiling point, **boiling**).",
+          "is_correct": true,
+          "execution_time_seconds": 1.5690321922302246,
+          "token_usage": 268,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_007",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The smallest unit of matter is an **atom**.",
+          "is_correct": true,
+          "execution_time_seconds": 10.45173454284668,
+          "token_usage": 306,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_008",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Nitrogen (about 78 % of the atmosphere).",
+          "is_correct": true,
+          "execution_time_seconds": 0.8385410308837891,
+          "token_usage": 193,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_009",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Chemical bonds store **chemical potential energy** (often simply called chemical energy).",
+          "is_correct": true,
+          "execution_time_seconds": 0.9047834873199463,
+          "token_usage": 227,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_010",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The process by which plants make their own food is called **photosynthesis**.",
+          "is_correct": true,
+          "execution_time_seconds": 0.9296681880950928,
+          "token_usage": 199,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_001",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "$10,000 - $3,000 - $5,000 = $2,000.  \nSo, $2,000 remains.",
+          "is_correct": true,
+          "execution_time_seconds": 1.9336328506469727,
+          "token_usage": 227,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_002",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Project A has the better monthly return.\n\n- Project A: $5,000 ÷ 3 months ≈ **$1,666.67 per month**  \n- Project B: $8,000 ÷ 5 months = **$1,600 per month**\n\nSo Project A yields a higher monthly profit.",
+          "is_correct": false,
+          "execution_time_seconds": 1.4513053894042969,
+          "token_usage": 282,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_003",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "$1,160.",
+          "is_correct": true,
+          "execution_time_seconds": 2.5399765968322754,
+          "token_usage": 252,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_004",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Total profit = $800.",
+          "is_correct": true,
+          "execution_time_seconds": 1.160686731338501,
+          "token_usage": 211,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_005",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The final price is **$144**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.849090814590454,
+          "token_usage": 219,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_006",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The total cost is **$200**.",
+          "is_correct": true,
+          "execution_time_seconds": 0.6052358150482178,
+          "token_usage": 196,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_007",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "$1,000 will have the purchasing power of about **$970.87** after one year at 3 % inflation.",
+          "is_correct": true,
+          "execution_time_seconds": 0.8718197345733643,
+          "token_usage": 264,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_008",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Daily output = 1 440 units.",
+          "is_correct": false,
+          "execution_time_seconds": 1.110119104385376,
+          "token_usage": 318,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_009",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "Net take‑home = $52,000.",
+          "is_correct": false,
+          "execution_time_seconds": 0.6834590435028076,
+          "token_usage": 276,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_010",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The bill is **$45.00**.  \n- Base plan: $30.00  \n- Overage: 150 min × $0.10 / min = $15.00  \n- Total: $30.00 + $15.00 = **$45.00**",
+          "is_correct": true,
+          "execution_time_seconds": 1.5645060539245605,
+          "token_usage": 259,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_001",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The total cost is **$47.25**.",
+          "is_correct": true,
+          "execution_time_seconds": 3.296377182006836,
+          "token_usage": 268,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_002",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The average is **90**.",
+          "is_correct": true,
+          "execution_time_seconds": 0.6125688552856445,
+          "token_usage": 211,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_003",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "- **Area:** \\(12 \\times 8 = 96\\) square units  \n- **Perimeter:** \\(2(12 + 8) = 40\\) units",
+          "is_correct": false,
+          "execution_time_seconds": 0.7084054946899414,
+          "token_usage": 267,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_004",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The train travels **150 miles**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.05562424659729,
+          "token_usage": 203,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_005",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "After 3 days the tank contains **470.596 gallons**.",
+          "is_correct": false,
+          "execution_time_seconds": 1.5190534591674805,
+          "token_usage": 271,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_006",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The final salary is **$41,400**.",
+          "is_correct": false,
+          "execution_time_seconds": 0.7861535549163818,
+          "token_usage": 223,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_007",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "**Circle with radius \\(r = 8\\ \\text{cm}\\)**  \n\n| Quantity | Formula | Result |\n|----------|---------|--------|\n| Area | \\(A = \\pi r^{2}\\) | \\(A = \\pi (8)^2 = 64\\pi \\ \\text{cm}^2 \\",
+          "is_correct": false,
+          "execution_time_seconds": 2.0139400959014893,
+          "token_usage": 322,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_008",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "For 10 people you’d need about **4.17 cups of flour** (≈ 25 ÷ 6 = 4 ⅙ cups).",
+          "is_correct": true,
+          "execution_time_seconds": 0.8670988082885742,
+          "token_usage": 259,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_009",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "After the first year the car is worth  \n\\(30{,}000 \\times 0.80 = \\$24{,}000\\).\n\nAfter the second year it depreciates another 15 %:  \n\\(24{,}000 \\times 0.85 = \\$20{,}400\\).\n\n**Value after 2 years: \\$20,400**",
+          "is_correct": true,
+          "execution_time_seconds": 1.8643677234649658,
+          "token_usage": 330,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_010",
+          "method": "baseline",
+          "claims_evaluated": 0,
+          "response": "The two workers’ rates add.  \n- Alone: \\( \\frac{1}{8}\\) of the job per hour.  \n- Helper alone: \\( \\frac{1}{6}\\) of the job per hour.  \n\nCombined rate:  \n\\[\n\\frac{1}{8}+\\frac{1}{6}= \\frac{3+4}{24}= \\frac{7}{24}\\text{ job/hour}\n\\]\n\nTime to finish one job:  \n\\[\n\\text{Time}= \\frac{1}{\\frac{7}{24}}= \\frac{24}{7}\\text{ hours}\\approx 3.43\\text{ hours}\n\\]\n\nSo working together they finish the project in **\\( \\displaystyle \\frac{24}{7}\\) hours (about 3 h 25 min)**.",
+          "is_correct": false,
+          "execution_time_seconds": 3.856553316116333,
+          "token_usage": 813,
+          "error_message": null
+        }
+      ]
+    },
+    "conjecture_0_claims": {
+      "correct_answers": 32,
+      "accuracy_percent": 64.0,
+      "improvement_over_baseline_percent": -6.0,
+      "total_time_seconds": 118.70249485969543,
+      "total_tokens": 15753,
+      "total_claims_evaluated": 0,
+      "details": [
+        {
+          "problem_id": "math_001",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "15% of 240 is \\(0.15 \\times 240 = 36\\).",
+          "is_correct": true,
+          "execution_time_seconds": 0.6120412349700928,
+          "token_usage": 221,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_002",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "x = 7",
+          "is_correct": true,
+          "execution_time_seconds": 0.5510382652282715,
+          "token_usage": 205,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_003",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "First perform the multiplication and division (they have the same precedence, so do them from left to right):\n\n- \\(25 \\times 4 = 100\\)\n- \\(18 \\div 3 = 6\\)\n\nNow add the two results:\n\n\\(100 + 6 = 106\\)\n\n**Answer: 106**",
+          "is_correct": true,
+          "execution_time_seconds": 2.6847293376922607,
+          "token_usage": 294,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_004",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The principal square root of 144 is **12** (the other root is –12).",
+          "is_correct": true,
+          "execution_time_seconds": 1.4721994400024414,
+          "token_usage": 228,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_005",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "3/4 of 80 is \\(80 \\times \\frac{3}{4} = 60\\).",
+          "is_correct": true,
+          "execution_time_seconds": 0.526353120803833,
+          "token_usage": 228,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_006",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "\\(2x - 7 = 13\\)\n\nAdd 7 to both sides:\n\\(2x = 20\\)\n\nDivide by 2:\n\\(x = 10\\)\n\n**Answer: \\(x = 10\\).**",
+          "is_correct": true,
+          "execution_time_seconds": 1.2021231651306152,
+          "token_usage": 264,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_007",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "12² + 5³ = 144 + 125 = **269**",
+          "is_correct": false,
+          "execution_time_seconds": 5.459989786148071,
+          "token_usage": 200,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_008",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "20 % of 150 is \\(0.20 \\times 150 = 30\\).",
+          "is_correct": true,
+          "execution_time_seconds": 1.052588939666748,
+          "token_usage": 219,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_009",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "To solve \\(3x + 4 = 19\\):\n\n1. Subtract 4 from both sides:  \n   \\(3x = 19 - 4 = 15\\).\n\n2. Divide both sides by 3:  \n   \\(x = \\frac{15}{3} = 5\\).\n\n**Answer:** \\(x = 5\\)",
+          "is_correct": true,
+          "execution_time_seconds": 1.2875421047210693,
+          "token_usage": 274,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_010",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The cube root of 27 is **3**.",
+          "is_correct": true,
+          "execution_time_seconds": 2.0560529232025146,
+          "token_usage": 212,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_001",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "No.  \nFrom  \n\n1. **All cats are animals** (All C ⊆ A)  \n2. **Some animals are pets** (∃ x ∈ A ∧ x ∈ P)\n\nwe cannot deduce that **some cats are pets** (∃ x ∈ C ∧ x ∈ P).  \nThe animals that are pets might be non‑cat animals, so the conclusion is not logically valid.",
+          "is_correct": true,
+          "execution_time_seconds": 1.874138355255127,
+          "token_usage": 432,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_002",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Yes.\n\nIn propositional logic the implication relation is **transitive**.  \nIf  \n\n1. \\(A \\rightarrow B\\)  (whenever \\(A\\) is true, \\(B\\) is true), and  \n2. \\(B \\rightarrow C\\)  (whenever \\(B\\) is true, \\(C\\) is true),\n\nthen it follows that  \n\n\\[\nA \\rightarrow C\n\\]\n\n**Why?**  \nAssume \\(A\\) is true.  \nFrom (1) we get \\(B\\) is true.  \nFrom (2) we get \\(C\\) is true.  \nThus whenever \\(A\\) holds, \\(C\\) holds, which is exactly \\(A \\rightarrow C\\).\n\nThis can also be seen as a tautology:  \n\n\\[\n\\bigl((A \\rightarrow B) \\land (B \\rightarrow C)\\bigr) \\rightarrow (A \\rightarrow C)\n\\]\n\nis true for all truth‑value assignments of \\(A, B, C\\). Hence, **A implies C**.",
+          "is_correct": true,
+          "execution_time_seconds": 5.016425848007202,
+          "token_usage": 471,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_003",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Yes.\n\n**Reasoning**\n\n1. **Premise 1:** Some doctors are rich.  \n   → There exists at least one person who is both a doctor and rich.\n\n2. **Premise 2:** All rich people drive cars.  \n   → Every person who is rich also drives a car.\n\n3. **Conclusion:** Therefore, that particular rich doctor (from Premise 1) drives a car.  \n   → There exists at least one doctor who drives a car.\n\nSo the statement “Some doctors drive cars” follows logically from the given premises.",
+          "is_correct": false,
+          "execution_time_seconds": 3.516016960144043,
+          "token_usage": 375,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_004",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Yes. Since all mammals are warm‑blooded and whales are mammals, whales are warm‑blooded.",
+          "is_correct": true,
+          "execution_time_seconds": 3.718931198120117,
+          "token_usage": 222,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_005",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Yes—under the given premises, the logical conclusion is that penguins can fly. (In reality, however, penguins are flightless.)",
+          "is_correct": false,
+          "execution_time_seconds": 2.0498836040496826,
+          "token_usage": 419,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_006",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Yes.  \n- Premise 1: Some students are athletes.  \n- Premise 2: All athletes are disciplined.  \n\nSince the athletes that are students are a subset of all athletes, and every athlete is disciplined, those particular students must be disciplined. Therefore, we can validly conclude that **some students are disciplined**.",
+          "is_correct": true,
+          "execution_time_seconds": 2.2520651817321777,
+          "token_usage": 343,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_007",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "No.  \nSince every triangle is a square and no square is a circle, a triangle cannot be a circle.",
+          "is_correct": true,
+          "execution_time_seconds": 10.751967191696167,
+          "token_usage": 382,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_008",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Yes.\n\n**Reasoning**\n\n1. The statement “If P is true, then Q is false” is the implication  \n   \\[\n   P \\;\\rightarrow\\; \\lnot Q .\n   \\]\n\n2. The contrapositive of an implication is logically equivalent to the original implication.  \n   For \\(P \\rightarrow \\lnot Q\\) the contrapositive is  \n   \\[\n   Q \\;\\rightarrow\\; \\lnot P .\n   \\]\n\n3. We are given that \\(Q\\) is true.  \n   Applying the contrapositive, a true \\(Q\\) forces \\(\\lnot P\\) to be true.\n\n4. Therefore \\(P\\) must be false.\n\nSo, given the premises, **P is false**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.9512674808502197,
+          "token_usage": 500,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_009",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "**Answer:**  \nNo. The conclusion “Some philosophers are writers” does **not** logically follow from the two premises.\n\n**Why?**\n\n| Premise | Form | Meaning |\n|---------|------|---------|\n| All philosophers are thinkers. | A‑statement (All P are T) | Every philosopher is a thinker. |\n| Some thinkers are writers. | I‑statement (Some T are W) | At least one thinker is a writer. |\n\nFrom these we can only deduce that the set of philosophers is a subset of the set of thinkers, and that the set of writers overlaps with the set of thinkers somewhere. But we have no information about whether the overlap between writers and thinkers includes any philosophers.\n\n**Counterexample**\n\n- Philosophers: { Alice, Bob }\n- Thinkers: { Alice, Bob, Carol, Dave }\n- Writers: { Carol, Dave }\n\nHere:\n\n- All philosophers (Alice, Bob) are thinkers. ✔️  \n- Some thinkers (Carol, Dave) are writers. ✔️  \n- **No philosopher is a writer.** ❌\n\nThus the premises can be true while the conclusion is false. Therefore the inference is invalid.",
+          "is_correct": true,
+          "execution_time_seconds": 3.257751226425171,
+          "token_usage": 704,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_010",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Since \\((A \\land B) \\rightarrow C\\) is true, the only way for \\(C\\) to be false while \\(A\\) is true is that the antecedent \\(A \\land B\\) is false.  \nBecause \\(A\\) is true, the falsity of \\(A \\land B\\) forces \\(B\\) to be false.\n\n**Conclusion:** \\(B\\) must be false.",
+          "is_correct": false,
+          "execution_time_seconds": 2.423973798751831,
+          "token_usage": 405,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_001",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "At 1 atm (standard pressure), water reaches its boiling point at 100 °C. When the temperature hits 100 °C, the vapor pressure of the liquid equals the atmospheric pressure, so the liquid begins to vaporize rapidly. The water turns into steam (water vapor) while absorbing the latent heat of vaporization.",
+          "is_correct": false,
+          "execution_time_seconds": 1.2899024486541748,
+          "token_usage": 338,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_002",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Plants primarily produce **oxygen (O₂)** during photosynthesis.",
+          "is_correct": true,
+          "execution_time_seconds": 1.6546382904052734,
+          "token_usage": 192,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_003",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The force that keeps planets in orbit around the Sun is **gravity**.  \nThe Sun’s mass creates a gravitational field that pulls each planet toward it. The planet’s inertia (its tendency to move in a straight line) causes it to travel forward, while the Sun’s gravity continuously pulls it inward. This balance between the planet’s forward motion and the Sun’s gravitational pull produces a curved, stable orbit.",
+          "is_correct": true,
+          "execution_time_seconds": 1.0861895084381104,
+          "token_usage": 283,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_004",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The chemical formula for water is **H₂O**.",
+          "is_correct": false,
+          "execution_time_seconds": 0.816450834274292,
+          "token_usage": 196,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_005",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The speed of light in vacuum is exactly **299,792,458 m/s** (about 300 000 km/s).",
+          "is_correct": false,
+          "execution_time_seconds": 1.055673360824585,
+          "token_usage": 225,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_006",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The conversion of liquid water into water vapor is called **evaporation** (or **boiling** when it occurs at the boiling point).",
+          "is_correct": true,
+          "execution_time_seconds": 2.2596938610076904,
+          "token_usage": 287,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_007",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The smallest known units of matter are **elementary particles**—the indivisible constituents of the Standard Model, such as quarks, leptons (e.g., electrons), and gauge bosons. These particles are not known to have any substructure.",
+          "is_correct": false,
+          "execution_time_seconds": 0.9946849346160889,
+          "token_usage": 350,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_008",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The gas that makes up the majority of Earth's atmosphere is **nitrogen (N₂)**, comprising about 78 % of the air.",
+          "is_correct": true,
+          "execution_time_seconds": 1.353224515914917,
+          "token_usage": 183,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_009",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Chemical bonds store **chemical potential energy**—the energy stored in the arrangement of atoms and electrons, which is released or absorbed during chemical reactions.",
+          "is_correct": false,
+          "execution_time_seconds": 1.6808569431304932,
+          "token_usage": 211,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_010",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The process is **photosynthesis**. During photosynthesis, plants use sunlight, water, and carbon dioxide to produce glucose (a sugar) and oxygen. The reaction can be summarized as:\n\n\\[\n6\\,\\text{CO}_2 + 6\\,\\text{H}_2\\text{O} + \\text{light energy} \\;\\longrightarrow\\; C_6H_{12}O_6 + 6\\,\\text{O}_2\n\\]\n\nThis occurs mainly in chloroplasts, where chlorophyll captures light energy.",
+          "is_correct": true,
+          "execution_time_seconds": 1.169708251953125,
+          "token_usage": 310,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_001",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "$10,000 – $3,000 – $5,000 = **$2,000** remains.",
+          "is_correct": true,
+          "execution_time_seconds": 1.0626530647277832,
+          "token_usage": 252,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_002",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Project A has the better monthly return.\n\n- Project A: $5,000 ÷ 3 months ≈ **$1,667 per month**  \n- Project B: $8,000 ÷ 5 months = **$1,600 per month**\n\nSo Project A yields a higher monthly profit.",
+          "is_correct": false,
+          "execution_time_seconds": 1.3978750705718994,
+          "token_usage": 307,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_003",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "With simple interest, the interest earned is\n\n\\[\n\\text{Interest} = P \\times r \\times t\n\\]\n\nwhere  \n\\(P = \\$1{,}000\\),  \n\\(r = 8\\% = 0.08\\),  \n\\(t = 2\\) years.\n\n\\[\n\\text{Interest} = 1000 \\times 0.08 \\times 2 = 160\n\\]\n\nThe total amount after 2 years is the principal plus the interest:\n\n\\[\n\\text{Total} = 1000 + 160 = \\$1{,}160\n\\]\n\n**Answer:** \\$1,160.",
+          "is_correct": true,
+          "execution_time_seconds": 3.2974748611450195,
+          "token_usage": 366,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_004",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Total profit = (100 × $20) – (100 × $12)  \n= $2,000 – $1,200  \n= **$800**.",
+          "is_correct": true,
+          "execution_time_seconds": 0.7949228286743164,
+          "token_usage": 259,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_005",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Original price: $200  \n1. 20 % off → $200 × 0.80 = $160  \n2. Additional 10 % off the discounted price → $160 × 0.90 = $144  \n\n**Final price: $144**",
+          "is_correct": true,
+          "execution_time_seconds": 2.0833752155303955,
+          "token_usage": 286,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_006",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The cost is:\n\n- Daily fee: \\(3 \\text{ days} \\times \\$50/\\text{day} = \\$150\\)\n- Mileage fee: \\(200 \\text{ miles} \\times \\$0.25/\\text{mile} = \\$50\\)\n\nTotal cost: \\(\\$150 + \\$50 = \\$200\\).",
+          "is_correct": true,
+          "execution_time_seconds": 1.292611837387085,
+          "token_usage": 282,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_007",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "With a 3 % annual inflation rate, the purchasing power of money falls by that amount each year.  \nSo the real value of $1,000 after one year is:\n\n\\[\n\\$1{,}000 \\times (1 - 0.03) = \\$1{,}000 \\times 0.97 = \\$970\n\\]\n\nThus, $1,000 will be worth **$970 in terms of purchasing power** after one year.",
+          "is_correct": true,
+          "execution_time_seconds": 2.2939138412475586,
+          "token_usage": 354,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_008",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "**Daily output**\n\n- Production rate: 100 units per hour  \n- Shift length: 8 h → 8 h × 100 units/h = 800 units per shift  \n- Downtime: 10 % → effective output per shift = 800 × 0.90 = **720 units**  \n- Two shifts per day → 720 units × 2 = **1,440 units per day**.",
+          "is_correct": true,
+          "execution_time_seconds": 2.3787453174591064,
+          "token_usage": 358,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_009",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "**Net take‑home:**  \n- Salary: $50,000  \n- Bonus (5 % of salary): $2,500  \n- Tax on bonus (20 %): $500  \n\nNet = $50,000 + $2,500 – $500 = **$52,000**.",
+          "is_correct": false,
+          "execution_time_seconds": 12.429920434951782,
+          "token_usage": 334,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_010",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The bill is:\n\n- Base plan: \\$30  \n- Overage: 650 min – 500 min = 150 min × \\$0.10 = \\$15  \n\n**Total bill = \\$30 + \\$15 = \\$45**",
+          "is_correct": true,
+          "execution_time_seconds": 1.1080262660980225,
+          "token_usage": 292,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_001",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "Total cost = 3 × $15 = $45  \nTax (5 % of $45) = 0.05 × $45 = $2.25  \n\n**Total = $45 + $2.25 = $47.25**",
+          "is_correct": true,
+          "execution_time_seconds": 2.5479774475097656,
+          "token_usage": 267,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_002",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The average is:\n\n\\[\n\\frac{80 + 90 + 100}{3} = \\frac{270}{3} = 90\n\\]",
+          "is_correct": true,
+          "execution_time_seconds": 0.9219217300415039,
+          "token_usage": 250,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_003",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "- **Area**: \\(12 \\times 8 = 96\\) square units  \n- **Perimeter**: \\(2(12 + 8) = 2 \\times 20 = 40\\) units",
+          "is_correct": false,
+          "execution_time_seconds": 2.0206727981567383,
+          "token_usage": 319,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_004",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The train travels \\(60 \\text{ mph} \\times 2.5 \\text{ h} = 150\\) miles.",
+          "is_correct": false,
+          "execution_time_seconds": 0.8683414459228516,
+          "token_usage": 235,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_005",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The tank loses 2 % of its contents each day, so the remaining amount after each day is multiplied by \\(0.98\\).\n\nAfter 3 days:\n\n\\[\n\\text{Remaining} = 500 \\times 0.98^3\n\\]\n\n\\[\n0.98^3 = 0.98 \\times 0.98 \\times 0.98 = 0.941192\n\\]\n\n\\[\n500 \\times 0.941192 \\approx 470.6 \\text{ gallons}\n\\]\n\n**Answer:** About **470.6 gallons** remain after 3 days.",
+          "is_correct": false,
+          "execution_time_seconds": 4.367554426193237,
+          "token_usage": 417,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_006",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The salary after the two changes is **$41,400**.",
+          "is_correct": false,
+          "execution_time_seconds": 2.4143009185791016,
+          "token_usage": 248,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_007",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "**Circle radius:** \\(r = 8 \\text{ cm}\\)\n\n| Quantity | Formula | Calculation | Result |\n|----------|---------|-------------|--------|\n| Area | \\(A = \\pi r^{2}\\) | \\(A = \\pi (8\\,\\text{cm})^{2} = 64\\pi \\,\\text{cm}^{2}\\) | \\( \\approx 201.06 \\,\\text{cm}^{2}\\) |\n| Circumference | \\(C = 2\\pi r\\) | \\(C = 2\\pi (8\\,\\text{cm}) = 16\\pi \\,\\text{cm}\\) | \\( \\approx 50.27 \\,\\text{cm}\\) |\n\nSo, the circle has an area of **\\(64\\pi \\text{ cm}^2\\)** (≈ 201.06 cm²) and a circumference of **\\(16\\pi \\text{ cm}\\)** (≈ 50.27 cm).",
+          "is_correct": false,
+          "execution_time_seconds": 2.3214385509490967,
+          "token_usage": 459,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_008",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The recipe uses 2.5 cups of flour for 6 servings.  \nTo find the amount for 10 servings, scale the flour proportionally:\n\n\\[\n\\text{Scale factor} = \\frac{10}{6} \\approx 1.6667\n\\]\n\n\\[\n\\text{Flour needed} = 2.5 \\text{ cups} \\times 1.6667 \\approx 4.17 \\text{ cups}\n\\]\n\nSo you’ll need **about 4 ⅙ cups of flour** (roughly 4 ¼ cups if you prefer a round number).",
+          "is_correct": false,
+          "execution_time_seconds": 5.316283226013184,
+          "token_usage": 445,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_009",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The car’s value after two years is:\n\n1. **First year:**  \n   \\(30{,}000 \\times (1 - 0.20) = 30{,}000 \\times 0.80 = \\$24{,}000\\)\n\n2. **Second year:**  \n   \\(24{,}000 \\times (1 - 0.15) = 24{,}000 \\times 0.85 = \\$20{,}400\\)\n\n**Value after 2 years: \\$20,400.**",
+          "is_correct": true,
+          "execution_time_seconds": 0.9058458805084229,
+          "token_usage": 385,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_010",
+          "method": "conjecture_0_claims",
+          "claims_evaluated": 0,
+          "response": "The two rates add:\n\n- Person A: \\(1/8\\) job per hour  \n- Person B: \\(1/6\\) job per hour  \n\nCombined rate \\(= \\frac{1}{8} + \\frac{1}{6} = \\frac{3}{24} + \\frac{4}{24} = \\frac{7}{24}\\) job per hour.\n\nTime to finish one job together:\n\n\\[\n\\text{Time} = \\frac{1}{\\text{rate}} = \\frac{1}{7/24} = \\frac{24}{7}\\text{ hours} \\approx 3.43\\text{ hours}\n\\]\n\nSo they finish the project in **24/7 hours (about 3 h 25 min)**.",
+          "is_correct": false,
+          "execution_time_seconds": 1.8005375862121582,
+          "token_usage": 465,
+          "error_message": null
+        }
+      ]
+    },
+    "conjecture_5_claims": {
+      "correct_answers": 36,
+      "accuracy_percent": 72.0,
+      "improvement_over_baseline_percent": 2.0,
+      "total_time_seconds": 157.07988166809082,
+      "total_tokens": 24591,
+      "total_claims_evaluated": 250,
+      "details": [
+        {
+          "problem_id": "math_001",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Solution**\n\nTo find 15 % of 240, use the definition of a percentage:\n\n\\[\n\\text{percentage of a number} = \\left(\\frac{\\text{percentage}}{100}\\right) \\times \\text{number}\n\\]\n\n1. Convert 15 % to a decimal:  \n   \\[\n   15\\% = \\frac{15}{100} = 0.15\n   \\]\n\n2. Multiply by the base value (240):  \n   \\[\n   0.15 \\times 240 = 36\n   \\]\n\n**Alternative check**\n\n- 15 % can also be expressed as the fraction \\(\\frac{15}{100} = \\frac{3}{20}\\).\n- Multiply:  \n  \\[\n  240 \\times \\frac{3}{20} = 12 \\times 3 = 36\n  \\]\n\nBoth methods give the same result.\n\n\\[\n\\boxed{36}\n\\]",
+          "is_correct": true,
+          "execution_time_seconds": 4.920917749404907,
+          "token_usage": 471,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_002",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "To solve the equation \\(x + 8 = 15\\):\n\n1. Subtract 8 from both sides to isolate \\(x\\):\n   \\[\n   x = 15 - 8\n   \\]\n\n2. Compute the subtraction:\n   \\[\n   x = 7\n   \\]\n\n**Answer:** \\(x = 7\\).",
+          "is_correct": true,
+          "execution_time_seconds": 1.8062841892242432,
+          "token_usage": 316,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_003",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Solution**\n\n1. **Apply the order of operations (PEMDAS/BODMAS)**  \n   - First perform multiplication and division from left to right:  \n     - \\(25 \\times 4 = 100\\)  \n     - \\(18 \\div 3 = 6\\)\n\n2. **Add the results**  \n   - \\(100 + 6 = 106\\)\n\n**Answer:** \\(25 \\times 4 + 18 \\div 3 = \\boxed{106}\\)",
+          "is_correct": true,
+          "execution_time_seconds": 1.8834662437438965,
+          "token_usage": 401,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_004",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer:**  \nThe principal (positive) square root of 144 is **12**.\n\n**Why?**  \n- \\(12 \\times 12 = 144\\).  \n- By definition, the square root of a non‑negative number \\(x\\) is the non‑negative number \\(y\\) such that \\(y^2 = x\\).  \n- Therefore \\(\\sqrt{144} = 12\\).\n\n**Note on the negative root:**  \nThe equation \\(y^2 = 144\\) also has the solution \\(y = -12\\). In most contexts, \\(\\sqrt{144}\\) refers to the principal (positive) root, while \\(-12\\) is called the “negative square root.”",
+          "is_correct": true,
+          "execution_time_seconds": 1.8025414943695068,
+          "token_usage": 457,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_005",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "To find \\( \\frac{3}{4}\\) of 80, multiply the fraction by the number:\n\n\\[\n\\frac{3}{4}\\times 80 = \\frac{3\\times 80}{4}\n\\]\n\nSimplify the division first:\n\n\\[\n\\frac{80}{4}=20\n\\]\n\nNow multiply:\n\n\\[\n3 \\times 20 = 60\n\\]\n\n**Answer:** \\( \\frac{3}{4}\\) of 80 is **60**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.2414824962615967,
+          "token_usage": 357,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_006",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "To solve the linear equation  \n\n\\[\n2x - 7 = 13\n\\]\n\nfollow the standard algebraic steps that keep the equation balanced.\n\n1. **Isolate the term containing \\(x\\).**  \n   Add \\(7\\) to both sides to cancel the \\(-7\\) on the left:\n\n   \\[\n   2x - 7 + 7 = 13 + 7 \\;\\;\\Longrightarrow\\;\\; 2x = 20\n   \\]\n\n2. **Solve for \\(x\\).**  \n   Divide both sides by \\(2\\) to isolate \\(x\\):\n\n   \\[\n   \\frac{2x}{2} = \\frac{20}{2} \\;\\;\\Longrightarrow\\;\\; x = 10\n   \\]\n\n**Verification**  \nSubstitute \\(x = 10\\) back into the original equation:\n\n\\[\n2(10) - 7 = 20 - 7 = 13\n\\]\n\nThe left‑hand side equals the right‑hand side, confirming the solution.\n\n\\[\n\\boxed{10}\n\\]",
+          "is_correct": true,
+          "execution_time_seconds": 4.4064037799835205,
+          "token_usage": 465,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_007",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "First evaluate each power:\n\n- \\(12^2 = 12 \\times 12 = 144\\)\n- \\(5^3 = 5 \\times 5 \\times 5 = 125\\)\n\nThen add the results:\n\n\\[\n144 + 125 = 269\n\\]\n\n**Answer:** \\(269\\)",
+          "is_correct": false,
+          "execution_time_seconds": 1.2380964756011963,
+          "token_usage": 331,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_008",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Solution**\n\nTo find 20 % of 150, use the percentage formula:\n\n\\[\n\\text{Result} = \\frac{\\text{percentage}}{100} \\times \\text{base}\n\\]\n\n1. Convert the percentage to a decimal:  \n   \\(20\\% = \\frac{20}{100} = 0.20\\).\n\n2. Multiply by the base value:  \n   \\(0.20 \\times 150 = 30\\).\n\n**Answer:** 20 % of 150 is **30**.",
+          "is_correct": true,
+          "execution_time_seconds": 0.9681704044342041,
+          "token_usage": 357,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_009",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Solution**\n\n1. Start with the equation  \n   \\[\n   3x + 4 = 19\n   \\]\n\n2. **Isolate the term with \\(x\\)**  \n   Subtract 4 from both sides (maintaining balance):  \n   \\[\n   3x + 4 - 4 = 19 - 4 \\;\\;\\Longrightarrow\\;\\; 3x = 15\n   \\]\n\n3. **Solve for \\(x\\)**  \n   Divide both sides by 3 (again keeping the equation balanced):  \n   \\[\n   \\frac{3x}{3} = \\frac{15}{3} \\;\\;\\Longrightarrow\\;\\; x = 5\n   \\]\n\n4. **Verification**  \n   Substitute \\(x = 5\\) back into the original equation:  \n   \\[\n   3(5) + 4 = 15 + 4 = 19\n   \\]\n   The left‑hand side equals the right‑hand side, confirming the solution.\n\n---\n\n**Answer:** \\(x = 5\\)",
+          "is_correct": true,
+          "execution_time_seconds": 1.1001439094543457,
+          "token_usage": 499,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_010",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "The cube root of a number \\(x\\) is the value \\(y\\) such that \\(y^3 = x\\).\n\nFor \\(x = 27\\):\n\n\\[\ny^3 = 27\n\\]\n\nWe can test integer candidates:\n\n- \\(2^3 = 8\\) (too small)\n- \\(3^3 = 27\\) (exact match)\n\nThus \\(y = 3\\).\n\n**Answer:** The cube root of 27 is **3**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.7065386772155762,
+          "token_usage": 341,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_001",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer:**  \nNo – we cannot conclude that some cats are pets.\n\n**Why?**  \n- Premise 1: *All cats are animals.* (Universal statement)  \n- Premise 2: *Some animals are pets.* (Existential statement)\n\nFrom these two premises we only know that there exists at least one animal that is a pet. That animal could be a dog, a rabbit, a fish, etc. The premises give no information about whether any of the cats are among those pets.  \n\n**Counterexample:**  \nSuppose the only pets are dogs.  \n- All cats are still animals.  \n- Some animals (the dogs) are pets.  \n- No cat is a pet.\n\nThus the conclusion “some cats are pets” does not follow logically from the premises. The inference is invalid.",
+          "is_correct": true,
+          "execution_time_seconds": 10.385900974273682,
+          "token_usage": 577,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_002",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer:**  \nYes.  \nIf the implication “\\(A \\Rightarrow B\\)” is true and the implication “\\(B \\Rightarrow C\\)” is true, then the implication “\\(A \\Rightarrow C\\)” is necessarily true.  \nThis is the **transitivity of implication**.\n\n---\n\n### Why it holds\n\n1. **Logical definition of implication**  \n   \\(P \\Rightarrow Q\\) is equivalent to \\(\\lnot P \\lor Q\\).  \n   So  \n   \\[\n   (A \\Rightarrow B) \\equiv (\\lnot A \\lor B), \\qquad\n   (B \\Rightarrow C) \\equiv (\\lnot B \\lor C).\n   \\]\n\n2. **Derivation**  \n   Assume \\(A\\) is true.  \n   - From \\(A \\Rightarrow B\\) we get \\(B\\).  \n   - From \\(B \\Rightarrow C\\) we get \\(C\\).  \n   Therefore, whenever \\(A\\) is true, \\(C\\) is true.  \n   Hence \\(A \\Rightarrow C\\).\n\n",
+          "is_correct": true,
+          "execution_time_seconds": 3.841355323791504,
+          "token_usage": 712,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_003",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer:**  \nYes – we can conclude that *some doctors drive cars*.\n\n**Why this inference is valid**\n\n| Premise | Interpretation | Logical form |\n|---------|----------------|--------------|\n| 1. Some doctors are rich. | There exists at least one person who is both a doctor and rich. | ∃x (Doctor(x) ∧ Rich(x)) |\n| 2. All rich people drive cars. | Every person who is rich drives a car. | ∀x (Rich(x) → DrivesCar(x)) |\n\nFrom (1) we know there is a particular individual, call him/her *d*, such that Doctor(d) ∧ Rich(d).  \nPremise (2) tells us that for **any** individual, if that individual is rich, then that individual drives a car. Applying this universal statement to *d* gives DrivesCar(d).\n\nThus we have found at least one doctor (*d*) who drives a car, which is exactly the statement “some doctors drive cars” (∃x (Doctor(x) ∧ DrivesCar(x))).\n\n**Key logical principles used**\n\n1. **Existential import** – “Some doctors are rich” guarantees the existence of at least one rich doctor.  \n2. **Universal instantiation** – “All rich people drive cars” applies to every rich individual, including the rich doctor found in (1).  \n3. **Transitivity of implication** – The chain “Doctor → Rich → DrivesCar” allows us to infer “Doctor → DrivesCar” for that particular individual.\n\n**What we cannot conclude**\n\n- We cannot say that *all*",
+          "is_correct": true,
+          "execution_time_seconds": 3.2386255264282227,
+          "token_usage": 716,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_004",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "Yes.  \nAll mammals are warm‑blooded, and whales are mammals, so by transitivity whales are warm‑blooded.",
+          "is_correct": true,
+          "execution_time_seconds": 1.3168096542358398,
+          "token_usage": 304,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_005",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer:**  \nUnder the given premises, **yes – penguins can fly**.\n\n**Why?**  \n1. Premise 1: “All birds can fly.”  \n2. Premise 2: “Penguins are birds.”  \n\nFrom (1) we have the universal statement: ∀x (Bird(x) → CanFly(x)).  \nFrom (2) we have: Penguin(p) → Bird(p).  \n\nBy transitivity of implication, we can infer: Penguin(p) → CanFly(p).  \nThus, for any penguin p, the conclusion “p can fly” follows logically from the premises.\n\n**Caveat:**  \nThe premise “all birds can fly” is empirically false (penguins, ostriches, etc. cannot fly). Therefore, while the logical inference is correct given the premises, it does not reflect reality.",
+          "is_correct": true,
+          "execution_time_seconds": 2.3395955562591553,
+          "token_usage": 537,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_006",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer:**  \nYes – we can conclude that *some students are disciplined*.\n\n**Why it follows**\n\n1. **Premise 1:** “Some students are athletes.”  \n   - Symbolically: ∃x (Student(x) ∧ Athlete(x)).  \n   - This guarantees at least one individual who is both a student and an athlete.\n\n2. **Premise 2:** “All athletes are disciplined.”  \n   - Symbolically: ∀x (Athlete(x) → Disciplined(x)).  \n   - This universal statement applies to every athlete, including the athlete(s) identified in Premise 1.\n\n3. **Inference:**  \n   - From the existential statement we can instantiate a particular individual, say *a*, such that Student(a) ∧ Athlete(a).  \n   - Applying the universal statement to *a* gives Disciplined(a).  \n   - Therefore we have Student(a) ∧ Disciplined(a), which is exactly ∃x (Student(x) ∧ Disciplined(x)).\n\nThis is a standard example of **existential instantiation** followed by **universal instantiation**, yielding a valid conclusion. The inference is transitive in the sense that the property “disciplined” is transferred from the class “athletes” to the specific individuals who are both students and athletes.\n\n**Conclusion:** The premises logically entail that *some students are disciplined*.",
+          "is_correct": true,
+          "execution_time_seconds": 4.93485689163208,
+          "token_usage": 677,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_007",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer:** No, none of the triangles are circles.\n\n**Reasoning**\n\n1. **Premise 1:** “No squares are circles.”  \n   - This means the set of squares and the set of circles are disjoint.\n\n2. **Premise 2:** “All triangles are squares.”  \n   - Every triangle belongs to the set of squares.\n\n3. **Conclusion:**  \n   - Since every triangle is a square, and no square can be a circle, it follows that no triangle can be a circle.\n\nThus, **no triangles are circles.**",
+          "is_correct": true,
+          "execution_time_seconds": 1.060500144958496,
+          "token_usage": 473,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_008",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer:**  \nYes – \\(P\\) must be false.\n\n**Reasoning**\n\n1. Premise 1: \\(P \\rightarrow \\lnot Q\\) (If \\(P\\) is true, then \\(Q\\) is false).  \n2. Premise 2: \\(Q\\) is true.\n\nTake the contrapositive of the first premise:  \n\\[\nP \\rightarrow \\lnot Q \\;\\;\\Longleftrightarrow\\;\\; Q \\rightarrow \\lnot P\n\\]\n\nSince \\(Q\\) is true, the contrapositive gives \\(\\lnot P\\).  \nThus \\(P\\) is false.\n\nThis inference is valid; no counterexample can satisfy both premises with \\(P\\) true.",
+          "is_correct": true,
+          "execution_time_seconds": 1.439885139465332,
+          "token_usage": 529,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_009",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "No.  \nThe premises give:\n\n1. **All philosophers are thinkers**  \\(P \\subseteq T\\)  \n2. **Some thinkers are writers**     \\(\\exists x (T(x) \\land W(x))\\)\n\nFrom (2) we know there is at least one thinker who is a writer, but that thinker might not be a philosopher. Since not every thinker is a philosopher, the existence of a writer thinker does not guarantee that a philosopher is a writer.  \n\nA counter‑example:  \n- Philosophers: only Alice (not a writer).  \n- Thinkers: Alice and Bob.  \n- Writers: Bob (a thinker but not a philosopher).\n\nBoth premises hold, yet no philosopher is a writer. Therefore we cannot conclude that some philosophers are writers.",
+          "is_correct": true,
+          "execution_time_seconds": 1.571913480758667,
+          "token_usage": 670,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_010",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer**\n\nBecause the premise is that **both** A and B together imply C, i.e.\n\n\\[\n(A \\land B) \\;\\rightarrow\\; C,\n\\]\n\nand we know that A is true while C is false",
+          "is_correct": false,
+          "execution_time_seconds": 2.7300405502319336,
+          "token_usage": 719,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_001",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "At 100 °C (at 1 atm), water reaches its boiling point. The liquid’s vapor pressure equals the surrounding atmospheric pressure, so it undergoes a phase transition from liquid to gas—forming steam. This transition requires the latent heat of vaporization, so the temperature stays at 100 °C while the water continues to boil.",
+          "is_correct": false,
+          "execution_time_seconds": 0.5458927154541016,
+          "token_usage": 389,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_002",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "Plants primarily produce **oxygen (O₂)** during photosynthesis.",
+          "is_correct": true,
+          "execution_time_seconds": 0.8273031711578369,
+          "token_usage": 338,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_003",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer**\n\nThe force that keeps planets in orbit around the Sun is **gravity**.\n\n- **Newton’s law of universal gravitation** states that every mass attracts every other mass with a force \\(F = G\\,\\frac{M_{\\text{sun}}\\,M_{\\text{planet}}}{r^{2}}\\), where \\(G\\) is the gravitational constant, \\(M_{\\text{sun}}\\) and \\(M_{\\text{planet}}\\) are the masses, and \\(r\\) is the distance between their centers.\n- A planet’s inertia (its tendency to move in a straight line) is constantly redirected toward the Sun by this gravitational pull, producing a curved, stable orbit (usually an ellipse).\n- This explanation is supported by extensive empirical evidence and reproducible observations—planetary motions match the predictions of Newtonian gravity (and, for high precision, Einstein’s general relativity).\n\nThe other claims (phase transitions, photosynthesis, chemical formulas) are unrelated to the mechanics of planetary orbits.",
+          "is_correct": true,
+          "execution_time_seconds": 4.933363676071167,
+          "token_usage": 645,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_004",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "The chemical formula for water is **H₂O** – two hydrogen atoms bonded to one oxygen atom.",
+          "is_correct": false,
+          "execution_time_seconds": 1.4505360126495361,
+          "token_usage": 325,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_005",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Speed of light in vacuum (c)**  \n- **Exact value:** 299 792 458 m s⁻¹  \n- **Definition:** The speed of electromagnetic waves in a perfect vacuum, a fundamental constant used in all modern physics.  \n\nThis value is determined experimentally and is now defined exactly by the International System of Units.",
+          "is_correct": false,
+          "execution_time_seconds": 1.0756886005401611,
+          "token_usage": 481,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_006",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "The conversion of liquid water to water vapor is called **evaporation** (or **boiling** when it occurs at the boiling point). It is a phase transition from the liquid to the gaseous state.",
+          "is_correct": true,
+          "execution_time_seconds": 0.7231471538543701,
+          "token_usage": 345,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_007",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer:**  \nIn chemistry the *smallest unit of matter that retains the chemical identity of an element* is the **atom**.  \nIn modern physics, the *smallest indivisible constituents* are the **elementary particles** (quarks, leptons, gauge bosons, etc.), which are the building blocks of atoms.\n\n**Why this follows from the context**\n\n| Contextual claim | Relevance to “smallest unit of matter” |\n|------------------|----------------------------------------|\n| Scientific principles are based on empirical evidence and reproducibility | Experiments (e.g., scattering experiments) show that atoms are made of smaller, indivisible particles. |\n| Phase transitions occur at specific physical conditions | The behavior of matter at different phases is governed by the interactions of its smallest constituents (atoms or sub‑atomic particles). |\n| Photosynthesis produces oxygen and consumes carbon dioxide | The process involves atoms (C, H, O) rearranging, illustrating that atoms are the fundamental units in chemical reactions. |\n| Gravitational force governs orbital mechanics | Gravitational interactions act on masses, which are ultimately composed of atoms and sub‑atomic particles. |\n| Chemical formulas represent molecular composition | Molecules are collections of atoms; the smallest unit that can be represented in a chemical formula is the atom.",
+          "is_correct": true,
+          "execution_time_seconds": 7.3758864402771,
+          "token_usage": 689,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_008",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "The gas that makes up most of Earth's atmosphere is **nitrogen (N₂)**, comprising about 78 % of the air by volume.",
+          "is_correct": true,
+          "execution_time_seconds": 1.1005570888519287,
+          "token_usage": 274,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_009",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "Chemical bonds store **chemical energy**—a form of potential energy held in the arrangement of electrons and nuclei within the molecules. This energy can be released or absorbed during chemical reactions.",
+          "is_correct": true,
+          "execution_time_seconds": 1.900510549545288,
+          "token_usage": 328,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_010",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer: Photosynthesis**\n\nPlants produce their own food through the process of **photosynthesis**. In this biochemical cycle, chlorophyll‑containing cells capture light energy, which is used to convert atmospheric carbon dioxide (CO₂) and water (H₂O) into glucose (C₆H₁₂O₆) and oxygen (O₂). The reaction can be summarized as:\n\n\\[\n6\\,\\text{CO}_2 + 6\\,\\text{H}_2\\text{O} + \\text{light energy} \\;\\longrightarrow\\; \\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\,\\text{O}_2\n\\]\n\n**Key stages**\n\n1. **Light‑dependent reactions** (in the thylakoid membranes)  \n   - Light excites electrons in chlorophyll.  \n   - Energy is stored in ATP and NADPH; oxygen is released as a by‑product.\n\n2. **Calvin cycle (light‑independent reactions)** (in the stroma)  \n   - ATP and NADPH drive the fixation of CO₂ into glucose via a series of enzyme‑catalyzed steps.\n\nThus, photosynthesis is the fundamental process by which plants synthesize their own food, simultaneously generating the oxygen that sustains aerobic life.",
+          "is_correct": true,
+          "execution_time_seconds": 2.859236717224121,
+          "token_usage": 546,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_001",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Remaining budget:**  \n$10,000 – $3,000 (marketing) – $5,000 (development) = **$2,000**.\n\n**Contextual take‑away**\n\n- **Budget constraints**: The $2,000 is the residual amount that must be managed within the overall financial limits.  \n- **Opportunity cost**: Any unused funds could be reallocated to higher‑return projects or saved for future needs.  \n- **Profit calculations**: This leftover amount should be factored into net profit or cost‑benefit analyses.  \n- **Investment returns**: If the company can earn a return on the $2,000 (e.g., short‑term investments), that return should be included in performance metrics.  \n- **Strategic decisions**: The remaining $2,000 can support contingency plans, additional marketing pushes, or other strategic initiatives that align with company goals.  \n\nIn short, after covering marketing and development, the company has **$2,000** to allocate strategically, ensuring it aligns with broader financial and operational objectives.",
+          "is_correct": true,
+          "execution_time_seconds": 0.8268957138061523,
+          "token_usage": 594,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_002",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Monthly return comparison**\n\n| Project | Total profit | Duration | Monthly return |\n|---------|--------------|----------|----------------|\n| A | $5,000 | 3 months | $5,000 ÷ 3 ≈ **$1,666.67** |\n| B | $8,000 | 5 months | $8,000 ÷ 5 = **$1,600.00** |\n\n**Result:** Project A delivers a higher monthly profit ($1,666.67 vs. $1,600.00), so it has the better monthly return.\n\n---\n\n### How the conclusion aligns with the contextual claims\n\n1. **Budget constraints & resource allocation**  \n   - Choosing the project with the higher monthly return maximizes the use of limited capital or labor each month, improving overall efficiency.\n\n2. **Time‑value analysis & opportunity costs**  \n   - A higher monthly return means the invested resources generate value more quickly, reducing the opportunity cost of tying up capital in a longer‑duration project.\n\n3. **Profit calculations & expenses**  \n   - The calculation assumes the stated profits already net all relevant costs. If additional expenses differ between projects, the monthly return would need to be recalculated accordingly.\n\n4. **Consistent time periods**  \n   - Comparing profits over the same unit (month) eliminates distortion that would arise from comparing a 3‑month and a 5‑month project directly.\n\n5. **Strategic decision‑making**  \n   - While monthly return is a key metric, strategic factors (e.g., market positioning, risk profile, scalability) should also be weighed. However, purely from a monthly profitability standpoint, Project A is superior.\n\n---\n\n**Takeaway:** If the goal is to maximize monthly profit under the given constraints, prioritize Project A. If other strategic factors favor Project B, those should be incorporated into a broader decision framework.",
+          "is_correct": false,
+          "execution_time_seconds": 1.837317943572998,
+          "token_usage": 701,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_003",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer**\n\nUsing simple interest:\n\n\\[\nI = P \\times r \\times t = \\$1{,}000 \\times 0.08 \\times 2 = \\$160\n\\]\n\nTotal amount after 2 years:\n\n\\[\nA = P + I = \\$1{,}000 + \\$160 = \\boxed{\\$1{,}160}\n\\]",
+          "is_correct": false,
+          "execution_time_seconds": 4.001495599746704,
+          "token_usage": 390,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_004",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer: $800 total profit**\n\n---\n\n### Step‑by‑step calculation\n\n| Item | Quantity | Unit price | Total |\n|------|----------|------------|-------|\n| **Revenue** | 100 units | $20 | 100 × $20 = **$2,000** |\n| **Cost of goods sold (COGS)** | 100 units | $12 | 100 × $12 = **$1,200** |\n| **Gross profit** | – | – | $2,000 – $1,200 = **$800** |\n\n---\n\n### Contextual considerations\n\n| Claim | How it applies to this simple calculation | What to add in a real‑world analysis |\n|-------|-------------------------------------------|--------------------------------------|\n| **Budget constraints require resource allocation optimization** | The $800 figure is the *gross* profit before any other budget items. | Include marketing, salaries, rent, utilities, and any capital expenditures. |\n| **Time‑value analysis requires considering opportunity costs** | The calculation assumes the $20 revenue and $12 cost are realized immediately. | Discount future cash flows to present value; consider alternative uses of the capital (e.g., investing the $800 elsewhere). |\n| **Profit calculations must account for all relevant expenses** | Only direct COG",
+          "is_correct": true,
+          "execution_time_seconds": 5.865030527114868,
+          "token_usage": 687,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_005",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Final price:** **$144**\n\n**Step‑by‑step calculation**\n\n1. **First discount (20 % of $200)**  \n   \\[\n   200 \\times 0.20 = 40 \\quad\\Rightarrow\\quad 200 - 40 = 160\n   \\]\n\n2. **Second discount (10 % of the discounted price)**  \n   \\[\n   160 \\times 0.10 = 16 \\quad\\Rightarrow\\quad 160 - 16 = 144\n   \\]\n\n3. **Multiplicative form** (for quick reference)  \n   \\[\n   200 \\times (1-0.20) \\times (1-0.10) = 200 \\times 0.8 \\times 0.9 = 144\n   \\]\n\n**Contextual relevance**\n\n- **Budget constraints**: The final price ($144) is the amount you actually need to allocate, reducing the budget impact compared to paying full price.\n- **Opportunity cost**: Paying $144 instead of $200 frees $56 for other uses or investments.\n- **Profit calculations**: If you’re reselling, the lower purchase cost improves margin.\n- **Investment returns**: The discounted purchase can be viewed as a cost‑saving “investment” that yields a 28 % effective discount (from $200 to $144).\n- **Strategic decisions**: Understanding how stacked discounts work helps in negotiating better deals or planning promotions.\n\n**Bottom line:** After a 20 % discount followed by an additional 10 % off the reduced price, the $200 item costs **$144**.",
+          "is_correct": true,
+          "execution_time_seconds": 3.717665195465088,
+          "token_usage": 883,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_006",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Total cost**\n\n- Daily fee: \\(3 \\text{ days} \\times \\$50 = \\$150\\)\n- Mileage fee: \\(200 \\text{ miles} \\times \\$0.25 = \\$50\\)\n\n**Total**: \\(\\$150 + \\$50 = \\boxed{\\$200}\\)",
+          "is_correct": true,
+          "execution_time_seconds": 5.6247124671936035,
+          "token_usage": 425,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_007",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Answer**\n\nWith a 3 % annual inflation rate, the purchasing power of $1,000 after one year is:\n\n\\[\n\\text{Real value} = \\frac{\\$1{,}000}{1 + 0.03} \\approx \\$970.87\n\\]\n\nSo, $1,000 will be worth about **$970.87 in real terms** after one year.\n\n---\n\n### How the context claims fit in\n\n| Claim | How it applies to the calculation |\n|-------|-----------------------------------|\n| **Budget constraints** | Knowing the real value helps you plan budgets that account for the loss of purchasing power. |\n| **Time‑value analysis** | The calculation is a simple example of discounting future cash flows for inflation. |\n| **Profit calculations** | If you earn a nominal return, you must compare it to inflation to see if you’re truly profitable in real terms. |\n| **Investment returns** | An investment yielding >3 % nominal will preserve or grow real value; ≤3 % will erode it. |\n| **Strategic decisions** | Decisions about saving, spending, or investing should factor in the 3 % erosion of value to avoid misallocating resources. |\n\n**Bottom line:** After one year,",
+          "is_correct": true,
+          "execution_time_seconds": 12.313389778137207,
+          "token_usage": 704,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_008",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Daily output**\n\n- Production rate: 100 units/hour  \n- Shift length: 8 h  \n- Downtime: 10 % → productive time per shift = 8 h × (1 – 0.10) = **7.2 h**  \n- Units per shift = 7.2 h × 100 units/h = **720 units**  \n- Two shifts per day → 720 units × 2 = **1,440 units/day**  \n\nSo the facility produces **1,440 units each day** under the given conditions.",
+          "is_correct": true,
+          "execution_time_seconds": 7.8214640617370605,
+          "token_usage": 492,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_009",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Net take‑home**\n\n- Salary: $50,000  \n- Bonus (5 % of salary): $50,000 × 0.05 = $2,500  \n- Tax on bonus (20 %): $2,500 × 0.20 = $500  \n\n**Take‑home pay**  \n$50,000 + $2,500 – $500 = **$52,000**  \n\n*(Assumes the 5 % bonus is calculated on the base salary and that the only tax applied is the 20 % on the bonus.)*",
+          "is_correct": false,
+          "execution_time_seconds": 2.6527040004730225,
+          "token_usage": 463,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_010",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "The bill is:\n\n- Base plan: \\$30  \n- Overage: 650 min – 500 min = 150 min × \\$0.10/min = \\$15  \n\n**Total bill = \\$30 + \\$15 = \\$45**",
+          "is_correct": true,
+          "execution_time_seconds": 1.6277573108673096,
+          "token_usage": 349,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_001",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "Total cost = 3 × $15 = $45  \nTax (5 %) = 0.05 × $45 = $2.25  \n\n**Total = $45 + $2.25 = $47.25**",
+          "is_correct": true,
+          "execution_time_seconds": 1.0852890014648438,
+          "token_usage": 338,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_002",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Step‑by‑step solution**\n\n1. **Identify the numbers**  \n   The numbers to average are: 80, 90, and 100.\n\n2. **Sum the numbers**  \n   \\[\n   80 + 90 + 100 = 270\n   \\]\n\n3. **Count the numbers**  \n   There are 3 numbers.\n\n4. **Divide the sum by the count**  \n   \\[\n   \\frac{270}{3} = 90\n   \\]\n\n**Verification**\n\n- Check the arithmetic:  \n  \\(80 + 90 = 170\\); \\(170 + 100 = 270\\).  \n  \\(270 ÷ 3 = 90\\).  \n- Cross‑check by averaging two numbers first:  \n  \\((80 + 90)/2 = 85\\).  \n  Then average 85 with 100: \\((85 + 100)/2 = 92.5\\).  \n  This is not the correct method because we must average all three together, not pairwise. The direct division confirms the correct result.\n\n**Final answer**\n\n\\[\n\\boxed{90}\n\\]",
+          "is_correct": true,
+          "execution_time_seconds": 1.4820289611816406,
+          "token_usage": 482,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_003",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Step‑by‑step solution**\n\n1. **Identify the given dimensions**  \n   - Length \\(L = 12\\) units  \n   - Width \\(W = 8\\) units  \n\n2. **Area of a rectangle**  \n   \\[\n   \\text{Area} = L \\times W = 12 \\times 8 = 96 \\text{ square units}\n   \\]\n\n3. **Perimeter of a rectangle**  \n   \\[\n   \\text{Perimeter} = 2(L + W) = 2(12 + 8) = 2 \\times 20 = 40 \\text{ units}\n   \\]\n\n**Verification**  \n- Area calculation: \\(12 \\times 8 = 96\\) (correct).  \n- Perimeter calculation: \\(2(12+8) = 2 \\times 20 = 40\\) (correct).\n\n**Final results**  \n- **Area:** \\(96\\) square units  \n- **Perimeter:** \\(40\\) units\n\nThese results follow from the basic formulas for a rectangle and have been verified for accuracy.",
+          "is_correct": false,
+          "execution_time_seconds": 1.0249314308166504,
+          "token_usage": 471,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_004",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Step‑by‑step solution**\n\n1. **Identify the known quantities**  \n   - Speed of the train: \\(60\\ \\text{mph}\\)  \n   - Time traveled: \\(2.5\\ \\text{hours}\\)\n\n2. **Apply the distance formula**  \n   \\[\n   \\text{Distance} = \\text{Speed} \\times \\text{Time}\n   \\]\n\n3. **Perform the multiplication**  \n   \\[\n   60\\ \\text{mph} \\times 2.5\\ \\text{h} = 150\\ \\text{miles}\n   \\]\n\n4. **Verification**  \n   - Check units: mph × h = miles (units cancel correctly).  \n   - Reasonableness: 60 mph for 2.5 h is a moderate trip; 150 miles is plausible.\n\n**Answer:** The train travels **150 miles**.",
+          "is_correct": true,
+          "execution_time_seconds": 3.503593683242798,
+          "token_usage": 445,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_005",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "The tank loses 2 % of its contents each day, so the remaining fraction after one day is \\(0.98\\).\n\nAfter 3 days the remaining fraction is:\n\\[\n0.98^3 = 0.98 \\times 0.98 \\times 0.98 = 0.941192\n\\]\n\nStarting with 500 gallons:\n\\[\n500 \\times 0.941192 \\approx 470.6 \\text{ gallons}\n\\]\n\n**Answer:** Approximately **470.6 gallons** remain after 3 days.",
+          "is_correct": false,
+          "execution_time_seconds": 10.867051362991333,
+          "token_usage": 454,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_006",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Step‑by‑step calculation**\n\n1. **Initial salary**  \n   \\[\n   S_0 = \\$40{,}000\n   \\]\n\n2. **15 % increase**  \n   \\[\n   S_1 = S_0 \\times (1 + 0.15) = 40{,}000 \\times 1.15 = \\$46{,}000\n   \\]\n\n3. **10 % decrease**  \n   \\[\n   S_2 = S_1 \\times (1 - 0.10) = 46{,}000 \\times 0.90 = \\$41{,}400\n   \\]\n\n**Final salary**: **$41,400**.",
+          "is_correct": false,
+          "execution_time_seconds": 4.463691711425781,
+          "token_usage": 448,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_007",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Problem**  \nA circle has a radius of **8 cm**.  \nFind  \n\n1. The area of the circle.  \n2. The circumference of the circle.  \n\n---\n\n### 1.  Break the problem into sub‑components  \n| Sub‑component | Formula | Value |\n|---------------|---------|-------|\n| Radius \\(r\\) | – | \\(8\\;\\text{cm}\\) |\n| Area \\(A\\) | \\(A = \\pi r^{2}\\) | – |\n| Circumference \\(C\\) | \\(C = 2\\pi r\\) | – |\n\n---\n\n### 2.  Step‑by‑step calculation  \n\n#### a) Area  \n\\[\nA = \\pi r^{2} = \\pi (8\\;\\text{cm})^{2}\n  = \\pi \\times 64\\;\\text{cm}^{2}\n  = 64\\pi\\;\\text{cm}^{2}\n\\]\n\nUsing \\(\\pi \\approx 3.1415926535\\):\n\n\\[\nA \\approx 64 \\times 3.1415926535\n  \\approx 201.06193\\;\\text{cm}^{2}\n\\]\n\n#### b) Circumference  \n\\[\nC = 2\\pi r = 2\\pi (8\\;\\text{cm})\n  = 16\\pi\\;\\text{cm}\n\\]\n\nUsing \\(\\pi \\approx 3.1415926535\\):\n\n\\[\nC \\approx 16 \\times 3.1415926535\n  \\approx 50.26548\\;\\text{cm}\n\\]\n\n---\n\n### 3.  Verification  \n- **Area**: \\(64\\pi",
+          "is_correct": false,
+          "execution_time_seconds": 7.315620422363281,
+          "token_usage": 692,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_008",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "For 10 people you’d need about **4 ⅙ cups of flour** (≈4.17 cups).",
+          "is_correct": false,
+          "execution_time_seconds": 1.1377487182617188,
+          "token_usage": 324,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_009",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "**Step‑by‑step calculation**\n\n1. **Initial value**: \\$30,000  \n2. **First‑year depreciation (20 %)**  \n   \\[\n   30{,}000 \\times (1-0.20)=30{,}000 \\times 0.80= \\$24{,}000\n   \\]\n3. **Second‑year depreciation (15 %)**  \n   \\[\n   24{,}000 \\times (1-0.15)=24{,}000 \\times 0.85= \\$20{,}400\n   \\]\n\n**Value after 2 years:** **\\$20,400**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.0236551761627197,
+          "token_usage": 466,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_010",
+          "method": "conjecture_5_claims",
+          "claims_evaluated": 5,
+          "response": "A works at a rate of \\(1/8\\) of the project per hour, and the helper works at \\(1/6\\) per hour.  \nCombined rate:\n\n\\[\n\\frac{1}{8}+\\frac{1}{6}= \\frac{3}{24}+\\frac{4}{24}= \\frac{7}{24}\\text{ of the project per hour}\n\\]\n\nTime to finish the whole project together:\n\n\\[\n\\text{Time} = \\frac{1}{\\text{combined rate}} = \\frac{1}{7/24}= \\frac{24}{7}\\text{ hours}\\approx 3.43\\text{ hours}\n\\]\n\nSo, working together they finish the project in **\\(24/7\\) hours (about 3 h 25 min)**.",
+          "is_correct": false,
+          "execution_time_seconds": 2.1621878147125244,
+          "token_usage": 514,
+          "error_message": null
+        }
+      ]
+    },
+    "conjecture_10_claims": {
+      "correct_answers": 36,
+      "accuracy_percent": 72.0,
+      "improvement_over_baseline_percent": 2.0,
+      "total_time_seconds": 151.50022721290588,
+      "total_tokens": 25640,
+      "total_claims_evaluated": 500,
+      "details": [
+        {
+          "problem_id": "math_001",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Solution**\n\nTo find a percentage of a number, multiply the number by the percentage expressed as a decimal.\n\n1. Convert the percentage to a decimal:  \n   \\(15\\% = \\dfrac{15}{100} = 0.15\\)\n\n2. Multiply by the base number:  \n   \\(0.15 \\times 240 = 36\\)\n\n**Answer:** 15 % of 240 is **36**.",
+          "is_correct": true,
+          "execution_time_seconds": 2.9893486499786377,
+          "token_usage": 418,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_002",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "Subtract 8 from both sides of the equation:\n\n\\[\nx + 8 = 15 \\;\\;\\Longrightarrow\\;\\; x = 15 - 8 = 7.\n\\]\n\n**Answer:** \\(x = 7\\).",
+          "is_correct": true,
+          "execution_time_seconds": 1.2845938205718994,
+          "token_usage": 399,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_003",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "First perform the multiplication and division:\n\n- \\(25 \\times 4 = 100\\)\n- \\(18 \\div 3 = 6\\)\n\nThen add the results:\n\n\\(100 + 6 = 106\\)\n\n**Answer: 106**",
+          "is_correct": true,
+          "execution_time_seconds": 2.5808470249176025,
+          "token_usage": 405,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_004",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer:**  \n\\[\n\\sqrt{144}=12\n\\]\n\n**Explanation (brief, step‑by‑step):**\n\n1. **Definition of a square root** – The square root of a number \\(x\\) is a number \\(y\\) such that \\(y^2 = x\\).  \n2. **Check the candidate** – \\(12^2 = 12 \\times 12 = 144\\).  \n3. **Verification via prime factorization** –  \n   \\[\n   144 = 2^4 \\times 3^2 \\quad\\Rightarrow\\quad \\sqrt{144}=2^{4/2}\\times3^{2/2}=2^2\\times3=4\\times3=12.\n   \\]\n\nThus the principal (non‑negative) square root of 144 is **12**.  \n(If one considers both roots, the other solution is \\(-12\\), since \\((-12)^2 = 144\\).)",
+          "is_correct": true,
+          "execution_time_seconds": 4.560537099838257,
+          "token_usage": 625,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_005",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "To find \\( \\frac{3}{4}\\) of 80, multiply 80 by the fraction:\n\n\\[\n\\frac{3}{4}\\times 80 = \\frac{3\\times 80}{4} = \\frac{240}{4} = 60.\n\\]\n\n**Answer:** 60.",
+          "is_correct": true,
+          "execution_time_seconds": 1.7911198139190674,
+          "token_usage": 397,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_006",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "To solve the equation \\(2x - 7 = 13\\):\n\n1. Add 7 to both sides to isolate the term with \\(x\\):\n   \\[\n   2x - 7 + 7 = 13 + 7 \\;\\;\\Rightarrow\\;\\; 2x = 20\n   \\]\n\n2. Divide both sides by 2 to solve for \\(x\\):\n   \\[\n   \\frac{2x}{2} = \\frac{20}{2} \\;\\;\\Rightarrow\\;\\; x = 10\n   \\]\n\n**Answer:** \\(x = 10\\)",
+          "is_correct": true,
+          "execution_time_seconds": 2.0689961910247803,
+          "token_usage": 450,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_007",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "12² = 144  \n5³ = 125  \n\n144 + 125 = **269**",
+          "is_correct": false,
+          "execution_time_seconds": 2.299743413925171,
+          "token_usage": 374,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_008",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "20 % of 150 is calculated as  \n\n\\[\n0.20 \\times 150 = 30.\n\\]\n\nSo the answer is **30**.",
+          "is_correct": true,
+          "execution_time_seconds": 6.301289081573486,
+          "token_usage": 352,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_009",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Solution**\n\nWe need to find the value of \\(x\\) that satisfies  \n\n\\[\n3x + 4 = 19\n\\]\n\n---\n\n### 1. Isolate the term containing \\(x\\)\n\nSubtract \\(4\\) from both sides (algebraic equations stay balanced when the same operation is applied to both sides):\n\n\\[\n3x + 4 - 4 = 19 - 4 \\;\\;\\Longrightarrow\\;\\; 3x = 15\n\\]\n\n---\n\n### 2. Solve for \\(x\\)\n\nDivide both sides by \\(3\\) (again keeping the equation balanced):\n\n\\[\n\\frac{3x}{3} = \\frac{15}{3} \\;\\;\\Longrightarrow\\;\\; x = 5\n\\]\n\n---\n\n### 3. Verify the solution\n\nPlug \\(x = 5\\) back into the original equation:\n\n\\[\n3(5) + 4 = 15 + 4 = 19\n\\]\n\nThe left‑hand side equals the right‑hand side, so the solution is correct.\n\n---\n\n## Final Answer\n\n\\[\n\\boxed{x = 5}\n\\]",
+          "is_correct": true,
+          "execution_time_seconds": 2.7235987186431885,
+          "token_usage": 569,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_010",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "The cube root of 27 is **3**, because \\(3^3 = 27\\).",
+          "is_correct": true,
+          "execution_time_seconds": 1.1211037635803223,
+          "token_usage": 337,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_001",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer:**  \nNo. From the two premises we cannot logically deduce that some cats are pets.\n\n**Why?**\n\n1. **Premise 1:** “All cats are animals.”  \n   \\[\n   \\forall x\\,(Cat(x) \\rightarrow Animal(x))\n   \\]\n\n2. **Premise 2:**",
+          "is_correct": true,
+          "execution_time_seconds": 6.501994609832764,
+          "token_usage": 748,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_002",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Short answer:**  \nYes.  \nIf the statements \\(A\\), \\(B\\), and \\(C\\) are ordinary propositions, the implication\n\n\\[\n(A \\rightarrow B)\\;\\land\\;(B \\rightarrow C)\\;\\;\\Longrightarrow\\;\\;(A \\rightarrow C)\n\\]\n\nis a tautology – it is always true, no matter what the truth values of \\(A\\), \\(B\\), and \\(C\\) are.\n\n---\n\n## Why it is always true\n\n### 1.  Logical equivalence\n\nRecall that an implication can be rewritten as a disjunction:\n\n\\[\nP \\rightarrow Q \\;\\equiv\\; \\lnot P \\;\\lor\\; Q .\n\\]\n\nApply this to the two premises:\n\n\\[\n\\begin{aligned}\nA \\rightarrow B &\\equiv \\lnot A \\;\\lor\\; B,\\\\\nB \\rightarrow C &\\equiv \\lnot B \\;\\lor\\; C.\n\\end{aligned}\n\\]\n\nNow the conclusion \\(A \\rightarrow C\\) is\n\n\\[\nA \\rightarrow C \\;\\equiv\\; \\lnot A \\;\\lor\\; C.\n\\]\n\nSo we need to show that\n\n\\[\n(\\lnot A \\lor B)\\;\\land\\;(\\lnot B \\lor C)\\;\\;\\Longrightarrow\\;\\;(\\lnot",
+          "is_correct": true,
+          "execution_time_seconds": 7.380186319351196,
+          "token_usage": 775,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_003",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer:**  \nYes – we can conclude that *some doctors drive cars*.\n\n**Why?**\n\n1. **Premise 1 (Existential):**  \n   “Some doctors are rich.”  \n   → There exists at least one person who is both a doctor and rich.  \n   (∃x [Doctor(x) ∧ Rich(x)])\n\n2. **Premise 2 (Universal):**  \n   “All rich people drive cars.”  \n   → For every person, if they are rich then they drive a car.  \n   (∀x [Rich(x) → DrivesCar(x)])\n\n3. **Inference:**  \n   From the existential premise we pick that particular rich doctor (call them *d*).  \n   Since *d* is rich, the universal premise tells us *d* drives a car.  \n   Therefore, there exists a doctor who drives a car.  \n   (∃x [Doctor(x) ∧ DrivesCar(x)])\n\nThis is a standard valid syllogistic pattern:  \n- **Premise 1:** Some A are B.  \n- **Premise 2:** All B are C.  \n- **Conclusion:** Some A are C.  \n\nSo the conclusion “some doctors drive cars” follows logically from the given premises.",
+          "is_correct": false,
+          "execution_time_seconds": 1.972984790802002,
+          "token_usage": 745,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_004",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "Yes.  \nAll mammals are warm‑blooded, and whales are mammals, so by transitivity whales are warm‑blooded.",
+          "is_correct": true,
+          "execution_time_seconds": 0.6334841251373291,
+          "token_usage": 367,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_005",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer**\n\nUnder the given premises, the conclusion follows logically:\n\n1. **Premise 1** – “All birds can fly.”  \n2. **Premise 2** – “Penguins are birds.”  \n\nFrom (1) we know that every member of the set *Birds* has the property *can fly*.  \nFrom (2) we know that every member of the set *Penguins* is also a member of *Birds*.  \n\nBy universal instantiation and transitivity of implication, every penguin must therefore have the property *can fly*.  \n\nSo, **yes, penguins can fly** *according to the premises*.\n\n---\n\n### Real‑world caveat\n\nIn reality, the premise “All birds can fly” is false because penguins (and a few other bird species) cannot fly. The logical conclusion is valid only if the premises are true. Since the first premise is empirically false, the conclusion does not hold in the real world.",
+          "is_correct": true,
+          "execution_time_seconds": 1.7330808639526367,
+          "token_usage": 573,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_006",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer:**  \nYes.  \n\n**Reasoning:**  \n1. “Some students are athletes” gives us at least one individual \\(a\\) such that  \n   \\[\n   \\text{Student}(a) \\land \\text{Athlete}(a).\n   \\]\n2. “All athletes are disciplined” is the universal statement  \n   \\[\n   \\forall x\\,(\\text{Athlete}(x) \\rightarrow \\text{Disciplined}(x)).\n   \\]\n   Applying this to the particular athlete \\(a\\) yields  \n   \\[\n   \\text{Disciplined}(a).\n   \\]\n3. Since \\(a\\) is also a student, we have  \n   \\[\n   \\text{Student}(a) \\land \\text{Disciplined}(a),\n   \\]\n   which is exactly “some students are disciplined” (\\(\\exists x\\,(\\text{Student}(x) \\land \\text{Disciplined}(x))\\)).\n\nThus the conclusion follows logically from the premises.",
+          "is_correct": true,
+          "execution_time_seconds": 1.833559274673462,
+          "token_usage": 652,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_007",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer:**  \nNo – there are no triangles that are circles.\n\n**Reasoning**\n\n1. **Premise 1:** “No squares are circles.”  \n   \\[\n   \\forall x\\, (\\,\\text{Square}(x) \\;\\rightarrow\\; \\neg\\text{Circle}(x)\\,)\n   \\]\n\n2. **Premise 2:** “All triangles are squares.”  \n   \\[\n   \\forall x\\, (\\,\\text{Triangle}(x) \\;\\rightarrow\\; \\text{Square}(x)\\,)\n   \\]\n\n3. **Transitive implication:**  \n   From (2) we know every triangle is a square.  \n   From (1) we know every square is *not* a circle.  \n   Therefore every triangle is *not* a circle:\n   \\[\n   \\forall x\\, (\\,\\text{Triangle}(x) \\;\\rightarrow\\; \\neg\\text{Circle}(x)\\,)\n   \\]\n\n4. **Existential question:** “Are any triangles circles?”  \n   This asks whether there exists an \\(x\\) such that \\( \\text{Triangle}(x) \\land \\text{Circle}(x) \\).  \n   The derived universal statement above says no such \\(x\\) can exist.\n\nHence, **no triangle can be a circle**.",
+          "is_correct": true,
+          "execution_time_seconds": 6.249328851699829,
+          "token_usage": 699,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_008",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer:**  \nYes – \\(P\\) must be false.\n\n**Why?**  \nThe premise “If \\(P\\) is true, then \\(Q\\) is false” is the implication\n\n\\[\nP \\;\\rightarrow\\; \\lnot Q .\n\\]\n\nThe contrapositive of an implication is always logically equivalent to the original statement.  \nTaking the contrapositive:\n\n\\[\n\\lnot(\\lnot Q) \\;\\rightarrow\\; \\lnot P\n\\;\\;\\Longrightarrow\\;\\;\nQ \\;\\rightarrow\\; \\lnot P .\n\\]\n\nThus, whenever \\(Q\\) is true, \\(P\\) must be false.  \nSince the problem states that \\(Q\\) is indeed true, we can conclude that \\(P\\) is false.",
+          "is_correct": true,
+          "execution_time_seconds": 3.223874568939209,
+          "token_usage": 663,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_009",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer:**  \nNo – we cannot conclude that some philosophers are writers.\n\n**Why?**\n\n1. **Premises**  \n   - *All philosophers are thinkers.* (∀x)(P(x) → T(x))  \n   - *Some thinkers are writers.* ∃x (T(x) ∧ W(x))\n\n2. **What the conclusion would require**  \n   - *Some philosophers are writers.* ∃x (P(x) ∧ W(x))\n\n3. **Logical analysis**  \n   - The first premise tells us that every philosopher is a thinker, but it does **not** say that every thinker is a philosopher.  \n   - The second premise only guarantees that **at least one** thinker is a writer. That thinker could be a non‑philosopher.\n\n4. **Counterexample**  \n   | Person | Philosopher (P) | Thinker (T) | Writer (W) |\n   |--------|-----------------|-------------|------------|\n   | a      | ✔︎              | ✔︎          | ✘          |\n   | b      | ✔︎              | ✔︎          | ✘          |\n   | c      | ✘              | ✔︎          | ✔︎          |\n   | d      | ",
+          "is_correct": true,
+          "execution_time_seconds": 3.6976985931396484,
+          "token_usage": 779,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_010",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer:**  \nB must be false (or at least not true).\n\n**Why?**  \nThe statement “A and B imply C” is normally read as the implication\n\n\\[\n(A \\land B) \\;\\rightarrow\\; C .\n\\]\n\nThis means: *whenever both A and B are true, C must be true*.  \nWe are told that A is true but C is false. If B were also true, then the antecedent \\(A \\land B\\) would be true, forcing C to be true—a contradiction. Therefore B cannot be true; it must be false (or at least not true).",
+          "is_correct": false,
+          "execution_time_seconds": 2.4796156883239746,
+          "token_usage": 657,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_001",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "At 1 atm (standard pressure), water reaches its boiling point at 100 °C. When it gets to that temperature it undergoes a phase transition from liquid to gas: the molecules acquire enough kinetic energy to overcome intermolecular forces, and the liquid turns into steam (water vapor). This process requires the latent heat of vaporization, so the temperature stays at 100 °C until all the liquid has boiled away.",
+          "is_correct": false,
+          "execution_time_seconds": 2.1024410724639893,
+          "token_usage": 431,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_002",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "Plants primarily produce **oxygen (O₂)** during photosynthesis.",
+          "is_correct": true,
+          "execution_time_seconds": 2.9854137897491455,
+          "token_usage": 288,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_003",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "The force that keeps planets in orbit around the Sun is **gravity**.  \n\n- The Sun’s mass creates a gravitational field that pulls each planet toward it.  \n- This pull provides the necessary centripetal force to keep the planet moving in a curved path rather than flying off in a straight line.  \n- Newton’s law of universal gravitation ( \\(F = G\\,\\frac{M_{\\text{Sun}}\\,M_{\\text{planet}}}{r^{2}}\\) ) quantifies this attraction, and Kepler’s laws describe how the resulting motion produces stable, elliptical orbits.",
+          "is_correct": true,
+          "execution_time_seconds": 10.656260251998901,
+          "token_usage": 437,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_004",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "The chemical formula for water is **H₂O**.",
+          "is_correct": false,
+          "execution_time_seconds": 0.8585386276245117,
+          "token_usage": 314,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_005",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Speed of light in vacuum**\n\nThe speed of light in a vacuum is defined exactly as  \n\n\\[\nc = 299\\,792\\,458 \\text{ metres per second (m s⁻¹)}.\n\\]\n\nThis value is a fundamental constant of nature, denoted by the symbol \\(c\\), and is used in all modern physics calculations.",
+          "is_correct": false,
+          "execution_time_seconds": 1.9325954914093018,
+          "token_usage": 405,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_006",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "The conversion of liquid water to water vapor is called **evaporation** (or boiling when it occurs at the boiling point). This is the phase transition from liquid to gas.",
+          "is_correct": true,
+          "execution_time_seconds": 0.8956596851348877,
+          "token_usage": 380,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_007",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer:**  \nThe smallest units of matter that we currently know are the **elementary particles**—the indivisible constituents of atoms. These include:\n\n| Category | Examples | Role in matter |\n|----------|----------|----------------|\n| **Quarks** | up, down, strange, charm, top, bottom | Combine to form protons and neutrons (the nuclei of atoms) |\n| **Leptons** | electron, muon, tau, and their neutrinos | Electrons orbit nuclei; neutrinos interact weakly |\n| **Gauge bosons** | photon, W/Z bosons, gluons | Mediate the fundamental forces (electromagnetism, weak, strong) |\n\n- **Atoms** are built from a nucleus (protons + neutrons) surrounded by electrons.  \n- **Protons** and **neutrons** are themselves composites of quarks bound by gluons.  \n- **Electrons** are elementary",
+          "is_correct": true,
+          "execution_time_seconds": 2.347679615020752,
+          "token_usage": 738,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_008",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "The gas that makes up the majority of Earth's atmosphere is **nitrogen (N₂)**, comprising about **78 %** of the air by volume.",
+          "is_correct": true,
+          "execution_time_seconds": 4.111150026321411,
+          "token_usage": 311,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_009",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "The energy stored in chemical bonds is **chemical potential energy** (often simply called chemical energy). It is a form of potential energy that arises from the arrangement of electrons and nuclei in a molecule; when bonds are broken or formed, this potential energy is released or absorbed.",
+          "is_correct": true,
+          "execution_time_seconds": 1.6267974376678467,
+          "token_usage": 384,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_010",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer**\n\nPlants make their own food through **photosynthesis** – a scientifically verified, reproducible process that converts light energy into chemical energy.\n\n**Key points**\n\n| Step | What happens | Inputs | Outputs |\n|------|--------------|--------|---------|\n| 1. Light‑dependent reactions | Chlorophyll absorbs sunlight, exciting electrons that travel through the electron‑transport chain, generating ATP and NADPH while splitting water to release O₂. | Sunlight, H₂O, chlorophyll | ATP, NADPH, O₂ |\n| 2. Calvin cycle (light‑independent reactions) | ATP and NADPH drive the fixation of atmospheric CO₂ into 3‑phosphoglycerate, which is eventually reduced to glucose. | CO₂, ATP, NADPH | Glucose (C₆H₁₂O₆) |\n\n**Result**\n\n- **Glucose** (a carbohydrate) serves as the plant’s food and energy source.\n- **Oxygen** is released into the atmosphere as a by‑product.\n\nThis process is a cornerstone of plant biology, supported by extensive empirical evidence and reproducibility, and it aligns with the scientific principle that photosynthesis consumes CO₂ and produces O₂.",
+          "is_correct": true,
+          "execution_time_seconds": 5.496154546737671,
+          "token_usage": 611,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_001",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Remaining budget:**  \n$10,000 – $3,000 (marketing) – $5,000 (development) = **$2,000**.\n\nSo after covering the marketing and development expenses, the company has **$2,000** left in its budget.",
+          "is_correct": true,
+          "execution_time_seconds": 1.8003466129302979,
+          "token_usage": 473,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_002",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Monthly return**\n\n| Project | Profit | Duration | Monthly return (profit ÷ months) |\n|---------|--------|----------|----------------------------------|\n| A | $5,000 | 3 months | **$1,666.67 / month** |\n| B | $8,000 | 5 months | $1,600 / month |\n\n**Conclusion:** Project A delivers the higher monthly return ($1,666.67 vs. $1,600).  \n\n*(If you need to factor in other considerations—expenses, risk, opportunity cost, etc.—those would be evaluated separately, but purely on a monthly profit basis, Project A is superior.)*",
+          "is_correct": false,
+          "execution_time_seconds": 2.051774501800537,
+          "token_usage": 501,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_003",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer**\n\nUsing simple interest:\n\n\\[\nI = P \\times r \\times t = 1000 \\times 0.08 \\times 2 = \\$160\n\\]\n\nTotal amount after 2 years:\n\n\\[\nA = P + I = 1000 + 160 = \\boxed{\\$1{,}160}\n\\]",
+          "is_correct": false,
+          "execution_time_seconds": 0.9189846515655518,
+          "token_usage": 433,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_004",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Total profit calculation**\n\n1. **Revenue**  \n   \\[\n   \\text{Revenue} = 100 \\text{ units} \\times \\$20/\\text{unit} = \\$2{,}000\n   \\]\n\n2. **Cost of goods sold (COGS)**  \n   \\[\n   \\text{COGS} = 100 \\text{ units} \\times \\$12/\\text{unit} = \\$1{,}200\n   \\]\n\n3. **Profit**  \n   \\[\n   \\text{Profit} = \\text{Revenue} - \\text{COGS} = \\$2{,}000 - \\$1{,}200 = \\$800\n   \\]\n\n**Answer:** The company’s total profit is **$800**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.9426677227020264,
+          "token_usage": 540,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_005",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Final price:** **$144**\n\n**Step‑by‑step calculation**\n\n1. **First discount (20 % off $200)**  \n   \\[\n   200 \\times (1 - 0.20) = 200 \\times 0.80 = \\$160\n   \\]\n\n2. **Second discount (10 % off the discounted price)**  \n   \\[\n   160 \\times (1 - 0.10) = 160 \\times 0.90 = \\$144\n   \\]\n\n**Formulaic view**\n\n\\[\n\\text{Final price} = 200 \\times (1-0.20) \\times (1-0.10) = 200 \\times 0.8 \\times 0.9 = \\$144\n\\]\n\nSo after the 20 % discount and the subsequent 10 % discount, the item costs **$144**.",
+          "is_correct": true,
+          "execution_time_seconds": 2.336376190185547,
+          "token_usage": 671,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_006",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "The cost is:\n\n- Daily fee: \\(3 \\text{ days} \\times \\$50/\\text{day} = \\$150\\)\n- Mileage fee: \\(200 \\text{ miles} \\times \\$0.25/\\text{mile} = \\$50\\)\n\nTotal cost: \\(\\$150 + \\$50 = \\boxed{\\$200}\\)",
+          "is_correct": true,
+          "execution_time_seconds": 1.2559363842010498,
+          "token_usage": 379,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_007",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "With a 3 % annual inflation rate, the purchasing power of $1,000 falls by that amount over one year.\n\n\\[\n\\text{Real value} = \\frac{\\$1{,}000}{1 + 0.03} \\approx \\$970.87\n\\]\n\nSo after one year, $1,000 will have the purchasing power of roughly **$970.87** in today’s dollars. (The nominal amount stays $1,000, but its real value is lower.)",
+          "is_correct": true,
+          "execution_time_seconds": 2.2919352054595947,
+          "token_usage": 475,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_008",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Daily output**\n\n1. **Operating hours per day**  \n   - 2 shifts × 8 h/shift = **16 h**\n\n2. **Effective production time (after 10 % downtime)**  \n   - 16 h × (1 – 0.10) = **14.4 h**\n\n3. **Units produced**  \n   - 14.4 h × 100 units/h = **1 440 units**\n\n**Answer:** The plant produces **1,440 units per day**.",
+          "is_correct": true,
+          "execution_time_seconds": 3.726518392562866,
+          "token_usage": 509,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_009",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Net take‑home pay**\n\n| Item | Amount |\n|------|--------|\n| Base salary | $50,000 |\n| 5 % bonus (5 % of $50,000) | $2,500 |\n| Tax on bonus (20 % of $2,500) | –$500 |\n| **Net take‑home** | **$52,000** |\n\n**Explanation**\n\n1. **Bonus calculation**  \n   \\( \\text{Bonus} = 0.05 \\times \\$50{,}000 = \\$2{,}500 \\)\n\n2. **Tax on bonus**  \n   \\( \\text{Tax} = 0.20 \\times \\$2{,}500 = \\$500 \\)\n\n3. **Net pay**  \n   \\( \\text{Net} = \\$50{,}000 + \\$2{,}500 - \\$500 = \\$52{,}000 \\)\n\nSo the employee’s take‑home salary after the bonus and the 20 % tax on that bonus is **$52,000**.",
+          "is_correct": false,
+          "execution_time_seconds": 8.445875644683838,
+          "token_usage": 612,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_010",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "The plan charges a flat $30 per month.  \nYou used 650 minutes, which is 150 minutes over the 500‑minute allowance.  \nExtra charge = 150 min × $0.10 / min = $15.  \n\n**Total bill = $30 + $15 = $45.**",
+          "is_correct": true,
+          "execution_time_seconds": 2.125223159790039,
+          "token_usage": 371,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_001",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Step‑by‑step calculation**\n\n1. **Subtotal**  \n   \\[\n   3 \\text{ items} \\times \\$15 \\text{ each} = \\$45\n   \\]\n\n2. **Tax (5 %)**  \n   \\[\n   5\\% \\text{ of } \\$45 = 0.05 \\times 45 = \\$2.25\n   \\]\n\n3. **Total cost**  \n   \\[\n   \\$45 + \\$2.25 = \\$47.25\n   \\]\n\n**Answer:** The total cost, including tax, is **\\$47.25**.",
+          "is_correct": true,
+          "execution_time_seconds": 4.955105304718018,
+          "token_usage": 442,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_002",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Step‑by‑step calculation**\n\n1. **Sum the numbers**  \n   \\(80 + 90 + 100 = 270\\)\n\n2. **Count the numbers**  \n   There are \\(3\\) numbers.\n\n3. **Divide the sum by the count**  \n   \\(\\displaystyle \\frac{270}{3} = 90\\)\n\n**Verification**\n\n- Alternative approach:  \n  \\((80 + 90 + 100)/3 = (80/3) + (90/3) + (100/3) = 26.67 + 30 + 33.33 \\approx 90\\)\n\n- Check with a calculator or mental math:  \n  \\(270 ÷ 3 = 90\\).\n\n**Final answer**\n\nThe average of 80, 90, and 100 is **90**.",
+          "is_correct": true,
+          "execution_time_seconds": 0.947296142578125,
+          "token_usage": 456,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_003",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Problem**\n\nA rectangle has:\n- Length \\(L = 12\\) units  \n- Width \\(W = 8\\) units  \n\nFind:\n1. The area \\(A\\)  \n2. The perimeter \\(P\\)\n\n---\n\n### 1. Area\n\nThe area of a rectangle is given by:\n\\[\nA = L \\times W\n\\]\n\nPlugging in the values:\n\\[\nA = 12 \\times 8 = 96\n\\]\n\n**Area** \\(= 96\\) square units.\n\n---\n\n### 2. Perimeter\n\nThe perimeter of a rectangle is:\n\\[\nP = 2(L + W)\n\\]\n\nCompute the sum inside the parentheses:\n\\[\nL + W = 12 + 8 = 20\n\\]\n\nMultiply by 2:\n\\[\nP = 2 \\times 20 = 40\n\\]\n\n**Perimeter** \\(= 40\\) units.\n\n---\n\n### Verification\n\n- **Area check**: \\(12 \\times 8 = 96\\) (consistent with multiplication table).  \n- **Perimeter check**: \\(2(12 + 8) = 2 \\times 20 = 40\\) (each side counted twice).\n\nBoth results are consistent and correct.\n\n---\n\n### Final Answers\n\n- **Area**: \\(96\\) square units  \n- **Perimeter**: \\(40\\) units",
+          "is_correct": false,
+          "execution_time_seconds": 6.953399896621704,
+          "token_usage": 578,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_004",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "The distance traveled is found by multiplying speed by time:\n\n\\[\n\\text{Distance} = \\text{Speed} \\times \\text{Time}\n\\]\n\n\\[\n\\text{Distance} = 60\\ \\text{mph} \\times 2.5\\ \\text{h} = 150\\ \\text{miles}\n\\]\n\n**Answer:** The train travels **150 miles**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.3227884769439697,
+          "token_usage": 394,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_005",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "The tank’s volume decreases by 2 % each day, so each day it retains 98 % of the previous amount.\n\n\\[\n\\text{Remaining after 3 days} = 500 \\times (0.98)^3\n\\]\n\nCalculate:\n\n\\[\n0.98^2 = 0.9604,\\qquad 0.9604 \\times 0.98 = 0.941192\n\\]\n\n\\[\n500 \\times 0.941192 \\approx 470.596\n\\]\n\n**Answer:** Approximately **470.6 gallons** remain after 3 days.",
+          "is_correct": false,
+          "execution_time_seconds": 4.9013755321502686,
+          "token_usage": 505,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_006",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "The salary after the two adjustments is **$41,400**.",
+          "is_correct": false,
+          "execution_time_seconds": 0.729254961013794,
+          "token_usage": 344,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_007",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Problem**\n\nA circle has a radius of **8 cm**.  \nFind  \n\n1. The area of the circle.  \n2. The circumference of the circle.\n\n---\n\n## 1. Formulas\n\n| Quantity | Formula | Variables |\n|----------|---------|-----------|\n| Area \\(A\\) | \\(A = \\pi r^{2}\\) | \\(r\\) = radius |\n| Circumference \\(C\\) | \\(C = 2\\pi r\\) | \\(r\\) = radius |\n\n---\n\n## 2. Plug in the radius\n\nGiven \\(r = 8\\ \\text{cm}\\).\n\n### 2.1 Area\n\n\\[\nA = \\pi (8)^2 = \\pi \\times 64 = 64\\pi\n\\]\n\n### 2.2 Circumference\n\n\\[\nC = 2\\pi (8) = 16\\pi\n\\]\n\n---\n\n## 3. Numerical values (using \\(\\pi \\approx 3.1415926535\\))\n\n| Quantity | Exact expression | Approximate value |\n|----------|------------------|-------------------|\n| Area | \\(64\\pi\\) | \\(64 \\times 3.1415926535 \\approx 201.06193\\ \\text{cm}^2\\) |\n| Circumference | \\(16\\pi\\) | \\(16 \\times 3.1415926535 \\approx 50.26548\\ \\text{cm}\\) |\n\nRounded to two decimal places:\n\n- **Area ≈ 201.06 cm²**  \n- **Circumference ≈ 50.27 cm**\n\n---\n\n## 4. Verification\n\n1. **Dimensional check**  \n   - Area: \\(\\text{cm}^2\\) → correct.  \n",
+          "is_correct": false,
+          "execution_time_seconds": 2.2853972911834717,
+          "token_usage": 737,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_008",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "To scale the recipe from 6 servings to 10 servings, use a simple proportion:\n\n\\[\n\\frac{2.5\\ \\text{cups}}{6\\ \\text{servings}} = \\frac{x\\ \\text{cups}}{10\\ \\text{servings}}\n\\]\n\nSolve for \\(x\\):\n\n\\[\nx = 2.5 \\times \\frac{10}{6} = \\frac{25}{6} \\approx 4.17\\ \\text{cups}\n\\]\n\n**Answer:** Use about **4 ⅙ cups (≈4.17 cups)** of flour for 10 people.",
+          "is_correct": true,
+          "execution_time_seconds": 0.884533166885376,
+          "token_usage": 480,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_009",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "The car’s value after two years is **$20,400**.\n\n**Step‑by‑step:**\n\n1. **First‑year depreciation (20 %):**  \n   \\(30{,}000 \\times (1 - 0.20) = 30{,}000 \\times 0.80 = 24{,}000\\).\n\n2. **Second‑year depreciation (15 %):**  \n   \\(24{,}000 \\times (1 - 0.15) = 24{,}000 \\times 0.85 = 20{,}400\\).\n\nSo, after two years the car is worth **$20,400**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.7820582389831543,
+          "token_usage": 499,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_010",
+          "method": "conjecture_10_claims",
+          "claims_evaluated": 10,
+          "response": "**Answer:**  \nWorking together, the two people finish the project in  \n\n\\[\n\\boxed{\\frac{24}{7}\\text{ hours}\\;\\approx\\;3.43\\text{ hours}\\;(3\\text{ h }25.7\\text{ min})}\n\\]\n\n---\n\n### Step‑by‑step solution\n\n| Step | Explanation | Calculation |\n|------|-------------|-------------|\n| 1 | **Determine each person’s rate** | Person A: \\( \\frac{1}{8}\\) job/hour. <br>Person B: \\( \\frac{1}{6}\\) job/hour. |\n| 2 | **Add the rates** (since they work simultaneously) | \\( \\frac{1}{8} + \\frac{1}{6} = \\frac{3}{24} + \\frac{4}{24} = \\frac{7}{24}\\) job/hour. |\n| 3 | **Find the time to finish one job** | Time \\(= \\frac{1\\text{ job}}{\\text{rate}}\\) = \\( \\frac{1}{7/24} = \\frac{24}{7}\\) hours. |\n| 4 | **Convert to hours and minutes** | \\( \\frac{24}{7} \\approx 3.4286\\) hours. <br>0.4286 h × 60 min/h ≈ 25.7 min. |\n\n---\n\n### Verification\n\n- **Check the combined work in 24/7 hours:**  \n  \\( \\frac{24}{7} \\times \\frac{7}{24} = 1\\) job, confirming the calculation.\n\n- **Alternative approach (cross‑multiplication):**  \n  Let \\(t\\) be the time together.  \n  \\( \\frac{t}{8} + \\frac{t}{6} = 1 \\Rightarrow t\\left(\\frac{1}{8}+\\frac{1}{6}\\right)=1 \\Rightarrow t=\\frac{24}{7}\\) hours. Same result.\n\nBoth methods agree, so the answer is reliable.",
+          "is_correct": false,
+          "execution_time_seconds": 3.4037039279937744,
+          "token_usage": 958,
+          "error_message": null
+        }
+      ]
+    },
+    "conjecture_25_claims": {
+      "correct_answers": 34,
+      "accuracy_percent": 68.0,
+      "improvement_over_baseline_percent": -2.0,
+      "total_time_seconds": 167.7882523536682,
+      "total_tokens": 31415,
+      "total_claims_evaluated": 1250,
+      "details": [
+        {
+          "problem_id": "math_001",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "To find 15 % of 240, convert the percentage to a decimal and multiply:\n\n\\[\n15\\% = \\frac{15}{100} = 0.15\n\\]\n\n\\[\n0.15 \\times 240 = 36\n\\]\n\n**Answer:** 15 % of 240 is **36**.",
+          "is_correct": true,
+          "execution_time_seconds": 2.0526628494262695,
+          "token_usage": 552,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_002",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "x = 7",
+          "is_correct": true,
+          "execution_time_seconds": 3.484367609024048,
+          "token_usage": 500,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_003",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "First perform the multiplication and division (PEMDAS):\n\n- \\(25 \\times 4 = 100\\)\n- \\(18 \\div 3 = 6\\)\n\nThen add the results:\n\n\\(100 + 6 = 106\\)\n\n**Answer: 106**",
+          "is_correct": true,
+          "execution_time_seconds": 4.121615886688232,
+          "token_usage": 592,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_004",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "The square root of 144 is **12**.",
+          "is_correct": true,
+          "execution_time_seconds": 0.699378490447998,
+          "token_usage": 517,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_005",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "3/4 of 80 is \\( \\frac{3}{4} \\times 80 = 60 \\).",
+          "is_correct": true,
+          "execution_time_seconds": 0.6702899932861328,
+          "token_usage": 539,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_006",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "\\(2x - 7 = 13\\)\n\nAdd 7 to both sides:  \n\\(2x = 20\\)\n\nDivide by 2:  \n\\(x = 10\\)\n\n**Answer:** \\(x = 10\\)",
+          "is_correct": true,
+          "execution_time_seconds": 1.796785593032837,
+          "token_usage": 555,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_007",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "\\(12^2 = 144\\)  \n\\(5^3 = 125\\)\n\n\\(12^2 + 5^3 = 144 + 125 = 269\\)",
+          "is_correct": false,
+          "execution_time_seconds": 1.5141019821166992,
+          "token_usage": 511,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_008",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "20 % of 150 is \\(0.20 \\times 150 = 30\\).",
+          "is_correct": true,
+          "execution_time_seconds": 2.776761293411255,
+          "token_usage": 533,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_009",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "To solve the equation \\(3x + 4 = 19\\):\n\n1. **Isolate the term with \\(x\\)**  \n   Subtract 4 from both sides:  \n   \\[\n   3x + 4 - 4 = 19 - 4 \\;\\;\\Rightarrow\\;\\; 3x = 15\n   \\]\n\n2. **Solve for \\(x\\)**  \n   Divide both sides by 3:  \n   \\[\n   \\frac{3x}{3} = \\frac{15}{3} \\;\\;\\Rightarrow\\;\\; x = 5\n   \\]\n\n**Answer:** \\(x = 5\\)",
+          "is_correct": true,
+          "execution_time_seconds": 1.2946960926055908,
+          "token_usage": 651,
+          "error_message": null
+        },
+        {
+          "problem_id": "math_010",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "The cube root of 27 is **3**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.0772805213928223,
+          "token_usage": 509,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_001",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Answer:**  \nNo. From the premises\n\n1. *All cats are animals.*  \n2. *Some animals are pets.*\n\nwe cannot validly conclude that *some cats are pets*.\n\n**Why?**  \n- Premise 1 is a universal statement: every cat belongs to the set of animals.  \n- Premise 2 is an existential statement: there exists at least one animal that is a pet, but it does **not** specify which animal(s) that is.\n\nThe conclusion would require that the particular animal(s) that are pets overlap with the set of cats. The premises give no information about that overlap.  \n\n**Counterexample:**  \n- Let the set of animals consist of cats and dogs.  \n- All cats are animals (true).  \n- Some animals are pets (the dogs are pets, true).  \n- No cats are pets (false).  \n\nThus the conclusion can be false even when both premises are true, so the inference is invalid.",
+          "is_correct": true,
+          "execution_time_seconds": 4.008143901824951,
+          "token_usage": 849,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_002",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "Yes.  \nIn propositional logic, implication is transitive:  \n\n\\[\n(A \\rightarrow B) \\land (B \\rightarrow C) \\;\\;\\Longrightarrow\\;\\; (A \\rightarrow C).\n\\]\n\nIf every time \\(A\\) is true \\(B\\) is true, and every time \\(B\\) is true \\(C\\) is true, then whenever \\(A\\) is true \\(C\\) must also be true. Thus \\(A\\) implies \\(C\\).",
+          "is_correct": true,
+          "execution_time_seconds": 0.8297467231750488,
+          "token_usage": 613,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_003",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "Yes.  \nFrom the premises:\n\n1. **Some doctors are rich**  ∃x (Doctor(x) ∧ Rich(x))  \n2. **All rich people drive cars** ∀x (Rich(x) → DrivesCar(x))\n\nThe existential statement guarantees at least one individual who is both a doctor and rich.  \nBy the universal statement, every rich individual drives a car, so that particular doctor must drive a car.  \n\nTherefore we can validly conclude: **Some doctors drive cars.**",
+          "is_correct": false,
+          "execution_time_seconds": 3.192054510116577,
+          "token_usage": 697,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_004",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "Yes.  \nAll mammals are warm‑blooded, and whales are mammals, so by transitivity whales are warm‑blooded.",
+          "is_correct": true,
+          "execution_time_seconds": 3.64054536819458,
+          "token_usage": 575,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_005",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Answer**\n\n- **Logical conclusion (given the premises):**  \n  Yes – if we accept the two premises as true, then we can conclude that penguins can fly.\n\n- **Reality check:**  \n  The premise “All birds can fly” is false in the real world (penguins are a counter‑example). Therefore, while the inference is *logically valid* (the form “All B are C; X is B → X is C” is a correct syllogism), the conclusion is not true in practice because the first premise is incorrect.\n\n**Bottom line:**  \nUnder the stated premises, the inference is correct; in the real world, penguins do not fly.",
+          "is_correct": true,
+          "execution_time_seconds": 4.839285612106323,
+          "token_usage": 789,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_006",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "Yes.\n\n**Reasoning**\n\n1. **Premise 1** – *Some students are athletes.*  \n   This tells us there is at least one student who is an athlete.\n\n2. **Premise 2** – *All athletes are disciplined.*  \n   Every athlete, including the one identified in Premise 1, is disciplined.\n\n3. **Conclusion** – *Some students are disciplined.*  \n   Since that particular student is both a student and disciplined, the statement “some students are disciplined” is true.\n\nThis is a valid syllogistic inference:  \n- “Some S are A” (existential)  \n- “All A are D” (universal)  \n⇒ “Some S are D” (existential).  \n\nThus we can confidently conclude that some students are disciplined.",
+          "is_correct": true,
+          "execution_time_seconds": 1.1749627590179443,
+          "token_usage": 778,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_007",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Answer:**  \nNo, none of the triangles are circles.\n\n**Reasoning**\n\n1. **Premise 1:** *No squares are circles.*  \n   This means the set of squares and the set of circles are disjoint:  \n   \\[\n   \\text{Squares} \\cap \\text{Circles} = \\varnothing\n   \\]\n\n2. **Premise 2:** *All triangles are squares.*  \n   Every triangle belongs to the set of squares:  \n   \\[\n   \\text{Triangles} \\subseteq \\text{Squares}\n   \\]\n\n3. **Transitivity of subset relations:**  \n   If every triangle is a square, and no square is a circle, then no triangle can be a circle. Formally:\n   \\[\n   \\text{Triangles} \\subseteq \\text{Squares} \\quad\\text{and}\\quad \\text{Squares} \\cap \\text{Circles} = \\varnothing\n   \\;\\;\\Longrightarrow\\;\\;\n   \\text{Triangles} \\cap \\text{Circles} = \\varnothing\n   \\]\n\nThus, **no triangles are circles**.",
+          "is_correct": true,
+          "execution_time_seconds": 3.2462856769561768,
+          "token_usage": 840,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_008",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "Yes.  \n\nThe statement “If P is true, then Q is false” is \\(P \\rightarrow \\lnot Q\\).  \nIts contrapositive is \\(\\lnot(\\lnot Q) \\rightarrow \\lnot P\\), i.e. \\(Q \\rightarrow \\lnot P\\).  \n\nSince \\(Q\\) is given to be true, we can apply the contrapositive and conclude \\(\\lnot P\\).  \nThus \\(P\\) must be false.",
+          "is_correct": true,
+          "execution_time_seconds": 2.0580294132232666,
+          "token_usage": 773,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_009",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "No.  \nThe premises give:\n\n1. **All philosophers are thinkers**  (∀x (Philosopher(x) → Thinker(x)))  \n2. **Some thinkers are writers**    (∃x (Thinker(x) ∧ Writer(x)))\n\nFrom (2) we know there is at least one thinker who is a writer, but we have no information that this particular thinker is a philosopher. The existential statement does not guarantee overlap with the set of philosophers.  \n\nA counter‑example:  \n- Philosophers: {A, B} (both thinkers, none writers)  \n- Thinkers: {A, B, C}  \n- Writers: {C} (C is a thinker but not a philosopher)\n\nBoth premises hold, yet no philosopher is a writer. Therefore we cannot conclude that some philosophers are writers.",
+          "is_correct": true,
+          "execution_time_seconds": 11.775012016296387,
+          "token_usage": 875,
+          "error_message": null
+        },
+        {
+          "problem_id": "logic_010",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "If the statement “A and B imply C” is taken to mean the conditional\n\n\\[\n(A \\land B) \\;\\rightarrow\\; C,\n\\]\n\nthen the truth of \\(A\\) together with the falsity of \\(C\\) forces \\(B\\) to be false.\n\n**Why?**\n\n* The implication \\((A \\land B) \\rightarrow C\\) is true in all cases except when \\(A \\land B\\) is true and \\(C\\) is false.\n* We are given that \\(A\\) is true and \\(C\\) is false.\n* If \\(B\\) were true, then \\(A \\land B\\) would be true, and the implication would require \\(C\\) to be true—a contradiction.\n* Therefore \\(B\\) cannot be true; it must be false.\n\nSo, under the usual interpretation that “A and B imply C” means \\((A \\land B) \\rightarrow C\\), the only consistent conclusion is that **\\(B\\) is false**.",
+          "is_correct": false,
+          "execution_time_seconds": 4.234960079193115,
+          "token_usage": 919,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_001",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "At 1 atm (standard pressure), water reaches its boiling point at 100 °C. When it gets to that temperature, it undergoes a phase transition from liquid to gas: the molecules gain enough kinetic energy to overcome intermolecular forces, and the liquid boils, producing steam (water vapor). The process absorbs the latent heat of vaporization, so the temperature stays at 100 °C until all the liquid has turned into vapor.",
+          "is_correct": false,
+          "execution_time_seconds": 0.5714116096496582,
+          "token_usage": 570,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_002",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "Plants primarily produce **oxygen (O₂)** during photosynthesis.",
+          "is_correct": true,
+          "execution_time_seconds": 1.5785784721374512,
+          "token_usage": 442,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_003",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "The force that keeps planets in orbit around the Sun is **gravity**.  \n\n- The Sun’s mass creates a gravitational field that pulls each planet toward it.  \n- The planet’s inertia (its tendency to move in a straight line) causes it to travel forward while gravity pulls it inward, producing a curved, stable orbit.  \n\nThus, the Sun’s gravitational attraction provides the centripetal force that balances the planet’s forward motion, keeping it in orbit.",
+          "is_correct": true,
+          "execution_time_seconds": 1.2412846088409424,
+          "token_usage": 544,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_004",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "The chemical formula for water is **H₂O**.",
+          "is_correct": false,
+          "execution_time_seconds": 1.3249404430389404,
+          "token_usage": 456,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_005",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Answer:**  \nThe speed of light in a vacuum is a fundamental physical constant, defined as  \n\n\\[\nc \\;=\\; 299\\,792\\,458 \\text{ meters per second (m s⁻¹)}.\n\\]\n\nThis value is exact by definition in the International System of Units (SI), because the meter is defined as the distance light travels in vacuum in \\(1/299\\,792\\,458\\) of a second. It is the same in all inertial reference frames and underpins many areas of physics, from electromagnetism to relativity.",
+          "is_correct": false,
+          "execution_time_seconds": 3.741391658782959,
+          "token_usage": 604,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_006",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "The conversion of liquid water into water vapor is called **evaporation** (when it occurs at temperatures below the boiling point). If the water is heated to its boiling point, the same transition is referred to as **boiling**.",
+          "is_correct": true,
+          "execution_time_seconds": 2.06135630607605,
+          "token_usage": 537,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_007",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Answer:**  \nThe smallest unit of matter that we currently know is an **elementary particle**—a particle that is not made up of anything smaller. In the Standard Model of particle physics, the elementary particles are:\n\n| Category | Examples | Notes |\n|----------|----------|-------|\n| **Quarks** | up, down, charm, strange, top, bottom | Combine to form protons, neutrons, and other hadrons |\n| **Leptons** | electron, muon, tau, and their neutrinos | Electrons are the lightest charged lepton |\n| **Gauge bosons** | photon, W/Z bosons, gluons, graviton (hypothetical) | Mediate fundamental forces |\n| **Higgs boson** | Higgs | Gives mass to other particles |\n\nThese particles are point‑like (no internal structure has been observed) and are the building blocks of all known matter.  \n\nHistorically, atoms were once considered the smallest indivisible units, but experiments (e.g., scattering experiments) revealed that atoms are composed of nuclei (protons and neutrons) and electrons, and that nuclei themselves are made of quarks. Thus, the modern view is that **elementary particles** are the smallest units of matter.",
+          "is_correct": true,
+          "execution_time_seconds": 4.492902994155884,
+          "token_usage": 875,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_008",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "The gas that makes up most of Earth's atmosphere is **nitrogen**, comprising about **78 %** of the air.",
+          "is_correct": true,
+          "execution_time_seconds": 2.8242528438568115,
+          "token_usage": 448,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_009",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "The energy stored in chemical bonds is **chemical potential energy** (often called chemical energy). It is a form of potential energy that can be released or absorbed during chemical reactions.",
+          "is_correct": true,
+          "execution_time_seconds": 0.9419300556182861,
+          "token_usage": 472,
+          "error_message": null
+        },
+        {
+          "problem_id": "science_010",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Answer**\n\nPlants produce their own food through **photosynthesis**—a light‑driven biochemical process that converts solar energy into chemical energy stored in sugars.\n\n**Key points**\n\n| Step | What happens | Where it occurs | Main products |\n|------|--------------|-----------------|---------------|\n| 1. Light absorption | Chlorophyll and accessory pigments capture photons | Thylakoid membranes of chloroplasts | Excited electrons, ATP, NADPH |\n| 2. Water splitting (photolysis) | Light energy splits H₂O → O₂ + H⁺ + 2e⁻ | Thylakoid lumen | O₂ (released to atmosphere) |\n| 3. Carbon fixation (Calvin cycle) | CO₂ + ATP + NADPH → G3P (3‑phosphoglycerate) | Stroma of chloroplasts | G3P → glucose, starch, cellulose |\n| 4. Sugar utilization | Glucose used for growth, energy, storage | Entire plant | Energy for metabolism, structural components |\n\n**Result**\n\n- **Glucose (C₆H₁₂O₆)** – the primary food molecule.\n- **Oxygen (O₂)** – a by‑product released into the atmosphere.\n\nThus, photosynthesis is the process by which plants synthesize their own food, turning light, water, and carbon dioxide into glucose and oxygen.",
+          "is_correct": true,
+          "execution_time_seconds": 2.8109707832336426,
+          "token_usage": 813,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_001",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "Remaining budget = $10,000 – $3,000 – $5,000 = **$2,000**.",
+          "is_correct": true,
+          "execution_time_seconds": 1.6992597579956055,
+          "token_usage": 497,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_002",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Monthly return**\n\n| Project | Profit | Duration | Monthly return |\n|---------|--------|----------|----------------|\n| A | $5,000 | 3 months | $5,000 ÷ 3 ≈ **$1,666.67** |\n| B | $8,000 | 5 months | $8,000 ÷ 5 = **$1,600.00** |\n\n**Result:** Project A delivers the higher monthly return.  \n*(Assumes all other costs are equal and ignores time‑value adjustments.)*",
+          "is_correct": false,
+          "execution_time_seconds": 4.502012729644775,
+          "token_usage": 604,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_003",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "With simple interest the formula is  \n\n\\[\n\\text{Total} = P + (P \\times r \\times t)\n\\]\n\nwhere  \n\\(P = \\$1{,}000\\) (principal),  \n\\(r = 8\\% = 0.08\\) (annual rate),  \n\\(t = 2\\) years.\n\n\\[\n\\text{Interest} = 1{,}000 \\times 0.08 \\times 2 = \\$160\n\\]\n\n\\[\n\\text{Total after 2 years} = 1{,}000 + 160 = \\$1{,}160\n\\]\n\n**Answer:** \\$1,160.",
+          "is_correct": true,
+          "execution_time_seconds": 8.393213033676147,
+          "token_usage": 672,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_004",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Total profit calculation**\n\n1. **Revenue per unit**: $20  \n2. **Cost per unit**: $12  \n3. **Profit per unit**: $20 – $12 = $8  \n4. **Units sold**: 100  \n\n\\[\n\\text{Total profit} = 100 \\times \\$8 = \\$800\n\\]\n\n**Result**: The company’s total profit from selling 100 units is **$800**.  \n*(This is gross profit; any additional operating expenses would further reduce the net profit.)*",
+          "is_correct": true,
+          "execution_time_seconds": 4.833041429519653,
+          "token_usage": 724,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_005",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Final price:** **$144**\n\n**Step‑by‑step calculation**\n\n1. **First discount (20 % off $200)**  \n   \\[\n   200 \\times 0.20 = 40 \\quad\\text{(amount saved)}\n   \\]\n   \\[\n   200 - 40 = 160\n   \\]\n\n2. **Second discount (10 % off the discounted price)**  \n   \\[\n   160 \\times 0.10 = 16 \\quad\\text{(additional savings)}\n   \\]\n   \\[\n   160 - 16 = 144\n   \\]\n\nSo the item costs **$144** after both discounts.\n\n---\n\n### Quick sanity check\n- 20 % of $200 = $40 → $200 – $40 = $160  \n- 10 % of $160 = $16 → $160 – $16 = $144  \n\nThe numbers line up, confirming the result.",
+          "is_correct": true,
+          "execution_time_seconds": 9.27826189994812,
+          "token_usage": 817,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_006",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Total cost**\n\n- Daily rental: \\(3 \\text{ days} \\times \\$50/\\text{day} = \\$150\\)\n- Mileage charge: \\(200 \\text{ miles} \\times \\$0.25/\\text{mile} = \\$50\\)\n\n**Total** = \\$150 + \\$50 = **\\$200**\n\nThis figure reflects a straightforward cost‑allocation calculation, aligning with basic budgeting principles: all direct expenses (daily fee + mileage) are summed to determine the final amount payable.",
+          "is_correct": true,
+          "execution_time_seconds": 2.686674118041992,
+          "token_usage": 650,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_007",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "$1,000 × (1 – 0.03) = $970.  \nAfter one year at 3 % inflation, the purchasing power of $1,000 is $970.",
+          "is_correct": true,
+          "execution_time_seconds": 1.2942867279052734,
+          "token_usage": 507,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_008",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Daily output**\n\n| Item | Value | Calculation |\n|------|-------|-------------|\n| Production rate | 100 units / hour | Given |\n| Shift length | 8 hours | Given |\n| Number of shifts | 2 | Given |\n| Downtime | 10 % | Given |\n| **Effective production per shift** | 720 units | \\(100 \\text{ units/h} \\times 8 \\text{ h} \\times (1-0.10) = 720\\) |\n| **Daily output** | **1 440 units** | \\(720 \\text{ units/shift} \\times 2 \\text{ shifts} = 1 440\\) |\n\n**Assumptions**\n\n1. The plant operates two full 8‑hour shifts per day (total 16 hours of operation).  \n2. Downtime is uniformly distributed across each shift, reducing the effective production by 10 %.  \n3. No additional shifts or overtime are considered.\n\n**Result**\n\nThe plant will produce **1 440 units per day** under the stated conditions.",
+          "is_correct": false,
+          "execution_time_seconds": 9.64045786857605,
+          "token_usage": 844,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_009",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "Net take‑home = **$52,000**  \n\n- Base salary: $50,000  \n- Bonus (5% of salary): $2,500  \n- Tax on bonus (20%): $500  \n- Net bonus: $2,000  \n- Total net: $50,000 + $2,000 = $52,000",
+          "is_correct": false,
+          "execution_time_seconds": 2.0821051597595215,
+          "token_usage": 646,
+          "error_message": null
+        },
+        {
+          "problem_id": "strategy_010",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Total bill:** **$45**\n\n**How it’s calculated**\n\n| Item | Minutes | Rate | Cost |\n|------|---------|------|------|\n| Base plan | – | $30/month | $30 |\n| Overage | 650 min – 500 min = **150 min** | $0.10/min | 150 × $0.10 = **$15** |\n| **Total** | | | **$45** |\n\n**Why this matters in a budgeting context**\n\n- **Fixed vs. variable costs**: The $30 base is a fixed expense; the overage is variable and depends on usage. Knowing the variable component helps forecast future bills if usage trends upward.\n- **Risk assessment**: If your usage fluctuates, the overage can become unpredictable. Setting a usage cap or monitoring usage can mitigate the risk of unexpectedly high bills.\n- **Opportunity cost**: Paying $15 extra for 150 minutes means you could have allocated that $15 elsewhere (e.g., savings, other services). Understanding this helps prioritize spending.\n- **Strategic decision**: If you consistently exceed 500 minutes, consider switching to a higher‑tier plan that includes more minutes to reduce per‑minute cost and simplify budgeting.\n\n**Bottom line**: For 650 minutes of usage, the bill is $45, comprising a $30 fixed fee and a $15 overage charge.",
+          "is_correct": true,
+          "execution_time_seconds": 10.331884622573853,
+          "token_usage": 818,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_001",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "Subtotal: 3 × $15 = $45  \nTax (5 %): 0.05 × $45 = $2.25  \n**Total cost: $47.25**",
+          "is_correct": true,
+          "execution_time_seconds": 1.909893274307251,
+          "token_usage": 499,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_002",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "The average is:\n\n\\[\n\\frac{80 + 90 + 100}{3} = \\frac{270}{3} = 90\n\\]",
+          "is_correct": true,
+          "execution_time_seconds": 1.9614157676696777,
+          "token_usage": 455,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_003",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Rectangle dimensions**  \n- Length \\(L = 12\\)  \n- Width \\(W = 8\\)\n\n---\n\n### 1. Area  \n\\[\n\\text{Area} = L \\times W = 12 \\times 8 = 96\n\\]\n\n### 2. Perimeter  \n\\[\n\\text{Perimeter} = 2(L + W) = 2(12 + 8) = 2 \\times 20 = 40\n\\]\n\n---\n\n**Answer**  \n- **Area:** \\(96\\) square units  \n- **Perimeter:** \\(40\\) units",
+          "is_correct": false,
+          "execution_time_seconds": 2.0436620712280273,
+          "token_usage": 552,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_004",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "The train travels \\(60 \\text{ mph} \\times 2.5 \\text{ h} = 150\\) miles.",
+          "is_correct": false,
+          "execution_time_seconds": 1.0831210613250732,
+          "token_usage": 472,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_005",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "The tank loses 2 % of its contents each day, so each day the remaining amount is multiplied by \\(0.98\\).\n\nAfter 3 days:\n\n\\[\n\\text{Remaining} = 500 \\times (0.98)^3\n\\]\n\n\\[\n(0.98)^2 = 0.9604,\\qquad 0.9604 \\times 0.98 = 0.941192\n\\]\n\n\\[\n500 \\times 0.941192 \\approx 470.6 \\text{ gallons}\n\\]\n\n**Answer:** About **470.6 gallons** remain after 3 days.",
+          "is_correct": false,
+          "execution_time_seconds": 3.6796436309814453,
+          "token_usage": 615,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_006",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "The salary after the two changes is **$41,400**.  \n\n- Increase 15% of $40,000 → $40,000 × 1.15 = $46,000.  \n- Decrease 10% of $46,000 → $46,000 × 0.90 = $41,400.",
+          "is_correct": false,
+          "execution_time_seconds": 2.144333600997925,
+          "token_usage": 544,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_007",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "**Circle with radius \\(r = 8\\ \\text{cm}\\)**  \n\n| Quantity | Formula | Calculation | Result |\n|----------|---------|-------------|--------|\n| Area | \\(A = \\pi r^{2}\\) | \\(A = \\pi \\times 8^{2} = \\pi \\times 64\\) | \\(A \\approx 201.06\\ \\text{cm}^{2}\\) |\n| Circumference | \\(C = 2\\pi r\\) | \\(C = 2\\pi \\times 8 = 16\\pi\\) | \\(C \\approx 50.27\\ \\text{cm}\\) |\n\n(Using \\(\\pi \\approx 3.1416\\).)",
+          "is_correct": false,
+          "execution_time_seconds": 2.4269165992736816,
+          "token_usage": 621,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_008",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "To scale the recipe from 6 servings to 10 servings, use a simple proportion:\n\n\\[\n\\frac{2.5\\ \\text{cups}}{6\\ \\text{servings}} = \\frac{x\\ \\text{cups}}{10\\ \\text{servings}}\n\\]\n\nSolve for \\(x\\):\n\n\\[\nx = 2.5 \\times \\frac{10}{6} = \\frac{25}{6} \\approx 4.17\\ \\text{cups}\n\\]\n\n**Answer:** About **4.2 cups of flour** (rounded to the nearest tenth).",
+          "is_correct": false,
+          "execution_time_seconds": 14.085060834884644,
+          "token_usage": 594,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_009",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "The car’s value after two years is **$20,400**.\n\n**Step‑by‑step:**\n\n1. **First year depreciation (20%)**  \n   \\[\n   30{,}000 \\times (1 - 0.20) = 30{,}000 \\times 0.80 = 24{,}000\n   \\]\n\n2. **Second year depreciation (15%)**  \n   \\[\n   24{,}000 \\times (1 - 0.15) = 24{,}000 \\times 0.85 = 20{,}400\n   \\]\n\nSo the car’s value after two years is **$20,400**.",
+          "is_correct": true,
+          "execution_time_seconds": 0.9893960952758789,
+          "token_usage": 642,
+          "error_message": null
+        },
+        {
+          "problem_id": "decomp_010",
+          "method": "conjecture_25_claims",
+          "claims_evaluated": 25,
+          "response": "Let  \n\n- Person A’s rate = \\( \\frac{1}{8}\\) of the project per hour.  \n- Person B’s rate = \\( \\frac{1}{6}\\) of the project per hour.\n\nCombined rate  \n\n\\[\n\\frac{1}{8}+\\frac{1}{6}= \\frac{3}{24}+\\frac{4}{24}= \\frac{7}{24}\\text{ of the project per hour}.\n\\]\n\nTime to finish one whole project together:\n\n\\[\n\\text{Time} = \\frac{1}{\\text{combined rate}} = \\frac{1}{7/24}= \\frac{24}{7}\\text{ hours}\\approx 3.43\\text{ hours}.\n\\]\n\nSo working together, they finish the project in **\\(24/7\\) hours (about 3 h 25 min)**.",
+          "is_correct": false,
+          "execution_time_seconds": 2.6476259231567383,
+          "token_usage": 714,
+          "error_message": null
+        }
+      ]
+    }
+  },
+  "analysis": {
+    "baseline_accuracy": 70.0,
+    "baseline_tokens": 12973,
+    "claim_evaluation_impact": [
+      {
+        "claims_evaluated": 0,
+        "accuracy_percent": 64.0,
+        "improvement_percent": -6.0,
+        "total_tokens": 15753,
+        "tokens_per_claim": Infinity
+      },
+      {
+        "claims_evaluated": 5,
+        "accuracy_percent": 72.0,
+        "improvement_percent": 2.0,
+        "total_tokens": 24591,
+        "tokens_per_claim": 98.364
+      },
+      {
+        "claims_evaluated": 10,
+        "accuracy_percent": 72.0,
+        "improvement_percent": 2.0,
+        "total_tokens": 25640,
+        "tokens_per_claim": 51.28
+      },
+      {
+        "claims_evaluated": 25,
+        "accuracy_percent": 68.0,
+        "improvement_percent": -2.0,
+        "total_tokens": 31415,
+        "tokens_per_claim": 25.132
+      }
+    ],
+    "optimal_threshold": 5,
+    "max_improvement": 2.0,
+    "efficiency_analysis": []
+  }
+}

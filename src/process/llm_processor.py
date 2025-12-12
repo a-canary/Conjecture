@@ -12,7 +12,7 @@ import logging
 import json
 
 from src.core.models import Claim
-from src.processing.llm.bridge import LLMBridge
+from src.processing.llm_bridge import LLMBridge
 from .models import (
     ContextResult,
     ProcessingResult,

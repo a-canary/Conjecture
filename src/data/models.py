@@ -2,6 +2,7 @@
 Data models and configuration for the Conjecture data layer.
 """
 
+import json
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
@@ -160,8 +161,98 @@ class Claim(BaseModel):
         """Backward compatibility property for created timestamp"""
         return self.created
 
+    def to_lancedb_dict(self) -> Dict[str, Any]:
+        """Convert claim to LanceDB dictionary format"""
+        return {
+            "id": self.id,
+            "content": self.content,
+            "confidence": self.confidence,
+            "state": self.state.value,
+            "type": json.dumps([t.value for t in self.type]),
+            "tags": json.dumps(self.tags),
+            "scope": self.scope.value,
+            "created": self.created.isoformat(),
+            "updated": self.updated.isoformat() if self.updated else self.created.isoformat(),
+            "is_dirty": self.is_dirty,
+            "dirty_reason": self.dirty_reason or "",
+            "dirty_timestamp": self.dirty_timestamp.isoformat() if self.dirty_timestamp else "",
+            "dirty_priority": self.dirty_priority,
+            "supported_by": json.dumps(self.supported_by),
+            "supports": json.dumps(self.supports),
+            "embedding": self.embedding
+        }
+
+    @classmethod
+    def from_lancedb_result(
+        cls, data: Dict[str, Any]
+    ) -> "Claim":
+        """Create claim from LanceDB query result"""
+        import json
+
+        # Parse JSON fields
+        try:
+            claim_type = [ClaimType(t) for t in json.loads(data.get("type", '["concept"]'))]
+        except:
+            claim_type = [ClaimType.CONCEPT]
+
+        try:
+            tags = json.loads(data.get("tags", "[]")) if data.get("tags") else []
+        except:
+            tags = []
+
+        try:
+            supported_by = json.loads(data.get("supported_by", "[]")) if data.get("supported_by") else []
+        except:
+            supported_by = []
+
+        try:
+            supports = json.loads(data.get("supports", "[]")) if data.get("supports") else []
+        except:
+            supports = []
+
+        # Parse dates
+        try:
+            created = datetime.fromisoformat(data["created"])
+        except:
+            created = datetime.utcnow()
+
+        try:
+            updated = datetime.fromisoformat(data["updated"]) if data.get("updated") else created
+        except:
+            updated = created
+
+        try:
+            dirty_timestamp = datetime.fromisoformat(data["dirty_timestamp"]) if data.get("dirty_timestamp") else None
+        except:
+            dirty_timestamp = None
+
+        # Parse scope
+        try:
+            scope = ClaimScope(data.get("scope", "user_workspace"))
+        except:
+            scope = ClaimScope.USER_WORKSPACE
+
+        return cls(
+            id=data["id"],
+            content=data["content"],
+            confidence=data["confidence"],
+            state=ClaimState(data["state"]),
+            type=claim_type,
+            tags=tags,
+            scope=scope,
+            created=created,
+            updated=updated,
+            is_dirty=data.get("is_dirty", False),
+            dirty_reason=data.get("dirty_reason") or None,
+            dirty_timestamp=dirty_timestamp,
+            dirty_priority=data.get("dirty_priority", 0),
+            supported_by=supported_by,
+            supports=supports,
+            embedding=data.get("embedding")
+        )
+
     def to_chroma_metadata(self) -> Dict[str, Any]:
-        """Convert claim to ChromaDB metadata format"""
+        """Convert claim to ChromaDB metadata format (deprecated - use to_lancedb_dict)"""
         return {
             "confidence": self.confidence,
             "state": self.state.value,
@@ -180,7 +271,7 @@ class Claim(BaseModel):
     def from_chroma_result(
         cls, id: str, content: str, metadata: Dict[str, Any]
     ) -> "Claim":
-        """Create claim from ChromaDB query result"""
+        """Create claim from ChromaDB query result (deprecated - use from_lancedb_result)"""
         return cls(
             id=id,
             content=content,
