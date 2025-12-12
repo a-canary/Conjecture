@@ -90,6 +90,9 @@ class ImprovementCycleAgent:
             elif cycle_config['number'] == 2:
                 # Cycle 2: Enhanced context integration
                 return await self._implement_cycle_2(cycle_config)
+            elif cycle_config['number'] == 3:
+                # Cycle 3: Self-verification enhancement
+                return await self._implement_cycle_3(cycle_config)
             else:
                 return {"success": False, "error": f"Cycle {cycle_config['number']} not implemented yet"}
         except Exception as e:
@@ -248,6 +251,127 @@ USEFUL FRAMEWORKS:
                     f.write(content)
 
             return {"success": True, "message": "Added enhanced context integration for problem types"}
+
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    async def _implement_cycle_3(self, cycle_config: Dict[str, Any]) -> Dict[str, Any]:
+        """Implement Cycle 3: Self-verification enhancement"""
+        try:
+            # Update the prompt system to add self-verification
+            prompt_system_path = Path(__file__).parent.parent / "agent" / "prompt_system.py"
+
+            # Read current file
+            with open(prompt_system_path, 'r') as f:
+                content = f.read()
+
+            # Add self-verification method
+            verification_method = '''
+    def _get_self_verification_prompt(self, problem_text: str, answer: str) -> str:
+        """Get self-verification prompt for error detection and correction"""
+        problem_lower = problem_text.lower()
+        answer_lower = answer.lower()
+
+        # Mathematical verification
+        if any(word in problem_lower for word in ['calculate', 'multiply', 'add', 'subtract', 'divide', 'percent', 'what is', 'how many']):
+            return f"""SELF-VERIFICATION CHECKLIST:
+Please verify your answer to this mathematical problem.
+
+ORIGINAL PROBLEM: {problem_text}
+YOUR ANSWER: {answer}
+
+VERIFICATION STEPS:
+1. Calculation Check:
+   - Recalculate the problem using a different method
+   - Verify arithmetic operations step-by-step
+   - Check for common calculation errors
+
+2. Reasonableness Check:
+   - Does the answer make sense in context?
+   - Can you estimate to verify the magnitude?
+   - Are units correct?
+
+3. Completeness Check:
+   - Did you answer exactly what was asked?
+   - Are all parts of the problem addressed?
+   - Is the final answer clearly stated?
+
+4. Confidence Assessment:
+   - Rate your confidence in this answer (0-100%)
+   - What are the potential sources of error?
+   - Would you like to revise your answer?
+
+If you find any errors, please provide the corrected answer with explanation."""
+
+        # Logical verification
+        elif any(word in problem_lower for word in ['if', 'then', 'conclude', 'logic', 'premise', 'assume', 'yes or no']):
+            return f"""SELF-VERIFICATION CHECKLIST:
+Please verify your reasoning to this logical problem.
+
+ORIGINAL PROBLEM: {problem_text}
+YOUR ANSWER: {answer}
+
+VERIFICATION STEPS:
+1. Premise Analysis:
+   - Did you correctly identify all given premises?
+   - Are there any hidden assumptions you made?
+   - Are the premises clearly stated and understood?
+
+2. Logical Validity:
+   - Does your conclusion necessarily follow from premises?
+   - Are there any logical fallacies in your reasoning?
+   - Can you think of counterexamples?
+
+3. Completeness Check:
+   - Did you address the exact question asked?
+   - Is your reasoning fully explained?
+   - Is the final answer clear and unambiguous?
+
+4. Confidence Assessment:
+   - Rate your confidence in this reasoning (0-100%)
+   - What are the potential weak points?
+   - Would you like to revise your answer?
+
+If you find any issues, please provide the corrected reasoning with explanation."""
+
+        # Default verification
+        else:
+            return f"""SELF-VERIFICATION CHECKLIST:
+Please verify your answer to this problem.
+
+ORIGINAL PROBLEM: {problem_text}
+YOUR ANSWER: {answer}
+
+VERIFICATION STEPS:
+1. Understanding Check:
+   - Did you correctly understand what was asked?
+   - Are all parts of the question addressed?
+   - Is there any ambiguity in interpretation?
+
+2. Reasoning Quality:
+   - Is your reasoning clear and logical?
+   - Are your steps well-explained?
+   - Can you identify any potential flaws?
+
+3. Answer Appropriateness:
+   - Does your answer directly address the question?
+   - Is the answer complete and accurate?
+   - Is the final answer clearly stated?
+
+4. Confidence Assessment:
+   - Rate your confidence in this answer (0-100%)
+   - What are potential sources of error?
+   - Would you like to revise your answer?
+
+If you find any issues, please provide the corrected answer with explanation."""
+
+''' + content
+
+            # Write enhanced content back to file
+            with open(prompt_system_path, 'w') as f:
+                f.write(verification_method)
+
+            return {"success": True, "message": "Added self-verification enhancement for error detection and correction"}
 
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -464,13 +588,43 @@ async def run_cycle_2():
 
     return result
 
-async def run_cycle_2_only():
-    """Run only Cycle 2"""
-    return await run_cycle_2()
+async def run_cycle_3():
+    """Run Cycle 3"""
+    agent = ImprovementCycleAgent()
+
+    cycle_config = {
+        "number": 3,
+        "title": "Self-Verification Enhancement",
+        "hypothesis": "Self-verification mechanisms will detect and correct errors, improving reliability by 70% error detection rate",
+        "target": "70% error detection rate, 10-15% accuracy improvement, reduced user corrections",
+        "files_modified": ["src/agent/prompt_system.py"]
+    }
+
+    result = await agent.run_cycle(cycle_config)
+
+    print(f"\n{'='*80}")
+    print(f"CYCLE 3 COMPLETE: {result['success']}")
+    if result['success']:
+        print("[SUCCESS] Self-verification enhancement validated and committed!")
+    else:
+        print("[FAILED] Cycle failed - no improvement or error occurred")
+    print(f"{'='*80}")
+
+    return result
+
+async def run_cycle_3_only():
+    """Run only Cycle 3"""
+    return await run_cycle_3()
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) > 1 and sys.argv[1] == "cycle2":
-        asyncio.run(run_cycle_2_only())
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "cycle2":
+            asyncio.run(run_cycle_2_only())
+        elif sys.argv[1] == "cycle3":
+            asyncio.run(run_cycle_3_only())
+        else:
+            print("Usage: python improvement_cycle_agent.py [cycle2|cycle3]")
+            asyncio.run(run_cycle_1())
     else:
         asyncio.run(run_cycle_1())

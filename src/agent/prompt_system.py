@@ -1,3 +1,102 @@
+
+    def _get_self_verification_prompt(self, problem_text: str, answer: str) -> str:
+        """Get self-verification prompt for error detection and correction"""
+        problem_lower = problem_text.lower()
+        answer_lower = answer.lower()
+
+        # Mathematical verification
+        if any(word in problem_lower for word in ['calculate', 'multiply', 'add', 'subtract', 'divide', 'percent', 'what is', 'how many']):
+            return f"""SELF-VERIFICATION CHECKLIST:
+Please verify your answer to this mathematical problem.
+
+ORIGINAL PROBLEM: {problem_text}
+YOUR ANSWER: {answer}
+
+VERIFICATION STEPS:
+1. Calculation Check:
+   - Recalculate the problem using a different method
+   - Verify arithmetic operations step-by-step
+   - Check for common calculation errors
+
+2. Reasonableness Check:
+   - Does the answer make sense in context?
+   - Can you estimate to verify the magnitude?
+   - Are units correct?
+
+3. Completeness Check:
+   - Did you answer exactly what was asked?
+   - Are all parts of the problem addressed?
+   - Is the final answer clearly stated?
+
+4. Confidence Assessment:
+   - Rate your confidence in this answer (0-100%)
+   - What are the potential sources of error?
+   - Would you like to revise your answer?
+
+If you find any errors, please provide the corrected answer with explanation."""
+
+        # Logical verification
+        elif any(word in problem_lower for word in ['if', 'then', 'conclude', 'logic', 'premise', 'assume', 'yes or no']):
+            return f"""SELF-VERIFICATION CHECKLIST:
+Please verify your reasoning to this logical problem.
+
+ORIGINAL PROBLEM: {problem_text}
+YOUR ANSWER: {answer}
+
+VERIFICATION STEPS:
+1. Premise Analysis:
+   - Did you correctly identify all given premises?
+   - Are there any hidden assumptions you made?
+   - Are the premises clearly stated and understood?
+
+2. Logical Validity:
+   - Does your conclusion necessarily follow from premises?
+   - Are there any logical fallacies in your reasoning?
+   - Can you think of counterexamples?
+
+3. Completeness Check:
+   - Did you address the exact question asked?
+   - Is your reasoning fully explained?
+   - Is the final answer clear and unambiguous?
+
+4. Confidence Assessment:
+   - Rate your confidence in this reasoning (0-100%)
+   - What are the potential weak points?
+   - Would you like to revise your answer?
+
+If you find any issues, please provide the corrected reasoning with explanation."""
+
+        # Default verification
+        else:
+            return f"""SELF-VERIFICATION CHECKLIST:
+Please verify your answer to this problem.
+
+ORIGINAL PROBLEM: {problem_text}
+YOUR ANSWER: {answer}
+
+VERIFICATION STEPS:
+1. Understanding Check:
+   - Did you correctly understand what was asked?
+   - Are all parts of the question addressed?
+   - Is there any ambiguity in interpretation?
+
+2. Reasoning Quality:
+   - Is your reasoning clear and logical?
+   - Are your steps well-explained?
+   - Can you identify any potential flaws?
+
+3. Answer Appropriateness:
+   - Does your answer directly address the question?
+   - Is the answer complete and accurate?
+   - Is the final answer clearly stated?
+
+4. Confidence Assessment:
+   - Rate your confidence in this answer (0-100%)
+   - What are potential sources of error?
+   - Would you like to revise your answer?
+
+If you find any issues, please provide the corrected answer with explanation."""
+
     def _get_context_for_problem_type(self, problem_text: str) -> str:
         """Get problem-type-specific context scaffolding"""
         problem_lower = problem_text.lower()
