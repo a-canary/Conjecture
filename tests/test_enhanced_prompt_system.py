@@ -203,7 +203,7 @@ class TestEnhancedPromptSystem:
             assert enhancement['suggested_steps'] >= 2
 
         @pytest.mark.asyncio
-        async async def test_problem_decomposition_enhancement(self, prompt_system):
+        async def test_problem_decomposition_enhancement(self, prompt_system):
             """Test problem decomposition enhancement"""
             problem = "Analyze the components of this complex system"
             enhancement = prompt_system._enhance_problem_decomposition(problem)

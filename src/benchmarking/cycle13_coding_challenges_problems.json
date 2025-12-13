@@ -1,0 +1,177 @@
+[
+  {
+    "id": "code_001",
+    "type": "coding_challenges",
+    "difficulty": "easy",
+    "problem": "Coding problem 1 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_002",
+    "type": "coding_challenges",
+    "difficulty": "hard",
+    "problem": "Coding problem 2 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_003",
+    "type": "coding_challenges",
+    "difficulty": "medium",
+    "problem": "Coding problem 3 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_004",
+    "type": "coding_challenges",
+    "difficulty": "hard",
+    "problem": "Coding problem 4 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_005",
+    "type": "coding_challenges",
+    "difficulty": "easy",
+    "problem": "Coding problem 5 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_006",
+    "type": "coding_challenges",
+    "difficulty": "hard",
+    "problem": "Coding problem 6 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_007",
+    "type": "coding_challenges",
+    "difficulty": "medium",
+    "problem": "Coding problem 7 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_008",
+    "type": "coding_challenges",
+    "difficulty": "hard",
+    "problem": "Coding problem 8 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_009",
+    "type": "coding_challenges",
+    "difficulty": "easy",
+    "problem": "Coding problem 9 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_010",
+    "type": "coding_challenges",
+    "difficulty": "hard",
+    "problem": "Coding problem 10 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_011",
+    "type": "coding_challenges",
+    "difficulty": "medium",
+    "problem": "Coding problem 11 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_012",
+    "type": "coding_challenges",
+    "difficulty": "hard",
+    "problem": "Coding problem 12 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_013",
+    "type": "coding_challenges",
+    "difficulty": "easy",
+    "problem": "Coding problem 13 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_014",
+    "type": "coding_challenges",
+    "difficulty": "hard",
+    "problem": "Coding problem 14 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_015",
+    "type": "coding_challenges",
+    "difficulty": "medium",
+    "problem": "Coding problem 15 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_016",
+    "type": "coding_challenges",
+    "difficulty": "hard",
+    "problem": "Coding problem 16 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_017",
+    "type": "coding_challenges",
+    "difficulty": "easy",
+    "problem": "Coding problem 17 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_018",
+    "type": "coding_challenges",
+    "difficulty": "hard",
+    "problem": "Coding problem 18 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_019",
+    "type": "coding_challenges",
+    "difficulty": "medium",
+    "problem": "Coding problem 19 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_020",
+    "type": "coding_challenges",
+    "difficulty": "hard",
+    "problem": "Coding problem 20 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_021",
+    "type": "coding_challenges",
+    "difficulty": "easy",
+    "problem": "Coding problem 21 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_022",
+    "type": "coding_challenges",
+    "difficulty": "hard",
+    "problem": "Coding problem 22 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_023",
+    "type": "coding_challenges",
+    "difficulty": "medium",
+    "problem": "Coding problem 23 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_024",
+    "type": "coding_challenges",
+    "difficulty": "hard",
+    "problem": "Coding problem 24 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  },
+  {
+    "id": "code_025",
+    "type": "coding_challenges",
+    "difficulty": "easy",
+    "problem": "Coding problem 25 involving algorithm implementation",
+    "expected_answer": "working_code_solution"
+  }
+]

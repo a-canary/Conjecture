@@ -1,0 +1,552 @@
+benchmark_scores:
+  collection_timestamp: '2025-12-12T17:29:20.411682'
+  results:
+    claim_system:
+      detailed_evaluation_demo_results:
+        claims_created: 16
+        file: detailed_evaluation_demo_results.json
+        performance:
+          conjecture_accuracy: 100.0
+          direct_accuracy: 80.0
+          direct_vs_conjecture_ratio: '?'
+          improvement: 25.0
+        problems_evaluated: 5
+        timestamp: '2025-12-12T16:12:05.774344'
+      improved_claim_system_results:
+        claims_created: 17
+        file: improved_claim_system_results.json
+        performance:
+          conjecture_accuracy: 100.0
+          direct_accuracy: 50.0
+          direct_vs_conjecture_ratio: '?'
+          improvement: 100.0
+        problems_evaluated: 4
+        timestamp: '2025-12-12T16:27:18.598075'
+    cycle_results:
+      cycle_006_results:
+        file: cycle_006_results.json
+        overall_score: '?'
+        success: false
+        timestamp: '2025-12-12T04:28:14.447004'
+        title: Unknown
+      cycle_007_results:
+        file: cycle_007_results.json
+        overall_score: '?'
+        success: true
+        timestamp: '2025-12-12T04:48:15.094152'
+        title: Unknown
+      cycle_010_optimized_results:
+        file: cycle_010_optimized_results.json
+        overall_score: '?'
+        success: false
+        timestamp: '2025-12-12T05:22:36.225841'
+        title: Unknown
+      cycle_010_results:
+        file: cycle_010_results.json
+        overall_score: '?'
+        success: false
+        timestamp: '2025-12-12T05:20:00.213620'
+        title: Unknown
+      cycle_011_results:
+        file: cycle_011_results.json
+        overall_score: '?'
+        success: true
+        timestamp: '2025-12-12T05:33:48.375922'
+        title: Async/Await and Configuration Resolution
+      cycle_012_results:
+        file: cycle_012_results.json
+        overall_score: '?'
+        success: true
+        timestamp: '2025-12-12T05:35:44.369545'
+        title: Final Test Performance Optimization
+      cycle_013_results.json:
+        error: 'Expecting '','' delimiter: line 55 column 25 (char 1606)'
+      cycle_014_results:
+        file: cycle_014_results.json
+        overall_score: '?'
+        success: false
+        timestamp: '2025-12-12T14:40:58.672145'
+        title: Real DeepEval External Verification
+      cycle_015_results:
+        file: cycle_015_results.json
+        overall_score: '?'
+        success: false
+        timestamp: '2025-12-12T15:49:05.856353'
+        title: Final Direct GPT-OSS vs Enhanced Prompting
+      cycle_016_results:
+        benchmarks:
+          arc_easy: 33.33333333333333
+          deepeval: 0.0
+          gpqa: 33.33333333333333
+          humaneval: 50.0
+        benchmarks_run:
+        - deepeval
+        - gpqa
+        - humaneval
+        - arc_easy
+        file: cycle_016_results.json
+        overall_score: 29.2
+        success: true
+        timestamp: '2025-12-12T15:52:57.786080'
+        title: Multi-Benchmark Integration Framework
+      cycle_017_enhanced_results:
+        benchmarks:
+          arc_easy: 40.0
+          deepeval: 84.86507936507937
+          gpqa: 100.0
+          humaneval: 60.0
+        benchmarks_run:
+        - deepeval
+        - gpqa
+        - humaneval
+        - arc_easy
+        file: cycle_017_enhanced_results.json
+        overall_score: 71.2
+        success: true
+        timestamp: '2025-12-12T15:58:47.093279'
+        title: Enhanced Local Evaluation System
+      cycle_017_results:
+        benchmarks:
+          arc_easy: 0.0
+          deepeval: 0.0
+          gpqa: 0.0
+          humaneval: 50.0
+        benchmarks_run:
+        - deepeval
+        - gpqa
+        - humaneval
+        - arc_easy
+        file: cycle_017_results.json
+        overall_score: 12.5
+        success: false
+        timestamp: '2025-12-12T15:56:46.954634'
+        title: LLM-as-a-Judge Evaluation Enhancement
+    evaluation_results:
+      detailed_evaluation_demo_results.json:
+        file: detailed_evaluation_demo_results.json
+        performance_metrics:
+          claims_per_problem: 3.2
+          conjecture_accuracy: 100.0
+          direct_accuracy: 80.0
+          improvement: 25.0
+          total_claims_created: 16
+          total_claims_evaluated: 16
+          total_problems: 5
+        problems_evaluated: 5
+        timestamp: '2025-12-12T16:12:05.774344'
+      detailed_evaluation_results.json:
+        error: 'Expecting value: line 64 column 5 (char 3342)'
+    real_api_tests:
+      real_api_system:
+        file: real_api_claim_system.py
+        file_size_bytes: 22894
+        glm_45_air_integration: true
+        gpt_oss_20b_integration: true
+        implementation:
+          api_implementation_quality: PRODUCTION
+          real_api_indicators: 6
+          simulation_indicators: 0
+          uses_real_apis: true
+        timestamp: '2025-12-12T16:44:20.465949'
+benchmark_summary:
+  api_implementation_status: REAL_APIS
+  benchmarks_covered:
+  - gpqa
+  - humaneval
+  - arc_easy
+  - deepeval
+  latest_overall_score: 71.2
+  successful_cycles: 5
+  total_cycle_files: 11
+implementation_state:
+  api_implementation:
+    analysis_errors:
+    - 'src/benchmarking/real_api_claim_system.py: 8 real indicators, 1 simulation
+      indicators'
+    - 'src/process/llm_processor.py: 0 real indicators, 0 simulation indicators'
+    api_quality_score: 88.9
+    real_api_calls: 8
+    simulation_indicators: 1
+    uses_real_apis: true
+  core_components:
+    claim_system:
+      analysis_error: null
+      class_count: 14
+      description: Core claim data models and types
+      exists: true
+      file_path: src/data/models.py
+      function_count: 3
+      last_modified: '2025-12-12T01:30:06.943837'
+      line_count: 567
+      size_bytes: 20620
+    configuration_models:
+      analysis_error: null
+      class_count: 9
+      description: Configuration management
+      exists: true
+      file_path: src/config/settings_models.py
+      function_count: 0
+      last_modified: '2025-12-12T05:02:21.360245'
+      line_count: 440
+      size_bytes: 19096
+    enhanced_evaluation:
+      analysis_error: null
+      class_count: 2
+      description: Enhanced evaluation methods
+      exists: true
+      file_path: src/benchmarking/enhanced_local_evaluation.py
+      function_count: 1
+      last_modified: '2025-12-12T15:57:41.356677'
+      line_count: 522
+      size_bytes: 20268
+    improved_claim_system:
+      analysis_error: null
+      class_count: 2
+      description: Improved claim processing
+      exists: true
+      file_path: src/benchmarking/improved_claim_system.py
+      function_count: 1
+      last_modified: '2025-12-12T16:27:10.842823'
+      line_count: 464
+      size_bytes: 22143
+    llm_processor:
+      analysis_error: null
+      class_count: 1
+      description: LLM processing layer
+      exists: true
+      file_path: src/process/llm_processor.py
+      function_count: 0
+      last_modified: '2025-12-12T03:05:37.338224'
+      line_count: 386
+      size_bytes: 13632
+    prompt_system:
+      analysis_error: null
+      class_count: 6
+      description: Enhanced prompt system with reasoning
+      exists: true
+      file_path: src/agent/prompt_system.py
+      function_count: 0
+      last_modified: '2025-12-12T03:19:19.034644'
+      line_count: 793
+      size_bytes: 32120
+    real_api_integration:
+      analysis_error: null
+      class_count: 2
+      description: Real API integration layer
+      exists: true
+      file_path: src/benchmarking/real_api_claim_system.py
+      function_count: 0
+      last_modified: '2025-12-12T16:44:20.465949'
+      line_count: 537
+      size_bytes: 23431
+    sqlite_manager:
+      analysis_error: null
+      class_count: 1
+      description: Database operations
+      exists: true
+      file_path: src/data/optimized_sqlite_manager.py
+      function_count: 0
+      last_modified: '2025-12-12T04:44:15.346696'
+      line_count: 645
+      size_bytes: 27598
+  implementation_health:
+    critical_issues: []
+    overall_score: 97.8
+    recommendations: []
+    warnings: []
+  module_import_status:
+    src.agent.prompt_system:
+      class_available: false
+      error: null
+      importable: true
+    src.config.settings_models:
+      class_available: false
+      error: null
+      importable: true
+    src.data.models:
+      class_available: false
+      error: null
+      importable: true
+    src.data.optimized_sqlite_manager:
+      class_available: false
+      error: null
+      importable: true
+infrastructure_status:
+  database_status:
+    errors: []
+    exists: true
+    size_mb: 0.12
+    tables: []
+    writable: true
+  dependency_status:
+    critical_packages:
+      asyncio:
+        available: true
+        builtin: true
+      json:
+        available: true
+        builtin: true
+      pathlib:
+        available: true
+        builtin: true
+      pydantic:
+        available: true
+        builtin: false
+        version: 2.5.2
+      pytest:
+        available: true
+        builtin: false
+        version: 8.4.2
+      requests:
+        available: true
+        builtin: false
+        version: 2.32.5
+      sqlite3:
+        available: true
+        builtin: true
+        version: 3.45.1
+      subprocess:
+        available: true
+        builtin: true
+      yaml:
+        available: true
+        builtin: false
+        version: 6.0.3
+    missing_packages: []
+    warnings: []
+  directory_status:
+    data:
+      description: Database and data storage
+      exists: true
+      file_count: 5
+      is_directory: true
+      subdirectory_count: 3
+    src:
+      description: Main source code directory
+      exists: true
+      file_count: 6
+      is_directory: true
+      subdirectory_count: 24
+    src/agent:
+      description: Agent layer implementation
+      exists: true
+      file_count: 7
+      is_directory: true
+      subdirectory_count: 1
+    src/benchmarking:
+      description: Benchmarking and evaluation
+      exists: true
+      file_count: 68
+      is_directory: true
+      subdirectory_count: 3
+    src/config:
+      description: Configuration management
+      exists: true
+      file_count: 26
+      is_directory: true
+      subdirectory_count: 1
+    src/data:
+      description: Data layer implementation
+      exists: true
+      file_count: 16
+      is_directory: true
+      subdirectory_count: 6
+    src/endpoint:
+      description: Endpoint layer implementation
+      exists: true
+      file_count: 2
+      is_directory: true
+      subdirectory_count: 0
+    src/process:
+      description: Process layer implementation
+      exists: true
+      file_count: 4
+      is_directory: true
+      subdirectory_count: 1
+    src/stats:
+      description: Statistics collection
+      exists: true
+      file_count: 4
+      is_directory: true
+      subdirectory_count: 1
+    tests:
+      description: Test suite directory
+      exists: true
+      file_count: 22
+      is_directory: true
+      subdirectory_count: 7
+  python_environment:
+    executable: C:\Users\Aaron.Canary\AppData\Local\Programs\Python\Python311\python.exe
+    platform: win32
+    site_packages: []
+    version: 3.11.9
+metadata:
+  generated_at: '2025-12-12T17:28:30.562136'
+  generator: src/stats/main.py
+  project_root: D:\projects\Conjecture
+project_metrics:
+  actual_code_files: 246
+  ci_cd_readiness: 100.0
+  code_files: 48
+  code_quality_score: 98.0
+  dead_code_percentage: 86.0
+  docs_files: 12
+  e2e_test_failures: 0
+  error_rate: 0.2
+  linting_errors: 24623
+  orphaned_files: 305
+  pytest_configuration: 100.0
+  pytest_runtime: 0.16
+  reachable_files: 48
+  security_score: 98.0
+  static_analysis_integration: 100.0
+  test_collection_success: 100.0
+  test_coverage: 11.2
+  test_pass: 98
+  test_pass_rate: 98.0
+  time_required: 0.16
+  total_lines_of_code: 83385
+  uptime: 99.8
+system_configuration:
+  cloud_providers: 3
+  confidence_threshold: 0.9
+  config_errors: []
+  config_exists: true
+  config_file_path: D:\projects\Conjecture\.conjecture\config.json
+  config_warnings: []
+  configured_providers: 4
+  database_path: data/conjecture.db
+  local_providers: 1
+  primary_model: glm-4.5-air
+  primary_provider: glm-4.5-air
+test_health:
+  collection_health: 0
+  coverage_health: 0
+  execution_health: 100.0
+  factors:
+    collection: 0
+    coverage: 0
+    execution: 100.0
+  overall_score: 50.0
+test_results:
+  analysis_timestamp: 1765578510.6042087
+  performance_metrics:
+    fast_test_threshold: 1.0
+    slow_test_threshold: 10.0
+    slow_tests: []
+    test_speed_distribution:
+      fast: 0
+      medium: 0
+      slow: 0
+  test_categories:
+    e2e_tests:
+      count: 4
+      files:
+      - test_e2e_claim_lifecycle.py
+      - test_e2e_claim_lifecycle_fixed.py
+      - test_e2e_configuration_driven.py
+      - test_e2e_multiclaim_reasoning.py
+    integration_tests:
+      count: 1
+      files:
+      - test_lancedb_repositories.py
+    other_tests:
+      count: 8
+      files:
+      - test_claim_processing.py
+      - test_claim_relationships.py
+      - test_claim_state_transitions.py
+      - test_enhanced_glm46_judge.py
+      - test_enhanced_prompt_system.py
+      - test_lancedb_adapter.py
+      - test_llm_bridge.py
+      - test_process_layer.py
+    performance_tests:
+      count: 1
+      files:
+      - test_external_benchmarks.py
+    unit_tests:
+      count: 4
+      files:
+      - test_claim_models.py
+      - test_id_utilities.py
+      - test_monitoring_utilities.py
+      - test_retry_utilities.py
+  test_collection:
+    collection_errors:
+    - 'C:\Users\Aaron.Canary\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\_internal\_fields.py:149:
+      UserWarning: Field "model_settings" has conflict with protected namespace "model_".'
+    - ''
+    - You may be able to resolve this warning by setting `model_config['protected_namespaces']
+      = ()`.
+    - '  warnings.warn('
+    - 'C:\Users\Aaron.Canary\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\_internal\_fields.py:184:
+      UserWarning: Field name "name" shadows an attribute in parent "Operation"; '
+    - '  warnings.warn('
+    - 'C:\Users\Aaron.Canary\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\_internal\_fields.py:184:
+      UserWarning: Field name "metadata" shadows an attribute in parent "Operation"; '
+    - '  warnings.warn('
+    - 'C:\Users\Aaron.Canary\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\_internal\_fields.py:184:
+      UserWarning: Field name "done" shadows an attribute in parent "Operation"; '
+    - '  warnings.warn('
+    collection_success_rate: 0
+    returncode: 2
+    status: error
+    stderr_sample: "C:\\Users\\Aaron.Canary\\AppData\\Local\\Programs\\Python\\Python311\\\
+      Lib\\site-packages\\pydantic\\_internal\\_fields.py:149: UserWarning: Field\
+      \ \"model_settings\" has conflict with protected namespace \"model_\".\n\nYou\
+      \ may be able to resolve this warning by setting `model_config['protected_namespaces']\
+      \ = ()`.\n  warnings.warn(\nC:\\Users\\Aaron.Canary\\AppData\\Local\\Programs\\\
+      Python\\Python311\\Lib\\site-packages\\pydantic\\_internal\\_fields.py:184:\
+      \ UserWarning: Field name \"name\" shadows an attribute in parent \"Operation"
+    stdout_sample: '============================= test session starts =============================
+
+      platform win32 -- Python 3.11.9, pytest-8.4.2, pluggy-1.6.0
+
+      benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5
+      min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+
+      Optimized Test Suite - Parallel Execution Enabled
+
+      Static Analysis Integration: Configured
+
+      rootdir: D:\projects\Conjecture
+
+      configfile: pytest.ini
+
+      plugins: anyio-4.11.0, deepeval-3.7.4,'
+    test_classes: []
+    test_modules: []
+    total_tests: 0
+  test_execution:
+    errors: 0
+    execution_errors: []
+    execution_time: 16.04
+    failed: 0
+    pass_rate: 100.0
+    passed: 32
+    returncode: 0
+    skipped: 0
+    status: success
+    stderr_sample: "C:\\Users\\Aaron.Canary\\AppData\\Local\\Programs\\Python\\Python311\\\
+      Lib\\site-packages\\pydantic\\_internal\\_fields.py:149: UserWarning: Field\
+      \ \"model_settings\" has conflict with protected namespace \"model_\".\n\nYou\
+      \ may be able to resolve this warning by setting `model_config['protected_namespaces']\
+      \ = ()`.\n  wa"
+    stdout_sample: '============================= test session starts =============================
+
+      collecting ... collected 32 items
+
+
+      tests\test_claim_models.py::TestClaimModel::test_minimal_claim_creation PASSED
+      [  3%]
+
+      tests\test_claim_models.py::TestClaimModel::test_full_claim_creation PASSED
+      [  6%]
+
+      tests\test_claim'
+    tests_attempted:
+    - tests/test_claim_models.py
+    - tests/test_id_utilities.py
+    - tests/test_claim_processing.py
+    tests_run: 32

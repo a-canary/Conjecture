@@ -6,7 +6,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
 
 class RelationshipError(Exception):
     """Exception raised for relationship-related errors"""
@@ -330,6 +330,13 @@ class ClaimBatch(BaseModel):
 
 class ProcessingResult(BaseModel):
     """Result of claim processing"""
+    
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra="forbid",
+        frozen=False,
+        protected_namespaces=()
+    )
 
     success: bool = Field(..., description="Processing success status")
     processed_claims: int = Field(..., description="Number of claims processed")
@@ -351,6 +358,13 @@ class ToolCall(BaseModel):
 
 class ExecutionResult(BaseModel):
     """Result of tool execution."""
+    
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra="forbid",
+        frozen=False,
+        protected_namespaces=()
+    )
 
     success: bool = Field(..., description="Execution success status")
     outcome: str = Field(..., description="Execution outcome or error message")
@@ -362,6 +376,13 @@ class ExecutionResult(BaseModel):
 
 class ParsedResponse(BaseModel):
     """Represents a parsed response from LLM"""
+    
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra="forbid",
+        frozen=False,
+        protected_namespaces=()
+    )
 
     tool_calls: List[ToolCall] = Field(
         default_factory=list, description="Extracted tool calls"

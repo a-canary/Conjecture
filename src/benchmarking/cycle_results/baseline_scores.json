@@ -1,0 +1,26 @@
+{
+  "deepeval": {
+    "overall_score": 20.0,
+    "exact_match_avg": 0.2,
+    "problems_evaluated": 5,
+    "established_cycle": 15
+  },
+  "gpqa": {
+    "overall_score": 25.0,
+    "accuracy": 0.25,
+    "problems_evaluated": 3,
+    "established_cycle": 16
+  },
+  "humaneval": {
+    "overall_score": 15.0,
+    "completion_rate": 0.15,
+    "problems_evaluated": 3,
+    "established_cycle": 16
+  },
+  "arc_easy": {
+    "overall_score": 30.0,
+    "accuracy": 0.3,
+    "problems_evaluated": 3,
+    "established_cycle": 16
+  }
+}

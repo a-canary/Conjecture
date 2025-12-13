@@ -1,0 +1,177 @@
+[
+  {
+    "id": "logic_001",
+    "type": "logical_inference",
+    "difficulty": "medium",
+    "problem": "Logical inference problem 1 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_002",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 2 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_003",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 3 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_004",
+    "type": "logical_inference",
+    "difficulty": "medium",
+    "problem": "Logical inference problem 4 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_005",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 5 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_006",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 6 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_007",
+    "type": "logical_inference",
+    "difficulty": "medium",
+    "problem": "Logical inference problem 7 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_008",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 8 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_009",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 9 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_010",
+    "type": "logical_inference",
+    "difficulty": "medium",
+    "problem": "Logical inference problem 10 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_011",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 11 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_012",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 12 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_013",
+    "type": "logical_inference",
+    "difficulty": "medium",
+    "problem": "Logical inference problem 13 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_014",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 14 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_015",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 15 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_016",
+    "type": "logical_inference",
+    "difficulty": "medium",
+    "problem": "Logical inference problem 16 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_017",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 17 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_018",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 18 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_019",
+    "type": "logical_inference",
+    "difficulty": "medium",
+    "problem": "Logical inference problem 19 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_020",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 20 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_021",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 21 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_022",
+    "type": "logical_inference",
+    "difficulty": "medium",
+    "problem": "Logical inference problem 22 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_023",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 23 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_024",
+    "type": "logical_inference",
+    "difficulty": "hard",
+    "problem": "Logical inference problem 24 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  },
+  {
+    "id": "logic_025",
+    "type": "logical_inference",
+    "difficulty": "medium",
+    "problem": "Logical inference problem 25 requiring deductive reasoning",
+    "expected_answer": "logical_conclusion"
+  }
+]

@@ -6,7 +6,7 @@ Consolidates all essential data models into a single, clean system
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
 
 # Import core models to maintain backward compatibility
 from .models import (
@@ -214,6 +214,14 @@ class FallbackResponse(BaseModel):
 
 class PromptMetrics(BaseModel):
     """Metrics for prompt performance"""
+    
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra="forbid",
+        frozen=False,
+        protected_namespaces=()
+    )
+    
     template_id: str = Field(..., description="Template ID")
     usage_count: int = Field(default=0)
     success_rate: float = Field(default=0.0)

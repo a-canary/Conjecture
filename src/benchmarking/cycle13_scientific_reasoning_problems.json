@@ -1,0 +1,177 @@
+[
+  {
+    "id": "science_001",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 1 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_002",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 2 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_003",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 3 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_004",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 4 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_005",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 5 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_006",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 6 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_007",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 7 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_008",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 8 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_009",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 9 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_010",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 10 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_011",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 11 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_012",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 12 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_013",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 13 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_014",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 14 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_015",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 15 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_016",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 16 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_017",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 17 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_018",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 18 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_019",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 19 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_020",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 20 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_021",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 21 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_022",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 22 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_023",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 23 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_024",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 24 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  },
+  {
+    "id": "science_025",
+    "type": "scientific_reasoning",
+    "difficulty": "medium",
+    "problem": "Scientific reasoning problem 25 requiring domain knowledge",
+    "expected_answer": "scientific_explanation"
+  }
+]

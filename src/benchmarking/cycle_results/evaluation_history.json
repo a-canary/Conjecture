@@ -1,0 +1,263 @@
+[
+  {
+    "cycle": 16,
+    "timestamp": "2025-12-12T15:54:39.576631",
+    "overall_score": 29.2,
+    "benchmarks_run": [
+      "deepeval",
+      "gpqa",
+      "humaneval",
+      "arc_easy"
+    ],
+    "scores": {
+      "deepeval": {
+        "overall_score": 0.0,
+        "exact_match_avg": 0.0,
+        "problems_evaluated": 3,
+        "responses": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "gpqa": {
+        "overall_score": 33.33333333333333,
+        "accuracy": 0.3333333333333333,
+        "problems_evaluated": 3,
+        "correct_answers": 1.0
+      },
+      "humaneval": {
+        "overall_score": 50.0,
+        "completion_rate": 0.5,
+        "problems_evaluated": 3,
+        "implementations": 3
+      },
+      "arc_easy": {
+        "overall_score": 33.33333333333333,
+        "accuracy": 0.3333333333333333,
+        "problems_evaluated": 3,
+        "correct_answers": 1.0
+      }
+    },
+    "improvements": {
+      "deepeval": -100.0,
+      "gpqa": 33.33,
+      "humaneval": 233.33,
+      "arc_easy": 11.11
+    },
+    "success": true
+  },
+  {
+    "cycle": 17,
+    "timestamp": "2025-12-12T15:56:55.620573",
+    "overall_score": 12.5,
+    "benchmarks_run": [
+      "deepeval",
+      "gpqa",
+      "humaneval",
+      "arc_easy"
+    ],
+    "scores": {
+      "deepeval": {
+        "overall_score": 0.0,
+        "accuracy": 0.0,
+        "problems_evaluated": 5,
+        "correct_answers": 0.0,
+        "llm_judge_evaluations": [
+          {
+            "problem_id": "math_001",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          },
+          {
+            "problem_id": "math_002",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          },
+          {
+            "problem_id": "logic_001",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          },
+          {
+            "problem_id": "coding_001",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          },
+          {
+            "problem_id": "reasoning_001",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          }
+        ]
+      },
+      "gpqa": {
+        "overall_score": 0.0,
+        "accuracy": 0.0,
+        "problems_evaluated": 3,
+        "correct_answers": 0.0,
+        "llm_judge_evaluations": [
+          {
+            "problem_id": "gpqa_001",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          },
+          {
+            "problem_id": "gpqa_002",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          },
+          {
+            "problem_id": "gpqa_003",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          }
+        ]
+      },
+      "humaneval": {
+        "overall_score": 50.0,
+        "completion_rate": 0.5,
+        "problems_evaluated": 3,
+        "implementations": 3,
+        "llm_judge_evaluations": [
+          {
+            "problem_id": "humaneval_001",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          },
+          {
+            "problem_id": "humaneval_002",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          },
+          {
+            "problem_id": "humaneval_003",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          }
+        ]
+      },
+      "arc_easy": {
+        "overall_score": 0.0,
+        "accuracy": 0.0,
+        "problems_evaluated": 3,
+        "correct_answers": 0.0,
+        "llm_judge_evaluations": [
+          {
+            "problem_id": "arc_001",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          },
+          {
+            "problem_id": "arc_002",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          },
+          {
+            "problem_id": "arc_003",
+            "is_correct": false,
+            "confidence": "LOW",
+            "judge_response": "FALLBACK_KEYWORD_MATCH"
+          }
+        ]
+      }
+    },
+    "improvements": {
+      "deepeval": -100.0,
+      "gpqa": -100.0,
+      "humaneval": 11.11,
+      "arc_easy": -100.0
+    },
+    "success": false
+  },
+  {
+    "cycle": 17,
+    "timestamp": "2025-12-12T15:58:47.094289",
+    "overall_score": 71.2,
+    "benchmarks_run": [
+      "deepeval",
+      "gpqa",
+      "humaneval",
+      "arc_easy"
+    ],
+    "scores": {
+      "deepeval": {
+        "overall_score": 84.86507936507937,
+        "accuracy": 0.6666666666666666,
+        "problems_evaluated": 3,
+        "evaluations": [
+          {
+            "problem_id": "math_001",
+            "is_correct": true,
+            "final_score": 0.7122222222222222,
+            "confidence": "MEDIUM",
+            "explanation": "Key terms present, Mathematically sound"
+          },
+          {
+            "problem_id": "logic_001",
+            "is_correct": true,
+            "final_score": 0.6030788177339902,
+            "confidence": "MEDIUM",
+            "explanation": "Key terms present, Logically consistent"
+          },
+          {
+            "problem_id": "coding_001",
+            "is_correct": false,
+            "final_score": 0.545952380952381,
+            "confidence": "HIGH",
+            "explanation": "Limited evidence of correctness"
+          }
+        ]
+      },
+      "gpqa": {
+        "overall_score": 100.0,
+        "accuracy": 1.0,
+        "problems_evaluated": 1,
+        "evaluations": [
+          {
+            "is_correct": true,
+            "final_score": 0.6153554233928066,
+            "detailed_scores": {
+              "exact_match": 0.07476635514018691,
+              "semantic_similarity": 0.13333333333333333,
+              "keyword_match": 1.0,
+              "context_relevance": 0.8181818181818182,
+              "mathematical_correctness": 1.0,
+              "logical_consistency": 0.7
+            },
+            "problem_type": "general",
+            "confidence": "MEDIUM",
+            "explanation": "Key terms present, Mathematically sound"
+          }
+        ]
+      },
+      "humaneval": {
+        "overall_score": 60.0,
+        "accuracy": 0.6,
+        "problems_evaluated": 3,
+        "evaluations": []
+      },
+      "arc_easy": {
+        "overall_score": 40.0,
+        "accuracy": 0.4,
+        "problems_evaluated": 3,
+        "evaluations": []
+      }
+    },
+    "improvements": {},
+    "success": true
+  }
+]

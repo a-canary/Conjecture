@@ -1,0 +1,8 @@
+{
+  "deepeval": 40.0,
+  "gpqa": 35.0,
+  "humaneval": 45.0,
+  "arc_easy": 50.0,
+  "established": "2025-12-12T15:59:25.214818",
+  "methodology": "Enhanced Local Evaluation"
+}

@@ -1,0 +1,177 @@
+[
+  {
+    "id": "math_001",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 1 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_002",
+    "type": "mathematical_reasoning",
+    "difficulty": "hard",
+    "problem": "Mathematical reasoning problem 2 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_003",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 3 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_004",
+    "type": "mathematical_reasoning",
+    "difficulty": "hard",
+    "problem": "Mathematical reasoning problem 4 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_005",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 5 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_006",
+    "type": "mathematical_reasoning",
+    "difficulty": "hard",
+    "problem": "Mathematical reasoning problem 6 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_007",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 7 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_008",
+    "type": "mathematical_reasoning",
+    "difficulty": "hard",
+    "problem": "Mathematical reasoning problem 8 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_009",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 9 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_010",
+    "type": "mathematical_reasoning",
+    "difficulty": "hard",
+    "problem": "Mathematical reasoning problem 10 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_011",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 11 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_012",
+    "type": "mathematical_reasoning",
+    "difficulty": "hard",
+    "problem": "Mathematical reasoning problem 12 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_013",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 13 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_014",
+    "type": "mathematical_reasoning",
+    "difficulty": "hard",
+    "problem": "Mathematical reasoning problem 14 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_015",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 15 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_016",
+    "type": "mathematical_reasoning",
+    "difficulty": "hard",
+    "problem": "Mathematical reasoning problem 16 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_017",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 17 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_018",
+    "type": "mathematical_reasoning",
+    "difficulty": "hard",
+    "problem": "Mathematical reasoning problem 18 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_019",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 19 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_020",
+    "type": "mathematical_reasoning",
+    "difficulty": "hard",
+    "problem": "Mathematical reasoning problem 20 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_021",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 21 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_022",
+    "type": "mathematical_reasoning",
+    "difficulty": "hard",
+    "problem": "Mathematical reasoning problem 22 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_023",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 23 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_024",
+    "type": "mathematical_reasoning",
+    "difficulty": "hard",
+    "problem": "Mathematical reasoning problem 24 involving complex calculations",
+    "expected_answer": "calculated_result"
+  },
+  {
+    "id": "math_025",
+    "type": "mathematical_reasoning",
+    "difficulty": "medium",
+    "problem": "Mathematical reasoning problem 25 involving complex calculations",
+    "expected_answer": "calculated_result"
+  }
+]

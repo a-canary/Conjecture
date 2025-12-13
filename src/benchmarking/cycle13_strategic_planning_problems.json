@@ -1,0 +1,177 @@
+[
+  {
+    "id": "strategy_001",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 1 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_002",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 2 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_003",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 3 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_004",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 4 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_005",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 5 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_006",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 6 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_007",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 7 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_008",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 8 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_009",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 9 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_010",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 10 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_011",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 11 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_012",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 12 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_013",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 13 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_014",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 14 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_015",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 15 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_016",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 16 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_017",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 17 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_018",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 18 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_019",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 19 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_020",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 20 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_021",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 21 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_022",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 22 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_023",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 23 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_024",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 24 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  },
+  {
+    "id": "strategy_025",
+    "type": "strategic_planning",
+    "difficulty": "hard",
+    "problem": "Strategic planning problem 25 requiring multi-step optimization",
+    "expected_answer": "optimal_strategy"
+  }
+]

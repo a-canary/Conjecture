@@ -25,8 +25,8 @@ class ProcessingResult:
     execution_time: Optional[float] = None  # in seconds
     tokens_used: Optional[int] = None
 
-    # Additional metadata
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    # Additional metadata (renamed to avoid conflict)
+    result_metadata: Dict[str, Any] = field(default_factory=dict)
     message: str = ""
 
     # Timestamps

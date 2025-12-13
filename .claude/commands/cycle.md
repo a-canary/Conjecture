@@ -17,8 +17,9 @@ Generic work cycle for fixing bugs, exploring new features, or simplifing comple
   - If you have conflicts or concerns or need clarity on the goal, ask user to confrim your 10-minute task at the concept level.
 4. Complete minimal changes to achieve goal improvement
 5. validate improvement: run full test suite, run code coverage, and gather significant metrics and `/review.md` workflow
-6. Update ANALYSIS.md to report current quality of code, docs, test results, and benchmarks and other metrics.  
-7. IF you are confident this change is a net positive compared to main branch (diff ANALYSIS.md to main branch to check progression), 
+6. Generate real-time project statistics: `python -c "import sys; sys.path.append('src'); from stats.main import ProjectStatsGenerator; ProjectStatsGenerator().generate_all_stats()"` to create ./STATS.yaml with current implementation state and benchmark scores
+7. Update ANALYSIS.md to report current quality of code, docs, test results, and benchmarks and other metrics.  
+8. IF you are confident this change is a net positive compared to main branch (diff ANALYSIS.md to main branch to check progression), 
   THEN:
     1. delete dead code and deprecated files
     2. update TODO.md items
@@ -34,7 +35,7 @@ Generic work cycle for fixing bugs, exploring new features, or simplifing comple
 8. At this point all files have been commited or reverted, Cycle State Files have been updated, and you start next cycle.
 
 While in this cycle, remember to:
-- Keep a big focus on transparency, maintanence, verifications, 
+- Keep a big focus on transparency, maintenance, verifications 
 - Keep project small, simple with high quality code, high value features and file content
 - Don't fix Dead code. 
 - Don't fix code until it has code coverage.

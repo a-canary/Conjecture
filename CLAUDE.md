@@ -222,3 +222,5 @@ async def run_cycle(self):
 5. **Document honestly**: Report both successes and failures
 
 The system has demonstrated that **core reasoning enhancements consistently work** while **infrastructure attempts consistently fail**. Focus on what works and maintain the scientific validation approach established through 13 systematic improvement cycles.
+- Always report latest (real, not simulated) scores by benchmark and direct/Contecture-/Conjecture+ (-:before last change,+:after last change)
+- always test and execute code

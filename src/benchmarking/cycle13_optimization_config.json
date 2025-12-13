@@ -1,0 +1,17 @@
+{
+  "reasoning_problems": {
+    "optimal_claims": 10,
+    "confidence_threshold": 0.95,
+    "domain_weighting": true
+  },
+  "coding_problems": {
+    "optimal_claims": 15,
+    "confidence_threshold": 0.98,
+    "syntax_verification": true
+  },
+  "mathematical_problems": {
+    "optimal_claims": 8,
+    "confidence_threshold": 0.96,
+    "step_by_step_verification": true
+  }
+}
