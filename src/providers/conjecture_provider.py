@@ -17,7 +17,7 @@ from pathlib import Path
 import aiohttp
 import uvicorn
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -31,6 +31,8 @@ app = FastAPI(
 )
 
 class ChatRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    
     model: str
     messages: list
     max_tokens: int = 42000

@@ -28,7 +28,8 @@ class ProviderConfig(BaseModel):
         validate_assignment=True,
         extra="forbid",
         use_enum_values=True,
-        populate_by_name=True
+        populate_by_name=True,
+        protected_namespaces=()
     )
 
     # Core required fields

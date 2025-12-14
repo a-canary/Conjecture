@@ -60,6 +60,13 @@ class ClaimScope(str, Enum):
 class DirtyReason(str, Enum):
     """Dirty flag reason enumeration"""
 
+    NEW_CLAIM_ADDED = "new_claim_added"
+    CONFIDENCE_THRESHOLD = "confidence_threshold"
+    SUPPORTING_CLAIM_CHANGED = "supporting_claim_changed"
+    RELATIONSHIP_CHANGED = "relationship_changed"
+    MANUAL_MARK = "manual_mark"
+    BATCH_EVALUATION = "batch_evaluation"
+    SYSTEM_TRIGGER = "system_trigger"
     RELATIONSHIP_CHANGE = "relationship_change"
     CONTENT_UPDATE = "content_update"
     CONFIDENCE_CHANGE = "confidence_change"
@@ -77,7 +84,7 @@ class Claim(BaseModel):
     )
 
     id: str = Field(..., description="Unique claim identifier")
-    content: str = Field(..., min_length=1, max_length=1000, description="Claim content")
+    content: str = Field(..., min_length=5, max_length=1000, description="Claim content")
     confidence: float = Field(
         ..., ge=0.0, le=1.0, description="Confidence level (0.0-1.0)"
     )
@@ -110,7 +117,8 @@ class Claim(BaseModel):
     )
     
     # Dirty flag fields for change tracking
-    is_dirty: bool = Field(default=False, description="Whether claim has unsaved changes")
+    is_dirty: bool = Field(default=True, description="Whether claim has unsaved changes")
+    dirty: bool = Field(default=True, description="Backward compatibility flag")
     dirty_reason: Optional[DirtyReason] = Field(
         default=None, description="Reason for dirty flag"
     )
@@ -127,6 +135,8 @@ class Claim(BaseModel):
         """Validate claim content"""
         if not v or not v.strip():
             raise ValueError('Claim content cannot be empty')
+        if len(v.strip()) < 5:
+            raise ValueError('Claim content must be at least 5 characters long')
         return v.strip()
 
     @field_validator('tags')
@@ -135,20 +145,31 @@ class Claim(BaseModel):
         """Validate claim tags"""
         if v and len(v) > 20:
             raise ValueError('Cannot have more than 20 tags')
-        return [tag.lower().strip() for tag in v if tag.strip()]
+        # Remove duplicates and empty strings
+        seen = set()
+        unique_tags = []
+        for tag in v:
+            tag_clean = tag.lower().strip()
+            if tag_clean and tag_clean not in seen:
+                seen.add(tag_clean)
+                unique_tags.append(tag_clean)
+        return unique_tags
 
     @model_validator(mode='after')
-    def validate_relationships(cls, values):
+    def validate_relationships(self):
         """Validate bidirectional relationships"""
-        supports = values.get('supports', [])
-        supported_by = values.get('supported_by', [])
-        claim_id = values.get('id')
-        
         # Check for self-references
-        if claim_id in supports or claim_id in supported_by:
+        if self.id in self.supports or self.id in self.supported_by:
             raise ValueError('Claim cannot support itself')
         
-        return values
+        return self
+
+    @model_validator(mode='after')
+    def validate_timestamps(self):
+        """Validate timestamp relationships"""
+        if self.updated and self.created and self.updated < self.created:
+            raise ValueError('Updated time cannot be before created time')
+        return self
 
     def to_chroma_metadata(self) -> Dict[str, Any]:
         """Convert claim to ChromaDB metadata format"""
@@ -167,6 +188,36 @@ class Claim(BaseModel):
             'dirty_timestamp': self.dirty_timestamp.isoformat() if self.dirty_timestamp else None,
             'dirty_priority': self.dirty_priority
         }
+
+    def format_for_context(self) -> str:
+        """Format claim for context inclusion"""
+        return f"[c{self.id} | {self.content} | / {self.confidence}]"
+
+    def format_for_output(self) -> str:
+        """Format claim for output display"""
+        return self.format_for_context()
+
+    def format_for_llm_analysis(self) -> str:
+        """Format claim for LLM analysis"""
+        return f"""Claim ID: {self.id}
+Content: {self.content}
+Confidence: {self.confidence}
+State: {self.state.value}
+Type: {[t.value for t in self.type]}
+Tags: {','.join(self.tags)}
+Scope: {self.scope.value}
+Supports: {self.supports}
+Supported By: {self.supported_by}"""
+
+    def __hash__(self) -> int:
+        """Make Claim hashable for use in sets"""
+        return hash((self.id, self.content, self.confidence))
+
+    def __eq__(self, other) -> bool:
+        """Claim equality based on hashable attributes"""
+        if not isinstance(other, Claim):
+            return False
+        return hash(self) == hash(other)
 
 # Backward compatibility alias for BasicClaim
 # BasicClaim was old name for Claim before model consolidation
@@ -298,108 +349,6 @@ class Relationship(BaseModel):
         default_factory=datetime.utcnow, description="Relationship creation time"
     )
 
-# Claim model with bidirectional relationships
-class Claim(BaseModel):
-    """Core claim model with validation"""
-    
-    model_config = ConfigDict(
-        validate_assignment=True,
-        extra="forbid",
-        frozen=False,
-        protected_namespaces=()
-    )
-
-    id: str = Field(..., description="Unique claim identifier")
-    content: str = Field(..., min_length=1, max_length=1000, description="Claim content")
-    confidence: float = Field(
-        ..., ge=0.0, le=1.0, description="Confidence level (0.0-1.0)"
-    )
-    state: ClaimState = Field(default=ClaimState.EXPLORE, description="Claim state")
-    type: List[ClaimType] = Field(
-        default_factory=lambda: [ClaimType.CONCEPT], description="Claim type(s)"
-    )
-    tags: List[str] = Field(default_factory=list, description="Claim tags")
-    scope: ClaimScope = Field(
-        default=ClaimScope.USER_WORKSPACE, description="Claim scope"
-    )
-    
-    # Bidirectional relationship fields
-    supports: List[str] = Field(
-        default_factory=list, description="Claims this claim supports (upward relationships)"
-    )
-    supported_by: List[str] = Field(
-        default_factory=list, description="Claims that support this claim (downward relationships)"
-    )
-    
-    # Metadata fields
-    created: datetime = Field(
-        default_factory=datetime.utcnow, description="Claim creation time"
-    )
-    updated: datetime = Field(
-        default_factory=datetime.utcnow, description="Last update time"
-    )
-    embedding: Optional[List[float]] = Field(
-        default=None, description="Vector embedding for semantic search"
-    )
-    
-    # Dirty flag fields for change tracking
-    is_dirty: bool = Field(default=False, description="Whether claim has unsaved changes")
-    dirty_reason: Optional[DirtyReason] = Field(
-        default=None, description="Reason for dirty flag"
-    )
-    dirty_timestamp: Optional[datetime] = Field(
-        default=None, description="When claim was marked dirty"
-    )
-    dirty_priority: int = Field(
-        default=0, description="Priority for dirty evaluation (higher = more urgent)"
-    )
-
-    @field_validator('content')
-    @classmethod
-    def validate_content(cls, v):
-        """Validate claim content"""
-        if not v or not v.strip():
-            raise ValueError('Claim content cannot be empty')
-        return v.strip()
-
-    @field_validator('tags')
-    @classmethod
-    def validate_tags(cls, v):
-        """Validate claim tags"""
-        if v and len(v) > 20:
-            raise ValueError('Cannot have more than 20 tags')
-        return [tag.lower().strip() for tag in v if tag.strip()]
-
-    @model_validator(mode='after')
-    def validate_relationships(cls, values):
-        """Validate bidirectional relationships"""
-        supports = values.get('supports', [])
-        supported_by = values.get('supported_by', [])
-        claim_id = values.get('id')
-        
-        # Check for self-references
-        if claim_id in supports or claim_id in supported_by:
-            raise ValueError('Claim cannot support itself')
-        
-        return values
-
-    def to_chroma_metadata(self) -> Dict[str, Any]:
-        """Convert claim to ChromaDB metadata format"""
-        return {
-            'id': self.id,
-            'state': self.state.value,
-            'type': [t.value for t in self.type],
-            'tags': self.tags,
-            'scope': self.scope.value,
-            'confidence': self.confidence,
-            'created': self.created.isoformat(),
-            'supports': self.supports,
-            'supported_by': self.supported_by,
-            'is_dirty': self.is_dirty,
-            'dirty_reason': self.dirty_reason.value if self.dirty_reason else None,
-            'dirty_timestamp': self.dirty_timestamp.isoformat() if self.dirty_timestamp else None,
-            'dirty_priority': self.dirty_priority
-        }
 
 # Utility functions for claim management
 def create_claim(

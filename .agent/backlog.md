@@ -492,12 +492,28 @@ Only keep the 50 most recent finished tasks.
 **Purpose**: 20% improvement in reasoning quality with maintained response times needed for performance optimization
 **Plan**: .agent/plan/context_generation.md
 **Target**: 20% improvement in reasoning quality with maintained response times
-**Remaining work**: 
+**Remaining work**:
 - [ ] Refine context building algorithms
 - [ ] Implement smart context pruning
 - [ ] Test quality metrics improvements
 - [ ] Verify response times remain within 10% of baseline
 - [ ] Measure reasoning quality improvements
+
+## 120 | Evaluation Prompt Tag System Enhancement | HIGH | open
+**Description**: Build Evaluation Prompt with context builder that provides 20 most common tags + 20 most relevant tags + custom tag option, ensuring 2-3 tag categorization for created claims
+**Purpose**: Improve claim categorization and organization through intelligent tag suggestion system with core predefined tags
+**Plan**: .agent/plan/evaluation_prompt_tags.md
+**Target**: Evaluation prompt states to use 2-3 tags, context builder provides 40+ tag options with core tags hardcoded
+**Remaining work**:
+- [ ] Analyze current Evaluation Prompt implementation
+- [ ] Identify context builder tag system location
+- [ ] Hardcode core tags: [definition, explain-to-5yo, formula, concept, thesis, feature, component, physics, math, economics, sociology, psychology, literature, quote, anecdote, statistic, instruction, politics, biology, example, tool-call, philosophy]
+- [ ] Implement 20 most common tags retrieval logic
+- [ ] Implement 20 most relevant tags via vector similarity
+- [ ] Add "create your own using any keyword" option
+- [ ] Update Evaluation Prompt to specify 2-3 tag usage
+- [ ] Test tag suggestion system functionality
+- [ ] Verify claim creation uses tags properly
 
 ## 120 | Process Layer Improvements | MEDIUM | open
 **Description**: Enhanced process layer architecture improves system modularity and extensibility
