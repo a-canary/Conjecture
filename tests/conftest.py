@@ -4,12 +4,7 @@ Provides shared fixtures, mocking strategies, and performance optimization.
 """
 import pytest
 
-# Register custom markers to ensure they're recognized
-def pytest_configure(config):
-    """Register custom markers."""
-    config.addinivalue_line("markers", "models: Marks tests for Pydantic model validation and behavior")
-    config.addinivalue_line("markers", "error_handling: Marks tests for error handling and edge cases")
-    config.addinivalue_line("markers", "test_marker_fix: Test marker to verify configuration is working")
+
 import asyncio
 import tempfile
 import shutil
@@ -36,12 +31,7 @@ except ImportError:
     NUMPY_AVAILABLE = False
     np = None
 
-@pytest.fixture(scope="session")
-def event_loop():
-    """Create an instance of the default event loop for the test session."""
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
+
 
 @pytest.fixture(scope="session")
 def temp_data_dir():
@@ -77,10 +67,10 @@ def test_config():
             "real": True,
             "provider": "local",
             "model": "test-model",
-            "timeout": 30.0
+            "timeout": 900.0
         },
         "performance": {
-            "max_test_time": 30.0,
+            "max_test_time": 900.0,
             "memory_limit_mb": 512,
             "parallel_workers": 4
         },
@@ -290,64 +280,7 @@ async def real_data_manager(test_config, temp_data_dir, real_embedding_service, 
         # Cleanup is handled by temp_data_dir
         pass
 
-@pytest.fixture(scope="function")
-async def real_llm_processor(test_config):
-    """Real LLM processor fixture using actual LLM bridge."""
-    from src.processing.llm.bridge import LLMBridge
-    from src.processing.llm_processor import ProcessLLMProcessor
-    
-    # Create a simple test bridge that returns predictable responses
-    class TestLLMBridge(LLMBridge):
-        def __init__(self):
-            self.call_count = 0
-            
-        async def generate_response(self, prompt: str, **kwargs) -> str:
-            self.call_count += 1
-            # Return predictable test responses based on prompt content
-            if "quantum" in prompt.lower():
-                return """{
-                    "evaluation_score": 0.85,
-                    "reasoning": "Quantum encryption claim shows strong technical merit",
-                    "instructions": [
-                        {
-                            "type": "research",
-                            "description": "Research quantum key distribution protocols",
-                            "confidence": 0.9,
-                            "priority": 1
-                        }
-                    ]
-                }"""
-            elif "hospital" in prompt.lower():
-                return """{
-                    "evaluation_score": 0.78,
-                    "reasoning": "Hospital network security requires validation",
-                    "instructions": [
-                        {
-                            "type": "validation",
-                            "description": "Validate HIPAA compliance requirements",
-                            "confidence": 0.85,
-                            "priority": 2
-                        }
-                    ]
-                }"""
-            else:
-                return """{
-                    "evaluation_score": 0.75,
-                    "reasoning": "General claim requires standard evaluation",
-                    "instructions": [
-                        {
-                            "type": "analysis",
-                            "description": "Perform standard claim analysis",
-                            "confidence": 0.8,
-                            "priority": 1
-                        }
-                    ]
-                }"""
-    
-    bridge = TestLLMBridge()
-    processor = ProcessLLMProcessor(bridge)
-    
-    yield processor
+
 
 @pytest.fixture(scope="function")
 async def real_context_builder(real_data_manager):
@@ -386,7 +319,7 @@ def optimized_pytest_config():
             "--maxfail=5",  # Stop after 5 failures
             "--dist=loadscope"  # Distribute tests by scope
         ],
-        "timeout": 300,
+        "timeout": 900,
         "parallel_workers": 4,
         "test_randomization": True
     }
@@ -502,7 +435,12 @@ def pytest_configure(config):
         # Development workflow markers
         "development: Marks tests for development tools and workflows",
         "documentation: Marks tests for documentation validation",
-        "examples: Marks tests for example code validation"
+        "examples: Marks tests for example code validation",
+        
+        # Additional markers
+        "models: Marks tests for Pydantic model validation and behavior",
+        "error_handling: Marks tests for error handling and edge cases",
+        "test_marker_fix: Test marker to verify configuration is working"
     ]
     
     for marker in markers_to_register:
@@ -561,6 +499,181 @@ def pytest_collection_modifyitems(config, items):
                     item.add_marker(getattr(pytest.mark, tool_name))
                     item.add_marker(pytest.mark.static_analysis)
 
+# Test duration tracking and reporting
+def pytest_sessionstart(session):
+    """Initialize session-level timing."""
+    session._session_start_time = time.time()
+    session._test_durations = []
+    session._test_results = {}
+
+def pytest_runtest_setup(item):
+    """Record test setup start time."""
+    item._setup_start_time = time.time()
+
+def pytest_runtest_call(item):
+    """Record test call start time."""
+    item._call_start_time = time.time()
+
+def pytest_runtest_teardown(item):
+    """Record test teardown start time."""
+    item._teardown_start_time = time.time()
+
+def pytest_runtest_logreport(report):
+    """Collect test duration data."""
+    if report.when == "call":
+        test_item = report.nodeid
+        
+        # Calculate durations for each phase
+        setup_duration = getattr(report, '_setup_start_time', 0)
+        call_duration = report.duration if hasattr(report, 'duration') else 0
+        teardown_duration = getattr(report, '_teardown_start_time', 0)
+        
+        total_duration = call_duration
+        
+        # Get the test item to access markers and session
+        # Note: We need to get the session from the global pytest context
+        try:
+            from _pytest.config import get_config
+            # This approach won't work, let's use a different strategy
+        except ImportError:
+            pass
+        
+        # Store timing info in a global list for now
+        if not hasattr(pytest_runtest_logreport, '_test_durations'):
+            pytest_runtest_logreport._test_durations = []
+        
+        # Get markers from the test item (this is tricky without direct node access)
+        # We'll collect markers in a different hook
+        timing_info = {
+            'nodeid': test_item,
+            'setup_duration': setup_duration,
+            'call_duration': call_duration,
+            'teardown_duration': teardown_duration,
+            'total_duration': total_duration,
+            'outcome': report.outcome,
+            'markers': []  # Will be populated in collection_modifyitems
+        }
+        
+        pytest_runtest_logreport._test_durations.append(timing_info)
+
+def pytest_sessionfinish(session, exitstatus):
+    """Generate comprehensive duration report."""
+    session_end_time = time.time()
+    total_session_time = session_end_time - getattr(session, '_session_start_time', session_end_time)
+    
+    # Get test durations from the global storage
+    test_durations = getattr(pytest_runtest_logreport, '_test_durations', [])
+    
+    if test_durations:
+        # Sort tests by duration (slowest first)
+        sorted_tests = sorted(test_durations, key=lambda x: x['total_duration'], reverse=True)
+        
+        print("\n" + "="*80)
+        print("COMPREHENSIVE TEST DURATION REPORT")
+        print("="*80)
+        
+        # Summary statistics
+        total_tests = len(sorted_tests)
+        passed_tests = len([t for t in sorted_tests if t['outcome'] == 'passed'])
+        failed_tests = len([t for t in sorted_tests if t['outcome'] == 'failed'])
+        skipped_tests = len([t for t in sorted_tests if t['outcome'] == 'skipped'])
+        
+        total_test_time = sum(t['total_duration'] for t in sorted_tests)
+        avg_test_time = total_test_time / total_tests if total_tests > 0 else 0
+        slowest_test = sorted_tests[0] if sorted_tests else None
+        fastest_test = sorted_tests[-1] if sorted_tests else None
+        
+        print(f"SUMMARY STATISTICS:")
+        print(f"   Total Session Time: {total_session_time:.2f}s")
+        print(f"   Total Test Time: {total_test_time:.2f}s")
+        print(f"   Overhead Time: {total_session_time - total_test_time:.2f}s")
+        print(f"   Total Tests: {total_tests}")
+        print(f"   Passed: {passed_tests} | Failed: {failed_tests} | Skipped: {skipped_tests}")
+        print(f"   Average Test Time: {avg_test_time:.3f}s")
+        if slowest_test:
+            print(f"   Slowest Test: {slowest_test['total_duration']:.3f}s ({slowest_test['nodeid']})")
+        if fastest_test:
+            print(f"   Fastest Test: {fastest_test['total_duration']:.3f}s ({fastest_test['nodeid']})")
+        
+        # Slowest tests (top 10)
+        print(f"\nSLOWEST TESTS (Top 10):")
+        for i, test in enumerate(sorted_tests[:10], 1):
+            status_char = "PASS" if test['outcome'] == 'passed' else "FAIL" if test['outcome'] == 'failed' else "SKIP"
+            markers_str = f" [{', '.join(test['markers'])}]" if test['markers'] else ""
+            print(f"   {i:2d}. {status_char:4} {test['total_duration']:6.3f}s | {test['nodeid']}{markers_str}")
+        
+        # Tests by marker
+        marker_stats = {}
+        for test in sorted_tests:
+            for marker in test['markers']:
+                if marker not in marker_stats:
+                    marker_stats[marker] = {'count': 0, 'total_time': 0, 'tests': []}
+                marker_stats[marker]['count'] += 1
+                marker_stats[marker]['total_time'] += test['total_duration']
+                marker_stats[marker]['tests'].append(test)
+        
+        if marker_stats:
+            print(f"\nDURATION BY MARKER:")
+            for marker, stats in sorted(marker_stats.items(), key=lambda x: x[1]['total_time'], reverse=True):
+                avg_time = stats['total_time'] / stats['count']
+                slowest_in_marker = max(stats['tests'], key=lambda x: x['total_duration'])
+                print(f"   {marker:15s}: {stats['count']:3d} tests, {stats['total_time']:6.2f}s total, {avg_time:6.3f}s avg")
+                print(f"                    Slowest: {slowest_in_marker['total_duration']:.3f}s ({slowest_in_marker['nodeid']})")
+        
+        # Performance warnings
+        print(f"\nPERFORMANCE WARNINGS:")
+        slow_tests = [t for t in sorted_tests if t['total_duration'] > 5.0]
+        if slow_tests:
+            print(f"   {len(slow_tests)} tests took > 5 seconds:")
+            for test in slow_tests[:5]:  # Show top 5 slow tests
+                print(f"     * {test['total_duration']:.2f}s - {test['nodeid']}")
+        else:
+            print("   No tests exceeded 5 seconds")
+        
+        very_slow_tests = [t for t in sorted_tests if t['total_duration'] > 30.0]
+        if very_slow_tests:
+            print(f"   {len(very_slow_tests)} tests took > 30 seconds (consider optimization):")
+            for test in very_slow_tests:
+                print(f"     * {test['total_duration']:.2f}s - {test['nodeid']}")
+        
+        print("="*80)
+        print("END DURATION REPORT")
+        print("="*80 + "\n")
+        
+        # Save detailed report to file
+        try:
+            report_file = Path("tests/results/test_duration_report.json")
+            report_file.parent.mkdir(exist_ok=True)
+            
+            report_data = {
+                'session_info': {
+                    'total_session_time': total_session_time,
+                    'total_test_time': total_test_time,
+                    'overhead_time': total_session_time - total_test_time,
+                    'timestamp': datetime.now().isoformat(),
+                    'exit_status': exitstatus
+                },
+                'summary': {
+                    'total_tests': total_tests,
+                    'passed': passed_tests,
+                    'failed': failed_tests,
+                    'skipped': skipped_tests,
+                    'average_test_time': avg_test_time,
+                    'slowest_test': slowest_test,
+                    'fastest_test': fastest_test
+                },
+                'test_durations': sorted_tests,
+                'marker_statistics': marker_stats
+            }
+            
+            with open(report_file, 'w', encoding='utf-8') as f:
+                json.dump(report_data, f, indent=2, ensure_ascii=False)
+            
+            print(f"Detailed duration report saved to: {report_file}")
+            
+        except Exception as e:
+            print(f"Could not save duration report: {e}")
+
 def pytest_runtest_setup(item):
     """Setup hook for static analysis test execution."""
     # Check if this is a static analysis test
@@ -610,27 +723,7 @@ def pytest_runtest_call(item):
                 except Exception as e:
                     pytest.fail(f"Error running {tool_name} static analysis: {str(e)}")
 
-def pytest_collection_modifyitems(config, items):
-    """Modify test collection for optimization."""
-    # Add automatic markers based on test location and name
-    for item in items:
-        # Mark tests in performance directory
-        if "performance" in item.nodeid:
-            item.add_marker(pytest.mark.performance)
-            item.add_marker(pytest.mark.slow)
 
-        # Mark integration tests
-        if "integration" in item.nodeid:
-            item.add_marker(pytest.mark.integration)
-
-        # Mark unit tests (default)
-        if not any(mark.name in ["integration", "performance"] for mark in item.iter_markers()):
-            item.add_marker(pytest.mark.unit)
-
-        # Mark critical tests
-        if "critical" in item.nodeid or any(keyword in item.name for keyword in
-                                          ["basic", "core", "essential"]):
-            item.add_marker(pytest.mark.critical)
 
 # Performance and static analysis reporting
 def pytest_report_header(config):

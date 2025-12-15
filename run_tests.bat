@@ -10,6 +10,10 @@ set PYTHONWARNINGS=ignore::UserWarning
 set PYTHONWARNINGS=%PYTHONWARNINGS%,ignore::DeprecationWarning
 set PYTHONWARNINGS=%PYTHONWARNINGS%,ignore::PendingDeprecationWarning
 
+REM Record start time
+echo Test session started at: %date% %time%
+echo.
+
 REM Check for help flag
 if "%1"=="--help" goto :help
     echo.
@@ -192,10 +196,23 @@ if "%1"=="--phased" (
 REM Run regular tests by default
 echo Running Regular Tests...
 python -m pytest tests/ -v -m "not static_analysis"
+
+REM Report completion time
+echo.
+echo Test session completed at: %date% %time%
+echo Test session completed.
+echo.
+echo Usage:
+echo   run_tests.bat --help       Show all available options
+echo   run_tests.bat              - Run regular tests only
+echo   run_tests.bat --static     - Run static analysis tests only
+echo   run_tests.bat --all        - Run all tests including static analysis
+echo   run_tests.bat --full       - Run full test suite with static analysis and coverage
+echo   run_tests.bat --phased     - Run 3-phase testing system with dynamic timeouts
+
 goto :end
 
 :help
-
 echo.
 echo Test run completed.
 echo.

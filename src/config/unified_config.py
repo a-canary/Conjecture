@@ -62,23 +62,22 @@ class UnifiedConfig:
         return self.settings.workspace.team
 
     @property
-    def providers(self) -> List[Dict[str, Any]]:
-        """Get providers as list of dictionaries for backward compatibility"""
-        return [provider.to_dict() for provider in self.settings.providers]
+    def providers(self) -> List[ProviderConfig]:
+        """Get providers as list of ProviderConfig objects"""
+        return self.settings.providers
 
     @property
     def config_path(self) -> Path:
         """Get the active config path"""
         return self.pydantic_config.config_hierarchy.get_active_config_path()
 
-    def get_providers(self) -> List[Dict[str, Any]]:
+    def get_providers(self) -> List[ProviderConfig]:
         """Get list of configured providers"""
         return self.providers
 
-    def get_primary_provider(self) -> Optional[Dict[str, Any]]:
+    def get_primary_provider(self) -> Optional[ProviderConfig]:
         """Get the primary (first) provider"""
-        primary = self.settings.get_primary_provider()
-        return primary.to_dict() if primary else None
+        return self.settings.get_primary_provider()
 
     def is_workspace_config(self) -> bool:
         """Check if using workspace-specific configuration"""

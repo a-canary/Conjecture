@@ -5,6 +5,11 @@ echo
 # Set PYTHONPATH to include project root
 export PYTHONPATH=.
 
+# Record start time
+START_TIME=$(date +%s.%N)
+echo "🕐 Test session started at: $(date)"
+echo
+
 # Check for help flag
 if [ "$1" == "--help" ]; then
     echo
@@ -194,6 +199,15 @@ fi
 echo "Running Regular Tests..."
 python -m pytest tests/ -v -m "not static_analysis"
 
+# Calculate and report total duration
+END_TIME=$(date +%s.%N)
+DURATION=$(echo "$END_TIME - $START_TIME" | bc -l)
+MINUTES=$(echo "$DURATION / 60" | bc -l)
+SECONDS=$(echo "$DURATION % 60" | bc -l)
+
+echo
+echo "🕐 Test session completed at: $(date)"
+echo "⏱️  Total test duration: ${DURATION}s (${MINUTES}m ${SECONDS}s)"
 echo
 echo "Test run completed."
 echo

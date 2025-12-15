@@ -50,7 +50,7 @@ class EnhancedContextBuilder:
         self.context_config = {
             "max_context_claims": 15,
             "primed_claim_ratio": 0.4,  # 40% of context should be primed claims
-            "min_similarity_threshold": 0.3,
+            "min_similarity_threshold": 0.85,
             "max_tokens": 8000,
             "quality_weight": 0.3,
             "recency_weight": 0.2,
@@ -312,13 +312,33 @@ class EnhancedContextBuilder:
                 reverse=True
             )
             
-            # Remove duplicates
-            seen_contents = set()
+            # Deduplicate using fuzzy matching
             unique_claims = []
+            similarity_threshold = self.context_config["min_similarity_threshold"]
+            
+            import difflib
+            
             for claim in merged_claims:
-                content_lower = claim.content.lower()
-                if content_lower not in seen_contents:
-                    seen_contents.add(content_lower)
+                is_duplicate = False
+                content_lower = claim.content.lower().strip()
+                
+                for existing_claim in unique_claims:
+                    existing_lower = existing_claim.content.lower().strip()
+                    
+                    # Check exact match first (fast)
+                    if content_lower == existing_lower:
+                        is_duplicate = True
+                        break
+                    
+                    # Check fuzzy match
+                    similarity = difflib.SequenceMatcher(None, content_lower, existing_lower).ratio()
+                    if similarity >= similarity_threshold:
+                        is_duplicate = True
+                        # If existing claim has lower confidence, potentially swap?
+                        # For now, keep the one that was sorted higher (first one)
+                        break
+                
+                if not is_duplicate:
                     unique_claims.append(claim)
             
             return unique_claims[:max_claims]

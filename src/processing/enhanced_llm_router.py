@@ -15,6 +15,7 @@ from enum import Enum
 from .llm.openai_compatible_provider import OpenAICompatibleProcessor, create_openai_compatible_processor
 from .llm.common import GenerationConfig, LLMProcessingResult
 from src.config.unified_config import get_config
+from src.config.settings_models import ProviderConfig
 from src.core.models import Claim
 
 class ProviderStatus(str, Enum):
@@ -167,33 +168,20 @@ class EnhancedLLMRouter:
             self.logger.error(f"Failed to load providers from config: {e}")
             return []
     
-    def _initialize_providers(self, providers: List[Dict[str, Any]]):
+    def _initialize_providers(self, providers: List[ProviderConfig]):
         """Initialize providers with enhanced configuration"""
         self.logger.info(f"Initializing {len(providers)} providers...")
         
-        for provider_data in providers:
+        for provider_config in providers:
             try:
-                # Create enhanced provider config
-                config = ProviderConfig(
-                    name=provider_data.get("name", ""),
-                    url=provider_data.get("url", ""),
-                    api_key=provider_data.get("api_key", provider_data.get("key", "")),
-                    model=provider_data.get("model", "gpt-3.5-turbo"),
-                    priority=provider_data.get("priority", 999),
-                    max_retries=provider_data.get("max_retries", 3),
-                    timeout=provider_data.get("timeout", 60),
-                    is_local=self._is_local_provider(provider_data.get("url", "")),
-                    enabled=provider_data.get("enabled", True),
-                    max_concurrent_requests=provider_data.get("max_concurrent_requests", 10),
-                    health_check_interval=provider_data.get("health_check_interval", 300),
-                    health_check_timeout=provider_data.get("health_check_timeout", 10)
-                )
+                # Use the provider config directly
+                config = provider_config
                 
                 # Create processor
                 processor = create_openai_compatible_processor(
                     provider_name=config.name,
                     api_url=config.url,
-                    api_key=config.api_key,
+                    api_key=config.api,
                     model=config.model
                 )
                 
@@ -204,7 +192,7 @@ class EnhancedLLMRouter:
                 self.logger.info(f"Initialized provider: {config.name} (priority: {config.priority})")
                 
             except Exception as e:
-                self.logger.error(f"Failed to initialize provider {provider_data.get('name', 'unknown')}: {e}")
+                self.logger.error(f"Failed to initialize provider {provider_config.name}: {e}")
         
         if not self.providers:
             self.logger.warning("No providers initialized")

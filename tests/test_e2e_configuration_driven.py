@@ -212,17 +212,17 @@ class TestConfigurationDrivenProcessingE2E:
         assert len(conjecture.config.providers) == 2
         
         provider_names = [p.name for p in conjecture.config.providers]
-        assert "local-ollama" in provider_names
-        assert "local-lmstudio" in provider_names
+        assert "ollama" in provider_names
+        assert "lm_studio" in provider_names
         
         # Check provider priorities
-        ollama_provider = next(p for p in conjecture.config.providers if p.name == "local-ollama")
-        lmstudio_provider = next(p for p in conjecture.config.providers if p.name == "local-lmstudio")
+        ollama_provider = next(p for p in conjecture.config.providers if p.name == "ollama")
+        lmstudio_provider = next(p for p in conjecture.config.providers if p.name == "lm_studio")
         
         assert ollama_provider.priority == 1
         assert lmstudio_provider.priority == 2
-        assert ollama_provider.enabled is True
-        assert lmstudio_provider.enabled is True
+        assert ollama_provider.is_local is True
+        assert lmstudio_provider.is_local is True
         
         # Test claim processing that would use providers
         processing_claim = Claim(

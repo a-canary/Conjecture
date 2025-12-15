@@ -11,8 +11,17 @@ import time
 from datetime import datetime
 from typing import Dict, List, Any, Optional
 from pathlib import Path
+from enum import Enum
 
 from ..core.models import Claim, ClaimState
+
+class PrimingDomain(Enum):
+    """Domains for priming knowledge"""
+    FACT_CHECKING = "fact-checking"
+    PROGRAMMING = "programming"
+    SCIENTIFIC_METHOD = "scientific_method"
+    CRITICAL_THINKING = "critical_thinking"
+
 from .unified_bridge import UnifiedLLMBridge, LLMRequest
 from .simplified_llm_manager import get_simplified_llm_manager
 from ..data.repositories import get_data_manager, RepositoryFactory
