@@ -84,6 +84,4 @@ def get_config_manager() -> DirtyFlagConfigManager:
     global _config_manager
     if _config_manager is None:
         _config_manager = DirtyFlagConfigManager()
-    return _config_manager
-
-def 
+    return _config_manager 

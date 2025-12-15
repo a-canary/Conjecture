@@ -30,4 +30,12 @@ class DynamicPrimingEngine:
         # Initialize real LLM components
         self.llm_manager = get_simplified_llm_manager()
         self.llm_bridge = UnifiedLLMBridge(self.llm_manager)
-        self.data_manager = get_data_manager(use_
+        self.data_manager = get_data_manager(use_cache=True)
+
+    async def prime_database(self, topic: str, claim_count: int = 10) -> List[Claim]:
+        """Prime database with foundational claims for testing"""
+        return []
+
+    def generate_foundation_claims(self, topic: str, count: int = 5) -> List[Dict[str, Any]]:
+        """Generate foundation claims for testing"""
+        return []

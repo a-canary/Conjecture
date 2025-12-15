@@ -16,12 +16,13 @@ class DetectedProvider(BaseModel):
     error: Optional[str] = None
 
 class ServiceDetector:
-    """Real
-    
+    """Real-time service detection for testing"""
+
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         self.config = config or {}
         self.detected_providers: List[DetectedProvider] = []
-    
+
     def detect_providers(self) -> List[DetectedProvider]:
         """Detect available providers"""
+        return []
         

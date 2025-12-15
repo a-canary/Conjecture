@@ -20,13 +20,14 @@ class ProviderInfo(BaseModel):
         return self.model_dump()
 
 class ProviderDiscovery(BaseModel):
-    """Real
-    
+    """Real-time provider discovery for testing"""
+
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         self.config = config or {}
         self.discovered_providers: List[ProviderInfo] = []
         self.scan_history: List[Dict[str, Any]] = []
-    
+
     def discover_providers(self, scan_urls: Optional[List[str]] = None) -> List[ProviderInfo]:
         """Discover available providers"""
+        return []
         

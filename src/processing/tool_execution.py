@@ -21,7 +21,7 @@ class ToolExecutionContext(BaseModel):
     timestamp: datetime = datetime.now()
 
 class ToolExecutor:
-    """Real
+    """Real-time tool executor for running registered tools."""
     
     def __init__(self, context: Optional[ToolExecutionContext] = None):
         self.context = context or ToolExecutionContext()
@@ -56,4 +56,6 @@ class ToolExecutor:
 
 def execute_tool_from_registry(tool_name: str, *args, **kwargs) -> ToolResult:
     """Execute a tool from the registry"""
+    # This is a placeholder implementation
+    return ToolResult(success=False, error=f"Registry not implemented for {tool_name}")
     

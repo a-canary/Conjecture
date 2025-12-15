@@ -108,4 +108,7 @@ class OptimizedConjecture:
         """Load data manager with minimal dependencies"""
         try:
             from src.data.repositories import get_data_manager
-            self._data_manager = get_data_manager(use_
+            self._data_manager = get_data_manager()
+        except Exception as e:
+            print(f"Data Manager initialization failed: {e}")
+            self._data_manager = None

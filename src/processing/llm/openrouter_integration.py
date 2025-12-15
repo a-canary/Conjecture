@@ -7,7 +7,7 @@ from typing import Dict, Any, List, Optional
 from pydantic import BaseModel
 
 class OpenRouterProcessor(BaseModel):
-    """Real
+    """Real-time OpenRouter LLM processor for generating responses."""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config

@@ -217,4 +217,15 @@ def get_weather_by_zipcode(zipcode: str) -> dict:
     try:
         # Use a free weather API (you may need to sign up for API key)
         # For demo purposes, returning test data
+        return {{
+            "zipcode": zipcode,
+            "temperature": "72°F",
+            "conditions": "Sunny",
+            "humidity": "45%",
+            "source": "Demo Data"
+        }}
+    except Exception as e:
+        return {{"error": f"Weather data unavailable: {{str(e)}}"}}
+            '''
+        }
         

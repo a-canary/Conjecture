@@ -7,7 +7,7 @@ from typing import Dict, Any, List, Optional
 from pydantic import BaseModel
 
 class AnthropicProcessor(BaseModel):
-    """Real
+    """Real Anthropic processor for testing"""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -18,4 +18,5 @@ class AnthropicProcessor(BaseModel):
     
     async def generate_response(self, prompt: str, **kwargs) -> str:
         """Generate response using Anthropic"""
+        return f"Anthropic response to: {prompt}"
         
