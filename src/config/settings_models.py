@@ -137,7 +137,8 @@ class DatabaseSettings(BaseModel):
     model_config = ConfigDict(
         validate_assignment=True,
         extra="forbid",
-        frozen=False
+        frozen=False,
+        protected_namespaces=()
     )
 
     database_type: str = Field(default="sqlite", description="Database type")
@@ -161,7 +162,8 @@ class LLMSettings(BaseModel):
     model_config = ConfigDict(
         validate_assignment=True,
         extra="forbid",
-        frozen=False
+        frozen=False,
+        protected_namespaces=()
     )
 
     default_model: str = Field(default="gpt-3.5-turbo", description="Default LLM model")
@@ -177,7 +179,8 @@ class ProcessingSettings(BaseModel):
     model_config = ConfigDict(
         validate_assignment=True,
         extra="forbid",
-        frozen=False
+        frozen=False,
+        protected_namespaces=()
     )
 
     confidence_threshold: float = Field(default=0.95, ge=0.0, le=1.0, description="Confidence threshold for validation")
@@ -206,7 +209,8 @@ class DirtyFlagSettings(BaseModel):
     model_config = ConfigDict(
         validate_assignment=True,
         extra="forbid",
-        frozen=False
+        frozen=False,
+        protected_namespaces=()
     )
 
     confidence_threshold: float = Field(default=0.90, ge=0.0, le=1.0, description="Dirty flag confidence threshold")
@@ -243,7 +247,8 @@ class LoggingSettings(BaseModel):
     model_config = ConfigDict(
         validate_assignment=True,
         extra="forbid",
-        frozen=False
+        frozen=False,
+        protected_namespaces=()
     )
 
     level: str = Field(default="INFO", description="Log level")
@@ -270,7 +275,8 @@ class WorkspaceSettings(BaseModel):
     model_config = ConfigDict(
         validate_assignment=True,
         extra="forbid",
-        frozen=False
+        frozen=False,
+        protected_namespaces=()
     )
 
     workspace: str = Field(default="default", description="Workspace name")

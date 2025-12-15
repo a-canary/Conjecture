@@ -45,7 +45,7 @@ class ContextResult(BaseModel):
     build_time_ms: int = Field(default=0, description="Time taken to build context in milliseconds")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional context metadata")
     
-    model_config = ConfigDict()
+    model_config = ConfigDict(protected_namespaces=())
     
     @field_serializer('context_claims')
     def serialize_context_claims(self, value: List[Claim]) -> List[Dict[str, Any]]:
@@ -62,7 +62,7 @@ class Instruction(BaseModel):
     source_claim_id: Optional[str] = Field(None, description="ID of claim that generated this instruction")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="When this instruction was created")
     
-    model_config = ConfigDict()
+    model_config = ConfigDict(protected_namespaces=())
     
     @field_serializer('created_at')
     def serialize_created_at(self, value: datetime) -> str:
@@ -81,7 +81,7 @@ class ProcessingResult(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional processing metadata")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="When processing was completed")
     
-    model_config = ConfigDict()
+    model_config = ConfigDict(protected_namespaces=())
     
     @field_serializer('created_at')
     def serialize_created_at(self, value: datetime) -> str:
