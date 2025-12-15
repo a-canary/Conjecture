@@ -7,6 +7,7 @@ Test all configured models with simple problems to establish baseline
 import asyncio
 import sys
 import time
+import pytest
 from pathlib import Path
 from datetime import datetime
 
@@ -41,6 +42,7 @@ BASELINE_PROBLEMS = [
     }
 ]
 
+@pytest.mark.asyncio
 async def test_gpt_oss_20b():
     """Test GPT-OSS-20B directly"""
     try:
@@ -99,6 +101,7 @@ async def test_gpt_oss_20b():
     except Exception as e:
         return None, f"Exception: {str(e)}"
 
+@pytest.mark.asyncio
 async def test_granite_tiny():
     """Test GraniteTiny via LM Studio"""
     try:
