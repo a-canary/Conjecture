@@ -1,0 +1,129 @@
+{
+  "timestamp": "2025-12-17T02:30:28.708711",
+  "provider": "glm-4.5-air",
+  "model": "glm-4.5-air",
+  "problems": 5,
+  "baseline": {
+    "accuracy": 0.2,
+    "correct": 1,
+    "total": 5,
+    "avg_time": 15.450406169891357,
+    "results": [
+      {
+        "id": "janet_eggs",
+        "system": "baseline",
+        "response": "",
+        "extracted": 0.0,
+        "expected": 18.0,
+        "correct": false,
+        "time": 16.13900113105774,
+        "error": null
+      },
+      {
+        "id": "pool_volume",
+        "system": "baseline",
+        "response": "Error: ",
+        "extracted": 0.0,
+        "expected": 2500.0,
+        "correct": false,
+        "time": 31.452468872070312,
+        "error": null
+      },
+      {
+        "id": "fruit_cost",
+        "system": "baseline",
+        "response": "The cost of apples is calculated as 5 lbs \u00d7 $3/lb = $15.  \nThe cost of oranges is calculated as 8 lbs \u00d7 $2/lb = $16.  \nThe total cost is $15 + $16 = $31.  \n\n\\boxed{31}",
+        "extracted": 15.0,
+        "expected": 31.0,
+        "correct": false,
+        "time": 8.183808326721191,
+        "error": null
+      },
+      {
+        "id": "bus_riders",
+        "system": "baseline",
+        "response": "",
+        "extracted": 0.0,
+        "expected": 46.0,
+        "correct": false,
+        "time": 16.47805166244507,
+        "error": null
+      },
+      {
+        "id": "reading_pages",
+        "system": "baseline",
+        "response": "60",
+        "extracted": 60.0,
+        "expected": 60.0,
+        "correct": true,
+        "time": 4.998700857162476,
+        "error": null
+      }
+    ]
+  },
+  "conjecture": {
+    "accuracy": 0.0,
+    "correct": 0,
+    "total": 5,
+    "avg_time": 15.307950401306153,
+    "results": [
+      {
+        "id": "janet_eggs",
+        "system": "conjecture",
+        "response": "",
+        "extracted": 0.0,
+        "expected": 18.0,
+        "correct": false,
+        "time": 10.174374341964722,
+        "error": null
+      },
+      {
+        "id": "pool_volume",
+        "system": "conjecture",
+        "response": "",
+        "extracted": 0.0,
+        "expected": 2500.0,
+        "correct": false,
+        "time": 21.591315507888794,
+        "error": null
+      },
+      {
+        "id": "fruit_cost",
+        "system": "conjecture",
+        "response": "",
+        "extracted": 0.0,
+        "expected": 31.0,
+        "correct": false,
+        "time": 16.94598078727722,
+        "error": null
+      },
+      {
+        "id": "bus_riders",
+        "system": "conjecture",
+        "response": "",
+        "extracted": 0.0,
+        "expected": 46.0,
+        "correct": false,
+        "time": 13.301452159881592,
+        "error": null
+      },
+      {
+        "id": "reading_pages",
+        "system": "conjecture",
+        "response": "",
+        "extracted": 0.0,
+        "expected": 60.0,
+        "correct": false,
+        "time": 14.526629209518433,
+        "error": null
+      }
+    ]
+  },
+  "comparison": {
+    "improvement": -0.2,
+    "improvement_pct": -100.0,
+    "overhead": -0.14245576858520437,
+    "overhead_pct": -0.9220195703515675,
+    "hypothesis_supported": false
+  }
+}

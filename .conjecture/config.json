@@ -11,40 +11,7 @@
       "max_tokens": 200000,
       "temperature": 0.2,
       "timeout": 30,
-      "max_retries": 5
-    },
-    {
-      "url": "https://api.z.ai/api/coding/paas/v4",
-      "api": "70e6e12e4d7c46e2a4d0b85503d51f38.LQHl8d98kDJChttb",
-      "model": "glm-4.6",
-      "name": "glm-4.6",
-      "max_tokens": 200000
-    },
-    {
-      "url": "https://openrouter.ai/api/v1",
-      "key": "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",
-      "model": "openai/gpt-oss-20b",
-      "name": "gpt-oss-20b",
-      "priority": 10,
-      "is_local": false,
-      "description": "Backup model - payment issues encountered",
-      "max_tokens": 128000,
-      "temperature": 0.2,
-      "timeout": 30,
-      "max_retries": 5
-    },
-    {
-      "url": "http://localhost:11434/v1",
-      "api": "",
-      "model": "qwen3:4b-thinking-2507-q8_0",
-      "name": "ollama-qwen-thinking",
-      "priority": 5,
-      "is_local": true,
-      "description": "Ollama Qwen3 4B thinking model for local reasoning",
-      "max_tokens": 8000,
-      "temperature": 0.3,
-      "timeout": 30,
-      "max_retries": 2
+      "max_retries": 3
     }
   ],
   "confidence_threshold": 0.9,

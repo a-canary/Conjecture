@@ -1,0 +1,95 @@
+{
+  "timestamp": "2025-12-17T02:00:08.272451",
+  "num_problems": 5,
+  "baseline": {
+    "accuracy": 0.0,
+    "correct": 0,
+    "total": 5,
+    "avg_time": 60.068956518173216,
+    "results": [
+      {
+        "problem_id": "gsm8k_janet_eggs",
+        "system": "baseline",
+        "correct": false,
+        "time": 60.0787398815155,
+        "error": "Command '['python', 'conjecture', 'prompt', \"Solve: Janet's ducks lay 16 eggs per day. She eats three for breakfast and bakes muffins with four. She sells the remainder at $2 each. How much does she make? Provide just the numeric answer.\"]' timed out after 60 seconds"
+      },
+      {
+        "problem_id": "gsm8k_swimming_pool",
+        "system": "baseline",
+        "correct": false,
+        "time": 60.067625761032104,
+        "error": "Command '['python', 'conjecture', 'prompt', 'Solve: A swimming pool is 50 meters long and 25 meters wide. If the water depth is 2 meters, how many cubic meters of water does it contain? Provide just the numeric answer.']' timed out after 60 seconds"
+      },
+      {
+        "problem_id": "gsm8k_fruit_stand",
+        "system": "baseline",
+        "correct": false,
+        "time": 60.06383681297302,
+        "error": "Command '['python', 'conjecture', 'prompt', 'Solve: Apples cost $3 per pound and oranges cost $2 per pound. If John buys 5 pounds of apples and 8 pounds of oranges, how much does he spend? Provide just the numeric answer.']' timed out after 60 seconds"
+      },
+      {
+        "problem_id": "gsm8k_bus_problem",
+        "system": "baseline",
+        "correct": false,
+        "time": 60.07058548927307,
+        "error": "Command '['python', 'conjecture', 'prompt', 'Solve: A bus starts with 45 passengers. At the first stop, 12 get off and 8 get on. At the second stop, 15 get off and 20 get on. How many are on the bus? Provide just the numeric answer.']' timed out after 60 seconds"
+      },
+      {
+        "problem_id": "gsm8k_reading_challenge",
+        "system": "baseline",
+        "correct": false,
+        "time": 60.06399464607239,
+        "error": "Command '['python', 'conjecture', 'prompt', 'Solve: Sarah wants to read a 480-page book in 8 days reading the same number each day. How many pages per day? Provide just the numeric answer.']' timed out after 60 seconds"
+      }
+    ]
+  },
+  "conjecture": {
+    "accuracy": 0.0,
+    "correct": 0,
+    "total": 5,
+    "avg_time": 60.06467051506043,
+    "results": [
+      {
+        "problem_id": "gsm8k_janet_eggs",
+        "system": "conjecture",
+        "correct": false,
+        "time": 60.06341814994812,
+        "error": "Command '['python', 'conjecture', 'create', \"Janet's ducks lay 16 eggs per day. She eats three for breakfast and bakes muffins with four. She sells the remainder at $2 each. How much does she make?\", '--confidence', '0.5']' timed out after 60 seconds"
+      },
+      {
+        "problem_id": "gsm8k_swimming_pool",
+        "system": "conjecture",
+        "correct": false,
+        "time": 60.063478231430054,
+        "error": "Command '['python', 'conjecture', 'create', 'A swimming pool is 50 meters long and 25 meters wide. If the water depth is 2 meters, how many cubic meters of water does it contain?', '--confidence', '0.5']' timed out after 60 seconds"
+      },
+      {
+        "problem_id": "gsm8k_fruit_stand",
+        "system": "conjecture",
+        "correct": false,
+        "time": 60.05755114555359,
+        "error": "Command '['python', 'conjecture', 'create', 'Apples cost $3 per pound and oranges cost $2 per pound. If John buys 5 pounds of apples and 8 pounds of oranges, how much does he spend?', '--confidence', '0.5']' timed out after 60 seconds"
+      },
+      {
+        "problem_id": "gsm8k_bus_problem",
+        "system": "conjecture",
+        "correct": false,
+        "time": 60.07752752304077,
+        "error": "Command '['python', 'conjecture', 'create', 'A bus starts with 45 passengers. At the first stop, 12 get off and 8 get on. At the second stop, 15 get off and 20 get on. How many are on the bus?', '--confidence', '0.5']' timed out after 60 seconds"
+      },
+      {
+        "problem_id": "gsm8k_reading_challenge",
+        "system": "conjecture",
+        "correct": false,
+        "time": 60.06137752532959,
+        "error": "Command '['python', 'conjecture', 'create', 'Sarah wants to read a 480-page book in 8 days reading the same number each day. How many pages per day?', '--confidence', '0.5']' timed out after 60 seconds"
+      }
+    ]
+  },
+  "comparison": {
+    "improvement": 0.0,
+    "improvement_pct": 0,
+    "hypothesis_supported": false
+  }
+}

@@ -1,0 +1,204 @@
+{
+  "timestamp": "2025-12-17T02:14:00.250842",
+  "model": "glm-4.5-air",
+  "num_problems": 8,
+  "baseline": {
+    "accuracy": 0.0,
+    "correct": 0,
+    "total": 8,
+    "avg_latency": 0.0,
+    "results": [
+      {
+        "problem_id": "math_algebra_20251204_181540",
+        "system": "baseline",
+        "question": "A farmer has a rectangular field that is 61 meters longer than it is wide. The farmer wants to divide the field into two equal rectangular sections by building a fence parallel to the width. If the total area of the field is 28,826 square meters and the fence costs $20 per meter, what is the total cost of the dividing fence?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 2130.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'LLMBridge' object has no attribute 'generate'"
+      },
+      {
+        "problem_id": "math_rate_20251204_181540",
+        "system": "baseline",
+        "question": "Two cars are traveling to the same destination 201 miles away. Car A travels at an average speed of 49 mph, while Car B travels at 57 mph. How much longer does the slower car take to reach the destination? Express your answer in hours and minutes.",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 0.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'LLMBridge' object has no attribute 'generate'"
+      },
+      {
+        "problem_id": "math_geometry_20251204_181540",
+        "system": "baseline",
+        "question": "A rectangular garden has a length of 37 meters and a width of 25 meters. If you want to build a fence around the garden and cover the entire area with grass sod that costs $3 per square meter, what is the total cost for the sod and how many meters of fencing do you need?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 2775.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'LLMBridge' object has no attribute 'generate'"
+      },
+      {
+        "problem_id": "gsm8k_janet_eggs",
+        "system": "baseline",
+        "question": "Janet's ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 18.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'LLMBridge' object has no attribute 'generate'"
+      },
+      {
+        "problem_id": "gsm8k_swimming_pool",
+        "system": "baseline",
+        "question": "A swimming pool is 50 meters long and 25 meters wide. If the water depth is 2 meters, how many cubic meters of water does the pool contain?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 2500.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'LLMBridge' object has no attribute 'generate'"
+      },
+      {
+        "problem_id": "gsm8k_fruit_stand",
+        "system": "baseline",
+        "question": "At a fruit stand, apples cost $3 per pound and oranges cost $2 per pound. If John buys 5 pounds of apples and 8 pounds of oranges, how much does he spend in total?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 31.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'LLMBridge' object has no attribute 'generate'"
+      },
+      {
+        "problem_id": "gsm8k_bus_problem",
+        "system": "baseline",
+        "question": "A bus starts with 45 passengers. At the first stop, 12 people get off and 8 people get on. At the second stop, 15 people get off and 20 people get on. How many passengers are on the bus after the second stop?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 46.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'LLMBridge' object has no attribute 'generate'"
+      },
+      {
+        "problem_id": "gsm8k_reading_challenge",
+        "system": "baseline",
+        "question": "Sarah wants to read a 480-page book in 8 days. If she reads the same number of pages each day, how many pages must she read per day?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 60.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'LLMBridge' object has no attribute 'generate'"
+      }
+    ]
+  },
+  "conjecture": {
+    "accuracy": 0.0,
+    "correct": 0,
+    "total": 8,
+    "avg_latency": 0.0,
+    "results": [
+      {
+        "problem_id": "math_algebra_20251204_181540",
+        "system": "conjecture",
+        "question": "A farmer has a rectangular field that is 61 meters longer than it is wide. The farmer wants to divide the field into two equal rectangular sections by building a fence parallel to the width. If the total area of the field is 28,826 square meters and the fence costs $20 per meter, what is the total cost of the dividing fence?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 2130.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'ConjectureEndpoint' object has no attribute 'process_prompt'"
+      },
+      {
+        "problem_id": "math_rate_20251204_181540",
+        "system": "conjecture",
+        "question": "Two cars are traveling to the same destination 201 miles away. Car A travels at an average speed of 49 mph, while Car B travels at 57 mph. How much longer does the slower car take to reach the destination? Express your answer in hours and minutes.",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 0.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'ConjectureEndpoint' object has no attribute 'process_prompt'"
+      },
+      {
+        "problem_id": "math_geometry_20251204_181540",
+        "system": "conjecture",
+        "question": "A rectangular garden has a length of 37 meters and a width of 25 meters. If you want to build a fence around the garden and cover the entire area with grass sod that costs $3 per square meter, what is the total cost for the sod and how many meters of fencing do you need?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 2775.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'ConjectureEndpoint' object has no attribute 'process_prompt'"
+      },
+      {
+        "problem_id": "gsm8k_janet_eggs",
+        "system": "conjecture",
+        "question": "Janet's ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 18.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'ConjectureEndpoint' object has no attribute 'process_prompt'"
+      },
+      {
+        "problem_id": "gsm8k_swimming_pool",
+        "system": "conjecture",
+        "question": "A swimming pool is 50 meters long and 25 meters wide. If the water depth is 2 meters, how many cubic meters of water does the pool contain?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 2500.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'ConjectureEndpoint' object has no attribute 'process_prompt'"
+      },
+      {
+        "problem_id": "gsm8k_fruit_stand",
+        "system": "conjecture",
+        "question": "At a fruit stand, apples cost $3 per pound and oranges cost $2 per pound. If John buys 5 pounds of apples and 8 pounds of oranges, how much does he spend in total?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 31.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'ConjectureEndpoint' object has no attribute 'process_prompt'"
+      },
+      {
+        "problem_id": "gsm8k_bus_problem",
+        "system": "conjecture",
+        "question": "A bus starts with 45 passengers. At the first stop, 12 people get off and 8 people get on. At the second stop, 15 people get off and 20 people get on. How many passengers are on the bus after the second stop?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 46.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'ConjectureEndpoint' object has no attribute 'process_prompt'"
+      },
+      {
+        "problem_id": "gsm8k_reading_challenge",
+        "system": "conjecture",
+        "question": "Sarah wants to read a 480-page book in 8 days. If she reads the same number of pages each day, how many pages must she read per day?",
+        "response": "",
+        "extracted_answer": 0.0,
+        "correct_answer": 60.0,
+        "is_correct": false,
+        "response_time": 0.0,
+        "error": "'ConjectureEndpoint' object has no attribute 'process_prompt'"
+      }
+    ]
+  },
+  "comparison": {
+    "accuracy_improvement": 0.0,
+    "accuracy_improvement_pct": 0,
+    "latency_overhead": 0.0,
+    "latency_overhead_pct": 0,
+    "hypothesis_supported": false
+  }
+}
