@@ -7,8 +7,12 @@
 ### Testing & Quality
 - [x] Fix async test failures (pytest-asyncio configured properly) - Cycle 29
 - [x] Add missing batch operations to OptimizedSQLiteManager - Cycle 29
-- [ ] Fix ID utilities tests (14 failures in test_id_utilities.py and test_monitoring_utilities.py)
-- [ ] Improve test coverage from 7.66% to at least 50%
+- [x] Fix ID utilities tests (14 failures) - Cycle 3
+- [x] Fix monitoring utilities tests - Cycle 3
+- [x] Achieve 100% test pass rate for core+utility tests - Cycle 3
+- [x] Create comprehensive test suite for claim_operations.py (97.48% coverage) - Cycle 4
+- [ ] Improve test coverage from 7.33% to at least 50% (currently 7.33%, next target: 10%)
+- [ ] Create test suites for relationship_manager.py, support_relationship_manager.py, dirty_flag.py
 - [ ] Fix timeout issues in e2e tests requiring real LLM connections
 - [ ] Resolve remaining Pydantic deprecation warnings (external dependencies)
 
@@ -65,6 +69,21 @@
 - [ ] Explore deployment options
 
 ## Completed Tasks
+
+### Cycle 4 (2025-12-17) - Coverage Improvement Sprint
+- [x] Created comprehensive test suite for src/core/claim_operations.py
+- [x] Achieved 97.48% coverage for claim_operations.py module
+- [x] Improved overall coverage from 7.15% to 7.33% (+0.18%)
+- [x] Added 47 tests covering all claim manipulation functions
+- [x] Identified broken code path in update_claim_with_dirty_propagation()
+- [x] Documented coverage gaps: relationship_manager, support_relationship_manager, dirty_flag
+
+### Cycle 3 (2025-12-17) - Utility Test Fixes
+- [x] Fixed 14 failing utility tests (ID utilities + monitoring utilities)
+- [x] Achieved 100% pass rate for all core+utility tests (131+47 = 178 tests)
+- [x] Updated ID format tests for new c{timestamp}_{uuid} format
+- [x] Fixed PerformanceMonitor API method calls (start_timer, end_timer, etc.)
+- [x] Fixed logger tests to use setup_logger instead of get_logger
 
 ### Cycle 29 (2025-12-17)
 - [x] Added batch_create_claims method to OptimizedSQLiteManager
