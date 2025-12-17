@@ -10,6 +10,7 @@ from collections import defaultdict, deque
 
 from .models import Claim
 
+
 @dataclass
 class RelationshipMetrics:
     """Performance and structure metrics for relationships"""
@@ -22,6 +23,7 @@ class RelationshipMetrics:
     avg_branching_factor: float
     relationship_density: float
 
+
 @dataclass
 class TraversalResult:
     """Result of relationship traversal operation"""
@@ -30,6 +32,7 @@ class TraversalResult:
     traversal_path: List[str]
     depth: int
     cycles: List[List[str]]
+
 
 class SupportRelationshipManager:
     """
@@ -45,7 +48,7 @@ class SupportRelationshipManager:
     def __init__(self, claims: List[Claim]):
         """Initialize with a list of claims"""
         self.claims = claims
-        self.claim_index = Claim.create_claim_index(claims)
+        self.claim_index = {claim.id: claim for claim in claims}
         self._support_map = None
         self._supporter_map = None
         self._relationship_metrics = None
@@ -307,15 +310,20 @@ class SupportRelationshipManager:
             # Calculate max depth
             max_depth = 0
             for claim in self.claims:
-                if claim.is_root_claim():
+                # Root claim has no supporters
+                if len(claim.supported_by) == 0:
                     descendants = self.get_all_supported_descendants(claim.id)
                     max_depth = max(max_depth, descendants.depth)
 
             # Count cycles
             cycles = self.detect_all_cycles()
 
-            # Count orphaned claims
-            orphaned = [claim for claim in self.claims if claim.is_orphaned()]
+            # Count orphaned claims (no supporters and no supported)
+            orphaned = [
+                claim
+                for claim in self.claims
+                if len(claim.supported_by) == 0 and len(claim.supports) == 0
+            ]
 
             # Calculate average branching factor
             branching_factors = [
@@ -454,7 +462,7 @@ class SupportRelationshipManager:
     def refresh(self, new_claims: List[Claim]) -> None:
         """Refresh the relationship manager with new claim data"""
         self.claims = new_claims
-        self.claim_index = Claim.create_claim_index(new_claims)
+        self.claim_index = {claim.id: claim for claim in new_claims}
         self._relationship_metrics = None
         self._build_relationship_maps()
 
