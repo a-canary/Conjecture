@@ -12,6 +12,29 @@
 
 ## High Priority Tasks
 
+### 🚨 Code Size Constraints (CRITICAL - 8.4x OVER BUDGET!)
+- [ ] **PROJECT MUST NOT EXCEED 10k LINES PER CATEGORY**
+  - Product src code: **83,734 lines** (target: ≤10,000) - **837% OVER** 🚨
+  - Testing code: **12,022 lines** (target: ≤10,000) - **20% over** ⚠️
+  - Benchmark code: **30,691 lines** (target: ≤10,000) - **307% OVER** 🚨
+  - **TOTAL**: 126,447 lines (target: 30,000) - **422% OVER BUDGET**
+  - **MUST REDUCE BY**: 96,447 lines (76% of current codebase!)
+  - **See**: CODE_SIZE_REDUCTION_PLAN.md for detailed strategy
+  - **Immediate Actions**:
+    1. ✅ Measured current size (83.7k src, 12k tests, 30.7k benchmarks)
+    2. ✅ Created reduction plan (CODE_SIZE_REDUCTION_PLAN.md)
+    3. [ ] Archive 86% dead code (-40k lines estimated)
+    4. [ ] Move src/benchmarking/ to benchmarks/ (-5k lines from src/)
+    5. [ ] Delete duplicate CLIs (keep one, delete 2) (-1.5k lines)
+    6. [ ] Delete duplicate SQLite managers (keep one) (-800 lines)
+    7. [ ] Consolidate prompt templates (5 files → 2 files) (-2.5k lines)
+    8. [ ] Archive non-critical monitoring/scaling code (-3k lines)
+    9. [ ] Continue aggressive reduction per plan
+  - **Week 1 Target**: Reduce src/ from 83,734 → 30,000 lines (-64% reduction)
+  - **Week 3 Target**: Reduce src/ from 30,000 → 10,000 lines (full compliance)
+  - **Rationale**: Keep project maintainable, focused, and comprehensible
+  - **Priority**: CRITICAL - STOP ALL NEW FEATURES until size compliant
+
 ### Testing & Quality
 - [x] Fix async test failures (pytest-asyncio configured properly) - Cycle 29
 - [x] Add missing batch operations to OptimizedSQLiteManager - Cycle 29
