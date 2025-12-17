@@ -101,7 +101,7 @@ class ProcessingConfig(BaseModel):
     timeout_seconds: int = Field(default=300, description="Timeout for processing operations")
     retry_attempts: int = Field(default=3, description="Number of retry attempts for failed operations")
     
-    model_config = ConfigDict(extra="allow")
+    model_config = ConfigDict(extra="allow", protected_namespaces=())
 
 class ProcessingRequest(BaseModel):
     """Request for claim processing."""
@@ -113,7 +113,7 @@ class ProcessingRequest(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional request metadata")
     requested_at: datetime = Field(default_factory=datetime.utcnow, description="When the request was made")
     
-    model_config = ConfigDict()
+    model_config = ConfigDict(protected_namespaces=())
     
     @field_serializer('requested_at')
     def serialize_requested_at(self, value: datetime) -> str:
@@ -131,7 +131,7 @@ class ProcessingBatch(BaseModel):
     config: Optional[ProcessingConfig] = Field(None, description="Batch-level configuration")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="When the batch was created")
     
-    model_config = ConfigDict()
+    model_config = ConfigDict(protected_namespaces=())
     
     @field_serializer('created_at')
     def serialize_created_at(self, value: datetime) -> str:

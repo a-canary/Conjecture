@@ -13,6 +13,7 @@ from typing import Dict, List, Any, Optional
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from deepeval import evaluate
+from pydantic import ConfigDict
 from deepeval.metrics import (
     AnswerRelevancyMetric,
     FaithfulnessMetric,
@@ -39,6 +40,8 @@ except ImportError:
 
 class ConjectureModelWrapper(DeepEvalBaseModel):
     """Wrapper for Conjecture models to work with DeepEval"""
+    
+    model_config = ConfigDict(protected_namespaces=())
 
     def __init__(self, model_name: str, use_conjecture: bool = False):
         self.model_name = model_name

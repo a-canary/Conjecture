@@ -11,11 +11,15 @@ class DirtyEvaluationConfig(BaseModel):
     """Configuration for dirty evaluation"""
     enabled: bool = True
     threshold: float = 0.5
+    
+    model_config = ConfigDict(protected_namespaces=())
 
 class DirtyClaimBatch(BaseModel):
     """Batch of dirty claims for evaluation"""
     claims: List[Dict[str, Any]] = []
     timestamp: datetime = datetime.now()
+    
+    model_config = ConfigDict(protected_namespaces=())
 
 class DirtyEvaluator:
     """Real-time dirty evaluation for testing"""

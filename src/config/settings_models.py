@@ -298,7 +298,8 @@ class ConjectureSettings(BaseModel):
     model_config = ConfigDict(
         validate_assignment=True,
         extra="forbid",
-        frozen=False
+        frozen=False,
+        protected_namespaces=()
     )
 
     # Core settings

@@ -41,13 +41,19 @@ class ChatRequest(BaseModel):
 
 class TellUserRequest(BaseModel):
     message: str
+    
+    model_config = ConfigDict(protected_namespaces=())
 
 class AskUserRequest(BaseModel):
     question: str
+    
+    model_config = ConfigDict(protected_namespaces=())
 
 class ModelInfo(BaseModel):
     name: str
     description: str
+    
+    model_config = ConfigDict(protected_namespaces=())
     capabilities: list
 
 @app.post("/v1/chat/completions")

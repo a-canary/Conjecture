@@ -105,7 +105,7 @@ class APIResponse(BaseModel):
     message: str = Field("", description="Response message")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Response timestamp")
     
-    model_config = ConfigDict()
+    model_config = ConfigDict(protected_namespaces=())
     
     @field_serializer('timestamp')
     def serialize_timestamp(self, value: datetime) -> str:
@@ -118,7 +118,7 @@ class ErrorResponse(BaseModel):
     details: Optional[Dict[str, Any]] = Field(None, description="Additional error details")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Error timestamp")
     
-    model_config = ConfigDict()
+    model_config = ConfigDict(protected_namespaces=())
     
     @field_serializer('timestamp')
     def serialize_timestamp(self, value: datetime) -> str:

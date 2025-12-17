@@ -49,7 +49,7 @@ class ProcessingResult:
 
     def add_metadata(self, key: str, value: Any):
         """Add metadata entry"""
-        self.metadata[key] = value
+        self.result_metadata[key] = value
 
     def get_summary(self) -> str:
         """Get a human-readable summary"""
@@ -69,7 +69,7 @@ class ProcessingResult:
             "warnings": self.warnings,
             "execution_time": self.execution_time,
             "tokens_used": self.tokens_used,
-            "metadata": self.metadata,
+            "metadata": self.result_metadata,
             "message": self.message,
             "started_at": self.started_at.isoformat() if self.started_at else None,
             "completed_at": self.completed_at.isoformat()

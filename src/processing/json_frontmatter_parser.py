@@ -66,6 +66,8 @@ class JSONClaimData(BaseModel):
     type: Optional[str] = Field(None, description="Claim type")
     tags: Optional[List[str]] = Field(default_factory=list, description="Additional tags")
     metadata: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Additional metadata")
+    
+    model_config = ConfigDict(protected_namespaces=())
 
     @field_validator('id')
     @classmethod
@@ -96,6 +98,8 @@ class JSONFrontmatterData(BaseModel):
     analysis: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Analysis data")
     metadata: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Additional metadata")
     version: str = Field(default="1.0", description="Format version")
+    
+    model_config = ConfigDict(protected_namespaces=())
     timestamp: Optional[str] = Field(None, description="Response timestamp")
 
     @field_validator('timestamp')
