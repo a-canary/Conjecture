@@ -845,3 +845,68 @@ Only keep the 50 most recent finished tasks.
 - [ ] Implement flags for time-sensitive claims
 - [ ] Test temporal accuracy improvements
 - [ ] Measure workflow accuracy improvements
+
+## 146 | Add SciCode Benchmark Integration | HIGH | open
+**Description**: Integrating SciCode benchmark will expand evaluation coverage to scientific reasoning and code generation tasks
+**Purpose**: Comprehensive benchmark coverage including scientific reasoning needed for better evaluation of Conjecture's capabilities
+**Plan**: .agent/plan/scicode_benchmark.md
+**Target**: SciCode benchmark fully integrated, results tracked in STATS.yaml, compatible with existing evaluation framework
+**Remaining work**:
+- [ ] Research SciCode benchmark format and requirements
+- [ ] Implement SciCode task generation and evaluation
+- [ ] Add to external_benchmarks.py framework
+- [ ] Create test cases for SciCode integration
+- [ ] Update STATS.yaml to track SciCode results
+- [ ] Verify compatibility with existing evaluation system
+
+## 147 | Add MMLU-Pro Benchmark Integration | HIGH | open
+**Description**: Integrating MMLU-Pro benchmark will expand evaluation coverage to advanced multitask language understanding
+**Purpose**: Comprehensive benchmark coverage including advanced reasoning needed for better evaluation of Conjecture's capabilities
+**Plan**: .agent/plan/mmlu_pro_benchmark.md
+**Target**: MMLU-Pro benchmark fully integrated, results tracked in STATS.yaml, compatible with existing evaluation framework
+**Remaining work**:
+- [ ] Research MMLU-Pro benchmark format and requirements
+- [ ] Implement MMLU-Pro task generation and evaluation
+- [ ] Add to external_benchmarks.py framework
+- [ ] Create test cases for MMLU-Pro integration
+- [ ] Update STATS.yaml to track MMLU-Pro results
+- [ ] Verify compatibility with existing evaluation system
+
+## 148 | Add TauBench Benchmark Integration | HIGH | open
+**Description**: Integrating TauBench benchmark will expand evaluation coverage to complex reasoning and problem-solving tasks
+**Purpose**: Comprehensive benchmark coverage including complex reasoning needed for better evaluation of Conjecture's capabilities
+**Plan**: .agent/plan/taubench_benchmark.md
+**Target**: TauBench benchmark fully integrated, results tracked in STATS.yaml, compatible with existing evaluation framework
+**Remaining work**:
+- [ ] Research TauBench benchmark format and requirements
+- [ ] Implement TauBench task generation and evaluation
+- [ ] Add to external_benchmarks.py framework
+- [ ] Create test cases for TauBench integration
+- [ ] Update STATS.yaml to track TauBench results
+- [ ] Verify compatibility with existing evaluation system
+
+## 149 | Add LiveCodeBench v6 Benchmark Integration | HIGH | open
+**Description**: Integrating LiveCodeBench v6 benchmark will expand evaluation coverage to real-time code generation and programming tasks
+**Purpose**: Comprehensive benchmark coverage including live coding tasks needed for better evaluation of Conjecture's capabilities
+**Plan**: .agent/plan/livecodebench_v6_benchmark.md
+**Target**: LiveCodeBench v6 benchmark fully integrated, results tracked in STATS.yaml, compatible with existing evaluation framework
+**Remaining work**:
+- [ ] Research LiveCodeBench v6 benchmark format and requirements
+- [ ] Implement LiveCodeBench v6 task generation and evaluation
+- [ ] Add to external_benchmarks.py framework
+- [ ] Create test cases for LiveCodeBench v6 integration
+- [ ] Update STATS.yaml to track LiveCodeBench v6 results
+- [ ] Verify compatibility with existing evaluation system
+
+## 150 | Add AA-LCR Benchmark Integration | HIGH | open
+**Description**: Integrating AA-LCR (Algorithmic Alignment - Long Context Reasoning) benchmark will expand evaluation coverage to long-context reasoning tasks
+**Purpose**: Comprehensive benchmark coverage including long-context reasoning needed for better evaluation of Conjecture's capabilities
+**Plan**: .agent/plan/aa_lcr_benchmark.md
+**Target**: AA-LCR benchmark fully integrated, results tracked in STATS.yaml, compatible with existing evaluation framework
+**Remaining work**:
+- [ ] Research AA-LCR benchmark format and requirements
+- [ ] Implement AA-LCR task generation and evaluation
+- [ ] Add to external_benchmarks.py framework
+- [ ] Create test cases for AA-LCR integration
+- [ ] Update STATS.yaml to track AA-LCR results
+- [ ] Verify compatibility with existing evaluation system

@@ -1,44 +1,1205 @@
 {
   "session_info": {
-    "total_session_time": 426.05420184135437,
-    "total_test_time": 425.62169130000984,
-    "overhead_time": 0.43251054134452716,
-    "timestamp": "2025-12-15T14:29:16.994149",
-    "exit_status": 1
+    "total_session_time": 0.7343020439147949,
+    "total_test_time": 0.018087999953422695,
+    "overhead_time": 0.7162140439613722,
+    "timestamp": "2025-12-17T01:08:13.010666",
+    "exit_status": 0
   },
   "summary": {
-    "total_tests": 1,
-    "passed": 0,
-    "failed": 1,
-    "skipped": 0,
-    "average_test_time": 425.62169130000984,
+    "total_tests": 130,
+    "passed": 122,
+    "failed": 0,
+    "skipped": 8,
+    "average_test_time": 0.00013913846118017458,
     "slowest_test": {
-      "nodeid": "test_e2e_configuration_driven.py::TestConfigurationDrivenProcessingE2E::test_local_providers_configuration",
+      "nodeid": "test_dirty_flag.py::TestCacheManagement::test_rebuild_cache",
       "setup_duration": 0,
-      "call_duration": 425.62169130000984,
+      "call_duration": 0.00044329999946057796,
       "teardown_duration": 0,
-      "total_duration": 425.62169130000984,
-      "outcome": "failed",
+      "total_duration": 0.00044329999946057796,
+      "outcome": "passed",
       "markers": []
     },
     "fastest_test": {
-      "nodeid": "test_e2e_configuration_driven.py::TestConfigurationDrivenProcessingE2E::test_local_providers_configuration",
+      "nodeid": "test_dirty_flag.py::TestPriorityCalculation::test_calculate_priority_low_confidence",
       "setup_duration": 0,
-      "call_duration": 425.62169130000984,
+      "call_duration": 8.789999992586672e-05,
       "teardown_duration": 0,
-      "total_duration": 425.62169130000984,
-      "outcome": "failed",
+      "total_duration": 8.789999992586672e-05,
+      "outcome": "passed",
       "markers": []
     }
   },
   "test_durations": [
     {
-      "nodeid": "test_e2e_configuration_driven.py::TestConfigurationDrivenProcessingE2E::test_local_providers_configuration",
+      "nodeid": "test_dirty_flag.py::TestCacheManagement::test_rebuild_cache",
       "setup_duration": 0,
-      "call_duration": 425.62169130000984,
+      "call_duration": 0.00044329999946057796,
       "teardown_duration": 0,
-      "total_duration": 425.62169130000984,
-      "outcome": "failed",
+      "total_duration": 0.00044329999946057796,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestCacheManagement::test_rebuild_cache_clears_existing",
+      "setup_duration": 0,
+      "call_duration": 0.00039260000630747527,
+      "teardown_duration": 0,
+      "total_duration": 0.00039260000630747527,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestConfidencePropagation::test_propagate_confidence_updates_simple",
+      "setup_duration": 0,
+      "call_duration": 0.0003188999980920926,
+      "teardown_duration": 0,
+      "total_duration": 0.0003188999980920926,
+      "outcome": "skipped",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestRelationshipValidation::test_validate_relationship_integrity_missing_supporter",
+      "setup_duration": 0,
+      "call_duration": 0.00023650001094210893,
+      "teardown_duration": 0,
+      "total_duration": 0.00023650001094210893,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestFilterOperations::test_filter_claims_by_confidence_range",
+      "setup_duration": 0,
+      "call_duration": 0.00020700000459328294,
+      "teardown_duration": 0,
+      "total_duration": 0.00020700000459328294,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestGetDirtyClaims::test_get_dirty_claims_with_max_count",
+      "setup_duration": 0,
+      "call_duration": 0.00020460000087041408,
+      "teardown_duration": 0,
+      "total_duration": 0.00020460000087041408,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestSuggestRelationships::test_suggest_support_relationships_max_suggestions",
+      "setup_duration": 0,
+      "call_duration": 0.00019729998894035816,
+      "teardown_duration": 0,
+      "total_duration": 0.00019729998894035816,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestUpdateConfidence::test_update_confidence_invalid_too_low",
+      "setup_duration": 0,
+      "call_duration": 0.00019130000146105886,
+      "teardown_duration": 0,
+      "total_duration": 0.00019130000146105886,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestClaimCategories::test_find_leaf_claims_multiple",
+      "setup_duration": 0,
+      "call_duration": 0.00018730000010691583,
+      "teardown_duration": 0,
+      "total_duration": 0.00018730000010691583,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestBidirectionalRelationships::test_establish_bidirectional_relationship",
+      "setup_duration": 0,
+      "call_duration": 0.00018459999409969896,
+      "teardown_duration": 0,
+      "total_duration": 0.00018459999409969896,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestClearDirtyFlags::test_clear_all_dirty_flags",
+      "setup_duration": 0,
+      "call_duration": 0.00017719999596010894,
+      "teardown_duration": 0,
+      "total_duration": 0.00017719999596010894,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestDirtyFlagSystemInitialization::test_initialization_with_zero_depth",
+      "setup_duration": 0,
+      "call_duration": 0.00017500000831205398,
+      "teardown_duration": 0,
+      "total_duration": 0.00017500000831205398,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipStatistics::test_get_relationship_statistics_comprehensive",
+      "setup_duration": 0,
+      "call_duration": 0.00016849998792167753,
+      "teardown_duration": 0,
+      "total_duration": 0.00016849998792167753,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestBidirectionalRelationships::test_establish_bidirectional_relationship_preserves_existing",
+      "setup_duration": 0,
+      "call_duration": 0.0001660999987507239,
+      "teardown_duration": 0,
+      "total_duration": 0.0001660999987507239,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestGetPriorityDirtyClaims::test_get_priority_dirty_claims",
+      "setup_duration": 0,
+      "call_duration": 0.00015800000983290374,
+      "teardown_duration": 0,
+      "total_duration": 0.00015800000983290374,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipAnalysis::test_analyze_claim_relationships_full_connections",
+      "setup_duration": 0,
+      "call_duration": 0.00015740000526420772,
+      "teardown_duration": 0,
+      "total_duration": 0.00015740000526420772,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipMaps::test_create_support_map_simple",
+      "setup_duration": 0,
+      "call_duration": 0.00015580000763293356,
+      "teardown_duration": 0,
+      "total_duration": 0.00015580000763293356,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestValidateConsistency::test_validate_relationship_consistency_valid",
+      "setup_duration": 0,
+      "call_duration": 0.00015310000162571669,
+      "teardown_duration": 0,
+      "total_duration": 0.00015310000162571669,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestGetDirtyClaims::test_get_dirty_claims_from_list",
+      "setup_duration": 0,
+      "call_duration": 0.00015259999781847,
+      "teardown_duration": 0,
+      "total_duration": 0.00015259999781847,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipStatistics::test_get_relationship_statistics_averages",
+      "setup_duration": 0,
+      "call_duration": 0.00015249999705702066,
+      "teardown_duration": 0,
+      "total_duration": 0.00015249999705702066,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestGetDirtyClaims::test_get_dirty_claims_prioritized",
+      "setup_duration": 0,
+      "call_duration": 0.0001520000078016892,
+      "teardown_duration": 0,
+      "total_duration": 0.0001520000078016892,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRemoveRelationships::test_remove_supports_relationship",
+      "setup_duration": 0,
+      "call_duration": 0.00015110000094864517,
+      "teardown_duration": 0,
+      "total_duration": 0.00015110000094864517,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestConfidencePropagation::test_propagate_confidence_updates_missing_claim",
+      "setup_duration": 0,
+      "call_duration": 0.00015100000018719584,
+      "teardown_duration": 0,
+      "total_duration": 0.00015100000018719584,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestValidateConsistency::test_validate_relationship_consistency_circular",
+      "setup_duration": 0,
+      "call_duration": 0.00014779999037273228,
+      "teardown_duration": 0,
+      "total_duration": 0.00014779999037273228,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRemoveRelationships::test_remove_supports_relationship_nonexistent",
+      "setup_duration": 0,
+      "call_duration": 0.00014709999959450215,
+      "teardown_duration": 0,
+      "total_duration": 0.00014709999959450215,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestValidateConsistency::test_validate_relationship_consistency_orphaned_validated",
+      "setup_duration": 0,
+      "call_duration": 0.00014709999959450215,
+      "teardown_duration": 0,
+      "total_duration": 0.00014709999959450215,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestSuggestRelationships::test_suggest_support_relationships_excludes_existing",
+      "setup_duration": 0,
+      "call_duration": 0.00014699999883305281,
+      "teardown_duration": 0,
+      "total_duration": 0.00014699999883305281,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestUpdateConfidence::test_update_confidence_preserves_relationships",
+      "setup_duration": 0,
+      "call_duration": 0.00014679999731015414,
+      "teardown_duration": 0,
+      "total_duration": 0.00014679999731015414,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestDirtyStatistics::test_get_dirty_statistics_basic",
+      "setup_duration": 0,
+      "call_duration": 0.000145800004247576,
+      "teardown_duration": 0,
+      "total_duration": 0.000145800004247576,
+      "outcome": "skipped",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipHeatmap::test_create_relationship_heatmap_simple",
+      "setup_duration": 0,
+      "call_duration": 0.00014570000348612666,
+      "teardown_duration": 0,
+      "total_duration": 0.00014570000348612666,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipStatistics::test_get_relationship_statistics_circular",
+      "setup_duration": 0,
+      "call_duration": 0.00014540000120177865,
+      "teardown_duration": 0,
+      "total_duration": 0.00014540000120177865,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipAnalysis::test_analyze_claim_relationships_supported_only",
+      "setup_duration": 0,
+      "call_duration": 0.0001453000004403293,
+      "teardown_duration": 0,
+      "total_duration": 0.0001453000004403293,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestFilterOperations::test_find_dirty_claims",
+      "setup_duration": 0,
+      "call_duration": 0.0001449999981559813,
+      "teardown_duration": 0,
+      "total_duration": 0.0001449999981559813,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestDirtyStatistics::test_dirty_statistics_priority_ranges",
+      "setup_duration": 0,
+      "call_duration": 0.0001446999958716333,
+      "teardown_duration": 0,
+      "total_duration": 0.0001446999958716333,
+      "outcome": "skipped",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestBatchOperations::test_batch_update_confidence_partial",
+      "setup_duration": 0,
+      "call_duration": 0.00014400000509340316,
+      "teardown_duration": 0,
+      "total_duration": 0.00014400000509340316,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestMarkClaimDirty::test_mark_dirty_with_different_reasons",
+      "setup_duration": 0,
+      "call_duration": 0.0001432999997632578,
+      "teardown_duration": 0,
+      "total_duration": 0.0001432999997632578,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestFilterOperations::test_filter_claims_by_type",
+      "setup_duration": 0,
+      "call_duration": 0.00014309999824035913,
+      "teardown_duration": 0,
+      "total_duration": 0.00014309999824035913,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestBatchOperations::test_batch_update_confidence_empty_updates",
+      "setup_duration": 0,
+      "call_duration": 0.00014220000593923032,
+      "teardown_duration": 0,
+      "total_duration": 0.00014220000593923032,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestRelationshipValidation::test_validate_relationship_integrity_valid",
+      "setup_duration": 0,
+      "call_duration": 0.00014119999832473695,
+      "teardown_duration": 0,
+      "total_duration": 0.00014119999832473695,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestGetDirtyClaims::test_get_dirty_claims_from_cache",
+      "setup_duration": 0,
+      "call_duration": 0.00014050000754650682,
+      "teardown_duration": 0,
+      "total_duration": 0.00014050000754650682,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestClaimCategories::test_find_orphaned_claims",
+      "setup_duration": 0,
+      "call_duration": 0.0001402000052621588,
+      "teardown_duration": 0,
+      "total_duration": 0.0001402000052621588,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestDirtyStatistics::test_dirty_statistics_reasons",
+      "setup_duration": 0,
+      "call_duration": 0.0001399999891873449,
+      "teardown_duration": 0,
+      "total_duration": 0.0001399999891873449,
+      "outcome": "skipped",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestSuggestRelationships::test_suggest_support_relationships_similar_content",
+      "setup_duration": 0,
+      "call_duration": 0.0001399000029778108,
+      "teardown_duration": 0,
+      "total_duration": 0.0001399000029778108,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRemoveRelationships::test_remove_support_relationship",
+      "setup_duration": 0,
+      "call_duration": 0.00013889999536331743,
+      "teardown_duration": 0,
+      "total_duration": 0.00013889999536331743,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestValidateConsistency::test_validate_relationship_consistency_missing_claim",
+      "setup_duration": 0,
+      "call_duration": 0.00013760000001639128,
+      "teardown_duration": 0,
+      "total_duration": 0.00013760000001639128,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipStatistics::test_get_relationship_statistics_all_orphaned",
+      "setup_duration": 0,
+      "call_duration": 0.00013760000001639128,
+      "teardown_duration": 0,
+      "total_duration": 0.00013760000001639128,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestRelationshipFinders::test_find_supporting_claims",
+      "setup_duration": 0,
+      "call_duration": 0.0001373999984934926,
+      "teardown_duration": 0,
+      "total_duration": 0.0001373999984934926,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipMaps::test_create_support_map_filters_missing_claims",
+      "setup_duration": 0,
+      "call_duration": 0.00013729999773204327,
+      "teardown_duration": 0,
+      "total_duration": 0.00013729999773204327,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestUpdateConfidence::test_update_confidence_boundary_high",
+      "setup_duration": 0,
+      "call_duration": 0.0001370999962091446,
+      "teardown_duration": 0,
+      "total_duration": 0.0001370999962091446,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestPrioritization::test_should_prioritize_clean_claim",
+      "setup_duration": 0,
+      "call_duration": 0.0001370999962091446,
+      "teardown_duration": 0,
+      "total_duration": 0.0001370999962091446,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestAddSupport::test_add_supports_duplicate",
+      "setup_duration": 0,
+      "call_duration": 0.00013679999392479658,
+      "teardown_duration": 0,
+      "total_duration": 0.00013679999392479658,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestSupportStrength::test_calculate_support_strength_multiple_supporters",
+      "setup_duration": 0,
+      "call_duration": 0.0001357000001007691,
+      "teardown_duration": 0,
+      "total_duration": 0.0001357000001007691,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestFilterOperations::test_filter_claims_by_tags_any",
+      "setup_duration": 0,
+      "call_duration": 0.0001357000001007691,
+      "teardown_duration": 0,
+      "total_duration": 0.0001357000001007691,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipMaps::test_create_supporter_map_simple",
+      "setup_duration": 0,
+      "call_duration": 0.00013499999477062374,
+      "teardown_duration": 0,
+      "total_duration": 0.00013499999477062374,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestSupportStrength::test_calculate_support_strength_single_supporter",
+      "setup_duration": 0,
+      "call_duration": 0.0001348999940091744,
+      "teardown_duration": 0,
+      "total_duration": 0.0001348999940091744,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestClaimCategories::test_find_leaf_claims",
+      "setup_duration": 0,
+      "call_duration": 0.00013479999324772507,
+      "teardown_duration": 0,
+      "total_duration": 0.00013479999324772507,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestDirtyFlagOperations::test_set_dirty_priority_when_clean",
+      "setup_duration": 0,
+      "call_duration": 0.00013410000246949494,
+      "teardown_duration": 0,
+      "total_duration": 0.00013410000246949494,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestClaimHierarchy::test_get_claim_hierarchy_with_supported",
+      "setup_duration": 0,
+      "call_duration": 0.00013390000094659626,
+      "teardown_duration": 0,
+      "total_duration": 0.00013390000094659626,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestUpdateConfidence::test_update_confidence_valid",
+      "setup_duration": 0,
+      "call_duration": 0.0001331000094069168,
+      "teardown_duration": 0,
+      "total_duration": 0.0001331000094069168,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipAnalysis::test_analyze_claim_relationships_orphaned",
+      "setup_duration": 0,
+      "call_duration": 0.00013270000636111945,
+      "teardown_duration": 0,
+      "total_duration": 0.00013270000636111945,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestAddSupport::test_add_support_duplicate",
+      "setup_duration": 0,
+      "call_duration": 0.00013270000636111945,
+      "teardown_duration": 0,
+      "total_duration": 0.00013270000636111945,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestAddSupport::test_add_support_new",
+      "setup_duration": 0,
+      "call_duration": 0.0001326000055996701,
+      "teardown_duration": 0,
+      "total_duration": 0.0001326000055996701,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestAddSupport::test_add_supports_new",
+      "setup_duration": 0,
+      "call_duration": 0.00013190000026952475,
+      "teardown_duration": 0,
+      "total_duration": 0.00013190000026952475,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestMarkClaimsByConfidenceThreshold::test_skip_already_dirty_claims",
+      "setup_duration": 0,
+      "call_duration": 0.00013179999950807542,
+      "teardown_duration": 0,
+      "total_duration": 0.00013179999950807542,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestUpdateConfidence::test_update_confidence_invalid_too_high",
+      "setup_duration": 0,
+      "call_duration": 0.00013120000949129462,
+      "teardown_duration": 0,
+      "total_duration": 0.00013120000949129462,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestCascadeDirtyFlags::test_cascade_prevents_infinite_loops",
+      "setup_duration": 0,
+      "call_duration": 0.0001311999949393794,
+      "teardown_duration": 0,
+      "total_duration": 0.0001311999949393794,
+      "outcome": "skipped",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipMaps::test_create_supporter_map_filters_missing_claims",
+      "setup_duration": 0,
+      "call_duration": 0.0001306000049225986,
+      "teardown_duration": 0,
+      "total_duration": 0.0001306000049225986,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestDirtyFlagOperations::test_set_dirty_priority_when_dirty",
+      "setup_duration": 0,
+      "call_duration": 0.00013010000111535192,
+      "teardown_duration": 0,
+      "total_duration": 0.00013010000111535192,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestDirtyFlagOperations::test_mark_clean",
+      "setup_duration": 0,
+      "call_duration": 0.0001300999865634367,
+      "teardown_duration": 0,
+      "total_duration": 0.0001300999865634367,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestClearDirtyFlags::test_clear_dirty_flags_with_reason_filter",
+      "setup_duration": 0,
+      "call_duration": 0.00012969999806955457,
+      "teardown_duration": 0,
+      "total_duration": 0.00012969999806955457,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestSupportStrength::test_calculate_support_strength_no_supporters",
+      "setup_duration": 0,
+      "call_duration": 0.0001294999965466559,
+      "teardown_duration": 0,
+      "total_duration": 0.0001294999965466559,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestDirtyFlagOperations::test_mark_dirty_with_reason",
+      "setup_duration": 0,
+      "call_duration": 0.00012940001033712178,
+      "teardown_duration": 0,
+      "total_duration": 0.00012940001033712178,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestFilterOperations::test_find_dirty_claims_with_priority",
+      "setup_duration": 0,
+      "call_duration": 0.00012910000805277377,
+      "teardown_duration": 0,
+      "total_duration": 0.00012910000805277377,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestPriorityCalculation::test_calculate_priority_high_confidence",
+      "setup_duration": 0,
+      "call_duration": 0.00012889999197795987,
+      "teardown_duration": 0,
+      "total_duration": 0.00012889999197795987,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestRelationshipValidation::test_validate_relationship_integrity_multiple_errors",
+      "setup_duration": 0,
+      "call_duration": 0.00012879999121651053,
+      "teardown_duration": 0,
+      "total_duration": 0.00012879999121651053,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipDataStructures::test_relationship_analysis_creation",
+      "setup_duration": 0,
+      "call_duration": 0.00012849998893216252,
+      "teardown_duration": 0,
+      "total_duration": 0.00012849998893216252,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestRelationshipFinders::test_find_supported_claims_empty",
+      "setup_duration": 0,
+      "call_duration": 0.0001281999866478145,
+      "teardown_duration": 0,
+      "total_duration": 0.0001281999866478145,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRemoveRelationships::test_remove_support_relationship_nonexistent",
+      "setup_duration": 0,
+      "call_duration": 0.0001281000004382804,
+      "teardown_duration": 0,
+      "total_duration": 0.0001281000004382804,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestOnClaimUpdated::test_on_claim_updated_content_change",
+      "setup_duration": 0,
+      "call_duration": 0.00012789999891538173,
+      "teardown_duration": 0,
+      "total_duration": 0.00012789999891538173,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestClaimHierarchy::test_get_claim_hierarchy_content_truncation",
+      "setup_duration": 0,
+      "call_duration": 0.00012740000966005027,
+      "teardown_duration": 0,
+      "total_duration": 0.00012740000966005027,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestUpdateConfidence::test_update_confidence_boundary_low",
+      "setup_duration": 0,
+      "call_duration": 0.00012689999130088836,
+      "teardown_duration": 0,
+      "total_duration": 0.00012689999130088836,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestRelationshipFinders::test_find_supported_claims",
+      "setup_duration": 0,
+      "call_duration": 0.00012660000356845558,
+      "teardown_duration": 0,
+      "total_duration": 0.00012660000356845558,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestFilterOperations::test_filter_claims_by_tags_all",
+      "setup_duration": 0,
+      "call_duration": 0.00012599999899975955,
+      "teardown_duration": 0,
+      "total_duration": 0.00012599999899975955,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestDirtyPropagation::test_update_claim_with_dirty_propagation_small_confidence_change",
+      "setup_duration": 0,
+      "call_duration": 0.00012589999823831022,
+      "teardown_duration": 0,
+      "total_duration": 0.00012589999823831022,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestDirtyPropagation::test_update_claim_with_dirty_propagation_content_change",
+      "setup_duration": 0,
+      "call_duration": 0.0001255999959539622,
+      "teardown_duration": 0,
+      "total_duration": 0.0001255999959539622,
+      "outcome": "skipped",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestPrioritization::test_should_prioritize_high_confidence",
+      "setup_duration": 0,
+      "call_duration": 0.00012549999519251287,
+      "teardown_duration": 0,
+      "total_duration": 0.00012549999519251287,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestMarkDirtyOnNewClaim::test_should_mark_related_skip_already_dirty",
+      "setup_duration": 0,
+      "call_duration": 0.00012549999519251287,
+      "teardown_duration": 0,
+      "total_duration": 0.00012549999519251287,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestMarkDirtyOnNewClaim::test_mark_dirty_on_new_claim_shared_types",
+      "setup_duration": 0,
+      "call_duration": 0.00012530000822152942,
+      "teardown_duration": 0,
+      "total_duration": 0.00012530000822152942,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestClaimCategories::test_find_orphaned_claims_none",
+      "setup_duration": 0,
+      "call_duration": 0.0001252000074600801,
+      "teardown_duration": 0,
+      "total_duration": 0.0001252000074600801,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestDirtyFlagOperations::test_mark_dirty_with_priority",
+      "setup_duration": 0,
+      "call_duration": 0.00012409999908413738,
+      "teardown_duration": 0,
+      "total_duration": 0.00012409999908413738,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestDirtyPropagation::test_update_claim_with_dirty_propagation_missing_supported_claim",
+      "setup_duration": 0,
+      "call_duration": 0.00012409999908413738,
+      "teardown_duration": 0,
+      "total_duration": 0.00012409999908413738,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestRelationshipValidation::test_validate_relationship_integrity_missing_supported",
+      "setup_duration": 0,
+      "call_duration": 0.00012379999679978937,
+      "teardown_duration": 0,
+      "total_duration": 0.00012379999679978937,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestClaimHierarchy::test_get_claim_hierarchy_with_supporters",
+      "setup_duration": 0,
+      "call_duration": 0.00012299999070819467,
+      "teardown_duration": 0,
+      "total_duration": 0.00012299999070819467,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestMarkDirtyOnNewClaim::test_should_mark_related_existing_relationships",
+      "setup_duration": 0,
+      "call_duration": 0.00012229999992996454,
+      "teardown_duration": 0,
+      "total_duration": 0.00012229999992996454,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestClaimHierarchy::test_get_claim_hierarchy_simple",
+      "setup_duration": 0,
+      "call_duration": 0.0001221999991685152,
+      "teardown_duration": 0,
+      "total_duration": 0.0001221999991685152,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipDataStructures::test_relationship_change_creation",
+      "setup_duration": 0,
+      "call_duration": 0.00012209999840706587,
+      "teardown_duration": 0,
+      "total_duration": 0.00012209999840706587,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestClaimCategories::test_find_root_claims_none",
+      "setup_duration": 0,
+      "call_duration": 0.00012090000382158905,
+      "teardown_duration": 0,
+      "total_duration": 0.00012090000382158905,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestMarkDirtyOnNewClaim::test_mark_dirty_on_new_claim_shared_tags",
+      "setup_duration": 0,
+      "call_duration": 0.00011979999544564635,
+      "teardown_duration": 0,
+      "total_duration": 0.00011979999544564635,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipHeatmap::test_create_relationship_heatmap_no_relationships",
+      "setup_duration": 0,
+      "call_duration": 0.00011879998783115298,
+      "teardown_duration": 0,
+      "total_duration": 0.00011879998783115298,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestOnClaimUpdated::test_on_claim_updated_confidence_change",
+      "setup_duration": 0,
+      "call_duration": 0.00011850000009872019,
+      "teardown_duration": 0,
+      "total_duration": 0.00011850000009872019,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestPrioritization::test_should_prioritize_custom_threshold",
+      "setup_duration": 0,
+      "call_duration": 0.00011840001388918608,
+      "teardown_duration": 0,
+      "total_duration": 0.00011840001388918608,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestMarkClaimsByConfidenceThreshold::test_mark_claims_below_threshold",
+      "setup_duration": 0,
+      "call_duration": 0.00011759999324567616,
+      "teardown_duration": 0,
+      "total_duration": 0.00011759999324567616,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestOnClaimUpdated::test_on_claim_updated_no_change",
+      "setup_duration": 0,
+      "call_duration": 0.00011750000703614205,
+      "teardown_duration": 0,
+      "total_duration": 0.00011750000703614205,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestDirtyPropagation::test_update_claim_with_dirty_propagation_confidence_change",
+      "setup_duration": 0,
+      "call_duration": 0.00011720000475179404,
+      "teardown_duration": 0,
+      "total_duration": 0.00011720000475179404,
+      "outcome": "skipped",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestClearDirtyFlags::test_clear_dirty_flags_basic",
+      "setup_duration": 0,
+      "call_duration": 0.00011680000170599669,
+      "teardown_duration": 0,
+      "total_duration": 0.00011680000170599669,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestRelationshipFinders::test_find_supporting_claims_empty",
+      "setup_duration": 0,
+      "call_duration": 0.0001162000116892159,
+      "teardown_duration": 0,
+      "total_duration": 0.0001162000116892159,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestClaimCategories::test_find_root_claims",
+      "setup_duration": 0,
+      "call_duration": 0.00011409999569877982,
+      "teardown_duration": 0,
+      "total_duration": 0.00011409999569877982,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestPrioritization::test_should_prioritize_dirty_low_confidence",
+      "setup_duration": 0,
+      "call_duration": 0.00011379999341443181,
+      "teardown_duration": 0,
+      "total_duration": 0.00011379999341443181,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestCacheManagement::test_invalidate_claim",
+      "setup_duration": 0,
+      "call_duration": 0.00011330000415910035,
+      "teardown_duration": 0,
+      "total_duration": 0.00011330000415910035,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestConfidencePropagation::test_propagate_confidence_updates_no_updates",
+      "setup_duration": 0,
+      "call_duration": 0.00011160000576637685,
+      "teardown_duration": 0,
+      "total_duration": 0.00011160000576637685,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_claim_operations.py::TestDirtyPropagation::test_update_claim_with_dirty_propagation_no_change",
+      "setup_duration": 0,
+      "call_duration": 0.00011130000348202884,
+      "teardown_duration": 0,
+      "total_duration": 0.00011130000348202884,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestMarkClaimsByConfidenceThreshold::test_mark_claims_custom_threshold",
+      "setup_duration": 0,
+      "call_duration": 0.0001109000004362315,
+      "teardown_duration": 0,
+      "total_duration": 0.0001109000004362315,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestCascadeDirtyFlags::test_cascade_to_related_claims",
+      "setup_duration": 0,
+      "call_duration": 0.00010869999823626131,
+      "teardown_duration": 0,
+      "total_duration": 0.00010869999823626131,
+      "outcome": "skipped",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestMarkClaimDirty::test_mark_claim_dirty_basic",
+      "setup_duration": 0,
+      "call_duration": 0.00010790000669658184,
+      "teardown_duration": 0,
+      "total_duration": 0.00010790000669658184,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestDirtyFlagSystemInitialization::test_default_initialization",
+      "setup_duration": 0,
+      "call_duration": 0.00010560000373516232,
+      "teardown_duration": 0,
+      "total_duration": 0.00010560000373516232,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipDepth::test_calculate_relationship_depth_simple",
+      "setup_duration": 0,
+      "call_duration": 0.00010559998918324709,
+      "teardown_duration": 0,
+      "total_duration": 0.00010559998918324709,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestCircularDependencies::test_detect_circular_dependencies_complex_cycle",
+      "setup_duration": 0,
+      "call_duration": 0.00010479999764356762,
+      "teardown_duration": 0,
+      "total_duration": 0.00010479999764356762,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestCircularDependencies::test_detect_circular_dependencies_no_cycles",
+      "setup_duration": 0,
+      "call_duration": 0.00010390000534243882,
+      "teardown_duration": 0,
+      "total_duration": 0.00010390000534243882,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestCircularDependencies::test_detect_circular_dependencies_simple_cycle",
+      "setup_duration": 0,
+      "call_duration": 0.00010390000534243882,
+      "teardown_duration": 0,
+      "total_duration": 0.00010390000534243882,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestCircularDependencies::test_detect_circular_dependencies_self_reference",
+      "setup_duration": 0,
+      "call_duration": 0.00010179998935200274,
+      "teardown_duration": 0,
+      "total_duration": 0.00010179998935200274,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestMarkClaimDirty::test_mark_dirty_updates_timestamp",
+      "setup_duration": 0,
+      "call_duration": 0.00010099999781232327,
+      "teardown_duration": 0,
+      "total_duration": 0.00010099999781232327,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipDepth::test_calculate_relationship_depth_single_node",
+      "setup_duration": 0,
+      "call_duration": 0.00010049999400507659,
+      "teardown_duration": 0,
+      "total_duration": 0.00010049999400507659,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipDepth::test_calculate_relationship_depth_cycle_handling",
+      "setup_duration": 0,
+      "call_duration": 0.00010019999172072858,
+      "teardown_duration": 0,
+      "total_duration": 0.00010019999172072858,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestDirtyFlagSystemInitialization::test_custom_initialization",
+      "setup_duration": 0,
+      "call_duration": 0.00010000000474974513,
+      "teardown_duration": 0,
+      "total_duration": 0.00010000000474974513,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestMarkClaimDirty::test_mark_dirty_priority_zero",
+      "setup_duration": 0,
+      "call_duration": 9.99999901978299e-05,
+      "teardown_duration": 0,
+      "total_duration": 9.99999901978299e-05,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestPriorityCalculation::test_calculate_priority_different_reasons",
+      "setup_duration": 0,
+      "call_duration": 9.73999995039776e-05,
+      "teardown_duration": 0,
+      "total_duration": 9.73999995039776e-05,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipStatistics::test_get_relationship_statistics_empty",
+      "setup_duration": 0,
+      "call_duration": 9.709999721962959e-05,
+      "teardown_duration": 0,
+      "total_duration": 9.709999721962959e-05,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_relationship_manager.py::TestRelationshipDepth::test_calculate_relationship_depth_branching",
+      "setup_duration": 0,
+      "call_duration": 9.639999188948423e-05,
+      "teardown_duration": 0,
+      "total_duration": 9.639999188948423e-05,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestCascadeDirtyFlags::test_cascade_respects_depth_limit",
+      "setup_duration": 0,
+      "call_duration": 9.129999671131372e-05,
+      "teardown_duration": 0,
+      "total_duration": 9.129999671131372e-05,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_dirty_flag.py::TestPriorityCalculation::test_calculate_priority_low_confidence",
+      "setup_duration": 0,
+      "call_duration": 8.789999992586672e-05,
+      "teardown_duration": 0,
+      "total_duration": 8.789999992586672e-05,
+      "outcome": "passed",
       "markers": []
     }
   ],
