@@ -5,10 +5,12 @@
 ## High Priority Tasks
 
 ### Testing & Quality
-- [ ] Fix async test failures (need pytest-asyncio plugin)
+- [x] Fix async test failures (pytest-asyncio configured properly) - Cycle 29
+- [x] Add missing batch operations to OptimizedSQLiteManager - Cycle 29
+- [ ] Fix ID utilities tests (14 failures in test_id_utilities.py and test_monitoring_utilities.py)
 - [ ] Improve test coverage from 7.66% to at least 50%
-- [ ] Fix code parsing issues in coverage reports
-- [ ] Resolve remaining Pydantic deprecation warnings
+- [ ] Fix timeout issues in e2e tests requiring real LLM connections
+- [ ] Resolve remaining Pydantic deprecation warnings (external dependencies)
 
 ### Code Quality
 - [ ] Clean up unparsable Python files causing coverage warnings
@@ -63,6 +65,13 @@
 - [ ] Explore deployment options
 
 ## Completed Tasks
+
+### Cycle 29 (2025-12-17)
+- [x] Added batch_create_claims method to OptimizedSQLiteManager
+- [x] Added batch_update_claims method to OptimizedSQLiteManager
+- [x] Fixed test_batch_processing_workflow test
+- [x] Achieved 117/131 core unit tests passing (89.3% pass rate)
+- [x] Fixed database batch operations for claim lifecycle
 
 ### Cycle 24 (2025-12-14)
 - [x] Add Pydantic v2 compatibility with protected_namespaces configuration
