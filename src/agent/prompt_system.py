@@ -23,6 +23,7 @@ from enum import Enum
 # Import for integration with Conjecture systems
 from src.config.unified_config import UnifiedConfig as Config
 
+
 class ProblemType(Enum):
     MATHEMATICAL = "mathematical"
     LOGICAL = "logical"
@@ -31,19 +32,23 @@ class ProblemType(Enum):
     SEQUENTIAL = "sequential"
     DECOMPOSITION = "decomposition"
 
+
 class Difficulty(Enum):
     EASY = "easy"
     MEDIUM = "medium"
     HARD = "hard"
 
+
 @dataclass
 class PromptResponse:
     """Structured response from prompt system"""
+
     response: str
     confidence: float
     reasoning: str
     prompt_type: str
     metadata: Dict[str, Any] = None
+
 
 class PromptSystem:
     """Enhanced prompt system with all proven reasoning capabilities"""
@@ -64,26 +69,120 @@ class PromptSystem:
         problem_lower = problem.lower()
 
         # Mathematical indicators
-        math_keywords = ['calculate', 'solve', 'compute', 'find', 'what is', 'how many', 'percent', 'area', 'volume', 'equation', 'variable', 'x', 'y', '+', '-', '*', '/', '=', 'square root', '√']
+        math_keywords = [
+            "calculate",
+            "solve",
+            "compute",
+            "find",
+            "what is",
+            "how many",
+            "percent",
+            "area",
+            "volume",
+            "equation",
+            "variable",
+            "x",
+            "y",
+            "+",
+            "-",
+            "*",
+            "/",
+            "=",
+            "square root",
+            "√",
+        ]
 
         # Logical indicators
-        logical_keywords = ['if', 'then', 'therefore', 'because', 'since', 'all', 'some', 'none', 'always', 'never', 'must', 'cannot', 'impossible', 'necessary', 'sufficient']
+        logical_keywords = [
+            "if",
+            "then",
+            "therefore",
+            "because",
+            "since",
+            "all",
+            "some",
+            "none",
+            "always",
+            "never",
+            "must",
+            "cannot",
+            "impossible",
+            "necessary",
+            "sufficient",
+            "implies",
+            "implication",
+        ]
 
         # Sequential/multi-step indicators
-        sequential_keywords = ['first', 'then', 'next', 'after that', 'finally', 'step', 'sequence', 'order', 'before', 'after']
+        sequential_keywords = [
+            "first",
+            "then",
+            "next",
+            "after that",
+            "finally",
+            "step",
+            "sequence",
+            "order",
+            "before",
+            "after",
+        ]
 
         # Scientific indicators
-        scientific_keywords = ['experiment', 'hypothesis', 'theory', 'observation', 'data', 'analysis', 'conclusion', 'method', 'procedure', 'result']
+        scientific_keywords = [
+            "experiment",
+            "hypothesis",
+            "theory",
+            "observation",
+            "data",
+            "analysis",
+            "conclusion",
+            "method",
+            "procedure",
+            "result",
+            "test",
+            "design",
+        ]
 
         # Decomposition indicators
-        decomposition_keywords = ['break down', 'analyze', 'components', 'parts', 'elements', 'factors', 'consider', 'separately', 'individually']
+        decomposition_keywords = [
+            "break down",
+            "analyze",
+            "components",
+            "parts",
+            "elements",
+            "factors",
+            "consider",
+            "separately",
+            "individually",
+        ]
 
-        # Count keyword matches
-        math_score = sum(1 for kw in math_keywords if kw in problem_lower)
-        logical_score = sum(1 for kw in logical_keywords if kw in problem_lower)
-        sequential_score = sum(1 for kw in sequential_keywords if kw in problem_lower)
-        scientific_score = sum(1 for kw in scientific_keywords if kw in problem_lower)
-        decomposition_score = sum(1 for kw in decomposition_keywords if kw in problem_lower)
+        # Count keyword matches (word-based matching)
+        problem_words = problem_lower.split()
+        math_score = sum(
+            1
+            for kw in math_keywords
+            if kw in problem_lower.split() or kw in problem_words
+        )
+        logical_score = sum(
+            1
+            for kw in logical_keywords
+            if kw in problem_lower.split() or kw in problem_words
+        )
+        sequential_score = sum(
+            1
+            for kw in sequential_keywords
+            if kw in problem_lower.split() or kw in problem_words
+        )
+        scientific_score = sum(
+            1
+            for kw in scientific_keywords
+            if kw in problem_lower.split() or kw in problem_words
+        )
+        decomposition_score = sum(
+            1
+            for kw in decomposition_keywords
+            if kw in problem_lower.split() or kw in problem_words
+        )
 
         # Determine primary type based on highest score
         scores = {
@@ -91,7 +190,7 @@ class PromptSystem:
             ProblemType.LOGICAL: logical_score,
             ProblemType.SEQUENTIAL: sequential_score,
             ProblemType.SCIENTIFIC: scientific_score,
-            ProblemType.DECOMPOSITION: decomposition_score
+            ProblemType.DECOMPOSITION: decomposition_score,
         }
 
         max_score = max(scores.values())
@@ -110,19 +209,51 @@ class PromptSystem:
 
         # Complexity indicators for hard problems
         hard_indicators = [
-            'prove', 'derive', 'theorem', 'lemma', 'corollary', 'complex',
-            'optimal', 'optimize', 'maximize', 'minimize', 'efficiency',
-            'algorithm', 'recursive', 'iteration', 'convergence', 'divergence'
+            "prove",
+            "derive",
+            "theorem",
+            "lemma",
+            "corollary",
+            "complex",
+            "optimal",
+            "optimize",
+            "maximize",
+            "minimize",
+            "efficiency",
+            "algorithm",
+            "recursive",
+            "iteration",
+            "convergence",
+            "divergence",
         ]
 
         # Simplicity indicators for easy problems
         easy_indicators = [
-            'what is', 'how many', 'find', 'calculate', 'simple', 'basic',
-            'single', 'one', 'first', 'just', 'only'
+            "what is",
+            "how many",
+            "find",
+            "calculate",
+            "simple",
+            "basic",
+            "single",
+            "one",
+            "first",
+            "just",
+            "only",
         ]
 
-        hard_score = sum(1 for ind in hard_indicators if ind in problem_lower)
-        easy_score = sum(1 for ind in easy_indicators if ind in problem_lower)
+        # Word-based matching for difficulty estimation
+        problem_words = problem_lower.split()
+        hard_score = sum(
+            1
+            for ind in hard_indicators
+            if ind in problem_lower.split() or ind in problem_words
+        )
+        easy_score = sum(
+            1
+            for ind in easy_indicators
+            if ind in problem_lower.split() or ind in problem_words
+        )
 
         if hard_score > easy_score:
             return Difficulty.HARD
@@ -131,7 +262,9 @@ class PromptSystem:
         else:
             return Difficulty.MEDIUM
 
-    def _get_domain_adaptive_prompt(self, problem: str, problem_type: ProblemType, difficulty: Difficulty) -> str:
+    def _get_domain_adaptive_prompt(
+        self, problem: str, problem_type: ProblemType, difficulty: Difficulty
+    ) -> str:
         """Generate domain-adaptive system prompt (Cycle 1 enhancement)"""
         if not self._domain_adaptive_enabled:
             return self._get_base_prompt()
@@ -146,7 +279,6 @@ MATHEMATICAL APPROACH:
 - State assumptions clearly
 - Provide exact answers when possible, approximate when necessary
 - Double-check calculations for accuracy""",
-
             ProblemType.LOGICAL: """You are Conjecture, a logical reasoning assistant designed to analyze arguments and solve puzzles systematically.
 
 LOGICAL APPROACH:
@@ -156,7 +288,6 @@ LOGICAL APPROACH:
 - Check for logical fallacies or inconsistencies
 - Consider edge cases and counterexamples
 - Build arguments step-by-step with clear justification""",
-
             ProblemType.SCIENTIFIC: """You are Conjecture, a scientific reasoning assistant designed to analyze scientific problems and data.
 
 SCIENTIFIC APPROACH:
@@ -166,7 +297,6 @@ SCIENTIFIC APPROACH:
 - Recognize limitations and uncertainties
 - Use appropriate scientific terminology
 - Distinguish between correlation and causation""",
-
             ProblemType.SEQUENTIAL: """You are Conjecture, a sequential reasoning assistant designed to solve multi-step problems systematically.
 
 SEQUENTIAL APPROACH:
@@ -176,7 +306,6 @@ SEQUENTIAL APPROACH:
 - Consider dependencies between steps
 - Maintain clear progression toward the solution
 - Check that no steps are overlooked""",
-
             ProblemType.DECOMPOSITION: """You are Conjecture, a decomposition reasoning assistant designed to break complex problems into manageable parts.
 
 DECOMPOSITION APPROACH:
@@ -186,7 +315,6 @@ DECOMPOSITION APPROACH:
 - Consider how components interact
 - Integrate partial solutions into a complete answer
 - Verify that all aspects are covered""",
-
             ProblemType.GENERAL: """You are Conjecture, a general reasoning assistant designed to solve problems thoughtfully and systematically.
 
 GENERAL APPROACH:
@@ -195,7 +323,7 @@ GENERAL APPROACH:
 - Show your reasoning clearly
 - Consider alternative perspectives
 - Verify your answer makes sense
-- Provide clear, well-structured responses"""
+- Provide clear, well-structured responses""",
         }
 
         prompt = base_prompts.get(problem_type, base_prompts[ProblemType.GENERAL])
@@ -210,7 +338,9 @@ GENERAL APPROACH:
 
         return prompt
 
-    def _get_context_for_problem_type(self, problem: str, problem_type: ProblemType) -> str:
+    def _get_context_for_problem_type(
+        self, problem: str, problem_type: ProblemType
+    ) -> str:
         """Get problem-type-specific context (Cycle 2 enhancement)"""
         if not self._context_integration_enabled:
             return ""
@@ -229,7 +359,6 @@ Common pitfalls to avoid:
 - Unit errors: ensure consistent units
 - Logic errors: verify the approach makes sense
 - Answer format: provide the requested format""",
-
             ProblemType.LOGICAL: """
 LOGICAL REASONING CONTEXT:
 - Deductive reasoning: General principles → specific conclusions
@@ -243,7 +372,6 @@ Common logical structures:
 - Pattern recognition and sequence completion
 - Causal relationships and correlations
 - Necessary vs sufficient conditions""",
-
             ProblemType.SCIENTIFIC: """
 SCIENTIFIC REASONING CONTEXT:
 - Variables: Independent, dependent, controlled
@@ -257,7 +385,6 @@ Key scientific principles:
 - Systematic observation and measurement
 - Evidence-based conclusions
 - Uncertainty and error analysis""",
-
             ProblemType.SEQUENTIAL: """
 SEQUENTIAL REASONING CONTEXT:
 - Step ordering: Identify prerequisite relationships
@@ -271,7 +398,6 @@ Common sequential patterns:
 - Multi-stage calculations
 - Project planning and scheduling
 - Process optimization and efficiency""",
-
             ProblemType.DECOMPOSITION: """
 PROBLEM DECOMPOSITION CONTEXT:
 - Component analysis: Identify main parts
@@ -285,14 +411,13 @@ Decomposition strategies:
 - Functional decomposition
 - Spatial/temporal breakdown
 - Causal factor analysis""",
-
             ProblemType.GENERAL: """
 GENERAL PROBLEM SOLVING CONTEXT:
 - Problem identification: What exactly is being asked?
 - Information gathering: What facts are relevant?
 - Strategy selection: What approach is most suitable?
 - Execution: Implement the chosen method
-- Verification: Does the answer make sense?"""
+- Verification: Does the answer make sense?""",
         }
 
         return contexts.get(problem_type, contexts[ProblemType.GENERAL])
@@ -305,17 +430,28 @@ GENERAL PROBLEM SOLVING CONTEXT:
         problem_lower = problem.lower()
 
         # Problem classification
-        if any(op in problem_lower for op in ['+', '-', '*', '×', '/', '÷']):
+        if any(op in problem_lower for op in ["+", "-", "*", "×", "/", "÷"]):
             prob_type = "arithmetic"
-        elif any(word in problem_lower for word in ['square root', 'sqrt', '√', 'power', 'exponent']):
+        elif any(
+            word in problem_lower
+            for word in ["square root", "sqrt", "√", "power", "exponent"]
+        ):
             prob_type = "roots_and_powers"
-        elif any(word in problem_lower for word in ['percent', '%', 'percentage']):
+        elif any(word in problem_lower for word in ["percent", "%", "percentage"]):
             prob_type = "percentage"
-        elif any(word in problem_lower for word in ['area', 'volume', 'perimeter', 'circumference']):
+        elif any(
+            word in problem_lower
+            for word in ["area", "volume", "perimeter", "circumference"]
+        ):
             prob_type = "geometry"
-        elif any(word in problem_lower for word in ['x', 'y', 'variable', 'equation', 'solve for']):
+        elif any(
+            word in problem_lower
+            for word in ["x", "y", "variable", "equation", "solve for"]
+        ):
             prob_type = "algebra"
-        elif any(word in problem_lower for word in ['rate', 'speed', 'distance', 'time']):
+        elif any(
+            word in problem_lower for word in ["rate", "speed", "distance", "time"]
+        ):
             prob_type = "rate_problems"
         else:
             prob_type = "general_math"
@@ -326,52 +462,52 @@ GENERAL PROBLEM SOLVING CONTEXT:
                 "Break down complex calculations into smaller steps",
                 "Estimate the answer before calculating",
                 "Verify by working backwards or using a different method",
-                "Check units and order of operations (PEMDAS/BODMAS)"
+                "Check units and order of operations (PEMDAS/BODMAS)",
             ],
             "roots_and_powers": [
                 "Test perfect squares/powers first",
                 "Use estimation to narrow the range",
                 "Apply appropriate formulas (a², √a, aⁿ)",
-                "Verify by inverse operation (√a × √a = a)"
+                "Verify by inverse operation (√a × √a = a)",
             ],
             "percentage": [
                 "Convert percentage to decimal (÷100)",
                 "Apply formula: part = whole × percentage",
                 "For percentage change: (new-old)/old × 100",
-                "Check if answer is reasonable (50% off should be half price)"
+                "Check if answer is reasonable (50% off should be half price)",
             ],
             "geometry": [
                 "Identify the shape and relevant formula",
                 "Ensure all measurements are in consistent units",
                 "Draw a diagram if helpful",
-                "Double-check calculations and final units"
+                "Double-check calculations and final units",
             ],
             "algebra": [
                 "Identify variables, constants, and coefficients",
                 "Choose method: substitution, elimination, factoring, etc.",
                 "Show each step of solving the equation",
-                "Check solution by substituting back into original equation"
+                "Check solution by substituting back into original equation",
             ],
             "rate_problems": [
                 "Identify what's being measured per unit of time/distance",
                 "Use formula: rate = distance/time or similar",
                 "Check units and convert if necessary",
-                "Consider if answer makes logical sense"
+                "Consider if answer makes logical sense",
             ],
             "general_math": [
                 "Understand what the problem is asking",
                 "Choose appropriate mathematical approach",
                 "Show work clearly",
-                "Verify answer is reasonable"
-            ]
+                "Verify answer is reasonable",
+            ],
         }
 
         selected_strategy = strategies.get(prob_type, strategies["general_math"])
 
         return {
-            'problem_type': prob_type,
-            'reasoning_strategy': selected_strategy,
-            'mathematical_enhancement_applied': True
+            "problem_type": prob_type,
+            "reasoning_strategy": selected_strategy,
+            "mathematical_enhancement_applied": True,
         }
 
     def _enhance_multistep_reasoning(self, problem: str) -> Dict[str, Any]:
@@ -382,12 +518,21 @@ GENERAL PROBLEM SOLVING CONTEXT:
         problem_lower = problem.lower()
 
         # Count sequential indicators
-        sequential_words = ['first', 'then', 'next', 'after', 'finally', 'step', 'before', 'following']
+        sequential_words = [
+            "first",
+            "then",
+            "next",
+            "after",
+            "finally",
+            "step",
+            "before",
+            "following",
+        ]
         step_count = sum(1 for word in sequential_words if word in problem_lower)
 
         # Count question marks and distinct clauses
-        question_count = problem.count('?')
-        clause_count = len(re.split(r'[;,\.]', problem)) if problem else 0
+        question_count = problem.count("?")
+        clause_count = len(re.split(r"[;,\.]", problem)) if problem else 0
 
         # Determine complexity
         if step_count >= 3 or question_count >= 2 or clause_count >= 4:
@@ -407,26 +552,26 @@ GENERAL PROBLEM SOLVING CONTEXT:
                 "Track intermediate results carefully",
                 "Verify each stage before proceeding",
                 "Consider alternative approaches",
-                "Perform final comprehensive check"
+                "Perform final comprehensive check",
             ],
             "medium": [
                 "Break into 3-4 logical steps",
                 "Show work for each step",
                 "Check connections between steps",
-                "Verify final answer"
+                "Verify final answer",
             ],
             "low": [
                 "Identify required steps (2-3)",
                 "Execute in correct order",
-                "Verify result"
-            ]
+                "Verify result",
+            ],
         }
 
         return {
-            'complexity_level': complexity,
-            'suggested_steps': suggested_steps,
-            'multistep_strategy': strategies.get(complexity, strategies["medium"]),
-            'multistep_enhancement_applied': True
+            "complexity_level": complexity,
+            "suggested_steps": suggested_steps,
+            "multistep_strategy": strategies.get(complexity, strategies["medium"]),
+            "multistep_enhancement_applied": True,
         }
 
     def _enhance_problem_decomposition(self, problem: str) -> Dict[str, Any]:
@@ -437,13 +582,22 @@ GENERAL PROBLEM SOLVING CONTEXT:
         problem_lower = problem.lower()
 
         # Identify decomposition approach
-        if any(word in problem_lower for word in ['component', 'part', 'piece', 'element']):
+        if any(
+            word in problem_lower for word in ["component", "part", "piece", "element"]
+        ):
             approach = "component_breakdown"
-        elif any(word in problem_lower for word in ['factor', 'cause', 'reason', 'why']):
+        elif any(
+            word in problem_lower for word in ["factor", "cause", "reason", "why"]
+        ):
             approach = "factor_analysis"
-        elif any(word in problem_lower for word in ['step', 'stage', 'phase', 'process']):
+        elif any(
+            word in problem_lower for word in ["step", "stage", "phase", "process"]
+        ):
             approach = "process_decomposition"
-        elif any(word in problem_lower for word in ['option', 'alternative', 'choice', 'either']):
+        elif any(
+            word in problem_lower
+            for word in ["option", "alternative", "choice", "either"]
+        ):
             approach = "alternative_analysis"
         else:
             approach = "general_decomposition"
@@ -454,38 +608,40 @@ GENERAL PROBLEM SOLVING CONTEXT:
                 "Identify all major components",
                 "Analyze each component separately",
                 "Consider component interactions",
-                "Integrate component analyses"
+                "Integrate component analyses",
             ],
             "factor_analysis": [
                 "List all contributing factors",
                 "Categorize factors by importance",
                 "Analyze factor relationships",
-                "Synthesize factor impacts"
+                "Synthesize factor impacts",
             ],
             "process_decomposition": [
                 "Map the complete process",
                 "Break into sequential stages",
                 "Analyze each stage's requirements",
-                "Ensure proper stage transitions"
+                "Ensure proper stage transitions",
             ],
             "alternative_analysis": [
                 "Identify all possible options",
                 "Evaluate each option's pros/cons",
                 "Compare against criteria",
-                "Select optimal solution"
+                "Select optimal solution",
             ],
             "general_decomposition": [
                 "Identify main problem aspects",
                 "Break into manageable subproblems",
                 "Address each subproblem systematically",
-                "Combine into comprehensive solution"
-            ]
+                "Combine into comprehensive solution",
+            ],
         }
 
         return {
-            'decomposition_approach': approach,
-            'decomposition_strategy': strategies.get(approach, strategies["general_decomposition"]),
-            'decomposition_enhancement_applied': True
+            "decomposition_approach": approach,
+            "decomposition_strategy": strategies.get(
+                approach, strategies["general_decomposition"]
+            ),
+            "decomposition_enhancement_applied": True,
         }
 
     def _get_self_verification_prompt(self, problem: str, response: str) -> str:
@@ -519,38 +675,38 @@ Review your work against this checklist and correct any issues."""
                 "Are all calculations shown clearly?",
                 "Is the final answer prominently stated?",
                 "Are units and format correct?",
-                "Does the answer address the specific mathematical question?"
+                "Does the answer address the specific mathematical question?",
             ],
             ProblemType.LOGICAL: [
                 "Is the reasoning structure clear?",
                 "Are assumptions stated explicitly?",
                 "Is the conclusion logically derived?",
-                "Are edge cases considered?"
+                "Are edge cases considered?",
             ],
             ProblemType.SCIENTIFIC: [
                 "Is the scientific method applied correctly?",
                 "Are hypotheses testable?",
                 "Is evidence properly interpreted?",
-                "Are limitations acknowledged?"
+                "Are limitations acknowledged?",
             ],
             ProblemType.SEQUENTIAL: [
                 "Are steps in the correct order?",
                 "Are all necessary steps included?",
                 "Are dependencies respected?",
-                "Is the sequence logical?"
+                "Is the sequence logical?",
             ],
             ProblemType.DECOMPOSITION: [
                 "Are all components addressed?",
                 "Is the decomposition complete?",
                 "Are component interactions considered?",
-                "Is the integration logical?"
+                "Is the integration logical?",
             ],
             ProblemType.GENERAL: [
                 "Is the answer clear and direct?",
                 "Is reasoning well-structured?",
                 "Is the response comprehensive?",
-                "Does it fully address the question?"
-            ]
+                "Does it fully address the question?",
+            ],
         }
 
         checks = critique_checks.get(problem_type, critique_checks[ProblemType.GENERAL])
@@ -584,7 +740,9 @@ Refine your response to meet these quality standards."""
         enhancements = {}
 
         # Domain-adaptive prompt (Cycle 1)
-        base_prompt = self._get_domain_adaptive_prompt(problem, problem_type, difficulty)
+        base_prompt = self._get_domain_adaptive_prompt(
+            problem, problem_type, difficulty
+        )
 
         # Context integration (Cycle 2)
         context = self._get_context_for_problem_type(problem, problem_type)
@@ -608,19 +766,25 @@ Refine your response to meet these quality standards."""
         if enhancements:
             enhancement_info = []
             for key, value in enhancements.items():
-                if key == 'reasoning_strategy' and value:
+                if key == "reasoning_strategy" and value:
                     enhancement_info.append(f"Strategy: {', '.join(value[:2])}")
-                elif key == 'multistep_strategy' and value:
+                elif key == "multistep_strategy" and value:
                     enhancement_info.append(f"Steps: {', '.join(value[:2])}")
-                elif key == 'decomposition_strategy' and value:
+                elif key == "decomposition_strategy" and value:
                     enhancement_info.append(f"Approach: {', '.join(value[:2])}")
 
             if enhancement_info:
-                enhanced_prompt += f"\n\nENHANCED APPROACH:\n" + "\n".join(enhancement_info)
+                enhanced_prompt += f"\n\nENHANCED APPROACH:\n" + "\n".join(
+                    enhancement_info
+                )
 
         # Add verification prompts
-        verification_prompt = self._get_self_verification_prompt(problem, "[Your response here]")
-        critique_prompt = self._quick_self_critique("[Your response here]", problem_type)
+        verification_prompt = self._get_self_verification_prompt(
+            problem, "[Your response here]"
+        )
+        critique_prompt = self._quick_self_critique(
+            "[Your response here]", problem_type
+        )
 
         if verification_prompt:
             enhanced_prompt += verification_prompt
@@ -650,12 +814,12 @@ Refine your response to meet these quality standards."""
             reasoning=f"Domain-adaptive {problem_type.value} processing with {len(enhancements)} enhancements applied",
             prompt_type="enhanced_conjecture",
             metadata={
-                'problem_type': problem_type.value,
-                'difficulty': difficulty.value,
-                'enhancements_applied': len(enhancements),
-                'enhancement_types': list(enhancements.keys()),
-                'cache_key': cache_key
-            }
+                "problem_type": problem_type.value,
+                "difficulty": difficulty.value,
+                "enhancements_applied": len(enhancements),
+                "enhancement_types": list(enhancements.keys()),
+                "cache_key": cache_key,
+            },
         )
 
         # Cache response
@@ -663,7 +827,12 @@ Refine your response to meet these quality standards."""
 
         return response
 
-    def get_system_prompt(self, problem_type: Optional[ProblemType] = None, difficulty: Optional[Difficulty] = None, problem: Optional[str] = None) -> str:
+    def get_system_prompt(
+        self,
+        problem_type: Optional[ProblemType] = None,
+        difficulty: Optional[Difficulty] = None,
+        problem: Optional[str] = None,
+    ) -> str:
         """Generate enhanced system prompt"""
 
         if problem:
@@ -693,42 +862,49 @@ Refine your response to meet these quality standards."""
     def get_enhancement_status(self) -> Dict[str, bool]:
         """Get status of all enhancements"""
         return {
-            'domain_adaptive': self._domain_adaptive_enabled,
-            'context_integration': self._context_integration_enabled,
-            'self_verification': self._self_verification_enabled,
-            'mathematical_reasoning': self._mathematical_reasoning_enabled,
-            'multistep_reasoning': self._multistep_reasoning_enabled,
-            'problem_decomposition': self._problem_decomposition_enabled,
-            'self_critique': self._self_critique_enabled
+            "domain_adaptive": self._domain_adaptive_enabled,
+            "context_integration": self._context_integration_enabled,
+            "self_verification": self._self_verification_enabled,
+            "mathematical_reasoning": self._mathematical_reasoning_enabled,
+            "multistep_reasoning": self._multistep_reasoning_enabled,
+            "problem_decomposition": self._problem_decomposition_enabled,
+            "self_critique": self._self_critique_enabled,
         }
+
 
 class ResponseParser:
     """Parse and structure responses from LLM models"""
 
     def __init__(self):
         self.parsing_strategies = {
-            'mathematical': self._parse_mathematical_response,
-            'logical': self._parse_logical_response,
-            'general': self._parse_general_response
+            "mathematical": self._parse_mathematical_response,
+            "logical": self._parse_logical_response,
+            "general": self._parse_general_response,
         }
 
-    def parse_response(self, response: str, problem_type: str = 'general') -> Dict[str, Any]:
+    def parse_response(
+        self, response: str, problem_type: str = "general"
+    ) -> Dict[str, Any]:
         """Parse LLM response into structured format"""
-        strategy = self.parsing_strategies.get(problem_type, self._parse_general_response)
+        strategy = self.parsing_strategies.get(
+            problem_type, self._parse_general_response
+        )
         return strategy(response)
 
     def _parse_mathematical_response(self, response: str) -> Dict[str, Any]:
         """Parse mathematical problem response"""
         # Look for numerical answers
         import re
-        numbers = re.findall(r'[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?', response)
+
+        numbers = re.findall(r"[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?", response)
 
         # Look for final answer patterns
         final_patterns = [
-            r'answer[:\s]*([-\d\.]+)',
-            r'result[:\s]*([-\d\.]+)',
-            r'equals?[:\s]*([-\d\.]+)',
-            r'=\s*([-\d\.]+)'
+            r"answer\s+is\s+([-\d\.]+)",  # "answer is 42" - specific handling
+            r"answer\s*:\s*([-\d\.]+)",  # "answer: 42"
+            r"result[:\s]*([-\d\.]+)",
+            r"equals?[:\s]*([-\d\.]+)",
+            r"=\s*([-\d\.]+)",
         ]
 
         final_answer = None
@@ -739,21 +915,21 @@ class ResponseParser:
                 break
 
         return {
-            'answer': final_answer or (numbers[-1] if numbers else None),
-            'workings': response,
-            'confidence': 'high' if final_answer else 'medium',
-            'numbers_found': numbers,
-            'has_final_answer': final_answer is not None
+            "answer": final_answer or (numbers[-1] if numbers else None),
+            "workings": response,
+            "confidence": "high" if final_answer else "medium",
+            "numbers_found": numbers,
+            "has_final_answer": final_answer is not None,
         }
 
     def _parse_logical_response(self, response: str) -> Dict[str, Any]:
         """Parse logical reasoning response"""
         # Look for conclusion patterns
         conclusion_patterns = [
-            r'conclusion[:\s]*(.+?)(?:\n|$)',
-            r'therefore[,:]?\s*(.+?)(?:\n|$)',
-            r'thus[,:]?\s*(.+?)(?:\n|$)',
-            r'hence[,:]?\s*(.+?)(?:\n|$)'
+            r"conclusion[:\s]*(.+?)(?:\n|$)",
+            r"therefore[,:]?\s*(.+?)(?:\n|$)",
+            r"thus[,:]?\s*(.+?)(?:\n|$)",
+            r"hence[,:]?\s*(.+?)(?:\n|$)",
         ]
 
         conclusion = None
@@ -764,30 +940,38 @@ class ResponseParser:
                 break
 
         return {
-            'conclusion': conclusion,
-            'reasoning': response,
-            'confidence': 'high' if conclusion else 'medium',
-            'has_conclusion': conclusion is not None
+            "conclusion": conclusion,
+            "reasoning": response,
+            "confidence": "high" if conclusion else "medium",
+            "has_conclusion": conclusion is not None,
         }
 
     def _parse_general_response(self, response: str) -> Dict[str, Any]:
         """Parse general problem response"""
         # Extract the last substantial sentence as potential answer
-        sentences = [s.strip() for s in response.split('.') if s.strip()]
+        sentences = [s.strip() for s in response.split(".") if s.strip()]
         answer = sentences[-1] if sentences else response[:200]
 
         return {
-            'answer': answer,
-            'full_response': response,
-            'confidence': 'medium',
-            'response_length': len(response)
+            "answer": answer,
+            "full_response": response,
+            "confidence": "medium",
+            "response_length": len(response),
         }
+
 
 # Legacy compatibility classes
 class PromptBuilder:
     """Legacy compatibility wrapper"""
+
     def __init__(self):
         self.system = PromptSystem()
 
-    def get_system_prompt(self, problem_type: Optional[ProblemType] = None, difficulty: Optional[Difficulty] = None) -> str:
-        return self.system.get_system_prompt(problem_type=problem_type, difficulty=difficulty)
+    def get_system_prompt(
+        self,
+        problem_type: Optional[ProblemType] = None,
+        difficulty: Optional[Difficulty] = None,
+    ) -> str:
+        return self.system.get_system_prompt(
+            problem_type=problem_type, difficulty=difficulty
+        )
