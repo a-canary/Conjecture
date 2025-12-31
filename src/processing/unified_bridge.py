@@ -1,221 +1,257 @@
 """
-Unified LLM Bridge Interface for Conjecture
-Provides clean abstraction between Conjecture API and unified LLM manager
-Follows single responsibility principle with minimal complexity
+=============================================================================
+GENERATED CODE - SC-FEAT-001 - TEST BRANCH
+=============================================================================
+Unified LLM Bridge for Conjecture
+Provides a unified interface for LLM interactions across all layers
+Wraps SimplifiedLLMManager for backward compatibility
+
+Modified 2025-12-30:
+  - Fixed GenerationConfig usage for OpenAICompatibleProcessor
+  - Added proper config parameter handling
+=============================================================================
 """
 
-from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
-from dataclasses import dataclass
 import time
-import logging
 
-try:
-    from ..core.models import Claim
-    from .unified_llm_manager import UnifiedLLMManager, get_unified_llm_manager
-    from ..utils.retry_utils import with_llm_retry, EnhancedRetryConfig
-except ImportError:
-    # Handle relative import issues for test compatibility
-    import sys
-    import os
-    # Add src directory to path for absolute imports
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-    from src.core.models import Claim
-    from src.processing.unified_llm_manager import UnifiedLLMManager, get_unified_llm_manager
-    from src.utils.retry_utils import with_llm_retry, EnhancedRetryConfig
+# SC-FEAT-001: Import GenerationConfig for proper LLM parameter handling
+from src.processing.llm.common import GenerationConfig
 
-# Configure logging
-logger = logging.getLogger(__name__)
 
 @dataclass
 class LLMRequest:
-    """Standardized LLM request structure"""
+    """Request object for LLM generation"""
 
     prompt: str
-    context_claims: Optional[List[Claim]] = None
-    max_tokens: int = 2048
-    temperature: float = 0.7
-    task_type: str = "general"  # explore, validate, analyze
+    max_tokens: int = 2000
+    temperature: float = 0.0
+    task_type: str = "generation"
+    provider: Optional[str] = None
+    model: Optional[str] = None
+    extra_params: Dict[str, Any] = field(default_factory=dict)
+
 
 @dataclass
 class LLMResponse:
-    """Standardized LLM response structure"""
+    """Response object from LLM generation"""
 
-    success: bool
     content: str
-    generated_claims: List[Claim]
-    metadata: Dict[str, Any]
-    errors: List[str]
-    processing_time: float
-    tokens_used: int
+    success: bool = True
+    errors: List[str] = field(default_factory=list)
+    model: Optional[str] = None
+    provider: Optional[str] = None
+    tokens_used: int = 0
+    processing_time: float = 0.0
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
 
 class UnifiedLLMBridge:
     """
-    Unified bridge between Conjecture API and LLM providers
-    Provides clean interface with no over-engineering
+    Unified LLM bridge providing consistent interface across all layers
+    Wraps SimplifiedLLMManager for backward compatibility with benchmarks
     """
 
-    def __init__(self, llm_manager: Optional[UnifiedLLMManager] = None, retry_config: Optional[EnhancedRetryConfig] = None):
-        self.llm_manager = llm_manager or get_unified_llm_manager()
-        self.retry_config = retry_config or EnhancedRetryConfig()
+    def __init__(self, llm_manager=None):
+        """
+        Initialize LLM bridge
 
-    @with_llm_retry(max_attempts=5, base_delay=10.0, max_delay=600.0)
-    def process(self, request: LLMRequest) -> LLMResponse:
-        """Process request using unified LLM manager with retry logic"""
-        start_time = time.time()
-        
-        try:
-            # Use unified LLM manager for processing
-            result = self.llm_manager.generate_response(
-                prompt=request.prompt,
-                max_tokens=request.max_tokens,
-                temperature=request.temperature,
-                provider=None  # Let manager choose optimal provider
-            )
-            
-            processing_time = time.time() - start_time
-            logger.info(f"LLM request processed successfully in {processing_time:.2f}s using provider: {result.get('provider', 'unified')}")
-            
-            return LLMResponse(
-                success=True,
-                content=result.get("content", ""),
-                generated_claims=[],
-                metadata={
-                    "provider": result.get("provider", "unified"),
-                    "model": result.get("model", "unknown"),
-                    "usage": result.get("usage", {}),
-                    "task_type": request.task_type,
-                    "retry_attempts": getattr(self, '_retry_attempts', 0)
-                },
-                errors=[],
-                processing_time=processing_time,
-                tokens_used=result.get("usage", {}).get("total_tokens", 0),
-            )
-            
-        except Exception as e:
-            processing_time = time.time() - start_time
-            retry_attempts = getattr(self, '_retry_attempts', 0)
-            logger.error(f"LLM request failed after {retry_attempts} attempts in {processing_time:.2f}s: {e}")
-            
-            return LLMResponse(
-                success=False,
-                content="",
-                generated_claims=[],
-                metadata={
-                    "retry_attempts": retry_attempts,
-                    "error_type": type(e).__name__
-                },
-                errors=[f"Unified LLM processing failed: {e}"],
-                processing_time=processing_time,
-                tokens_used=0,
-            )
+        Args:
+            llm_manager: SimplifiedLLMManager instance. If None, creates one.
+        """
+        if llm_manager is None:
+            from .simplified_llm_manager import get_simplified_llm_manager
 
-    @with_llm_retry(max_attempts=5, base_delay=10.0, max_delay=600.0)
-    def process_claims(
-        self,
-        claims: List[Claim],
-        task: str = "analyze",
-        **kwargs
-    ) -> LLMResponse:
-        """Process claims using unified LLM manager with retry logic"""
-        start_time = time.time()
-        
-        try:
-            # Use unified LLM manager for claim processing
-            result = self.llm_manager.process_claims(
-                claims=claims,
-                task=task,
-                **kwargs
-            )
-            
-            processing_time = time.time() - start_time
-            logger.info(f"Claim processing completed successfully in {processing_time:.2f}s using provider: {result.get('provider', 'unified')}")
-            
-            return LLMResponse(
-                success=True,
-                content=result.get("content", ""),
-                generated_claims=result.get("generated_claims", []),
-                metadata={
-                    "provider": result.get("provider", "unified"),
-                    "model": result.get("model", "unknown"),
-                    "usage": result.get("usage", {}),
-                    "task": task,
-                    "claims_processed": len(claims),
-                    "retry_attempts": getattr(self, '_retry_attempts', 0)
-                },
-                errors=[],
-                processing_time=processing_time,
-                tokens_used=result.get("usage", {}).get("total_tokens", 0),
-            )
-            
-        except Exception as e:
-            processing_time = time.time() - start_time
-            retry_attempts = getattr(self, '_retry_attempts', 0)
-            logger.error(f"Claim processing failed after {retry_attempts} attempts in {processing_time:.2f}s: {e}")
-            
-            return LLMResponse(
-                success=False,
-                content="",
-                generated_claims=[],
-                metadata={
-                    "retry_attempts": retry_attempts,
-                    "error_type": type(e).__name__,
-                    "claims_processed": len(claims)
-                },
-                errors=[f"Claim processing failed: {e}"],
-                processing_time=processing_time,
-                tokens_used=0,
-            )
+            self.llm_manager = get_simplified_llm_manager()
+        else:
+            self.llm_manager = llm_manager
 
     def is_available(self) -> bool:
-        """Check if unified LLM manager is available"""
-        return self.llm_manager is not None and len(self.llm_manager.get_available_providers()) > 0
+        """Check if any LLM providers are available"""
+        return (
+            self.llm_manager is not None
+            and len(self.llm_manager.get_available_providers()) > 0
+        )
 
-    def get_status(self) -> Dict[str, Any]:
-        """Get bridge status and provider information"""
-        if not self.llm_manager:
-            return {
-                "available": False,
-                "error": "No LLM manager available",
-                "bridge_type": "unified"
-            }
-        
-        provider_info = self.llm_manager.get_provider_info()
-        health_status = self.llm_manager.health_check()
-        
-        return {
-            "available": self.is_available(),
-            "bridge_type": "unified",
-            "provider_info": provider_info,
-            "health_status": health_status,
-            "primary_provider": self.llm_manager.primary_provider
-        }
+    def process(self, request: LLMRequest) -> LLMResponse:
+        """
+        Process an LLM request
 
-    def switch_provider(self, provider_name: str) -> bool:
-        """Switch to a specific provider"""
-        if not self.llm_manager:
-            return False
-        
-        return self.llm_manager.switch_provider(provider_name)
+        SC-FEAT-001: Fixed to use GenerationConfig object instead of kwargs
+
+        Args:
+            request: LLMRequest object containing prompt and parameters
+
+        Returns:
+            LLMResponse object with generation results
+        """
+        start_time = time.time()
+
+        try:
+            # SC-FEAT-001: Build GenerationConfig object (required by OpenAICompatibleProcessor)
+            config = GenerationConfig(
+                temperature=request.temperature,
+                max_tokens=request.max_tokens,
+                top_p=0.9,  # Default value
+            )
+
+            # Generate response with GenerationConfig
+            response = self.llm_manager.generate_response(
+                prompt=request.prompt,
+                provider=request.provider,
+                config=config,  # SC-FEAT-001: Pass config object, not kwargs
+            )
+
+            # Extract content from LLMProcessingResult
+            response_content = ""
+            if hasattr(response, "content"):
+                response_content = response.content
+            elif hasattr(response, "processed_claims") and response.processed_claims:
+                response_content = str(response.processed_claims)
+            else:
+                response_content = str(response)
+
+            # Extract model and provider info if available
+            processor = self.llm_manager.get_processor(request.provider)
+            provider_name = request.provider
+            if not provider_name and processor:
+                provider_name = self.llm_manager._get_provider_name(processor)
+
+            model_name = None
+            if processor:
+                model_name = getattr(processor, "model_name", None)
+            if not model_name and request.model:
+                model_name = request.model
+
+            tokens_used = 0
+            if hasattr(response, "tokens_used"):
+                tokens_used = response.tokens_used
+
+            processing_time = time.time() - start_time
+
+            return LLMResponse(
+                content=response_content,
+                success=getattr(response, "success", True),
+                errors=getattr(response, "errors", []),
+                model=model_name,
+                provider=provider_name,
+                tokens_used=tokens_used,
+                processing_time=processing_time,
+                metadata={"task_type": request.task_type},
+            )
+
+        except Exception as e:
+            processing_time = time.time() - start_time
+
+            # Get provider info even on error
+            provider_name = request.provider
+            try:
+                processor = self.llm_manager.get_processor(request.provider)
+                if processor:
+                    provider_name = self.llm_manager._get_provider_name(processor)
+            except:
+                pass
+
+            return LLMResponse(
+                content="",
+                success=False,
+                errors=[str(e)],
+                provider=provider_name,
+                processing_time=processing_time,
+                metadata={
+                    "task_type": request.task_type,
+                    "error_type": type(e).__name__,
+                },
+            )
+
+    async def process_async(self, request: LLMRequest) -> LLMResponse:
+        """
+        Async version of process method
+
+        Args:
+            request: LLMRequest object containing prompt and parameters
+
+        Returns:
+            LLMResponse object with generation results
+        """
+        # For now, process synchronously
+        # TODO: Add true async support when underlying processors support it
+        return self.process(request)
+
+    def batch_process(self, requests: List[LLMRequest]) -> List[LLMResponse]:
+        """
+        Process multiple LLM requests
+
+        Args:
+            requests: List of LLMRequest objects
+
+        Returns:
+            List of LLMResponse objects
+        """
+        return [self.process(req) for req in requests]
 
     def get_available_providers(self) -> List[str]:
-        """Get list of available providers"""
-        if not self.llm_manager:
-            return []
-        
+        """Get list of available provider names"""
         return self.llm_manager.get_available_providers()
 
-    def reset_failed_providers(self):
-        """Reset failed providers list"""
-        if self.llm_manager:
-            self.llm_manager.failed_providers.clear()
+    def health_check(self) -> Dict[str, Any]:
+        """Perform health check on LLM bridge"""
+        try:
+            health = self.llm_manager.health_check()
+            return {
+                "status": health.get("overall_status", "unknown"),
+                "available_providers": self.get_available_providers(),
+                "primary_provider": self.llm_manager.primary_provider,
+                "bridge_available": self.is_available(),
+            }
+        except Exception as e:
+            return {
+                "status": "unhealthy",
+                "bridge_available": False,
+                "error": str(e),
+                "available_providers": [],
+                "primary_provider": None,
+            }
+
+    def get_stats(self) -> Dict[str, Any]:
+        """Get statistics from LLM bridge"""
+        try:
+            return self.llm_manager.get_combined_stats()
+        except Exception as e:
+            return {
+                "error": str(e),
+                "total_providers": 0,
+                "available_providers": 0,
+            }
+
 
 # Global instance for easy access
-_unified_bridge = None
+_unified_llm_bridge = None
 
-def get_unified_bridge() -> UnifiedLLMBridge:
-    """Get the global unified bridge instance"""
-    global _unified_bridge
-    if _unified_bridge is None:
-        _unified_bridge = UnifiedLLMBridge()
-    return _unified_bridge
+
+def get_unified_bridge(llm_manager=None) -> UnifiedLLMBridge:
+    """
+    Get global unified LLM bridge instance
+
+    Args:
+        llm_manager: Optional LLM manager to use
+
+    Returns:
+        UnifiedLLMBridge instance
+    """
+    global _unified_llm_bridge
+    if _unified_llm_bridge is None:
+        _unified_llm_bridge = UnifiedLLMBridge(llm_manager=llm_manager)
+    return _unified_llm_bridge
+
+
+def reset_unified_bridge():
+    """Reset global unified LLM bridge instance"""
+    global _unified_llm_bridge
+    _unified_llm_bridge = None
+
+
+# ============================================================================
+# END OF GENERATED CODE - SC-FEAT-001 - TEST BRANCH
+# ============================================================================

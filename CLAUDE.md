@@ -38,7 +38,7 @@ ls src/benchmarking/cycle_results/
 cat src/benchmarking/cycle_results/cycle_XXX_results.json
 
 # Check progress documentation
-cat TODO.md
+cat .agent/backlog.md
 cat ANALYSIS_100_CYCLES.md
 ```
 

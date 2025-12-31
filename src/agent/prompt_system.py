@@ -24,6 +24,20 @@ from enum import Enum
 from src.config.unified_config import UnifiedConfig as Config
 
 
+def _keyword_matches(keyword: str, problem_lower: str) -> bool:
+    """Check if keyword matches in problem using appropriate strategy."""
+    # For single-character symbols, use direct substring match
+    if len(keyword) == 1 and not keyword.isalpha():
+        return keyword in problem_lower
+
+    # For multi-word phrases (contain space), use substring match
+    if " " in keyword:
+        return keyword in problem_lower
+
+    # For regular words, use word boundary matching
+    return bool(re.search(r"\b" + re.escape(keyword) + r"\b", problem_lower))
+
+
 class ProblemType(Enum):
     MATHEMATICAL = "mathematical"
     LOGICAL = "logical"
@@ -86,6 +100,7 @@ class PromptSystem:
             "+",
             "-",
             "*",
+            "×",
             "/",
             "=",
             "square root",
@@ -156,32 +171,21 @@ class PromptSystem:
             "individually",
         ]
 
-        # Count keyword matches (word-based matching)
-        problem_words = problem_lower.split()
+        # Count keyword matches using smart matching strategy
         math_score = sum(
-            1
-            for kw in math_keywords
-            if kw in problem_lower.split() or kw in problem_words
+            1 for kw in math_keywords if _keyword_matches(kw, problem_lower)
         )
         logical_score = sum(
-            1
-            for kw in logical_keywords
-            if kw in problem_lower.split() or kw in problem_words
+            1 for kw in logical_keywords if _keyword_matches(kw, problem_lower)
         )
         sequential_score = sum(
-            1
-            for kw in sequential_keywords
-            if kw in problem_lower.split() or kw in problem_words
+            1 for kw in sequential_keywords if _keyword_matches(kw, problem_lower)
         )
         scientific_score = sum(
-            1
-            for kw in scientific_keywords
-            if kw in problem_lower.split() or kw in problem_words
+            1 for kw in scientific_keywords if _keyword_matches(kw, problem_lower)
         )
         decomposition_score = sum(
-            1
-            for kw in decomposition_keywords
-            if kw in problem_lower.split() or kw in problem_words
+            1 for kw in decomposition_keywords if _keyword_matches(kw, problem_lower)
         )
 
         # Determine primary type based on highest score
@@ -231,6 +235,8 @@ class PromptSystem:
         easy_indicators = [
             "what is",
             "how many",
+            "how much",
+            "what color",
             "find",
             "calculate",
             "simple",
@@ -240,19 +246,17 @@ class PromptSystem:
             "first",
             "just",
             "only",
+            "color",
+            "name",
+            "list",
         ]
 
-        # Word-based matching for difficulty estimation
-        problem_words = problem_lower.split()
+        # Smart matching for difficulty estimation
         hard_score = sum(
-            1
-            for ind in hard_indicators
-            if ind in problem_lower.split() or ind in problem_words
+            1 for ind in hard_indicators if _keyword_matches(ind, problem_lower)
         )
         easy_score = sum(
-            1
-            for ind in easy_indicators
-            if ind in problem_lower.split() or ind in problem_words
+            1 for ind in easy_indicators if _keyword_matches(ind, problem_lower)
         )
 
         if hard_score > easy_score:

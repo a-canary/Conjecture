@@ -6,7 +6,6 @@ Simplified Universal Claim Architecture with LLM-Driven Instruction Support
 __version__ = "1.0.0"
 
 # Core components
-from .conjecture import Conjecture, ExplorationResult
 from .core.models import (
     Claim,
     ClaimState,
@@ -16,8 +15,6 @@ from .core.models import (
 
 # High-level API
 __all__ = [
-    "Conjecture",
-    "ExplorationResult",
     "Claim",
     "ClaimType",
     "ClaimState",

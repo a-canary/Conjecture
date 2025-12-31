@@ -1,0 +1,240 @@
+{
+  "results": [
+    {
+      "task_id": "bash_task_0001_file_processing",
+      "result": "failed",
+      "execution_time": 238.3634216785431,
+      "react_iterations": 5,
+      "success": false,
+      "failure_analysis": {
+        "task_id": "bash_task_0001_file_processing",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": [],
+        "problem_length": 286,
+        "iterations_used": 5
+      }
+    },
+    {
+      "task_id": "bash_task_0002_string_manipulation",
+      "result": "failed",
+      "execution_time": 186.45716667175293,
+      "react_iterations": 5,
+      "success": false,
+      "failure_analysis": {
+        "task_id": "bash_task_0002_string_manipulation",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": [],
+        "problem_length": 236,
+        "iterations_used": 5
+      }
+    },
+    {
+      "task_id": "bash_task_0003_directory_sync",
+      "result": "failed",
+      "execution_time": 255.68282318115234,
+      "react_iterations": 5,
+      "success": false,
+      "failure_analysis": {
+        "task_id": "bash_task_0003_directory_sync",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": [],
+        "problem_length": 280,
+        "iterations_used": 5
+      }
+    },
+    {
+      "task_id": "bash_task_0004_process_monitoring",
+      "result": "failed",
+      "execution_time": 356.07450437545776,
+      "react_iterations": 5,
+      "success": false,
+      "failure_analysis": {
+        "task_id": "bash_task_0004_process_monitoring",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": [],
+        "problem_length": 275,
+        "iterations_used": 5
+      }
+    },
+    {
+      "task_id": "bash_task_0005_config_parser",
+      "result": "failed",
+      "execution_time": 299.2934424877167,
+      "react_iterations": 5,
+      "success": false,
+      "failure_analysis": {
+        "task_id": "bash_task_0005_config_parser",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": [],
+        "problem_length": 291,
+        "iterations_used": 5
+      }
+    },
+    {
+      "task_id": "bash_task_0006_file_processing",
+      "result": "failed",
+      "execution_time": 832.1502034664154,
+      "react_iterations": 5,
+      "success": false,
+      "failure_analysis": {
+        "task_id": "bash_task_0006_file_processing",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": [],
+        "problem_length": 286,
+        "iterations_used": 5
+      }
+    },
+    {
+      "task_id": "bash_task_0007_string_manipulation",
+      "result": "failed",
+      "execution_time": 353.9942955970764,
+      "react_iterations": 5,
+      "success": false,
+      "failure_analysis": {
+        "task_id": "bash_task_0007_string_manipulation",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": [],
+        "problem_length": 236,
+        "iterations_used": 5
+      }
+    },
+    {
+      "task_id": "bash_task_0008_directory_sync",
+      "result": "failed",
+      "execution_time": 715.8789014816284,
+      "react_iterations": 5,
+      "success": false,
+      "failure_analysis": {
+        "task_id": "bash_task_0008_directory_sync",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": [],
+        "problem_length": 280,
+        "iterations_used": 5
+      }
+    },
+    {
+      "task_id": "bash_task_0009_process_monitoring",
+      "result": "failed",
+      "execution_time": 335.57279658317566,
+      "react_iterations": 5,
+      "success": false,
+      "failure_analysis": {
+        "task_id": "bash_task_0009_process_monitoring",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": [],
+        "problem_length": 275,
+        "iterations_used": 5
+      }
+    },
+    {
+      "task_id": "bash_task_0010_config_parser",
+      "result": "failed",
+      "execution_time": 505.23337984085083,
+      "react_iterations": 5,
+      "success": false,
+      "failure_analysis": {
+        "task_id": "bash_task_0010_config_parser",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": [],
+        "problem_length": 291,
+        "iterations_used": 5
+      }
+    }
+  ],
+  "summary": {
+    "total": 10,
+    "passed": 0,
+    "failed": 10,
+    "success_rate": 0.0,
+    "average_time": 407.87009353637694,
+    "total_react_iterations": 50,
+    "average_iterations": 5.0
+  },
+  "failure_analysis": {
+    "total_failures": 10,
+    "error_type_distribution": {
+      "runtime": 10
+    },
+    "top_error_keywords": [
+      [
+        "execution_error",
+        10
+      ]
+    ],
+    "average_problem_length": 273.6,
+    "average_iterations_used": 5.0,
+    "common_bash_patterns": {},
+    "failed_tasks": [
+      {
+        "task_id": "bash_task_0001_file_processing",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": []
+      },
+      {
+        "task_id": "bash_task_0002_string_manipulation",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": []
+      },
+      {
+        "task_id": "bash_task_0003_directory_sync",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": []
+      },
+      {
+        "task_id": "bash_task_0004_process_monitoring",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": []
+      },
+      {
+        "task_id": "bash_task_0005_config_parser",
+        "error_type": "runtime",
+        "error_keywords": [
+          "execution_error"
+        ],
+        "bash_patterns": []
+      }
+    ]
+  }
+}

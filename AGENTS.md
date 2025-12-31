@@ -27,7 +27,7 @@ Conjecture is an AI-Powered Evidence-Based Reasoning System that enables users t
 5. **Quality Verification** - Ensure project quality before each commit
 
 #### **Agent-Specific Requirements**
-- **Before Any Code Changes**: Read current RESULTS.md and TODO.md
+- **Before Any Code Changes**: Read current RESULTS.md and .agent/backlog.md
 - **During Development**: Follow pre-commit checklist religiously
 - **Before Commit**: Update RESULTS.md with current metrics and analysis
 - **After Commit**: Verify all quality gates passed
@@ -40,9 +40,9 @@ Conjecture is an AI-Powered Evidence-Based Reasoning System that enables users t
 ## Essential Docs
 - ANALYSIS.md: most recent comprehensive analysis of tests, metrics, and benchmarks to use a baseline to compare WIP changes to before committing, rewrite after each comprehensive test results, git diff to compare to baseline
 - RESULTS.md: log of past work
-- TODO.md: backlog of future work
+- .agent/backlog.md: backlog of future work
 
-CRITICAL: ALL AGENTS must follow the Code-Test-Commit workflow rules documented in TODO.md Section 1. No exceptions.
+CRITICAL: ALL AGENTS must follow the Code-Test-Commit workflow rules documented in .agent/backlog.md. No exceptions.
 
 ## Essential Commands
 

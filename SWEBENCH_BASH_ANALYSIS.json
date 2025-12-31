@@ -1,0 +1,388 @@
+{
+  "analysis_date": "2025-12-30",
+  "target": "SWE-Bench-Bash-Only >70% accuracy with GraniteTiny",
+  "combination": [
+    "Functional Requirements",
+    "Security & Privacy",
+    "Integration & Compatibility"
+  ],
+  "problem_summary": "Safe execution pipeline that validates bash commands before execution while maintaining reproducibility and traceability for SWE-Bench evaluation",
+  "reasoning": "Docker isolation enables safe experimentation, but generated bash commands must be validated before execution. Integration with SWE-bench requires clean command execution tracking, comprehensive logging, and deterministic results. GraniteTiny's limited context requires focused prompts and careful command validation.",
+  "current_state": {
+    "swe_bench_evaluator": {
+      "status": "✅ PRODUCTION-READY",
+      "file": "benchmarks/benchmarking/swe_bench_evaluator.py",
+      "lines": 895,
+      "capabilities": [
+        "Real SWE-bench-lite dataset integration (princeton-nlp/swe-bench_lite)",
+        "Sandboxed test execution with timeout handling",
+        "Direct vs Conjecture comparison framework",
+        "Comprehensive metrics tracking",
+        "Fallback task generation for offline testing"
+      ],
+      "key_classes": [
+        "RealSWEBenchEvaluator",
+        "SWETask",
+        "EvaluationOutput",
+        "EvaluationResult"
+      ]
+    },
+    "granite_tiny_integration": {
+      "status": "✅ FULLY CONFIGURED",
+      "file": "docs/ibm_granite_tiny_integration_guide.md",
+      "lines": 385,
+      "model": "ibm/granite-4-h-tiny",
+      "provider": "LM Studio (local)",
+      "optimized_parameters": {
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "max_context_size": 5,
+        "confidence_threshold": 0.90,
+        "batch_size": 3
+      },
+      "performance_metrics": {
+        "claim_generation_success_rate": "90%+",
+        "response_time": "<5 seconds",
+        "json_frontmatter_parsing_rate": "95%+",
+        "confidence_score_quality": "0.8-0.95"
+      }
+    },
+    "benchmark_framework": {
+      "status": "✅ EXTENSIVE (55+ files)",
+      "directory": "benchmarks/benchmarking/",
+      "supported_benchmarks": 9,
+      "evaluation_approaches": 5,
+      "optimization_cycles": 17
+    },
+    "success_criteria": {
+      "item": "SC-FEAT-001",
+      "status": "PROMOTED",
+      "target": ">70% accuracy on SWE-Bench-Bash-Only",
+      "backlog_reference": ".agent/backlog.md (Line 273-281)"
+    }
+  },
+  "solution_steps": [
+    {
+      "step": 1,
+      "title": "Implement Bash Command Whitelist for Safe Operations",
+      "description": "Create a validated set of safe bash operations for SWE-Bench tasks",
+      "implementation": [
+        "Define whitelist of allowed commands: cd, ls, find, grep, cat, head, tail, sed, awk, python, pip, git, make, pytest, etc.",
+        "Implement command parser to extract commands from LLM output",
+        "Validate each command against whitelist before execution",
+        "Log all command attempts (allowed and blocked) for audit trail",
+        "Create command_validator.py module in src/processing/"
+      ],
+      "security_considerations": [
+        "Block dangerous commands: rm -rf, dd, mkfs, reboot, shutdown, etc.",
+        "Prevent command chaining with && || ; | backticks",
+        "Validate file paths to prevent directory traversal",
+        "Restrict network operations (curl, wget, nc, etc.)",
+        "Prevent privilege escalation attempts (sudo, su, etc.)"
+      ],
+      "functional_requirements": [
+        "Support common SWE-Bench operations: file editing, test running, git operations",
+        "Allow legitimate command composition through safe patterns",
+        "Provide clear error messages for blocked commands",
+        "Enable debugging with verbose logging"
+      ]
+    },
+    {
+      "step": 2,
+      "title": "Sandbox File Operations to Repository Directory Only",
+      "description": "Restrict all file operations to the target repository directory",
+      "implementation": [
+        "Create sandbox_manager.py to track allowed directories",
+        "Implement path normalization and validation",
+        "Enforce chroot-like restrictions at Python level",
+        "Create temporary working directories for each task",
+        "Implement cleanup procedures for sandbox directories"
+      ],
+      "security_considerations": [
+        "Prevent access to /etc, /root, /home, system directories",
+        "Block symlink traversal attacks",
+        "Validate all file paths with realpath() before access",
+        "Implement resource limits (disk space, file count)",
+        "Monitor for suspicious file access patterns"
+      ],
+      "functional_requirements": [
+        "Allow full read/write access within repo directory",
+        "Support git operations within sandbox",
+        "Enable test execution with proper working directory",
+        "Preserve file permissions and ownership"
+      ]
+    },
+    {
+      "step": 3,
+      "title": "Timeout Dangerous Commands (Network, Recursion, Infinite Loops)",
+      "description": "Implement execution timeouts and resource limits",
+      "implementation": [
+        "Create timeout_executor.py with configurable timeouts",
+        "Implement per-command timeout (default 30s for SWE-Bench)",
+        "Add memory limit enforcement (512MB for GraniteTiny tasks)",
+        "Implement CPU time limits to prevent infinite loops",
+        "Create graceful timeout handling with cleanup"
+      ],
+      "security_considerations": [
+        "Prevent denial-of-service through infinite loops",
+        "Block network operations that could hang indefinitely",
+        "Implement cascading timeouts (command > task > evaluation)",
+        "Ensure proper process cleanup on timeout",
+        "Log timeout events for analysis"
+      ],
+      "functional_requirements": [
+        "Support long-running tests (up to 30s per command)",
+        "Provide timeout configuration per task type",
+        "Enable partial results collection on timeout",
+        "Track timeout frequency for performance analysis"
+      ]
+    },
+    {
+      "step": 4,
+      "title": "Log All Commands for Reproducibility and Audit Trail",
+      "description": "Comprehensive logging of all executed commands and results",
+      "implementation": [
+        "Create execution_logger.py with structured logging",
+        "Log format: timestamp, command, status, output, duration, error",
+        "Implement JSON-based log format for easy parsing",
+        "Create per-task log files in sandbox directory",
+        "Implement log rotation and archival",
+        "Create log analysis tools for debugging"
+      ],
+      "security_considerations": [
+        "Sanitize sensitive data from logs (API keys, passwords)",
+        "Implement log access controls",
+        "Create audit trail for compliance",
+        "Enable log integrity verification (checksums)",
+        "Implement log retention policies"
+      ],
+      "functional_requirements": [
+        "Enable full reproducibility of evaluation runs",
+        "Support debugging of failed tasks",
+        "Track performance metrics per command",
+        "Enable analysis of command patterns",
+        "Support integration with SWE-Bench evaluation framework"
+      ]
+    },
+    {
+      "step": 5,
+      "title": "Validate Patch Syntax Before Apply",
+      "description": "Ensure generated patches are valid before applying to repository",
+      "implementation": [
+        "Create patch_validator.py with unified diff parsing",
+        "Validate patch format (unified diff standard)",
+        "Check patch applicability before applying",
+        "Implement dry-run mode for patch testing",
+        "Create rollback mechanism for failed patches",
+        "Integrate with git apply/patch commands"
+      ],
+      "security_considerations": [
+        "Prevent malicious patches that modify system files",
+        "Validate patch targets are within repository",
+        "Check for suspicious patterns in patches",
+        "Implement patch signing/verification",
+        "Log all patch operations"
+      ],
+      "functional_requirements": [
+        "Support standard unified diff format",
+        "Enable patch preview before application",
+        "Support multi-file patches",
+        "Enable rollback to previous state",
+        "Track patch application history"
+      ]
+    },
+    {
+      "step": 6,
+      "title": "Integrate with SWE-Bench Evaluation Framework",
+      "description": "Connect bash execution pipeline to existing SWE-Bench evaluator",
+      "implementation": [
+        "Extend RealSWEBenchEvaluator with bash execution support",
+        "Create bash_executor.py module for command execution",
+        "Integrate command validation into evaluation pipeline",
+        "Add bash-specific metrics tracking",
+        "Create comparison framework (direct vs bash-enhanced)",
+        "Implement result aggregation and reporting"
+      ],
+      "security_considerations": [
+        "Maintain isolation between evaluation runs",
+        "Prevent cross-task contamination",
+        "Implement proper cleanup between evaluations",
+        "Track security violations per task",
+        "Enable security audit reports"
+      ],
+      "functional_requirements": [
+        "Support bash-only task evaluation",
+        "Track success/failure per task",
+        "Measure improvement over baseline",
+        "Generate comprehensive evaluation reports",
+        "Enable comparison with other approaches"
+      ]
+    },
+    {
+      "step": 7,
+      "title": "Optimize for GraniteTiny Context Limitations",
+      "description": "Tailor bash execution pipeline for GraniteTiny's limited context",
+      "implementation": [
+        "Create context_optimizer.py for prompt compression",
+        "Implement command history summarization",
+        "Create focused prompts for bash-specific tasks",
+        "Implement multi-turn bash interaction patterns",
+        "Add confidence scoring for bash commands",
+        "Create fallback strategies for complex tasks"
+      ],
+      "security_considerations": [
+        "Ensure context compression doesn't hide security issues",
+        "Validate compressed prompts for completeness",
+        "Maintain audit trail through context compression",
+        "Prevent prompt injection through compression"
+      ],
+      "functional_requirements": [
+        "Support GraniteTiny's 512-token limit",
+        "Enable multi-turn bash interactions",
+        "Provide clear command feedback",
+        "Support iterative problem-solving",
+        "Track context usage per task"
+      ]
+    }
+  ],
+  "expected_outcome": {
+    "primary_goal": "Achieve >70% accuracy on SWE-Bench-Bash-Only with GraniteTiny",
+    "metrics": {
+      "accuracy": ">70%",
+      "execution_safety": "100% (no system damage)",
+      "reproducibility": "100% (full audit trail)",
+      "performance": "<30s per task",
+      "resource_efficiency": "512MB memory, <100% CPU"
+    },
+    "deliverables": [
+      "command_validator.py - Bash command whitelist and validation",
+      "sandbox_manager.py - File operation sandboxing",
+      "timeout_executor.py - Execution timeout and resource limits",
+      "execution_logger.py - Comprehensive command logging",
+      "patch_validator.py - Patch syntax validation",
+      "bash_executor.py - Integration with SWE-Bench evaluator",
+      "context_optimizer.py - GraniteTiny context optimization",
+      "Extended RealSWEBenchEvaluator with bash support",
+      "Comprehensive test suite for bash execution pipeline",
+      "Documentation and usage guides"
+    ],
+    "success_criteria": [
+      "All bash commands validated before execution",
+      "Zero unauthorized file access attempts",
+      "100% command execution logging",
+      "All patches validated before application",
+      "Full integration with SWE-Bench evaluator",
+      "GraniteTiny context optimization working",
+      ">70% accuracy on SWE-Bench-Bash-Only",
+      "Reproducible evaluation results",
+      "Comprehensive audit trail for all operations"
+    ]
+  },
+  "architecture_integration": {
+    "layer_1_presentation": "CLI commands for bash evaluation and monitoring",
+    "layer_2_endpoint": "ConjectureEndpoint methods for bash task evaluation",
+    "layer_3_process": "Bash execution pipeline with validation and logging",
+    "layer_4_data": "Execution logs and results stored in database"
+  },
+  "risk_mitigation": {
+    "command_injection": "Whitelist-based validation, no shell interpretation",
+    "file_system_damage": "Sandbox restrictions, path validation, rollback capability",
+    "resource_exhaustion": "Timeout enforcement, memory limits, CPU limits",
+    "data_loss": "Comprehensive logging, backup before modifications",
+    "reproducibility_issues": "Full audit trail, deterministic execution, version tracking"
+  },
+  "implementation_priority": [
+    {
+      "phase": 1,
+      "priority": "CRITICAL",
+      "items": [
+        "command_validator.py - Whitelist and validation",
+        "sandbox_manager.py - File operation restrictions",
+        "timeout_executor.py - Execution safety"
+      ],
+      "timeline": "Week 1",
+      "rationale": "Foundation for safe bash execution"
+    },
+    {
+      "phase": 2,
+      "priority": "HIGH",
+      "items": [
+        "execution_logger.py - Comprehensive logging",
+        "patch_validator.py - Patch validation",
+        "bash_executor.py - SWE-Bench integration"
+      ],
+      "timeline": "Week 2",
+      "rationale": "Reproducibility and integration"
+    },
+    {
+      "phase": 3,
+      "priority": "MEDIUM",
+      "items": [
+        "context_optimizer.py - GraniteTiny optimization",
+        "Extended RealSWEBenchEvaluator",
+        "Test suite and documentation"
+      ],
+      "timeline": "Week 3",
+      "rationale": "Performance optimization and testing"
+    }
+  ],
+  "testing_strategy": {
+    "unit_tests": [
+      "Command validation (whitelist, parsing, blocking)",
+      "Sandbox restrictions (path validation, access control)",
+      "Timeout enforcement (execution limits, cleanup)",
+      "Logging (format, completeness, sanitization)",
+      "Patch validation (format, applicability, safety)"
+    ],
+    "integration_tests": [
+      "End-to-end bash execution pipeline",
+      "SWE-Bench evaluator integration",
+      "GraniteTiny context optimization",
+      "Multi-task evaluation runs",
+      "Comparison with baseline approaches"
+    ],
+    "security_tests": [
+      "Command injection attempts",
+      "Directory traversal attacks",
+      "Resource exhaustion attacks",
+      "Privilege escalation attempts",
+      "Audit trail integrity"
+    ],
+    "performance_tests": [
+      "Command execution speed",
+      "Memory usage under load",
+      "Timeout accuracy",
+      "Logging overhead",
+      "Scalability with task count"
+    ]
+  },
+  "success_validation": {
+    "baseline_establishment": "Run SWE-Bench-Bash-Only with current approach, document baseline accuracy",
+    "incremental_validation": "After each phase, measure accuracy improvement",
+    "final_validation": "Achieve >70% accuracy on full SWE-Bench-Bash-Only test set",
+    "reproducibility_check": "Verify identical results across multiple runs",
+    "security_audit": "Comprehensive security review of bash execution pipeline"
+  },
+  "notes": {
+    "context_gathering": "Analyzed SWEBENCH_EXPLORATION_REPORT.md, ibm_granite_tiny_integration_guide.md, swe_bench_evaluator.py, and backlog items",
+    "key_insights": [
+      "SWE-Bench evaluator is production-ready with real dataset integration",
+      "GraniteTiny is fully configured with optimized parameters",
+      "Benchmark framework supports 9+ benchmark types with 5+ evaluation approaches",
+      "SC-FEAT-001 success criteria already tracked in backlog",
+      "Main gap is bash command execution safety and validation"
+    ],
+    "dependencies": [
+      "Existing RealSWEBenchEvaluator class",
+      "GraniteTiny configuration and optimization",
+      "Conjecture 4-layer architecture",
+      "SWE-bench-lite dataset access"
+    ],
+    "assumptions": [
+      "Docker or sandbox environment available for safe execution",
+      "SWE-bench-lite dataset accessible via HuggingFace",
+      "GraniteTiny model available via LM Studio",
+      "Bash execution environment available in sandbox"
+    ]
+  }
+}

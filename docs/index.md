@@ -42,7 +42,7 @@ This document provides a comprehensive evaluation of all files in the Conjecture
   - **Contribution**: Essential documentation for AI agents working on the project, providing critical development guidelines and workflow standards.
   - **Dependencies**: None (standalone documentation)
 
-- **TODO.md** - 🔵 9/10 - Task tracking
+- **.agent/backlog.md** - 🔵 9/10 - Task tracking
   - **Contribution**: Critical project management document that tracks remaining work, priorities, and development progress across the team.
   - **Dependencies**: None (standalone documentation)
 

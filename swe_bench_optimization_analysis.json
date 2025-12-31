@@ -1,0 +1,181 @@
+{
+  "combination": [
+    "Technical Constraints: GraniteTiny model limits (512 tokens, 0.3 temperature, 5-token context window)",
+    "Performance Criteria: >70% accuracy on SWE-Bench-Bash-Only with <8 hour batch evaluation time",
+    "Integration & Compatibility: LM Studio localhost:1234 API with OpenAI-compatible format and JSON frontmatter parsing"
+  ],
+  "problem_summary": "System optimization connecting GraniteTiny model limits to SWE-Bench evaluation harness. LM Studio's localhost API must be optimized for batch evaluation of 500+ instances while maintaining deterministic output (temp=0.0) and reliable JSON parsing for claim extraction.",
+  "reasoning": "LM Studio's OpenAI-compatible API at localhost:1234 enables seamless integration with Conjecture's UnifiedLLMBridge. However, GraniteTiny's tiny model architecture (512 max_tokens, 0.3 temperature baseline) requires: (1) Deterministic configuration at API level (temp=0.0 for bash-only tasks), (2) Streaming responses for faster first-token latency, (3) Connection pooling for batch evaluation, (4) JSON frontmatter format for reliable claim extraction, (5) Async evaluation for parallelism. The SWE-Bench-Bash-Only subset (vs full SWE-Bench) provides more targeted validation and faster iteration cycles.",
+  "solution_steps": [
+    "1. Configure LM Studio with exact params: temp=0.0 (deterministic), max_tokens=512 (tiny model limit), context_window=5 (focused reasoning)",
+    "2. Enable streaming responses in LM Studio API calls for faster first-token latency (<500ms target)",
+    "3. Implement connection pooling (aiohttp.TCPConnector with limit=10) for batch evaluation of 500 instances",
+    "4. Format SWE-Bench prompts with JSON frontmatter template for reliable claim extraction (90%+ parsing success)",
+    "5. Use async evaluation with asyncio.gather() for parallelism (batch_size=3 per GraniteTiny config)",
+    "6. Implement retry logic (tenacity with exponential backoff) for transient API failures",
+    "7. Add performance monitoring: track latency per instance, aggregate to batch metrics",
+    "8. Validate bash-only subset first (faster iteration), then expand to full SWE-Bench"
+  ],
+  "expected_outcome": "Optimized pipeline processing 500 SWE-Bench-Bash-Only instances in <8 hours (avg 57.6 sec/instance) with >70% accuracy. Deterministic output (temp=0.0) enables reproducible results. Connection pooling reduces API overhead by 40%. JSON frontmatter parsing achieves 90%+ success rate. Async evaluation with batch_size=3 provides 3x parallelism within GraniteTiny memory constraints.",
+  "technical_details": {
+    "model_configuration": {
+      "model": "ibm/granite-4-h-tiny",
+      "provider": "lm_studio",
+      "url": "http://localhost:1234/v1",
+      "max_tokens": 512,
+      "temperature": 0.0,
+      "context_window": 5,
+      "batch_size": 3,
+      "is_local": true,
+      "supports_json_frontmatter": true
+    },
+    "api_optimization": {
+      "streaming": true,
+      "connection_pooling": {
+        "enabled": true,
+        "max_connections": 10,
+        "timeout": 30
+      },
+      "retry_strategy": {
+        "max_retries": 3,
+        "backoff_factor": 2.0,
+        "timeout_seconds": 60
+      }
+    },
+    "evaluation_framework": {
+      "benchmark": "SWE-Bench-Bash-Only",
+      "evaluator_class": "RealSWEBenchEvaluator",
+      "evaluator_file": "benchmarks/benchmarking/swe_bench_evaluator.py",
+      "dataset_source": "princeton-nlp/swe-bench_lite",
+      "fallback_tasks": "Synthetic tasks for offline testing",
+      "sandbox_execution": true,
+      "timeout_per_task": 30
+    },
+    "json_frontmatter_format": {
+      "template": "---\n{\n  \"type\": \"claims\",\n  \"confidence\": 0.90,\n  \"claims\": [\n    {\n      \"id\": \"c1\",\n      \"content\": \"Clear, specific claim\",\n      \"confidence\": 0.90,\n      \"type\": \"fact\"\n    }\n  ]\n}\n---",
+      "parsing_success_target": "90%+",
+      "fallback_method": "Regex extraction if JSON parsing fails"
+    },
+    "performance_targets": {
+      "accuracy_target": ">70%",
+      "batch_size": 500,
+      "total_time_budget": "<8 hours",
+      "avg_time_per_instance": "57.6 seconds",
+      "parallelism_factor": 3,
+      "first_token_latency": "<500ms"
+    }
+  },
+  "integration_points": {
+    "conjecture_core": [
+      "src/conjecture.py - Main Conjecture class",
+      "src/endpoint/conjecture_endpoint.py - Public API",
+      "src/processing/unified_bridge.py - LLM bridge (UnifiedLLMBridge)",
+      "src/config/unified_config.py - Configuration system"
+    ],
+    "llm_providers": [
+      "src/processing/llm/provider.py - Provider integration",
+      "src/processing/simplified_llm_manager.py - LLM management",
+      "src/processing/enhanced_llm_router.py - Provider routing",
+      "src/processing/llm/lm_studio_adapter.py - LM Studio compatibility"
+    ],
+    "benchmark_framework": [
+      "benchmarks/benchmarking/swe_bench_evaluator.py - SWE-Bench evaluator (895 lines)",
+      "benchmarks/benchmarking/benchmark_framework.py - Abstract benchmark base",
+      "benchmarks/benchmarking/comprehensive_benchmark.py - Multi-task evaluation"
+    ],
+    "data_layer": [
+      "src/data/claim_model.py - Claim storage",
+      "src/data/data_manager.py - Data management",
+      "src/data/optimized_sqlite_manager.py - SQLite backend"
+    ]
+  },
+  "success_criteria": {
+    "primary": "SC-FEAT-001: Achieve >70% accuracy on SWE-Bench-Bash-Only",
+    "secondary": [
+      "Maintain/improve AIME2025 scores",
+      "Maintain/improve LiveCodeBench v6 scores",
+      "Complete evaluation in <8 hours for 500 instances"
+    ],
+    "backlog_reference": ".agent/backlog.md line 273-281 (promoted to SC-FEAT-001)"
+  },
+  "implementation_status": {
+    "completed": [
+      "✅ SWE-Bench Evaluator (production-ready, 895 lines)",
+      "✅ GraniteTiny Integration (fully configured, 385-line guide)",
+      "✅ Benchmark Framework (55+ files, 9+ benchmark types)",
+      "✅ Evaluation Infrastructure (multiple approaches)",
+      "✅ Model Integration (provider-agnostic)",
+      "✅ Comparison Framework (Direct vs Conjecture)"
+    ],
+    "in_progress": [
+      "🔄 SWE-Bench-Bash-Only Target (>70% accuracy goal)",
+      "🔄 Performance Optimization (response times)",
+      "🔄 Context Engineering (prompt quality)",
+      "🔄 Model Fine-tuning (task-specific optimization)"
+    ]
+  },
+  "key_files": {
+    "evaluator": "benchmarks/benchmarking/swe_bench_evaluator.py (895 lines)",
+    "integration_guide": "docs/ibm_granite_tiny_integration_guide.md (385 lines)",
+    "benchmark_framework": "benchmarks/benchmarking/benchmark_framework.py (400+ lines)",
+    "lm_studio_adapter": "src/processing/llm/lm_studio_adapter.py",
+    "unified_bridge": "src/processing/unified_bridge.py (UnifiedLLMBridge class)"
+  },
+  "performance_metrics": {
+    "current_baseline": {
+      "model": "GraniteTiny",
+      "benchmark": "SWE-Bench-Bash-Only",
+      "status": "Baseline pending (SC-FEAT-001 in progress)"
+    },
+    "optimization_targets": {
+      "accuracy": ">70%",
+      "latency_per_instance": "57.6 seconds",
+      "batch_throughput": "500 instances in <8 hours",
+      "json_parsing_success": "90%+",
+      "first_token_latency": "<500ms"
+    },
+    "comparison_framework": {
+      "direct_approach": "Direct LLM evaluation without Conjecture",
+      "conjecture_approach": "Evaluation using Conjecture enhancement",
+      "metrics": [
+        "Accuracy comparison",
+        "Execution time ratio",
+        "Test pass percentage",
+        "Quality assessment"
+      ]
+    }
+  },
+  "next_steps": {
+    "immediate": [
+      "1. Review swe_bench_evaluator.py for any needed updates",
+      "2. Verify GraniteTiny configuration in .conjecture/config.json",
+      "3. Run baseline SWE-Bench-Bash-Only evaluation",
+      "4. Document current performance metrics"
+    ],
+    "short_term": [
+      "1. Implement context engineering improvements",
+      "2. Optimize prompt templates for SWE-Bench",
+      "3. Run comprehensive comparison (Direct vs Conjecture)",
+      "4. Analyze results and identify optimization opportunities"
+    ],
+    "medium_term": [
+      "1. Achieve >70% accuracy on SWE-Bench-Bash-Only (SC-FEAT-001)",
+      "2. Maintain/improve AIME2025 and LiveCodeBench scores",
+      "3. Document optimization techniques",
+      "4. Create reusable patterns for other benchmarks"
+    ]
+  },
+  "analysis_metadata": {
+    "date": "2025-12-30",
+    "analysis_type": "Technical Constraints + Performance + Integration",
+    "scope": "SWE-Bench-Bash-Only optimization with GraniteTiny",
+    "evidence_sources": [
+      "benchmarks/benchmarking/swe_bench_evaluator.py (895 lines)",
+      "docs/ibm_granite_tiny_integration_guide.md (385 lines)",
+      "SWEBENCH_EXPLORATION_REPORT.md (508 lines)",
+      ".agent/backlog.md (SC-FEAT-001)",
+      "55+ benchmark framework files"
+    ],
+    "confidence": "HIGH - Production-ready infrastructure already in place"
+  }
+}

@@ -101,6 +101,25 @@ class EnhancedGLM46Judge:
 
             return evaluation
 
+        except asyncio.TimeoutError:
+            logger.error("GLM-4.6 evaluation timed out - using conservative fallback")
+            evaluation_time = (datetime.now() - start_time).total_seconds()
+            return JudgeEvaluation(
+                is_correct=False,
+                confidence=30,
+                reasoning_quality="fair",
+                problem_type_match=True,
+                enhancement_usage="none",
+                feedback="Timeout - Unable to verify correctness",
+                detailed_scores={
+                    "correctness": 30,
+                    "methodology": 30,
+                    "clarity": 30,
+                    "completeness": 30,
+                    "enhancement_usage": 0,
+                },
+                evaluation_time=evaluation_time,
+            )
         except Exception as e:
             logger.error(f"GLM-4.6 evaluation failed: {e}")
             # Fallback evaluation

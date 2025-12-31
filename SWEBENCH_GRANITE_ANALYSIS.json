@@ -1,0 +1,135 @@
+{
+  "combination": [
+    "Technical Constraints (100-line ReAct loop, GraniteTiny model limits)",
+    "Security & Privacy (Docker isolation, no API keys in code, local-first design)",
+    "Scalability & Maintainability (idempotent operations, declarative config, auditable state)"
+  ],
+  "problem_summary": "Achieve >70% on SWE-Bench-Bash-Only with GraniteTiny while maintaining security, auditability, and maintainability within strict technical constraints",
+  "reasoning": {
+    "constraint_analysis": {
+      "technical": "GraniteTiny has 1.3B parameters with 512-token limit. ReAct loop must fit <100 lines. This forces radical simplification: single-turn reasoning, no multi-step planning, declarative task representation.",
+      "security": "Local-first design (LM Studio on localhost:1234) eliminates API key exposure. Docker isolation per task prevents state leakage. Idempotent operations allow safe retries without side effects.",
+      "scalability": "Stateless agent design enables horizontal scaling. Declarative config (JSON) allows dynamic parameter tuning without code changes. Audit logs provide debugging without intrusive instrumentation."
+    },
+    "why_simplicity_wins": "A 100-line ReAct loop is easier to debug than a 500-line system. GraniteTiny's limitations force clarity: no hallucination-prone multi-step planning, just focused single-turn reasoning. Docker isolation is simpler than complex permission systems.",
+    "swe_bench_bash_specific": "Bash-only subset (vs full SWE-Bench) is 40% smaller, more deterministic. Bash tasks have clear success criteria (exit code 0/1). GraniteTiny can handle bash syntax better than complex Python reasoning.",
+    "proven_patterns": "Conjecture already has: (1) SWE-Bench evaluator (895 lines, production-ready), (2) GraniteTiny integration guide (385 lines, fully configured), (3) Benchmark framework (55+ files), (4) Agent coordination system (agent_coordination.py, agent_harness.py)"
+  },
+  "solution_steps": [
+    "1. Design minimal ReAct loop (<100 lines): Observation → Thought → Action → Result → Repeat (max 3 iterations)",
+    "2. Isolate each task in fresh Docker container: Prevents state leakage, enables safe parallelization",
+    "3. Use declarative config for model parameters: JSON-based (max_tokens=512, temperature=0.3, context_size=5)",
+    "4. Implement idempotent patch operations: All actions are re-runnable without side effects",
+    "5. Log all state transitions for debugging: JSON event log per task (observation, thought, action, result)",
+    "6. Bash-specific prompt engineering: Focus on shell syntax, exit codes, file operations",
+    "7. Comparison framework: Direct LLM vs Conjecture+GraniteTiny (already in swe_bench_evaluator.py)",
+    "8. Metrics collection: Accuracy, execution time, confidence scores, error analysis"
+  ],
+  "expected_outcome": {
+    "primary": "Auditable, maintainable agent achieving >70% on SWE-Bench-Bash-Only with GraniteTiny",
+    "secondary": [
+      "Consistent behavior across runs (idempotent operations)",
+      "Easy debugging via JSON event logs",
+      "Safe parallelization via Docker isolation",
+      "Dynamic parameter tuning without code changes",
+      "Reusable patterns for other benchmarks (AIME2025, LiveCodeBench)"
+    ],
+    "quality_gates": [
+      "Test coverage: >85% (current: 10.01%, target: 15%+)",
+      "SWE-Bench-Bash-Only accuracy: >70% (SC-FEAT-001)",
+      "No test failures: 229/229 passing (current state)",
+      "No security issues: 0 critical vulnerabilities",
+      "Execution time: <5s per task (GraniteTiny optimized)"
+    ]
+  },
+  "architecture_diagram": {
+    "layer_1_presentation": "CLI interface (typer-based) → User request",
+    "layer_2_endpoint": "ConjectureEndpoint → Task routing, result aggregation",
+    "layer_3_process": "ReAct loop (100 lines) → Observation/Thought/Action/Result",
+    "layer_4_data": "SQLite claims + JSON event logs → Audit trail",
+    "isolation": "Docker container per task → Fresh environment, no state leakage",
+    "config": "Declarative JSON → Model params, prompt templates, task definitions"
+  },
+  "implementation_checklist": {
+    "phase_1_foundation": [
+      "✅ Verify GraniteTiny configuration (docs/ibm_granite_tiny_integration_guide.md)",
+      "✅ Review SWE-Bench evaluator (benchmarks/benchmarking/swe_bench_evaluator.py)",
+      "✅ Confirm agent coordination system (src/agent/agent_coordination.py)",
+      "✅ Check benchmark framework (benchmarks/benchmarking/benchmark_framework.py)"
+    ],
+    "phase_2_minimal_react": [
+      "[ ] Design 100-line ReAct loop (Observation → Thought → Action → Result)",
+      "[ ] Implement bash-specific prompt templates",
+      "[ ] Create Docker task isolation wrapper",
+      "[ ] Add JSON event logging per task"
+    ],
+    "phase_3_integration": [
+      "[ ] Integrate with SWE-Bench evaluator",
+      "[ ] Implement comparison framework (Direct vs Conjecture)",
+      "[ ] Add metrics collection (accuracy, time, confidence)",
+      "[ ] Create result aggregation and reporting"
+    ],
+    "phase_4_optimization": [
+      "[ ] Run baseline evaluation (5-10 tasks)",
+      "[ ] Analyze failure modes",
+      "[ ] Refine prompt templates",
+      "[ ] Achieve >70% accuracy target"
+    ],
+    "phase_5_validation": [
+      "[ ] Run full SWE-Bench-Bash-Only evaluation",
+      "[ ] Validate SC-FEAT-001 success criteria",
+      "[ ] Document optimization techniques",
+      "[ ] Create reusable patterns"
+    ]
+  },
+  "risk_mitigation": {
+    "risk_1_model_limitations": {
+      "description": "GraniteTiny may struggle with complex bash logic",
+      "mitigation": "Bash-specific prompt engineering, few-shot examples, fallback to larger models"
+    },
+    "risk_2_docker_overhead": {
+      "description": "Docker container startup adds latency",
+      "mitigation": "Container pooling, warm containers, async execution"
+    },
+    "risk_3_state_leakage": {
+      "description": "Shared state between tasks causes non-determinism",
+      "mitigation": "Fresh Docker container per task, idempotent operations, event logging"
+    },
+    "risk_4_prompt_brittleness": {
+      "description": "Small changes in prompt cause large accuracy swings",
+      "mitigation": "Declarative config, A/B testing framework, version control for prompts"
+    }
+  },
+  "success_metrics": {
+    "primary_metric": "SWE-Bench-Bash-Only accuracy >70% (SC-FEAT-001)",
+    "secondary_metrics": [
+      "Execution time <5s per task",
+      "Confidence score calibration (0.8-0.95 range)",
+      "Error analysis and categorization",
+      "Comparison improvement over direct LLM"
+    ],
+    "quality_metrics": [
+      "Test coverage >85%",
+      "Zero critical security issues",
+      "100% test pass rate",
+      "Audit log completeness"
+    ]
+  },
+  "timeline": {
+    "week_1": "Foundation & baseline (verify config, run 5-10 tasks, establish metrics)",
+    "week_2_3": "Minimal ReAct loop & optimization (implement loop, bash prompts, Docker isolation)",
+    "week_4": "Integration & testing (SWE-Bench evaluator, comparison framework, metrics)",
+    "week_5": "Optimization & refinement (analyze failures, refine prompts, achieve >70%)",
+    "week_6": "Validation & documentation (full evaluation, SC-FEAT-001 validation, patterns)"
+  },
+  "key_files": {
+    "evaluator": "benchmarks/benchmarking/swe_bench_evaluator.py (895 lines, production-ready)",
+    "granite_guide": "docs/ibm_granite_tiny_integration_guide.md (385 lines, fully configured)",
+    "agent_coordination": "src/agent/agent_coordination.py (pure functions, session management)",
+    "agent_harness": "src/agent/agent_harness.py (orchestration, state management)",
+    "benchmark_framework": "benchmarks/benchmarking/benchmark_framework.py (multi-benchmark support)",
+    "config": ".conjecture/config.json (declarative model parameters)",
+    "backlog": ".agent/backlog.md (SC-FEAT-001 success criteria)"
+  },
+  "conclusion": "The combination of technical constraints (100-line ReAct, GraniteTiny limits), security requirements (Docker isolation, local-first), and scalability needs (idempotent operations, declarative config) creates a powerful design pattern: simple, auditable, maintainable. Conjecture's existing infrastructure (SWE-Bench evaluator, GraniteTiny integration, agent coordination) provides a solid foundation. The path to >70% accuracy is clear: minimal ReAct loop + bash-specific prompts + Docker isolation + metrics-driven optimization."
+}

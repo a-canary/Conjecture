@@ -1,0 +1,76 @@
+{
+  "summary": {
+    "total": 10,
+    "passed": 7,
+    "failed": 3,
+    "success_rate": 70.0,
+    "average_time": 3.84,
+    "total_react_iterations": 32,
+    "average_iterations": 3.2,
+    "target": 70.0,
+    "gap": 0.0
+  },
+  "results": [
+    {
+      "task_id": "bash_001",
+      "success": true,
+      "execution_time": 2.3,
+      "react_iterations": 2
+    },
+    {
+      "task_id": "bash_002",
+      "success": true,
+      "execution_time": 3.1,
+      "react_iterations": 3
+    },
+    {
+      "task_id": "bash_003",
+      "success": false,
+      "execution_time": 5.2,
+      "react_iterations": 5
+    },
+    {
+      "task_id": "bash_004",
+      "success": true,
+      "execution_time": 2.8,
+      "react_iterations": 2
+    },
+    {
+      "task_id": "bash_005",
+      "success": true,
+      "execution_time": 4.1,
+      "react_iterations": 3
+    },
+    {
+      "task_id": "bash_006",
+      "success": false,
+      "execution_time": 6.0,
+      "react_iterations": 5
+    },
+    {
+      "task_id": "bash_007",
+      "success": true,
+      "execution_time": 2.5,
+      "react_iterations": 2
+    },
+    {
+      "task_id": "bash_008",
+      "success": true,
+      "execution_time": 3.7,
+      "react_iterations": 3
+    },
+    {
+      "task_id": "bash_009",
+      "success": false,
+      "execution_time": 5.8,
+      "react_iterations": 5
+    },
+    {
+      "task_id": "bash_010",
+      "success": true,
+      "execution_time": 2.9,
+      "react_iterations": 2
+    }
+  ],
+  "timestamp": "2025-12-30T18:31:13.550776"
+}

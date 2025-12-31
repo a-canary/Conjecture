@@ -17,10 +17,11 @@ from pathlib import Path
 import statistics
 from collections import defaultdict
 
+
 class BenchmarkAnalyzer:
     """Analyzes benchmark cycle results for correlations"""
 
-    def __init__(self, results_dir: str = "src/benchmarking/cycle_results"):
+    def __init__(self, results_dir: str = "benchmarks/benchmarking/cycle_results"):
         self.results_dir = results_dir
         self.cycles_data = {}
         self.analysis_results = {}
@@ -33,12 +34,12 @@ class BenchmarkAnalyzer:
 
         for file_path in cycle_files:
             try:
-                with open(file_path, 'r') as f:
+                with open(file_path, "r") as f:
                     data = json.load(f)
 
                 # Extract cycle number from filename
                 filename = os.path.basename(file_path)
-                cycle_num = filename.split('_')[1]
+                cycle_num = filename.split("_")[1]
 
                 self.cycles_data[cycle_num] = data
                 print(f"  Loaded {filename}")
@@ -55,7 +56,7 @@ class BenchmarkAnalyzer:
             "claims_created": 0,
             "claims_evaluated": 0,
             "problems_tested": 0,
-            "test_cases": 0
+            "test_cases": 0,
         }
 
         # Extract from test_results
@@ -73,8 +74,12 @@ class BenchmarkAnalyzer:
         # Count from decomposition_results
         decomp_results = test_results.get("decomposition_results", [])
         if decomp_results:
-            claims_info["test_cases"] = max(claims_info["test_cases"], len(decomp_results))
-            claims_info["claims_evaluated"] = max(claims_info["claims_evaluated"], len(decomp_results))
+            claims_info["test_cases"] = max(
+                claims_info["test_cases"], len(decomp_results)
+            )
+            claims_info["claims_evaluated"] = max(
+                claims_info["claims_evaluated"], len(decomp_results)
+            )
 
         # Count from baseline_results and enhanced_results
         baseline_results = test_results.get("baseline_results", [])
@@ -126,9 +131,12 @@ class BenchmarkAnalyzer:
 
         # Additional metrics
         success_fields = [
-            "classification_accuracy", "strategy_relevance_rate",
-            "feature_detection_rate", "strategy_accuracy",
-            "indicator_detection_rate", "complexity_accuracy"
+            "classification_accuracy",
+            "strategy_relevance_rate",
+            "feature_detection_rate",
+            "strategy_accuracy",
+            "indicator_detection_rate",
+            "complexity_accuracy",
         ]
 
         for field in success_fields:
@@ -160,16 +168,20 @@ class BenchmarkAnalyzer:
                     improvement_score = scores["overall_success_rate"]
 
                 if improvement_score is not None:
-                    correlation_data.append({
-                        "cycle": f"cycle_{cycle_num}",
-                        "cycle_num": int(cycle_num),
-                        "improvement_score": improvement_score,
-                        "claims_created": claims_info["claims_created"],
-                        "claims_evaluated": claims_info["claims_evaluated"],
-                        "problems_tested": claims_info["problems_tested"],
-                        "test_cases": claims_info["test_cases"],
-                        "enhancement_type": cycle_data.get("enhancement_type", "Unknown")
-                    })
+                    correlation_data.append(
+                        {
+                            "cycle": f"cycle_{cycle_num}",
+                            "cycle_num": int(cycle_num),
+                            "improvement_score": improvement_score,
+                            "claims_created": claims_info["claims_created"],
+                            "claims_evaluated": claims_info["claims_evaluated"],
+                            "problems_tested": claims_info["problems_tested"],
+                            "test_cases": claims_info["test_cases"],
+                            "enhancement_type": cycle_data.get(
+                                "enhancement_type", "Unknown"
+                            ),
+                        }
+                    )
 
             except Exception as e:
                 print(f"  Error processing cycle {cycle_num}: {e}")
@@ -185,7 +197,7 @@ class BenchmarkAnalyzer:
         self.analysis_results = {
             "correlation_data": correlation_data,
             "correlations": correlations,
-            "threshold_analysis": threshold_analysis
+            "threshold_analysis": threshold_analysis,
         }
 
         return self.analysis_results
@@ -202,9 +214,15 @@ class BenchmarkAnalyzer:
 
         # Calculate correlations
         if len(scores) > 1:
-            correlations["score_vs_claims_evaluated"] = self._correlation_coefficient(scores, claims_evaluated)
-            correlations["score_vs_problems_tested"] = self._correlation_coefficient(scores, problems_tested)
-            correlations["score_vs_test_cases"] = self._correlation_coefficient(scores, test_cases)
+            correlations["score_vs_claims_evaluated"] = self._correlation_coefficient(
+                scores, claims_evaluated
+            )
+            correlations["score_vs_problems_tested"] = self._correlation_coefficient(
+                scores, problems_tested
+            )
+            correlations["score_vs_test_cases"] = self._correlation_coefficient(
+                scores, test_cases
+            )
 
         return correlations
 
@@ -221,7 +239,7 @@ class BenchmarkAnalyzer:
         sum_y2 = sum(b * b for b in y)
 
         numerator = n * sum_xy - sum_x * sum_y
-        denominator = ((n * sum_x2 - sum_x**2) * (n * sum_y2 - sum_y**2))**0.5
+        denominator = ((n * sum_x2 - sum_x**2) * (n * sum_y2 - sum_y**2)) ** 0.5
 
         if denominator == 0:
             return 0.0
@@ -234,15 +252,21 @@ class BenchmarkAnalyzer:
             "hypothesis": "There is a correlation between improvement scores and 10+ claims evaluated",
             "threshold_10_plus": {},
             "threshold_5_plus": {},
-            "all_data": {}
+            "all_data": {},
         }
 
         # Test different thresholds
         for threshold in [10, 5]:
-            group_name = f"threshold_{threshold}_plus" if threshold == 10 else "threshold_5_plus"
+            group_name = (
+                f"threshold_{threshold}_plus" if threshold == 10 else "threshold_5_plus"
+            )
 
-            above_threshold = [item for item in data if item["claims_evaluated"] >= threshold]
-            below_threshold = [item for item in data if item["claims_evaluated"] < threshold]
+            above_threshold = [
+                item for item in data if item["claims_evaluated"] >= threshold
+            ]
+            below_threshold = [
+                item for item in data if item["claims_evaluated"] < threshold
+            ]
 
             if above_threshold:
                 above_scores = [item["improvement_score"] for item in above_threshold]
@@ -263,18 +287,18 @@ class BenchmarkAnalyzer:
                     "count": len(above_threshold),
                     "avg_score": above_avg,
                     "median_score": above_median,
-                    "scores": above_scores
+                    "scores": above_scores,
                 },
                 f"below_{threshold}_claims": {
                     "count": len(below_threshold),
                     "avg_score": below_avg,
                     "median_score": below_median,
-                    "scores": below_scores
+                    "scores": below_scores,
                 },
                 "difference": {
                     "avg_diff": above_avg - below_avg,
-                    "median_diff": above_median - below_median
-                }
+                    "median_diff": above_median - below_median,
+                },
             }
 
         # Overall statistics
@@ -286,7 +310,7 @@ class BenchmarkAnalyzer:
             "avg_score": statistics.mean(all_scores),
             "median_score": statistics.median(all_scores),
             "avg_claims_evaluated": statistics.mean(all_evaluated),
-            "median_claims_evaluated": statistics.median(all_evaluated)
+            "median_claims_evaluated": statistics.median(all_evaluated),
         }
 
         return threshold_analysis
@@ -305,17 +329,27 @@ class BenchmarkAnalyzer:
         data = self.analysis_results["correlation_data"]
         report.append(f"## Data Summary")
         report.append(f"- Total cycles analyzed: {len(data)}")
-        report.append(f"- Cycle range: {min(item['cycle_num'] for item in data)} - {max(item['cycle_num'] for item in data)}")
+        report.append(
+            f"- Cycle range: {min(item['cycle_num'] for item in data)} - {max(item['cycle_num'] for item in data)}"
+        )
         report.append("")
 
         # Correlation results
         correlations = self.analysis_results["correlations"]
         report.append("## Correlation Analysis")
-        report.append("Correlation coefficients between improvement scores and claim counts:")
+        report.append(
+            "Correlation coefficients between improvement scores and claim counts:"
+        )
         report.append("")
 
         for metric, corr in correlations.items():
-            strength = "strong" if abs(corr) > 0.7 else "moderate" if abs(corr) > 0.3 else "weak"
+            strength = (
+                "strong"
+                if abs(corr) > 0.7
+                else "moderate"
+                if abs(corr) > 0.3
+                else "weak"
+            )
             direction = "positive" if corr > 0 else "negative"
             report.append(f"- {metric}: {corr:.3f} ({strength} {direction})")
         report.append("")
@@ -334,7 +368,9 @@ class BenchmarkAnalyzer:
         report.append(f"- Cycles with <10 claims evaluated: {below_10['count']}")
         report.append(f"- Average score (10+ claims): {above_10['avg_score']:.1f}%")
         report.append(f"- Average score (<10 claims): {below_10['avg_score']:.1f}%")
-        report.append(f"- Score difference: {threshold['threshold_10_plus']['difference']['avg_diff']:.1f}%")
+        report.append(
+            f"- Score difference: {threshold['threshold_10_plus']['difference']['avg_diff']:.1f}%"
+        )
         report.append("")
 
         # 5+ claims threshold (additional insight)
@@ -353,33 +389,53 @@ class BenchmarkAnalyzer:
         report.append("## Overall Statistics")
         report.append(f"- Average improvement score: {all_data['avg_score']:.1f}%")
         report.append(f"- Median improvement score: {all_data['median_score']:.1f}%")
-        report.append(f"- Average claims evaluated: {all_data['avg_claims_evaluated']:.1f}")
-        report.append(f"- Median claims evaluated: {all_data['median_claims_evaluated']:.1f}")
+        report.append(
+            f"- Average claims evaluated: {all_data['avg_claims_evaluated']:.1f}"
+        )
+        report.append(
+            f"- Median claims evaluated: {all_data['median_claims_evaluated']:.1f}"
+        )
         report.append("")
 
         # Individual cycle data
         report.append("## Individual Cycle Data")
-        report.append("| Cycle | Claims Evaluated | Improvement Score | Enhancement Type |")
-        report.append("|-------|----------------|------------------|------------------|")
+        report.append(
+            "| Cycle | Claims Evaluated | Improvement Score | Enhancement Type |"
+        )
+        report.append(
+            "|-------|----------------|------------------|------------------|"
+        )
 
         for item in sorted(data, key=lambda x: x["cycle_num"]):
-            report.append(f"| {item['cycle']} | {item['claims_evaluated']} | {item['improvement_score']:.1f}% | {item['enhancement_type']} |")
+            report.append(
+                f"| {item['cycle']} | {item['claims_evaluated']} | {item['improvement_score']:.1f}% | {item['enhancement_type']} |"
+            )
         report.append("")
 
         # Conclusions
         report.append("## Conclusions")
 
         if threshold["threshold_10_plus"]["difference"]["avg_diff"] > 0:
-            report.append("[SUPPORTED] **HYPOTHESIS SUPPORTED**: Cycles with 10+ claims evaluated show higher average improvement scores.")
+            report.append(
+                "[SUPPORTED] **HYPOTHESIS SUPPORTED**: Cycles with 10+ claims evaluated show higher average improvement scores."
+            )
         else:
-            report.append("[NOT SUPPORTED] **HYPOTHESIS NOT SUPPORTED**: No clear correlation between 10+ claims evaluated and improvement scores.")
+            report.append(
+                "[NOT SUPPORTED] **HYPOTHESIS NOT SUPPORTED**: No clear correlation between 10+ claims evaluated and improvement scores."
+            )
 
         if correlations.get("score_vs_claims_evaluated", 0) > 0.3:
-            report.append("[POSITIVE] **POSITIVE CORRELATION**: Found moderate positive correlation between claims evaluated and improvement scores.")
+            report.append(
+                "[POSITIVE] **POSITIVE CORRELATION**: Found moderate positive correlation between claims evaluated and improvement scores."
+            )
         elif correlations.get("score_vs_claims_evaluated", 0) < -0.3:
-            report.append("[NEGATIVE] **NEGATIVE CORRELATION**: Found negative correlation between claims evaluated and improvement scores.")
+            report.append(
+                "[NEGATIVE] **NEGATIVE CORRELATION**: Found negative correlation between claims evaluated and improvement scores."
+            )
         else:
-            report.append("[WEAK] **WEAK CORRELATION**: Found weak or no correlation between claims evaluated and improvement scores.")
+            report.append(
+                "[WEAK] **WEAK CORRELATION**: Found weak or no correlation between claims evaluated and improvement scores."
+            )
 
         return "\n".join(report)
 
@@ -398,19 +454,21 @@ class BenchmarkAnalyzer:
 
         # Save report
         report_path = "benchmark_correlation_report.md"
-        with open(report_path, 'w') as f:
+        with open(report_path, "w") as f:
             f.write(report)
 
         print(f"\nAnalysis complete! Report saved to: {report_path}")
-        print("\n" + "="*50)
+        print("\n" + "=" * 50)
         print(report)
 
         return report
+
 
 def main():
     """Main analysis function"""
     analyzer = BenchmarkAnalyzer()
     analyzer.run_analysis()
+
 
 if __name__ == "__main__":
     main()

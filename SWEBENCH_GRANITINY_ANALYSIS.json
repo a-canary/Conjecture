@@ -1,0 +1,165 @@
+{
+  "combination": [
+    "Functional Requirements: SWE-Bench-Bash-Only >70% accuracy with GraniteTiny",
+    "Technical Constraints: Bash-only environment, minimal context windows, local LM Studio execution",
+    "Integration & Compatibility: Mini-SWE-Agent framework, Docker harness, OpenAI-compatible API"
+  ],
+  "problem_summary": "Achieving >70% on SWE-Bench-Bash-Only with GraniteTiny requires bridging the gap between HumanEval success (where tiny models excel at isolated problems) and SWE-bench (where models must understand repository context, generate patches, and verify fixes). The challenge is integrating GraniteTiny through Conjecture's claim verification system into the mini-swe-agent framework while maintaining bash-only execution constraints.",
+  "current_state": {
+    "infrastructure_ready": true,
+    "swe_bench_evaluator": "benchmarks/benchmarking/swe_bench_evaluator.py (895 lines, production-ready)",
+    "granite_tiny_integration": "docs/ibm_granite_tiny_integration_guide.md (fully configured)",
+    "benchmark_framework": "55+ files in benchmarks/benchmarking/ with comprehensive evaluation",
+    "backlog_item": "SC-FEAT-001: SWE-Bench-Bash-Only accuracy target (>70%) already tracked",
+    "key_insight": "Focused subset (bash-only) provides more targeted validation than full SWEBench"
+  },
+  "reasoning": {
+    "gap_analysis": "HumanEval success (isolated problems) vs SWE-bench (repository context, patch generation, test verification). GraniteTiny excels at focused reasoning but struggles with multi-step repository navigation.",
+    "conjecture_role": "Conjecture's claim verification system can validate patch correctness BEFORE submission, reducing false positives and improving accuracy metrics.",
+    "bash_only_advantage": "Bash-only constraint eliminates Python environment complexity, focusing on core problem-solving: parsing problem statements, generating patches, running tests.",
+    "integration_point": "Mini-SWE-Agent framework expects OpenAI-compatible API; Conjecture can wrap GraniteTiny (via LM Studio) to provide this interface with claim verification overlay."
+  },
+  "solution_steps": [
+    "1. Implement OpenAI-compatible API wrapper for LM Studio + GraniteTiny",
+    "   - Create src/processing/llm/openai_compatible_wrapper.py",
+    "   - Expose /v1/chat/completions endpoint compatible with mini-swe-agent",
+    "   - Handle streaming and non-streaming responses",
+    "   - Implement retry logic with exponential backoff",
+    "",
+    "2. Parse SWE-bench problem_statement into structured claims",
+    "   - Extract: repo name, base commit, problem description, test requirements",
+    "   - Create Claim objects for: 'Problem Understanding', 'Solution Approach', 'Test Coverage'",
+    "   - Store in Conjecture database for verification tracking",
+    "",
+    "3. Use Conjecture to verify patch correctness before apply",
+    "   - Generate patch via GraniteTiny",
+    "   - Create Claim: 'Patch is syntactically valid Python'",
+    "   - Create Claim: 'Patch addresses problem statement'",
+    "   - Create Claim: 'Patch passes test_patch requirements'",
+    "   - Only submit if all claims validated",
+    "",
+    "4. Integrate with Docker execution harness",
+    "   - Bash-only: Use subprocess.run() for test execution",
+    "   - Parse test output to extract pass/fail counts",
+    "   - Map results back to Conjecture claims",
+    "   - Track metrics: tests_passed, tests_total, execution_time",
+    "",
+    "5. Format outputs for SWE-bench evaluation",
+    "   - Generate patch in unified diff format",
+    "   - Submit to mini-swe-agent evaluation endpoint",
+    "   - Collect: instance_id, result (passed/failed), execution_time",
+    "   - Aggregate metrics: accuracy, pass_rate, avg_time"
+  ],
+  "implementation_details": {
+    "openai_wrapper": {
+      "file": "src/processing/llm/openai_compatible_wrapper.py",
+      "class": "OpenAICompatibleWrapper",
+      "methods": [
+        "async def chat_completions(messages, model, temperature, max_tokens)",
+        "async def stream_chat_completions(messages, model, temperature, max_tokens)",
+        "def _format_response(completion_text) -> dict",
+        "async def _call_lm_studio(prompt, max_tokens, temperature)"
+      ],
+      "endpoint": "POST /v1/chat/completions",
+      "compatibility": "OpenAI API format for mini-swe-agent"
+    },
+    "claim_verification": {
+      "file": "src/processing/swe_bench_claim_verifier.py",
+      "class": "SWEBenchClaimVerifier",
+      "claims_generated": [
+        "Problem Understanding: Correctly parsed repo/commit/requirements",
+        "Solution Approach: Patch addresses root cause",
+        "Syntax Validity: Patch is valid Python",
+        "Test Coverage: Patch passes test_patch",
+        "No Regressions: Patch doesn't break existing tests"
+      ],
+      "verification_method": "Execute tests in bash-only environment, parse output"
+    },
+    "bash_only_execution": {
+      "file": "src/processing/bash_executor.py",
+      "class": "BashExecutor",
+      "methods": [
+        "async def apply_patch(repo_path, patch_content) -> bool",
+        "async def run_tests(repo_path, test_command) -> TestResult",
+        "async def verify_syntax(file_path) -> bool"
+      ],
+      "constraints": "No Python subprocess.Popen, only subprocess.run with timeout"
+    },
+    "swe_bench_integration": {
+      "file": "benchmarks/benchmarking/swe_bench_granite_tiny.py",
+      "class": "SWEBenchGraniteTinyEvaluator",
+      "extends": "RealSWEBenchEvaluator",
+      "methods": [
+        "async def evaluate_with_conjecture_verification(task) -> EvaluationOutput",
+        "async def evaluate_bash_only_subset(num_tasks=100) -> Dict[str, float]",
+        "def calculate_accuracy_metrics() -> Dict[str, float]"
+      ],
+      "target_metric": ">70% accuracy on bash-only subset"
+    }
+  },
+  "expected_outcome": {
+    "accuracy_target": ">70% on SWE-Bench-Bash-Only",
+    "mechanism": "Clean integration enabling accurate evaluation metrics through claim verification",
+    "benefits": [
+      "GraniteTiny can focus on core problem-solving without environment complexity",
+      "Conjecture claims provide explainability for each patch decision",
+      "Bash-only execution eliminates Python environment issues",
+      "OpenAI-compatible wrapper enables mini-swe-agent integration",
+      "Claim verification reduces false positives and improves accuracy"
+    ],
+    "success_criteria": [
+      "OpenAI wrapper passes compatibility tests with mini-swe-agent",
+      "SWE-bench evaluator runs 100+ bash-only tasks without errors",
+      "Accuracy metric >70% achieved on bash-only subset",
+      "Claim verification correctly identifies patch validity",
+      "Execution time <30s per task (including test execution)"
+    ]
+  },
+  "risk_mitigation": {
+    "tiny_model_limitations": {
+      "risk": "GraniteTiny may struggle with complex repository navigation",
+      "mitigation": "Bash-only subset focuses on simpler problems; use Conjecture claims to validate understanding before patch generation"
+    },
+    "context_window_constraints": {
+      "risk": "Limited context may miss important repository details",
+      "mitigation": "Parse problem_statement to extract key requirements; use semantic search in Conjecture to find relevant code"
+    },
+    "test_execution_failures": {
+      "risk": "Tests may fail due to environment issues, not patch issues",
+      "mitigation": "Bash-only execution is deterministic; capture full test output for debugging"
+    },
+    "api_compatibility": {
+      "risk": "Mini-swe-agent may expect specific API response format",
+      "mitigation": "Test wrapper against mini-swe-agent test suite before full evaluation"
+    }
+  },
+  "files_to_create": [
+    "src/processing/llm/openai_compatible_wrapper.py - OpenAI API compatibility layer",
+    "src/processing/swe_bench_claim_verifier.py - Claim verification for patches",
+    "src/processing/bash_executor.py - Bash-only test execution",
+    "benchmarks/benchmarking/swe_bench_granite_tiny.py - GraniteTiny evaluator",
+    "tests/test_swe_bench_granite_tiny.py - Integration tests"
+  ],
+  "files_to_modify": [
+    "benchmarks/benchmarking/swe_bench_evaluator.py - Add GraniteTiny support",
+    "src/config/unified_config.py - Add bash-only execution mode",
+    "src/processing/llm/provider.py - Register OpenAI wrapper"
+  ],
+  "estimated_effort": {
+    "openai_wrapper": "4-6 hours",
+    "claim_verifier": "3-4 hours",
+    "bash_executor": "2-3 hours",
+    "swe_bench_integration": "4-5 hours",
+    "testing": "3-4 hours",
+    "total": "16-22 hours"
+  },
+  "next_steps": [
+    "1. Review mini-swe-agent framework requirements (API format, evaluation protocol)",
+    "2. Implement OpenAI-compatible wrapper with streaming support",
+    "3. Create bash-only test executor with timeout handling",
+    "4. Implement claim verification for patch validation",
+    "5. Run integration tests on 10-20 bash-only SWE-bench tasks",
+    "6. Measure accuracy and iterate on prompt engineering",
+    "7. Scale to full bash-only subset (100+ tasks) for final evaluation"
+  ]
+}

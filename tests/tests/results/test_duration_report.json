@@ -1,0 +1,154 @@
+{
+  "session_info": {
+    "total_session_time": 0.5588123798370361,
+    "total_test_time": 0.2562669001054019,
+    "overhead_time": 0.30254547973163426,
+    "timestamp": "2025-12-30T10:57:29.597566",
+    "exit_status": 0
+  },
+  "summary": {
+    "total_tests": 13,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0,
+    "average_test_time": 0.019712838469646297,
+    "slowest_test": {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_retry_delay_calculation",
+      "setup_duration": 0,
+      "call_duration": 0.07744770008139312,
+      "teardown_duration": 0,
+      "total_duration": 0.07744770008139312,
+      "outcome": "passed",
+      "markers": []
+    },
+    "fastest_test": {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_enhanced_retry_config_test_values",
+      "setup_duration": 0,
+      "call_duration": 0.0002445001155138016,
+      "teardown_duration": 0,
+      "total_duration": 0.0002445001155138016,
+      "outcome": "passed",
+      "markers": []
+    }
+  },
+  "test_durations": [
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_retry_delay_calculation",
+      "setup_duration": 0,
+      "call_duration": 0.07744770008139312,
+      "teardown_duration": 0,
+      "total_duration": 0.07744770008139312,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_retry_max_delay_limit",
+      "setup_duration": 0,
+      "call_duration": 0.03749319980852306,
+      "teardown_duration": 0,
+      "total_duration": 0.03749319980852306,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_with_llm_retry_success_after_retries",
+      "setup_duration": 0,
+      "call_duration": 0.034679400036111474,
+      "teardown_duration": 0,
+      "total_duration": 0.034679400036111474,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_with_llm_retry_max_attempts_exceeded",
+      "setup_duration": 0,
+      "call_duration": 0.031578100053593516,
+      "teardown_duration": 0,
+      "total_duration": 0.031578100053593516,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_with_llm_retry_max_attempts_exceeded_basic",
+      "setup_duration": 0,
+      "call_duration": 0.029869999969378114,
+      "teardown_duration": 0,
+      "total_duration": 0.029869999969378114,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_retry_with_jitter",
+      "setup_duration": 0,
+      "call_duration": 0.028697700006887317,
+      "teardown_duration": 0,
+      "total_duration": 0.028697700006887317,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_retry_specific_exception_types",
+      "setup_duration": 0,
+      "call_duration": 0.014743400039151311,
+      "teardown_duration": 0,
+      "total_duration": 0.014743400039151311,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_retry_function_preservation",
+      "setup_duration": 0,
+      "call_duration": 0.00036639999598264694,
+      "teardown_duration": 0,
+      "total_duration": 0.00036639999598264694,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_enhanced_retry_config_defaults",
+      "setup_duration": 0,
+      "call_duration": 0.00032739993184804916,
+      "teardown_duration": 0,
+      "total_duration": 0.00032739993184804916,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_with_llm_retry_success_first_attempt",
+      "setup_duration": 0,
+      "call_duration": 0.00028270017355680466,
+      "teardown_duration": 0,
+      "total_duration": 0.00028270017355680466,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_retry_config_validation",
+      "setup_duration": 0,
+      "call_duration": 0.0002778999041765928,
+      "teardown_duration": 0,
+      "total_duration": 0.0002778999041765928,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_enhanced_retry_config_custom",
+      "setup_duration": 0,
+      "call_duration": 0.0002584999892860651,
+      "teardown_duration": 0,
+      "total_duration": 0.0002584999892860651,
+      "outcome": "passed",
+      "markers": []
+    },
+    {
+      "nodeid": "test_retry_utilities.py::TestRetryUtilities::test_enhanced_retry_config_test_values",
+      "setup_duration": 0,
+      "call_duration": 0.0002445001155138016,
+      "teardown_duration": 0,
+      "total_duration": 0.0002445001155138016,
+      "outcome": "passed",
+      "markers": []
+    }
+  ],
+  "marker_statistics": {}
+}

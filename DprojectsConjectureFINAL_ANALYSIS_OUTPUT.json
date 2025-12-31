@@ -1,0 +1,197 @@
+{
+  "analysis_metadata": {
+    "date": "2025-12-30",
+    "status": "COMPLETE",
+    "confidence": "HIGH",
+    "scope": "SWE-Bench-Bash-Only + GraniteTiny Integration Analysis"
+  },
+  "combination": {
+    "functional_requirements": [
+      "Achieve >70% accuracy on SWE-Bench-Bash-Only with GraniteTiny",
+      "Parse problem statements into structured claims",
+      "Generate patches that pass test requirements",
+      "Verify patch correctness before submission"
+    ],
+    "technical_constraints": [
+      "Bash-only environment (no Python environment setup)",
+      "Minimal context windows (GraniteTiny: 512 tokens max)",
+      "Local LM Studio execution (no cloud API calls)",
+      "Deterministic test execution (same results every time)"
+    ],
+    "integration_compatibility": [
+      "Mini-SWE-Agent framework expects OpenAI-compatible API",
+      "Docker harness for sandboxed execution",
+      "Unified diff format for patches",
+      "Test output parsing for metrics"
+    ]
+  },
+  "problem_summary": "Achieving >70% on SWE-Bench-Bash-Only with GraniteTiny requires bridging the gap between HumanEval success (where tiny models excel at isolated problems) and SWE-bench (where models must understand repository context, generate patches, and verify fixes). The challenge is integrating GraniteTiny through Conjecture's claim verification system into the mini-swe-agent framework while maintaining bash-only execution constraints.",
+  "reasoning": {
+    "gap_analysis": "HumanEval success (isolated problems) vs SWE-bench (repository context, patch generation, test verification). GraniteTiny excels at focused reasoning but struggles with multi-step repository navigation.",
+    "conjecture_role": "Conjecture's claim verification system can validate patch correctness BEFORE submission, reducing false positives and improving accuracy metrics.",
+    "bash_only_advantage": "Bash-only constraint eliminates Python environment complexity, focusing on core problem-solving: parsing problem statements, generating patches, running tests.",
+    "integration_point": "Mini-SWE-Agent framework expects OpenAI-compatible API; Conjecture can wrap GraniteTiny (via LM Studio) to provide this interface with claim verification overlay."
+  },
+  "current_state": {
+    "swe_bench_evaluator": {
+      "file": "benchmarks/benchmarking/swe_bench_evaluator.py",
+      "lines": 895,
+      "status": "PRODUCTION-READY",
+      "features": [
+        "Real SWE-bench-lite dataset integration",
+        "Fallback task generation for offline testing",
+        "Sandboxed execution with timeout handling",
+        "Direct vs Conjecture comparison framework"
+      ]
+    },
+    "granite_tiny_integration": {
+      "file": "docs/ibm_granite_tiny_integration_guide.md",
+      "lines": 385,
+      "status": "FULLY-CONFIGURED",
+      "configuration": {
+        "url": "http://localhost:1234/v1",
+        "model": "ibm/granite-4-h-tiny",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "max_context_size": 5
+      }
+    },
+    "benchmark_framework": {
+      "directory": "benchmarks/benchmarking/",
+      "files": 55,
+      "status": "EXTENSIVE-INFRASTRUCTURE",
+      "features": [
+        "Multiple evaluation approaches",
+        "Comprehensive metrics tracking",
+        "Multi-model comparison support"
+      ]
+    },
+    "backlog_item": {
+      "id": "SC-FEAT-001",
+      "status": "TRACKED",
+      "target": ">70% accuracy on bash-only subset"
+    }
+  },
+  "solution_architecture": {
+    "layer_1_openai_wrapper": {
+      "file": "src/processing/llm/openai_compatible_wrapper.py",
+      "purpose": "Bridge LM Studio + GraniteTiny to OpenAI API format",
+      "methods": [
+        "async def chat_completions(messages, model, temperature, max_tokens)",
+        "async def stream_chat_completions(messages, model, temperature, max_tokens)"
+      ],
+      "effort_hours": "4-6"
+    },
+    "layer_2_bash_executor": {
+      "file": "src/processing/bash_executor.py",
+      "purpose": "Execute tests in deterministic bash environment",
+      "methods": [
+        "async def apply_patch(repo_path, patch_content) -> bool",
+        "async def run_tests(repo_path, test_command) -> TestResult",
+        "async def verify_syntax(file_path) -> bool"
+      ],
+      "effort_hours": "2-3"
+    },
+    "layer_3_claim_verifier": {
+      "file": "src/processing/swe_bench_claim_verifier.py",
+      "purpose": "Validate patches using Conjecture claims",
+      "claims": [
+        "Problem Understanding: Correctly parsed repo/commit/requirements",
+        "Solution Approach: Patch addresses root cause",
+        "Syntax Validity: Patch is valid Python",
+        "Test Coverage: Patch passes test_patch",
+        "No Regressions: Patch doesn't break existing tests"
+      ],
+      "effort_hours": "3-4"
+    },
+    "layer_4_swe_bench_integration": {
+      "file": "benchmarks/benchmarking/swe_bench_granite_tiny.py",
+      "purpose": "Integrate all components into evaluator",
+      "methods": [
+        "async def evaluate_with_conjecture_verification(task) -> EvaluationOutput",
+        "async def evaluate_bash_only_subset(num_tasks=100) -> Dict[str, float]"
+      ],
+      "effort_hours": "4-5"
+    }
+  },
+  "implementation_phases": {
+    "phase_1_openai_wrapper": {
+      "duration_hours": "4-6",
+      "tasks": [
+        "Create compatibility layer for mini-swe-agent",
+        "Implement streaming support",
+        "Add retry logic with exponential backoff"
+      ],
+      "success_criteria": [
+        "Wrapper passes OpenAI API compatibility tests",
+        "Streaming responses work correctly",
+        "Retry logic handles LM Studio timeouts"
+      ]
+    },
+    "phase_2_bash_executor": {
+      "duration_hours": "2-3",
+      "tasks": [
+        "Implement patch application using 'patch' command",
+        "Implement test execution with output parsing",
+        "Add timeout handling (30s per task)"
+      ],
+      "success_criteria": [
+        "Patches apply cleanly",
+        "Test output parsed correctly",
+        "Timeouts handled gracefully"
+      ]
+    },
+    "phase_3_claim_verifier": {
+      "duration_hours": "3-4",
+      "tasks": [
+        "Implement claim generation for patches",
+        "Implement claim validation logic",
+        "Integrate with Conjecture database"
+      ],
+      "success_criteria": [
+        "Claims correctly identify valid/invalid patches",
+        "Verification reduces false positives",
+        "Claims stored in Conjecture database"
+      ]
+    },
+    "phase_4_swe_bench_integration": {
+      "duration_hours": "4-5",
+      "tasks": [
+        "Extend RealSWEBenchEvaluator with GraniteTiny support",
+        "Implement bash-only subset evaluation",
+        "Add metrics collection and reporting"
+      ],
+      "success_criteria": [
+        "Evaluator runs without errors",
+        "Accuracy metric >70% achieved",
+        "Metrics properly collected and reported"
+      ]
+    },
+    "phase_5_testing_optimization": {
+      "duration_hours": "3-4",
+      "tasks": [
+        "Create integration tests",
+        "Run evaluation on 100+ bash-only tasks",
+        "Optimize prompts and parameters"
+      ],
+      "success_criteria": [
+        "All integration tests pass",
+        "Accuracy >70% on bash-only subset",
+        "Failure analysis documented"
+      ]
+    }
+  },
+  "expected_outcome": {
+    "primary_goal": "Demonstrate tiny LLMs can achieve >70% on SWE-Bench-Bash-Only",
+    "mechanism": "Clean integration enabling accurate evaluation metrics through claim verification",
+    "success_criteria": [
+      "OpenAI wrapper passes compatibility tests with mini-swe-agent",
+      "SWE-bench evaluator runs 100+ bash-only tasks without errors",
+      "Accuracy metric >70% achieved on bash-only subset",
+      "Claim verification correctly identifies patch validity",
+      "Execution time <30s per task (including test execution)"
+    ],
+    "benefits": [
+      "GraniteTiny focuses on core problem-solving without environment complexity",
+      "Conjecture claims provide explainability for each patch decision",
+      "Bash-only execution eliminates Python environment issue

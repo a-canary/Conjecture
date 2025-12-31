@@ -3,7 +3,14 @@
     "allow": [
       "mcp__web-search-prime__webSearchPrime",
       "mcp__web-reader__webReader",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(claude mcp add:*)",
+      "Bash(claude mcp get:*)",
+      "mcp__project-rag__get_statistics",
+      "mcp__project-rag__index_codebase",
+      "Bash(ls -la \"D:\\\\projects\\\\Conjecture\\\\.agent\\\\scripts\"\" 2>&1 || echo \"Scripts dir not found \")",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []

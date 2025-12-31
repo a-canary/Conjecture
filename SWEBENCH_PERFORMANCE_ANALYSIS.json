@@ -1,0 +1,254 @@
+{
+  "combination": [
+    "Performance Criteria: Batch evaluation with progress checkpoints, concurrent instance processing (4-8 parallel), optimized context windows",
+    "Scalability & Maintainability: Modular LLM adapter pattern, intermediate result storage for resume capability, standardized evaluation reports",
+    "Integration & Compatibility: Provider-agnostic architecture, GraniteTiny-specific optimizations, seamless Conjecture system integration"
+  ],
+  "problem_summary": "Production-ready evaluation infrastructure for achieving >70% accuracy on SWE-Bench-Bash-Only with GraniteTiny model",
+  "current_state": {
+    "infrastructure_status": "PRODUCTION-READY",
+    "swe_bench_evaluator": {
+      "file": "benchmarks/benchmarking/swe_bench_evaluator.py",
+      "lines": 895,
+      "status": "✅ IMPLEMENTED",
+      "capabilities": [
+        "Real SWE-bench-lite dataset integration (princeton-nlp/swe-bench_lite)",
+        "Sandboxed test execution with timeout handling",
+        "Direct vs Conjecture comparison framework",
+        "Fallback task generation for offline testing",
+        "Comprehensive metrics tracking"
+      ]
+    },
+    "granite_tiny_integration": {
+      "file": "docs/ibm_granite_tiny_integration_guide.md",
+      "lines": 385,
+      "status": "✅ FULLY CONFIGURED",
+      "model": "ibm/granite-4-h-tiny",
+      "provider": "LM Studio (local)",
+      "optimized_parameters": {
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "max_context_size": 5,
+        "confidence_threshold": 0.90,
+        "batch_size": 3
+      },
+      "performance_benchmarks": {
+        "claim_generation_success_rate": "90%+",
+        "response_time": "<5 seconds",
+        "json_frontmatter_parsing_rate": "95%+",
+        "confidence_score_quality": "0.8-0.95"
+      }
+    },
+    "benchmark_framework": {
+      "directory": "benchmarks/benchmarking/",
+      "files": 55,
+      "status": "✅ EXTENSIVE INFRASTRUCTURE",
+      "supported_benchmarks": [
+        "AIME 2025",
+        "GPQA",
+        "SWE-Bench",
+        "SWE-Verified",
+        "LiveCodeBench",
+        "DeepEval",
+        "HumanEval",
+        "ARC Easy",
+        "Custom Tasks"
+      ],
+      "evaluation_approaches": [
+        "Direct LLM evaluation",
+        "Conjecture-enhanced evaluation",
+        "LLM judge-based evaluation",
+        "Automated comparison (Direct vs Conjecture)",
+        "Multi-model parallel evaluation"
+      ]
+    },
+    "success_criteria": {
+      "item": "SC-FEAT-001",
+      "target": ">70% accuracy on SWE-Bench-Bash-Only",
+      "status": "PROMOTED TO SUCCESS CRITERIA",
+      "rationale": "Focused subset (bash-only) provides more targeted validation than full SWEBench"
+    }
+  },
+  "reasoning": {
+    "performance_layer": "A scalable, well-integrated system can evaluate 500 instances efficiently through batch processing with checkpoints. Concurrent processing (4-8 workers) enables parallel evaluation while maintaining system stability. Intermediate result storage enables resume capability for long-running evaluations.",
+    "scalability_layer": "Modular LLM adapter pattern allows seamless model swapping without rewriting evaluation logic. Standardized evaluation reports enable consistent metrics tracking across different models and benchmarks. Clean separation between evaluation framework and model-specific logic.",
+    "integration_layer": "Provider-agnostic architecture (OpenAI-compatible) enables easy integration of new models. GraniteTiny-specific optimizations (reduced context, lower temperature, smaller batches) ensure optimal performance for tiny models. Seamless integration with existing Conjecture system for context building and claim management."
+  },
+  "solution_steps": [
+    "1. Implement batch evaluation with progress checkpoints - Load 500 instances, process in batches of 50, save checkpoint every 50 instances for resume capability",
+    "2. Use modular LLM adapter pattern for model switching - Create adapter interface, implement GraniteTiny adapter, enable provider-agnostic evaluation",
+    "3. Store intermediate results for resume capability - JSON-based result storage, checkpoint system, recovery mechanism for interrupted evaluations",
+    "4. Parallelize independent instances (4-8 concurrent) - Async task queue, worker pool management, resource monitoring, graceful shutdown",
+    "5. Generate standardized evaluation reports - Metrics aggregation, comparison analysis, performance visualization, detailed result export"
+  ],
+  "implementation_architecture": {
+    "layer_1_batch_processor": {
+      "responsibility": "Manage evaluation batches and checkpoints",
+      "components": [
+        "BatchEvaluationManager - Orchestrate batch processing",
+        "CheckpointSystem - Save/restore evaluation state",
+        "ProgressTracker - Monitor evaluation progress",
+        "ResultAggregator - Collect and aggregate results"
+      ],
+      "key_methods": [
+        "load_instances(num_instances: int) -> List[SWETask]",
+        "process_batch(batch: List[SWETask], batch_id: int) -> BatchResult",
+        "save_checkpoint(batch_id: int, results: List[EvaluationOutput])",
+        "resume_from_checkpoint(checkpoint_id: int) -> int"
+      ]
+    },
+    "layer_2_model_adapter": {
+      "responsibility": "Provide model-agnostic evaluation interface",
+      "components": [
+        "LLMAdapterInterface - Abstract base for model adapters",
+        "GraniteTinyAdapter - GraniteTiny-specific implementation",
+        "AdapterFactory - Create appropriate adapter for model",
+        "ProviderRouter - Route requests to correct provider"
+      ],
+      "key_methods": [
+        "async evaluate(task: SWETask, context: str) -> str",
+        "async generate_patch(problem: str, context: str) -> str",
+        "get_model_config() -> ModelConfig",
+        "validate_response(response: str) -> bool"
+      ]
+    },
+    "layer_3_concurrent_executor": {
+      "responsibility": "Execute evaluations concurrently with resource management",
+      "components": [
+        "AsyncTaskQueue - Queue for evaluation tasks",
+        "WorkerPool - Manage concurrent workers (4-8)",
+        "ResourceMonitor - Track memory/CPU usage",
+        "GracefulShutdown - Handle interruptions safely"
+      ],
+      "key_methods": [
+        "async execute_concurrent(tasks: List[SWETask], num_workers: int = 4)",
+        "async process_task(task: SWETask) -> EvaluationOutput",
+        "monitor_resources() -> ResourceMetrics",
+        "shutdown_gracefully()"
+      ]
+    },
+    "layer_4_result_manager": {
+      "responsibility": "Store, retrieve, and analyze evaluation results",
+      "components": [
+        "ResultStorage - Persist results to disk/database",
+        "MetricsCalculator - Compute evaluation metrics",
+        "ReportGenerator - Create standardized reports",
+        "ComparisonAnalyzer - Compare Direct vs Conjecture"
+      ],
+      "key_methods": [
+        "save_result(result: EvaluationOutput, instance_id: str)",
+        "calculate_metrics(results: List[EvaluationOutput]) -> Metrics",
+        "generate_report(results: List[EvaluationOutput]) -> Report",
+        "compare_approaches(direct: List[Result], conjecture: List[Result]) -> Comparison"
+      ]
+    }
+  },
+  "expected_outcome": {
+    "primary_goal": "Robust evaluation completing 500 instances with resume support",
+    "success_metrics": {
+      "accuracy_target": ">70% on SWE-Bench-Bash-Only",
+      "throughput": "500 instances evaluated in <24 hours",
+      "reliability": "Zero data loss with checkpoint recovery",
+      "scalability": "Linear scaling with worker count (4-8 workers)",
+      "maintainability": "Model swaps require <1 hour implementation"
+    },
+    "deliverables": [
+      "BatchEvaluationManager - Orchestrate 500-instance evaluation",
+      "CheckpointSystem - Resume capability for interrupted runs",
+      "LLMAdapterInterface - Model-agnostic evaluation framework",
+      "GraniteTinyAdapter - Optimized tiny model implementation",
+      "ConcurrentExecutor - 4-8 worker parallel processing",
+      "StandardizedReports - Metrics, comparisons, visualizations",
+      "ComparisonFramework - Direct vs Conjecture analysis"
+    ],
+    "performance_targets": {
+      "batch_processing_time": "50 instances in ~2-3 hours",
+      "checkpoint_overhead": "<5% performance impact",
+      "concurrent_scaling": "4x throughput with 4 workers",
+      "memory_per_worker": "<500MB per concurrent task",
+      "report_generation": "<5 minutes for 500 instances"
+    }
+  },
+  "integration_points": {
+    "with_conjecture_core": [
+      "src/conjecture.py - Main Conjecture class",
+      "src/endpoint/conjecture_endpoint.py - Public API",
+      "src/processing/unified_bridge.py - LLM bridge",
+      "src/config/unified_config.py - Configuration system"
+    ],
+    "with_llm_providers": [
+      "src/processing/llm/provider.py - Provider integration",
+      "src/processing/simplified_llm_manager.py - LLM management",
+      "src/processing/enhanced_llm_router.py - Provider routing"
+    ],
+    "with_data_layer": [
+      "src/data/claim_model.py - Claim storage",
+      "src/data/data_manager.py - Data management",
+      "src/data/optimized_sqlite_manager.py - SQLite backend"
+    ],
+    "with_benchmark_framework": [
+      "benchmarks/benchmarking/swe_bench_evaluator.py - SWE-Bench evaluator",
+      "benchmarks/benchmarking/benchmark_framework.py - Base framework",
+      "benchmarks/benchmarking/comprehensive_benchmark.py - Multi-task evaluation"
+    ]
+  },
+  "risk_mitigation": {
+    "data_loss": {
+      "risk": "Interrupted evaluation loses progress",
+      "mitigation": "Checkpoint system saves every 50 instances, resume from last checkpoint"
+    },
+    "resource_exhaustion": {
+      "risk": "Too many concurrent workers exhaust memory",
+      "mitigation": "Resource monitor tracks usage, auto-scales workers (4-8 range), graceful shutdown"
+    },
+    "model_failures": {
+      "risk": "GraniteTiny timeouts or errors",
+      "mitigation": "Retry logic with exponential backoff, fallback to direct evaluation, error logging"
+    },
+    "accuracy_regression": {
+      "risk": "Changes break existing accuracy",
+      "mitigation": "Baseline metrics tracked, comparison framework validates improvements"
+    }
+  },
+  "timeline": {
+    "phase_1_foundation": {
+      "duration": "2-3 days",
+      "tasks": [
+        "Implement BatchEvaluationManager with checkpoint system",
+        "Create LLMAdapterInterface and GraniteTinyAdapter",
+        "Set up result storage and metrics calculation"
+      ]
+    },
+    "phase_2_concurrency": {
+      "duration": "2-3 days",
+      "tasks": [
+        "Implement ConcurrentExecutor with worker pool",
+        "Add resource monitoring and graceful shutdown",
+        "Test with 4-8 concurrent workers"
+      ]
+    },
+    "phase_3_evaluation": {
+      "duration": "3-5 days",
+      "tasks": [
+        "Run baseline evaluation (50 instances)",
+        "Optimize GraniteTiny parameters",
+        "Run full 500-instance evaluation"
+      ]
+    },
+    "phase_4_analysis": {
+      "duration": "2-3 days",
+      "tasks": [
+        "Generate standardized reports",
+        "Compare Direct vs Conjecture approaches",
+        "Document findings and optimizations"
+      ]
+    }
+  },
+  "success_criteria_validation": {
+    "SC-FEAT-001_target": ">70% accuracy on SWE-Bench-Bash-Only",
+    "validation_method": "Run full 500-instance evaluation, measure pass rate",
+    "expected_result": "Achieve >70% accuracy through optimized context engineering and prompt refinement",
+    "measurement": "Pass rate = (passed_instances / total_instances) * 100",
+    "success_threshold": "≥70%"
+  }
+}

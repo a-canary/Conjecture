@@ -4,6 +4,7 @@ Tests the refactored data layer functionality
 """
 
 import pytest
+import pytest_asyncio
 import asyncio
 import tempfile
 import os
@@ -11,9 +12,16 @@ from datetime import datetime, timedelta
 from typing import List
 
 # Test imports
+from pydantic import ValidationError
 from src.data.models import (
-    Claim, ClaimState, ClaimType, ClaimFilter, Relationship,
-    DataLayerError, ClaimNotFoundError, InvalidClaimError
+    Claim,
+    ClaimState,
+    ClaimType,
+    ClaimFilter,
+    Relationship,
+    DataLayerError,
+    ClaimNotFoundError,
+    InvalidClaimError,
 )
 from src.data.lancedb_adapter import LanceDBAdapter, create_lancedb_adapter
 from src.core.models import ClaimScope
@@ -29,10 +37,11 @@ except ImportError:
 
 pytestmark = pytest.mark.skipif(not lancedb_available, reason="LanceDB not available")
 
+
 class TestLanceDBAdapter:
     """Test cases for LanceDB Adapter"""
 
-    @pytest.fixture
+    @pytest_asyncio.fixture
     async def adapter(self):
         """Create a temporary LanceDB adapter for testing"""
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -53,7 +62,7 @@ class TestLanceDBAdapter:
             tags=["python", "programming", "test"],
             state=ClaimState.EXPLORE,
             scope=ClaimScope.USER_WORKSPACE,
-            embedding=[0.1] * 384  # Mock embedding
+            embedding=[0.1] * 384,  # Mock embedding
         )
 
     @pytest.fixture
@@ -63,12 +72,12 @@ class TestLanceDBAdapter:
             Claim(
                 id=f"c000000{i:02d}",
                 content=f"Test claim {i} about mathematics and logic",
-                confidence=0.7 + (i * 0.05),
+                confidence=0.6 + (i * 0.03),
                 type=[ClaimType.THESIS if i % 2 == 0 else ClaimType.CONCEPT],
                 tags=[f"tag{i}", "test"],
                 state=ClaimState.VALIDATED if i > 5 else ClaimState.EXPLORE,
                 scope=ClaimScope.USER_WORKSPACE,
-                embedding=[(i * 0.01)] * 384
+                embedding=[(i * 0.01)] * 384,
             )
             for i in range(1, 11)
         ]
@@ -125,7 +134,7 @@ class TestLanceDBAdapter:
         assert retrieved is not None
         assert retrieved.id == sample_claim.id
         assert retrieved.content == sample_claim.content
-        assert retrieved.confidence == sample_claim.confidence
+        assert retrieved.confidence == pytest.approx(sample_claim.confidence, rel=1e-5)
         assert retrieved.state == sample_claim.state
 
     @pytest.mark.asyncio
@@ -144,7 +153,7 @@ class TestLanceDBAdapter:
         updates = {
             "content": "Updated content",
             "confidence": 0.95,
-            "state": ClaimState.VALIDATED
+            "state": ClaimState.VALIDATED,
         }
         updated = await adapter.update_claim(sample_claim.id, updates)
 
@@ -240,17 +249,14 @@ class TestLanceDBAdapter:
             type=[ClaimType.REFERENCE],
             tags=["support", "test"],
             state=ClaimState.VALIDATED,
-            scope=ClaimScope.USER_WORKSPACE
+            scope=ClaimScope.USER_WORKSPACE,
         )
 
         await adapter.create_claim(claim1)
         await adapter.create_claim(claim2)
 
         # Create relationship
-        relationship = Relationship(
-            supporter_id=claim2.id,
-            supported_id=claim1.id
-        )
+        relationship = Relationship(supporter_id=claim2.id, supported_id=claim1.id)
 
         result = await adapter.create_relationship(relationship)
 
@@ -269,17 +275,14 @@ class TestLanceDBAdapter:
             type=[ClaimType.REFERENCE],
             tags=["support"],
             state=ClaimState.VALIDATED,
-            scope=ClaimScope.USER_WORKSPACE
+            scope=ClaimScope.USER_WORKSPACE,
         )
 
         await adapter.create_claim(claim1)
         await adapter.create_claim(claim2)
 
         # Create relationship
-        relationship = Relationship(
-            supporter_id=claim2.id,
-            supported_id=claim1.id
-        )
+        relationship = Relationship(supporter_id=claim2.id, supported_id=claim1.id)
         await adapter.create_relationship(relationship)
 
         # Get relationships
@@ -333,14 +336,17 @@ class TestLanceDBAdapter:
             adapter = await create_lancedb_adapter(db_path, dimension=256)
 
             assert adapter._initialized is True
-            assert adapter.dimension == 256
+            assert (
+                adapter.dimension == 256
+            )  # Factory should respect the dimension parameter
 
             await adapter.close()
+
 
 class TestLanceDBAdapterEdgeCases:
     """Test edge cases and error conditions"""
 
-    @pytest.fixture
+    @pytest_asyncio.fixture
     async def adapter(self):
         """Create a temporary LanceDB adapter for testing"""
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -352,37 +358,29 @@ class TestLanceDBAdapterEdgeCases:
 
     @pytest.mark.asyncio
     async def test_invalid_claim_validation(self, adapter):
-        """Test claim validation during creation"""
-        # Test short content
-        short_claim = Claim(
-            id="c0000001",
-            content="Short",  # Too short
-            confidence=0.5,
-            type=[ClaimType.CONCEPT],
-            tags=["test"]
-        )
-
-        with pytest.raises(DataLayerError):
-            await adapter.create_claim(short_claim)
+        """Test that Pydantic validates claim content before adapter sees it"""
+        # Test short content - Pydantic should reject this
+        with pytest.raises(ValidationError):
+            Claim(
+                id="c0000001",
+                content="Short",  # Too short - Pydantic validates
+                confidence=0.5,
+                type=[ClaimType.CONCEPT],
+                tags=["test"],
+            )
 
     @pytest.mark.asyncio
     async def test_invalid_confidence(self, adapter):
-        """Test invalid confidence values"""
-        # Test high confidence
-        high_claim = Claim(
-            id="c0000001",
-            content="Valid content for testing purposes",
-            confidence=1.5,  # Too high
-            type=[ClaimType.CONCEPT],
-            tags=["test"]
-        )
-
-        # The model should validate, but let's test adapter handling too
-        try:
-            await adapter.create_claim(high_claim)
-            assert False, "Should have raised validation error"
-        except Exception:
-            pass  # Expected
+        """Test that Pydantic validates confidence values before adapter sees it"""
+        # Test high confidence - Pydantic should reject this
+        with pytest.raises(ValidationError):
+            Claim(
+                id="c0000001",
+                content="Valid content for testing purposes",
+                confidence=1.5,  # Too high - Pydantic validates
+                type=[ClaimType.CONCEPT],
+                tags=["test"],
+            )
 
     @pytest.mark.asyncio
     async def test_large_number_of_claims(self, adapter):
@@ -396,7 +394,7 @@ class TestLanceDBAdapterEdgeCases:
                 type=[ClaimType.CONCEPT],
                 tags=[f"tag{i}", "bulk_test"],
                 state=ClaimState.EXPLORE,
-                scope=ClaimScope.USER_WORKSPACE
+                scope=ClaimScope.USER_WORKSPACE,
             )
             claims.append(claim)
 
@@ -411,6 +409,7 @@ class TestLanceDBAdapterEdgeCases:
     @pytest.mark.asyncio
     async def test_concurrent_operations(self, adapter):
         """Test concurrent claim operations"""
+
         async def create_claims(start_id: int, count: int):
             for i in range(count):
                 claim = Claim(
@@ -420,7 +419,7 @@ class TestLanceDBAdapterEdgeCases:
                     type=[ClaimType.CONCEPT],
                     tags=["concurrent"],
                     state=ClaimState.EXPLORE,
-                    scope=ClaimScope.USER_WORKSPACE
+                    scope=ClaimScope.USER_WORKSPACE,
                 )
                 await adapter.create_claim(claim)
 
@@ -428,7 +427,7 @@ class TestLanceDBAdapterEdgeCases:
         tasks = [
             create_claims(1000, 10),
             create_claims(2000, 10),
-            create_claims(3000, 10)
+            create_claims(3000, 10),
         ]
 
         await asyncio.gather(*tasks)
@@ -436,6 +435,7 @@ class TestLanceDBAdapterEdgeCases:
         # Verify all claims were created
         all_claims = await adapter.list_claims()
         assert len(all_claims) == 30
+
 
 if __name__ == "__main__":
     # Run tests

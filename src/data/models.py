@@ -9,30 +9,36 @@ from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field, field_validator, ConfigDict, field_serializer
 from src.core.models import ClaimScope
 
+
 class DataLayerError(Exception):
     """Base exception for data layer operations."""
 
     pass
+
 
 class ClaimNotFoundError(DataLayerError):
     """Raised when a claim is not found."""
 
     pass
 
+
 class InvalidClaimError(DataLayerError):
     """Raised when claim validation fails."""
 
     pass
+
 
 class RelationshipError(DataLayerError):
     """Raised when relationship operations fail."""
 
     pass
 
+
 class EmbeddingError(DataLayerError):
     """Raised when embedding operations fail."""
 
     pass
+
 
 class ClaimState(str, Enum):
     """Claim state enumeration"""
@@ -41,6 +47,7 @@ class ClaimState(str, Enum):
     VALIDATED = "Validated"
     ORPHANED = "Orphaned"
     QUEUED = "Queued"
+
 
 class ClaimType(str, Enum):
     """Claim type enumeration"""
@@ -51,6 +58,7 @@ class ClaimType(str, Enum):
     SKILL = "skill"
     EXAMPLE = "example"
     GOAL = "goal"
+
 
 class Claim(BaseModel):
     """Enhanced Claim model for data layer operations"""
@@ -82,12 +90,12 @@ class Claim(BaseModel):
     embedding: Optional[List[float]] = Field(
         default=None, description="Vector embedding"
     )
-    
+
     # Scope field for access control
     scope: ClaimScope = Field(
         default=ClaimScope.USER_WORKSPACE, description="Claim scope for access control"
     )
-    
+
     # Dirty flag fields
     is_dirty: bool = Field(
         default=True, description="Whether claim needs re-evaluation"
@@ -172,26 +180,30 @@ class Claim(BaseModel):
             "tags": json.dumps(self.tags),
             "scope": self.scope.value,
             "created": self.created.isoformat(),
-            "updated": self.updated.isoformat() if self.updated else self.created.isoformat(),
+            "updated": self.updated.isoformat()
+            if self.updated
+            else self.created.isoformat(),
             "is_dirty": self.is_dirty,
             "dirty_reason": self.dirty_reason or "",
-            "dirty_timestamp": self.dirty_timestamp.isoformat() if self.dirty_timestamp else "",
+            "dirty_timestamp": self.dirty_timestamp.isoformat()
+            if self.dirty_timestamp
+            else "",
             "dirty_priority": self.dirty_priority,
             "supported_by": json.dumps(self.supported_by),
             "supports": json.dumps(self.supports),
-            "embedding": self.embedding
+            "embedding": self.embedding,
         }
 
     @classmethod
-    def from_lancedb_result(
-        cls, data: Dict[str, Any]
-    ) -> "Claim":
+    def from_lancedb_result(cls, data: Dict[str, Any]) -> "Claim":
         """Create claim from LanceDB query result"""
         import json
 
         # Parse JSON fields
         try:
-            claim_type = [ClaimType(t) for t in json.loads(data.get("type", '["concept"]'))]
+            claim_type = [
+                ClaimType(t) for t in json.loads(data.get("type", '["concept"]'))
+            ]
         except:
             claim_type = [ClaimType.CONCEPT]
 
@@ -201,12 +213,18 @@ class Claim(BaseModel):
             tags = []
 
         try:
-            supported_by = json.loads(data.get("supported_by", "[]")) if data.get("supported_by") else []
+            supported_by = (
+                json.loads(data.get("supported_by", "[]"))
+                if data.get("supported_by")
+                else []
+            )
         except:
             supported_by = []
 
         try:
-            supports = json.loads(data.get("supports", "[]")) if data.get("supports") else []
+            supports = (
+                json.loads(data.get("supports", "[]")) if data.get("supports") else []
+            )
         except:
             supports = []
 
@@ -217,12 +235,20 @@ class Claim(BaseModel):
             created = datetime.utcnow()
 
         try:
-            updated = datetime.fromisoformat(data["updated"]) if data.get("updated") else created
+            updated = (
+                datetime.fromisoformat(data["updated"])
+                if data.get("updated")
+                else created
+            )
         except:
             updated = created
 
         try:
-            dirty_timestamp = datetime.fromisoformat(data["dirty_timestamp"]) if data.get("dirty_timestamp") else None
+            dirty_timestamp = (
+                datetime.fromisoformat(data["dirty_timestamp"])
+                if data.get("dirty_timestamp")
+                else None
+            )
         except:
             dirty_timestamp = None
 
@@ -248,7 +274,7 @@ class Claim(BaseModel):
             dirty_priority=data.get("dirty_priority", 0),
             supported_by=supported_by,
             supports=supports,
-            embedding=data.get("embedding")
+            embedding=data.get("embedding"),
         )
 
     def to_chroma_metadata(self) -> Dict[str, Any]:
@@ -326,6 +352,7 @@ class Claim(BaseModel):
     def __repr__(self):
         return f"Claim(id={self.id}, confidence={self.confidence:.2f}, state={self.state.value})"
 
+
 class Relationship(BaseModel):
     """Simplified claim relationship model - only supports 'A supports B' connections"""
 
@@ -342,6 +369,7 @@ class Relationship(BaseModel):
 
     def __repr__(self) -> str:
         return f"Relationship({self.supporter_id} supports {self.supported_id})"
+
 
 class ClaimFilter(BaseModel):
     """Filter options for claim queries"""
@@ -430,6 +458,7 @@ class ClaimFilter(BaseModel):
                     )
         return v
 
+
 class DataConfig(BaseModel):
     """Configuration for data layer components"""
 
@@ -451,21 +480,30 @@ class DataConfig(BaseModel):
     embedding_dim: Optional[int] = Field(
         default=None, description="Embedding dimension"
     )
-    embedding_service: Optional[Any] = Field(default=None, description="Embedding service instance")
-    vector_store: Optional[Any] = Field(default=None, description="Vector store instance")
-    
+    embedding_service: Optional[Any] = Field(
+        default=None, description="Embedding service instance"
+    )
+    vector_store: Optional[Any] = Field(
+        default=None, description="Vector store instance"
+    )
+
     # Performance configuration
     max_tokens: int = Field(default=8000, ge=1000, description="Maximum context tokens")
     cache_size: int = Field(default=1000, ge=0, description="Cache size")
     cache_ttl: int = Field(default=300, ge=0, description="Cache TTL in seconds")
     batch_size: int = Field(default=100, ge=1, le=1000, description="Batch size")
-    max_connections: Optional[int] = Field(default=10, ge=1, description="Maximum database connections")
+    max_connections: Optional[int] = Field(
+        default=10, ge=1, description="Maximum database connections"
+    )
     query_timeout: int = Field(default=30, description="Query timeout in seconds")
 
     # Feature flags
-    use_chroma: bool = Field(default=True, description="Whether to use ChromaDB for vector storage")
+    use_chroma: bool = Field(
+        default=True, description="Whether to use ChromaDB for vector storage"
+    )
     use_embeddings: bool = Field(default=True, description="Whether to use embeddings")
     auto_sync: bool = Field(default=True, description="Auto-sync dirty claims")
+
 
 class QueryResult(BaseModel):
     """Standardized query result"""
@@ -484,14 +522,18 @@ class QueryResult(BaseModel):
     def __len__(self):
         return len(self.items)
 
+
 # Import common result classes to maintain backward compatibility
 from src.core.common_results import ProcessingResult, BatchResult
+
 
 class ProcessingStats(BaseModel):
     """Processing statistics and metrics"""
 
-    operation: str = Field(..., description="Operation name")
-    start_time: datetime = Field(..., description="Start timestamp")
+    operation: str
+    start_time: datetime = Field(
+        default_factory=datetime.utcnow, description="Start timestamp"
+    )
     end_time: Optional[datetime] = Field(default=None, description="End timestamp")
     items_processed: int = Field(default=0, description="Items processed")
     items_succeeded: int = Field(default=0, description="Items successfully processed")
@@ -536,6 +578,7 @@ class ProcessingStats(BaseModel):
         self.items_processed += count
         self.items_failed += count
 
+
 class ProcessingResult(BaseModel):
     """Result of processing a single claim"""
 
@@ -552,14 +595,17 @@ class ProcessingResult(BaseModel):
         default=None, description="Additional processing metadata"
     )
 
+
 # Utility functions for claim validation and processing
 def validate_claim_id(claim_id: str) -> bool:
     """Validate claim ID format"""
     return claim_id.startswith("c") and len(claim_id) == 8 and claim_id[1:].isdigit()
 
+
 def validate_confidence(confidence: float) -> bool:
     """Validate confidence score"""
     return 0.0 <= confidence <= 1.0
+
 
 def generate_claim_id(counter: int = 1) -> str:
     """Generate a claim ID from a counter"""

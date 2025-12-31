@@ -8,8 +8,9 @@ import json
 import os
 from pathlib import Path
 
+
 def main():
-    cycle_dir = Path("src/benchmarking/cycle_results")
+    cycle_dir = Path("benchmarks/benchmarking/cycle_results")
 
     print("LATEST BENCHMARK SCORES")
     print("=" * 60)
@@ -20,7 +21,7 @@ def main():
 
     for cycle_file in cycle_files:
         try:
-            with open(cycle_file, 'r', encoding='utf-8') as f:
+            with open(cycle_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
             cycle_num = data.get("cycle", "Unknown")
@@ -28,19 +29,25 @@ def main():
             overall_score = data.get("overall_score", 0)
             success = data.get("success", False)
 
-            scores.append({
-                "cycle": cycle_num,
-                "title": title,
-                "score": overall_score,
-                "success": success
-            })
+            scores.append(
+                {
+                    "cycle": cycle_num,
+                    "title": title,
+                    "score": overall_score,
+                    "success": success,
+                }
+            )
 
         except Exception as e:
             print(f"Error reading {cycle_file.name}: {str(e)[:30]}...")
 
     # Sort by cycle number if possible
     try:
-        scores.sort(key=lambda x: int(x["cycle"]) if isinstance(x["cycle"], (int, str)) and str(x["cycle"]).isdigit() else 999)
+        scores.sort(
+            key=lambda x: int(x["cycle"])
+            if isinstance(x["cycle"], (int, str)) and str(x["cycle"]).isdigit()
+            else 999
+        )
     except:
         pass
 
@@ -52,7 +59,11 @@ def main():
     for score_data in scores[-10:]:  # Last 10 cycles
         cycle_str = str(score_data["cycle"])
         status = "PASS" if score_data["success"] else "FAIL"
-        score_str = f"{score_data['score']:.1f}%" if isinstance(score_data['score'], (int, float)) else f"{score_data['score']}"
+        score_str = (
+            f"{score_data['score']:.1f}%"
+            if isinstance(score_data["score"], (int, float))
+            else f"{score_data['score']}"
+        )
 
         print(f"{cycle_str:<8} {score_str:<8} {status:<8} {score_data['title']}")
 
@@ -61,7 +72,9 @@ def main():
     total = len(scores)
     success_rate = (successful / total * 100) if total > 0 else 0
 
-    numeric_scores = [s["score"] for s in scores if isinstance(s["score"], (int, float))]
+    numeric_scores = [
+        s["score"] for s in scores if isinstance(s["score"], (int, float))
+    ]
     avg_score = sum(numeric_scores) / len(numeric_scores) if numeric_scores else 0
     best_score = max(numeric_scores) if numeric_scores else 0
 
@@ -76,12 +89,19 @@ def main():
         # Find most recent successful cycle
         recent_successful = None
         for score_data in reversed(scores):
-            if score_data["success"] and isinstance(score_data["score"], (int, float)) and score_data["score"] > 0:
+            if (
+                score_data["success"]
+                and isinstance(score_data["score"], (int, float))
+                and score_data["score"] > 0
+            ):
                 recent_successful = score_data
                 break
 
         if recent_successful:
-            print(f"Best Recent: Cycle {recent_successful['cycle']} - {recent_successful['score']:.1f}% - {recent_successful['title'][:30]}")
+            print(
+                f"Best Recent: Cycle {recent_successful['cycle']} - {recent_successful['score']:.1f}% - {recent_successful['title'][:30]}"
+            )
+
 
 if __name__ == "__main__":
     main()

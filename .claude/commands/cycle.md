@@ -7,7 +7,7 @@ Generic work cycle for fixing bugs, exploring new features, or simplifing comple
   - start a Task to perform [Cycle Steps](#cycle-steps)
 
 ### Cycle Steps
-1. analyse project status, git diff files, read TODO.md 
+1. analyse project status, git diff files, read .agent/backlog.md
 2. Consider 5 possible high-impact work priorieties, and make a focused goal for this cycle that should take about 10 minutes. These can be defined tasks/goals or investigations to learn more about something that your unsure about. 
 3. Complete research and analysis
   - analyse related project code
@@ -22,8 +22,8 @@ Generic work cycle for fixing bugs, exploring new features, or simplifing comple
 8. IF you are confident this change is a net positive compared to main branch (diff ANALYSIS.md to main branch to check progression), 
   THEN:
     1. delete dead code and deprecated files
-    2. update TODO.md items
-    3. Adding next steps and new identified work or explorations to TODO.md
+     2. update .agent/backlog.md items
+     3. Adding next steps and new identified work or explorations to .agent/backlog.md
     4. revert temporary changes, debug logging, cycle specific plans and reports
     5. check important and relevant docs are accurate
     6. `git commit` relevant changes and Cycle State Files    
@@ -31,7 +31,7 @@ Generic work cycle for fixing bugs, exploring new features, or simplifing comple
     - If issues are small and addressable, goto [this step](#cycle-steps/4)
     - If issues are significant and not addressable:
       1. git revert all changes
-      2. set cycle as failure in TODO.md, and git commit
+      2. set cycle as failure in .agent/backlog.md, and git commit
 8. At this point all files have been commited or reverted, Cycle State Files have been updated, and you start next cycle.
 
 While in this cycle, remember to:
@@ -44,7 +44,7 @@ While in this cycle, remember to:
 - see file formats in [Cycle State Files](#cycle-state-files)
 
 ### Cycle State Files
-#### TODO.md
+#### .agent/backlog.md
 Concise inventory of task concepts.
 
 #### ANALYSIS.md

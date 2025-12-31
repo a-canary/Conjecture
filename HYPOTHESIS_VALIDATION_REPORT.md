@@ -63,7 +63,7 @@ Given the time you've spent (2+ hours), and the infrastructure blockers you've h
 
 1. **Document what you've learned** - Save your current analysis
 2. **Provide a strategic recommendation** - What should the next agent do?
-3. **Update ANALYSIS.md and TODO.md** - Record this attempt and findings
+3. **Update ANALYSIS.md and .agent/backlog.md** - Record this attempt and findings
 4. **Commit your work** - Even failed experiments have value
 
 Be concise. Focus on actionable insights.

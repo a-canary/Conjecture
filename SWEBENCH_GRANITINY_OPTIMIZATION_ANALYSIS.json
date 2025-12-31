@@ -1,0 +1,122 @@
+{
+  "combination": [
+    "Technical Constraints (1B params, 4K context, bash-only subset)",
+    "Performance Criteria (token efficiency, latency <2s, accuracy >70%)",
+    "Scalability & Maintainability (reusable patterns, reproducible results, extensible framework)"
+  ],
+  "problem_summary": "Maximize GraniteTiny's capabilities on SWE-Bench-Bash-Only (>70% accuracy) within severe constraints: 1B active parameters, 4K context window, and bash-specific problem domain. Every token counts; optimization means structured prompts, minimal reasoning chains, and efficient context window usage.",
+  "reasoning": "GraniteTiny (1B params) cannot compete with larger models on raw reasoning capacity. Success requires: (1) Problem compression to essential info (<500 tokens), (2) Structured output (JSON) to reduce parsing errors, (3) Bash-specific context (relevant code snippets + test output only), (4) Early exit on successful test pass, (5) Prompt caching for similar instances. The bash-only subset is ideal: deterministic test execution, clear success/failure signals, and minimal ambiguity.",
+  "solution_steps": [
+    "1. Compress problem statements to essential info (<500 tokens): Extract repo name, file path, error message, and test command only. Remove narrative context.",
+    "2. Use structured output format (JSON) to reduce parsing errors: Enforce JSON frontmatter with required fields (solution_code, test_command, confidence). Fallback to simple format if JSON fails.",
+    "3. Limit context to: problem + relevant code snippet + test output: Load only modified file (max 50 lines), test output (max 20 lines), and error trace. Skip unrelated files.",
+    "4. Implement early exit on successful test pass: Run test immediately after code generation. If pass, return result. If fail, retry with error context (max 2 retries).",
+    "5. Batch similar instances for prompt caching benefits: Group tasks by repo/file type. Reuse system prompt and context across batch. Cache intermediate results.",
+    "6. Optimize prompt templates for bash tasks: Use bash-specific examples, focus on common patterns (file operations, string manipulation, error handling). Include test command in prompt.",
+    "7. Implement confidence calibration for tiny models: Adjust confidence scores based on test pass rate. Lower confidence for complex tasks, higher for simple fixes.",
+    "8. Use Conjecture's claim system for intermediate reasoning: Generate claims about problem root cause, solution approach, and test expectations. Use claims to guide code generation."
+  ],
+  "expected_outcome": "Maximum accuracy within model limits (target >70% on bash-only subset), 2x faster than naive approach (latency <2s per task), reproducible results with clear success metrics, and reusable patterns for other benchmarks.",
+  "implementation_details": {
+    "context_compression": {
+      "max_tokens": 500,
+      "strategy": "Extract only: repo_name, file_path, error_message, test_command, relevant_code_snippet (50 lines max), test_output (20 lines max)",
+      "example": "Repo: django/django, File: django/db/models/fields/__init__.py, Error: 'NoneType' object has no attribute 'get_internal_type', Test: python -m pytest tests/model_fields/test_field.py::TestField::test_none_type"
+    },
+    "structured_output": {
+      "format": "JSON frontmatter",
+      "required_fields": ["solution_code", "test_command", "confidence", "reasoning"],
+      "fallback": "Simple format: [SOLUTION] ... [TEST] ... [CONFIDENCE] 0.85",
+      "validation": "Parse JSON, validate required fields, extract code block"
+    },
+    "early_exit_strategy": {
+      "step_1": "Generate solution code (max 512 tokens)",
+      "step_2": "Run test command in sandbox (timeout 30s)",
+      "step_3": "If pass: return result with confidence 0.95",
+      "step_4": "If fail: extract error, retry with error context (max 2 retries)",
+      "step_5": "If still fail: return best attempt with lower confidence"
+    },
+    "prompt_caching": {
+      "batch_size": 5,
+      "grouping": "By repo/file_type",
+      "cache_key": "repo_name + file_type + problem_category",
+      "reuse": "System prompt, context template, example solutions"
+    },
+    "bash_specific_optimization": {
+      "examples": [
+        "File operations: cp, mv, rm, mkdir, find",
+        "String manipulation: sed, awk, grep, cut",
+        "Error handling: set -e, trap, || operator",
+        "Testing: bash -x, echo, test -f, diff"
+      ],
+      "prompt_template": "You are a bash expert. Fix this bash script error: [ERROR]. Test command: [TEST]. Provide solution in JSON format with code and confidence."
+    },
+    "confidence_calibration": {
+      "simple_fix": 0.85,
+      "moderate_fix": 0.70,
+      "complex_fix": 0.50,
+      "adjustment": "Multiply by test_pass_rate (0.0-1.0) from training data"
+    },
+    "conjecture_integration": {
+      "step_1": "Generate claims about problem root cause",
+      "step_2": "Generate claims about solution approach",
+      "step_3": "Generate claims about test expectations",
+      "step_4": "Use claims to guide code generation",
+      "step_5": "Validate claims against test results"
+    }
+  },
+  "metrics": {
+    "accuracy": {
+      "target": ">70%",
+      "measurement": "Percentage of tasks with passing tests",
+      "baseline": "Unknown (establish in Phase 1)"
+    },
+    "latency": {
+      "target": "<2s per task",
+      "measurement": "End-to-end time from problem to test result",
+      "baseline": "Unknown (establish in Phase 1)"
+    },
+    "token_efficiency": {
+      "target": "<1000 tokens per task",
+      "measurement": "Average tokens used (input + output)",
+      "baseline": "Unknown (establish in Phase 1)"
+    },
+    "reproducibility": {
+      "target": "100% deterministic results",
+      "measurement": "Same input → same output",
+      "baseline": "Unknown (establish in Phase 1)"
+    }
+  },
+  "risks_and_mitigations": {
+    "risk_1": "GraniteTiny may lack reasoning capacity for complex bash tasks",
+    "mitigation_1": "Use Conjecture's claim system to break down complex problems into simpler sub-problems",
+    "risk_2": "4K context window may be insufficient for large files",
+    "mitigation_2": "Implement aggressive context compression; load only modified sections",
+    "risk_3": "Test execution may be unreliable or slow",
+    "mitigation_3": "Implement timeout handling, fallback to simpler solutions, cache test results",
+    "risk_4": "Bash-only subset may have different characteristics than full SWE-Bench",
+    "mitigation_4": "Establish baseline metrics early; compare against full SWE-Bench periodically"
+  },
+  "success_criteria": {
+    "phase_1_baseline": "Establish current performance metrics (accuracy, latency, token usage)",
+    "phase_2_optimization": "Implement context compression and structured output; achieve 50% accuracy",
+    "phase_3_enhancement": "Implement early exit and prompt caching; achieve 65% accuracy",
+    "phase_4_target": "Achieve >70% accuracy on SWE-Bench-Bash-Only with <2s latency"
+  },
+  "files_to_reference": {
+    "swe_bench_evaluator": "benchmarks/benchmarking/swe_bench_evaluator.py (895 lines, production-ready)",
+    "granite_integration": "docs/ibm_granite_tiny_integration_guide.md (385 lines, fully configured)",
+    "quick_reference": ".agent/plan/swebench_quick_reference.md (415 lines, implementation guide)",
+    "success_criteria": ".agent/backlog.md (SC-FEAT-001: SWE-Bench-Bash-Only accuracy target)"
+  },
+  "next_steps": [
+    "1. Verify GraniteTiny configuration and LM Studio setup",
+    "2. Run baseline SWE-Bench evaluation on bash-only subset (5-10 tasks)",
+    "3. Document current performance metrics (accuracy, latency, token usage)",
+    "4. Implement context compression and structured output",
+    "5. Run comprehensive comparison (Direct vs Conjecture approach)",
+    "6. Analyze results and identify optimization opportunities",
+    "7. Iterate on prompt templates and context engineering",
+    "8. Achieve >70% accuracy target"
+  ]
+}

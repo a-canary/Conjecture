@@ -1,63 +1,5 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "instructions": [
-    "TODO.md",
-    "ANALYSIS.md",
-    "RESULTS.md"
-  ],
-  "agent": {
-    "build": {
-      "mode": "primary",
-      "model": "chutes/zai-org/GLM-4.6-FP8",
-      "description": "Primary coding and testing agent",
-      "temperature": 0.3
-    },
-    "plan": {
-      "mode": "primary",
-      "model": "anthropic/claude-sonnet-4-20250514",
-      "description": "Strategic planning and validation agent",
-      "temperature": 0.1,
-      "tools": {
-        "write": false,
-        "edit": false
-      }
-    },
-    "planner": {
-      "description": "Strategic planning and validation using Claude Sonnet 4",
-      "mode": "subagent",
-      "model": "anthropic/claude-sonnet-4-20250514",
-      "temperature": 0.1
-    },
-    "coder": {
-      "description": "Coding and testing implementation using GLM-4.6",
-      "mode": "subagent",
-      "model": "chutes/zai-org/GLM-4.6-FP8",
-      "temperature": 0.3
-    }
-  },
-  "command": {
-    "cycle": {
-      "description": "Run infinite iteration cycle",
-      "template": "Execute the infinite improvement cycle as defined in .opencode/command/cycle.md",
-      "agent": "build"
-    },
-    "review": {
-      "description": "Comprehensive code review",
-      "template": "Execute comprehensive code review as defined in .opencode/command/review.md",
-      "agent": "plan"
-    },
-    "test-coverage": {
-      "description": "Run tests with coverage",
-      "template": "Run comprehensive test suite with coverage analysis as defined in .opencode/command/test-coverage.md",
-      "agent": "build"
-    },
-    "validate": {
-      "description": "Validate hypothesis with benchmarks",
-      "template": "Validate core hypothesis as defined in .opencode/command/validate.md",
-      "agent": "plan",
-      "subtask": true
-    }
-  },
   "permission": {
     "edit": "allow",
     "bash": {
@@ -69,5 +11,42 @@
       "*": "allow"
     },
     "webfetch": "allow"
-  }
+  },
+  "provider": {
+    "chutes": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Chutes",
+      "options": {
+        "baseURL": "https://llm.chutes.ai/v1"
+      },
+      "models": {
+        "zai-org/GLM-4.7-TEE": {
+          "name": "GLM-4.7-TEE"
+        }
+      }
+    }
+  },
+  "agent": {
+    "agent-super": {
+      "model": "chutes/zai-org/GLM-4.7-TEE",
+      "temperature": 0.4,
+      "description": "High-level reasoning for review, analysis, strategic decisions"
+    },
+    "agent-ego": {
+      "model": "chutes/zai-org/GLM-4.7-TEE",
+      "temperature": 0.2,
+      "description": "Implementation for code writing and refactoring"
+    },
+    "agent-id": {
+      "model": "chutes/zai-org/GLM-4.7-TEE",
+      "temperature": 0.15,
+      "description": "Execution for testing, bash commands, web research"
+    },
+    "meta": {
+      "model": "chutes/zai-org/GLM-4.7-TEE",
+      "temperature": 0.4,
+      "description": "Framework perfection - analyzes and improves agents, commands, context systems"
+    }
+  },
+  "model": "chutes/zai-org/GLM-4.7-TEE"
 }

@@ -7,7 +7,14 @@ Tests all 7 proven enhancements and integrated functionality
 import pytest
 import asyncio
 from unittest.mock import Mock, patch
-from src.agent.prompt_system import PromptSystem, ProblemType, Difficulty, PromptResponse, ResponseParser
+from src.agent.prompt_system import (
+    PromptSystem,
+    ProblemType,
+    Difficulty,
+    PromptResponse,
+    ResponseParser,
+)
+
 
 class TestEnhancedPromptSystem:
     """Test the restored and enhanced prompt system"""
@@ -32,12 +39,14 @@ class TestEnhancedPromptSystem:
                 "What is 17 × 24?",
                 "Solve for x: 2x + 5 = 15",
                 "Calculate 15% of 200",
-                "Find the square root of 144"
+                "Find the square root of 144",
             ]
 
             for problem in problems:
                 problem_type = prompt_system._detect_problem_type(problem)
-                assert problem_type == ProblemType.MATHEMATICAL, f"Failed to detect mathematical in: {problem}"
+                assert problem_type == ProblemType.MATHEMATICAL, (
+                    f"Failed to detect mathematical in: {problem}"
+                )
 
         @pytest.mark.asyncio
         async def test_logical_detection(self, prompt_system):
@@ -45,12 +54,14 @@ class TestEnhancedPromptSystem:
             problems = [
                 "If all A are B and some B are C, what follows?",
                 "Given P implies Q and Q implies R, does P imply R?",
-                "All humans are mortal. Socrates is human. Therefore?"
+                "All humans are mortal. Socrates is human. Therefore?",
             ]
 
             for problem in problems:
                 problem_type = prompt_system._detect_problem_type(problem)
-                assert problem_type == ProblemType.LOGICAL, f"Failed to detect logical in: {problem}"
+                assert problem_type == ProblemType.LOGICAL, (
+                    f"Failed to detect logical in: {problem}"
+                )
 
         @pytest.mark.asyncio
         async def test_scientific_detection(self, prompt_system):
@@ -58,13 +69,15 @@ class TestEnhancedPromptSystem:
             problems = [
                 "Design an experiment to test plant growth",
                 "Analyze the data from this scientific observation",
-                "Form a hypothesis about the experimental results"
+                "Form a hypothesis about the experimental results",
             ]
 
             for problem in problems:
                 problem_type = prompt_system._detect_problem_type(problem)
                 # Note: Current implementation may detect as other types, this test documents current behavior
-                assert problem_type in [ProblemType.SCIENTIFIC, ProblemType.GENERAL], f"Unexpected detection: {problem_type}"
+                assert problem_type in [ProblemType.SCIENTIFIC, ProblemType.GENERAL], (
+                    f"Unexpected detection: {problem_type}"
+                )
 
         @pytest.mark.asyncio
         async def test_sequential_detection(self, prompt_system):
@@ -72,12 +85,14 @@ class TestEnhancedPromptSystem:
             problems = [
                 "First measure the ingredients, then mix them, finally bake",
                 "Complete step 1, then proceed to step 2, followed by step 3",
-                "Before starting the analysis, gather data, then process it"
+                "Before starting the analysis, gather data, then process it",
             ]
 
             for problem in problems:
                 problem_type = prompt_system._detect_problem_type(problem)
-                assert problem_type == ProblemType.SEQUENTIAL, f"Failed to detect sequential in: {problem}"
+                assert problem_type == ProblemType.SEQUENTIAL, (
+                    f"Failed to detect sequential in: {problem}"
+                )
 
         @pytest.mark.asyncio
         async def test_general_detection(self, prompt_system):
@@ -85,13 +100,15 @@ class TestEnhancedPromptSystem:
             problems = [
                 "What is the best approach to solve this?",
                 "How would you handle this situation?",
-                "Explain the concept in simple terms"
+                "Explain the concept in simple terms",
             ]
 
             for problem in problems:
                 problem_type = prompt_system._detect_problem_type(problem)
                 # Most problems should be classified (default fallback)
-                assert isinstance(problem_type, ProblemType), f"No classification for: {problem}"
+                assert isinstance(problem_type, ProblemType), (
+                    f"No classification for: {problem}"
+                )
 
     class TestDifficultyEstimation:
         """Test difficulty estimation functionality"""
@@ -102,12 +119,14 @@ class TestEnhancedPromptSystem:
             easy_problems = [
                 "What is 2 + 2?",
                 "How many days in a week?",
-                "What color is the sky?"
+                "What color is the sky?",
             ]
 
             for problem in easy_problems:
                 difficulty = prompt_system._estimate_difficulty(problem)
-                assert difficulty == Difficulty.EASY, f"Failed to detect easy in: {problem}"
+                assert difficulty == Difficulty.EASY, (
+                    f"Failed to detect easy in: {problem}"
+                )
 
         @pytest.mark.asyncio
         async def test_hard_detection(self, prompt_system):
@@ -115,12 +134,14 @@ class TestEnhancedPromptSystem:
             hard_problems = [
                 "Prove the fundamental theorem of calculus",
                 "Optimize the algorithm for maximum efficiency",
-                "Derive the complex mathematical formula"
+                "Derive the complex mathematical formula",
             ]
 
             for problem in hard_problems:
                 difficulty = prompt_system._estimate_difficulty(problem)
-                assert difficulty == Difficulty.HARD, f"Failed to detect hard in: {problem}"
+                assert difficulty == Difficulty.HARD, (
+                    f"Failed to detect hard in: {problem}"
+                )
 
         @pytest.mark.asyncio
         async def test_medium_detection(self, prompt_system):
@@ -128,13 +149,15 @@ class TestEnhancedPromptSystem:
             medium_problems = [
                 "Calculate the area of a complex shape",
                 "Analyze the given data set",
-                "Explain the concept with examples"
+                "Explain the concept with examples",
             ]
 
             for problem in medium_problems:
                 difficulty = prompt_system._estimate_difficulty(problem)
                 # Most non-easy/hard problems should be medium
-                assert difficulty == Difficulty.MEDIUM, f"Unexpected difficulty for: {problem}"
+                assert difficulty == Difficulty.MEDIUM, (
+                    f"Unexpected difficulty for: {problem}"
+                )
 
     class TestDomainAdaptivePrompts:
         """Test domain-adaptive prompt generation"""
@@ -186,10 +209,10 @@ class TestEnhancedPromptSystem:
             problem = "What is 15 × 12?"
             enhancement = prompt_system._enhance_mathematical_reasoning(problem)
 
-            assert enhancement['mathematical_enhancement_applied'] is True
-            assert 'problem_type' in enhancement
-            assert 'reasoning_strategy' in enhancement
-            assert len(enhancement['reasoning_strategy']) > 0
+            assert enhancement["mathematical_enhancement_applied"] is True
+            assert "problem_type" in enhancement
+            assert "reasoning_strategy" in enhancement
+            assert len(enhancement["reasoning_strategy"]) > 0
 
         @pytest.mark.asyncio
         async def test_multistep_reasoning_enhancement(self, prompt_system):
@@ -197,10 +220,10 @@ class TestEnhancedPromptSystem:
             problem = "First calculate A, then multiply by B, finally add C"
             enhancement = prompt_system._enhance_multistep_reasoning(problem)
 
-            assert enhancement['multistep_enhancement_applied'] is True
-            assert 'complexity_level' in enhancement
-            assert 'suggested_steps' in enhancement
-            assert enhancement['suggested_steps'] >= 2
+            assert enhancement["multistep_enhancement_applied"] is True
+            assert "complexity_level" in enhancement
+            assert "suggested_steps" in enhancement
+            assert enhancement["suggested_steps"] >= 2
 
         @pytest.mark.asyncio
         async def test_problem_decomposition_enhancement(self, prompt_system):
@@ -208,10 +231,10 @@ class TestEnhancedPromptSystem:
             problem = "Analyze the components of this complex system"
             enhancement = prompt_system._enhance_problem_decomposition(problem)
 
-            assert enhancement['decomposition_enhancement_applied'] is True
-            assert 'decomposition_approach' in enhancement
-            assert 'decomposition_strategy' in enhancement
-            assert len(enhancement['decomposition_strategy']) > 0
+            assert enhancement["decomposition_enhancement_applied"] is True
+            assert "decomposition_approach" in enhancement
+            assert "decomposition_strategy" in enhancement
+            assert len(enhancement["decomposition_strategy"]) > 0
 
     class TestIntegrationFunctionality:
         """Test full integration functionality"""
@@ -238,9 +261,9 @@ class TestEnhancedPromptSystem:
             response = await prompt_system.process_with_context(problem)
 
             # Should have applied enhancements
-            assert response.metadata['enhancements_applied'] >= 1
-            assert 'enhancement_types' in response.metadata
-            assert response.metadata['problem_type'] == 'mathematical'
+            assert response.metadata["enhancements_applied"] >= 1
+            assert "enhancement_types" in response.metadata
+            assert response.metadata["problem_type"] == "mathematical"
 
         @pytest.mark.asyncio
         async def test_caching_functionality(self, prompt_system):
@@ -249,11 +272,11 @@ class TestEnhancedPromptSystem:
 
             # First call
             response1 = await prompt_system.process_with_context(problem)
-            cache_key_1 = response1.metadata['cache_key']
+            cache_key_1 = response1.metadata["cache_key"]
 
             # Second call should use cache
             response2 = await prompt_system.process_with_context(problem)
-            cache_key_2 = response2.metadata['cache_key']
+            cache_key_2 = response2.metadata["cache_key"]
 
             # Should use same cache key
             assert cache_key_1 == cache_key_2
@@ -271,14 +294,14 @@ class TestEnhancedPromptSystem:
             assert all(status.values()), "Not all enhancements enabled by default"
 
             # Disable an enhancement
-            prompt_system.enable_enhancement('mathematical_reasoning', False)
+            prompt_system.enable_enhancement("mathematical_reasoning", False)
             status = prompt_system.get_enhancement_status()
-            assert status['mathematical_reasoning'] is False
+            assert status["mathematical_reasoning"] is False
 
             # Re-enable the enhancement
-            prompt_system.enable_enhancement('mathematical_reasoning', True)
+            prompt_system.enable_enhancement("mathematical_reasoning", True)
             status = prompt_system.get_enhancement_status()
-            assert status['mathematical_reasoning'] is True
+            assert status["mathematical_reasoning"] is True
 
     class TestResponseParsing:
         """Test response parsing functionality"""
@@ -287,35 +310,35 @@ class TestEnhancedPromptSystem:
         async def test_mathematical_parsing(self, response_parser):
             """Test mathematical response parsing"""
             response = "The answer is 42. I calculated this by multiplying 6 by 7."
-            parsed = response_parser.parse_response(response, 'mathematical')
+            parsed = response_parser.parse_response(response, "mathematical")
 
-            assert parsed['answer'] is not None
-            assert 'workings' in parsed
-            assert 'confidence' in parsed
-            assert 'numbers_found' in parsed
-            assert parsed['has_final_answer'] is True
+            assert parsed["answer"] is not None
+            assert "workings" in parsed
+            assert "confidence" in parsed
+            assert "numbers_found" in parsed
+            assert parsed["has_final_answer"] is True
 
         @pytest.mark.asyncio
         async def test_logical_parsing(self, response_parser):
             """Test logical response parsing"""
             response = "Therefore, the conclusion is that all humans are mortal."
-            parsed = response_parser.parse_response(response, 'logical')
+            parsed = response_parser.parse_response(response, "logical")
 
-            assert 'conclusion' in parsed
-            assert 'reasoning' in parsed
-            assert 'confidence' in parsed
-            assert 'has_conclusion' in parsed
+            assert "conclusion" in parsed
+            assert "reasoning" in parsed
+            assert "confidence" in parsed
+            assert "has_conclusion" in parsed
 
         @pytest.mark.asyncio
         async def test_general_parsing(self, response_parser):
             """Test general response parsing"""
             response = "This is a general response to the question asked."
-            parsed = response_parser.parse_response(response, 'general')
+            parsed = response_parser.parse_response(response, "general")
 
-            assert 'answer' in parsed
-            assert 'full_response' in parsed
-            assert 'confidence' in parsed
-            assert 'response_length' in parsed
+            assert "answer" in parsed
+            assert "full_response" in parsed
+            assert "confidence" in parsed
+            assert "response_length" in parsed
 
     class TestLegacyCompatibility:
         """Test backward compatibility with legacy interfaces"""
@@ -326,7 +349,9 @@ class TestEnhancedPromptSystem:
             from src.agent.prompt_system import PromptBuilder
 
             builder = PromptBuilder()
-            prompt = builder.get_system_prompt(ProblemType.MATHEMATICAL, Difficulty.MEDIUM)
+            prompt = builder.get_system_prompt(
+                ProblemType.MATHEMATICAL, Difficulty.MEDIUM
+            )
 
             assert prompt is not None
             assert len(prompt) > 50  # Should be a substantial prompt
@@ -335,6 +360,11 @@ class TestEnhancedPromptSystem:
 
 class TestPromptSystemPerformance:
     """Test prompt system performance and optimization"""
+
+    @pytest.fixture
+    def prompt_system(self):
+        """Create prompt system for testing"""
+        return PromptSystem()
 
     @pytest.mark.asyncio
     async def test_response_time_performance(self, prompt_system):
@@ -364,11 +394,7 @@ class TestPromptSystemPerformance:
         initial_objects = len(gc.get_objects())
 
         # Process multiple problems
-        problems = [
-            "What is 2 + 2?",
-            "Calculate 10 × 5",
-            "Solve for x: x + 3 = 8"
-        ]
+        problems = ["What is 2 + 2?", "Calculate 10 × 5", "Solve for x: x + 3 = 8"]
 
         for problem in problems:
             await prompt_system.process_with_context(problem)

@@ -1,0 +1,684 @@
+{
+  "validation_summary": {
+    "total_criteria": 46,
+    "approved": 6,
+    "needs_revision": 32,
+    "rejected": 8,
+    "validation_date": "2025-12-19",
+    "validator_confidence_note": "Critical mentor review - strict >99% confidence standard applied"
+  },
+  "validated_criteria": [
+    {
+      "id": "SC-151-1",
+      "confidence": 100,
+      "issues": [],
+      "recommendation": "approve",
+      "rationale": "This criterion is already marked as completed in the JSON itself. Real verification shows src/benchmarking/ does NOT exist and benchmarks/ directory IS present. The completed status is accurate."
+    },
+    {
+      "id": "SC-151-2",
+      "confidence": 25,
+      "issues": [
+        "TESTABILITY ISSUE: count_lines.py exists but counts YAML, JSON, MD files in addition to Python - line count target ambiguous",
+        "MEASURABILITY ISSUE: Target -40,000 lines is mathematically impossible if current is 64,280 and target is 30,000 (only -34,280 lines available)",
+        "ACHIEVABILITY ISSUE: No identified tasks to actually reduce 40,000 lines - criteria doesn't specify WHAT code to delete",
+        "DECEPTION RISK: Test checks total line count but doesn't verify core functionality preservation - could delete working code",
+        "TEST METHOD INCOMPLETE: 'python -m pytest tests/ -x --tb=short' only runs first failing test, doesn't verify zero regressions"
+      ],
+      "recommendation": "reject",
+      "revised_target": "src/ directory contains ≤30,000 lines of Python ONLY code, with 0 test regressions in full test suite",
+      "revised_test_method": "python .agent/scripts/count_lines_python_only.py src/ (should output ≤30000); python -m pytest tests/ -v 2>&1 | tail -5 (verify all tests pass or show baseline passing rate)",
+      "rationale": "Current test has mismatched expectations, ambiguous file types, and incomplete test validation. Reject until rewritten with clear, achievable targets."
+    },
+    {
+      "id": "SC-151-3",
+      "confidence": 35,
+      "issues": [
+        "TESTABILITY ISSUE: Criterion requires ≤5 core CLI files but current count shows only 3 files - this is ALREADY ACHIEVED but criteria says 'pending_validation'",
+        "ACHIEVABILITY ISSUE: Test counts total matches but doesn't verify they're duplicates or which ones to keep",
+        "DECEPTION RISK: Accepting status=pending when test shows success ≤5 (actual: 3) suggests incomplete analysis",
+        "CLARITY ISSUE: What constitutes a 'core CLI file'? Is base_cli.py duplicate or primary? Needs specification"
+      ],
+      "recommendation": "revise",
+      "revised_target": "Only one primary CLI implementation at src/cli/base_cli.py exists; enhanced_modular_cli.py and modular_cli.py identified and deleted as duplicates",
+      "revised_test_method": "ls src/cli/*.py | wc -l (should be 1); grep -r 'from.*cli' src/ --include='*.py' | grep -v 'src/cli' | wc -l (should be 0, no other modules import CLI)",
+      "rationale": "Test already shows success (<5 files found), but criteria needs specification of which file to keep and confirmation that other modules don't depend on deleted CLI files."
+    },
+    {
+      "id": "SC-151-4",
+      "confidence": 65,
+      "issues": [
+        "TESTABILITY: Test method is correct and executable - grep works",
+        "ACHIEVABILITY: Two classes found (EnhancedSQLiteManager, OptimizedSQLiteManager) - which to delete? Criteria doesn't specify",
+        "DECEPTION RISK: Test counts classes but doesn't verify no functionality loss if one is deleted",
+        "MISSING DEPENDENCY ANALYSIS: Which code imports the less-optimal SQLite manager? Could break if not refactored"
+      ],
+      "recommendation": "revise",
+      "revised_target": "Only OptimizedSQLiteManager exists in src/; EnhancedSQLiteManager deleted; all imports updated to use OptimizedSQLiteManager",
+      "revised_test_method": "grep -r 'class.*SQLiteManager' src/ --include='*.py' | wc -l (should be 1); grep -r 'EnhancedSQLiteManager' src/ --include='*.py' | wc -l (should be 0); python -m pytest tests/ -k 'database' -v | grep -c 'PASSED' (>10 DB tests pass)",
+      "rationale": "Test mechanism is sound but criteria needs to specify which manager to keep and require proof that all references are updated."
+    },
+    {
+      "id": "SC-151-5",
+      "confidence": 45,
+      "issues": [
+        "ACHIEVABILITY ISSUE: Currently 4 prompt/template files exist (prompt_system.py + 3 in llm_prompts/). Target says '≤2 main prompt template files'",
+        "CLARITY ISSUE: What constitutes a 'main' vs supporting file? prompt_system.py vs template_manager.py - which to keep?",
+        "DECEPTION RISK: Deleting prompt infrastructure could break enhancement cycles (Cycles 1-12 built on prompt_system.py)",
+        "TEST METHOD: Only counts files, doesn't verify consolidation actually occurred (code moved/merged, not just deleted)"
+      ],
+      "recommendation": "revise",
+      "revised_target": "src/agent/prompt_system.py maintained as core; all template logic consolidated there; src/processing/llm_prompts/ deleted or merged into prompt_system.py",
+      "revised_test_method": "find src/ -type f \\( -name '*prompt*.py' -o -name '*template*.py' \\) | grep -v __pycache__ | wc -l (should be ≤2); python -c 'from src.agent.prompt_system import PromptSystem; print(\"Core system OK\")'; python -m pytest tests/ -k 'prompt' -v | grep 'PASSED' | wc -l (>5 prompt tests pass)",
+      "rationale": "Current criteria deletes infrastructure without consolidation plan. Revise to require actual consolidation and verification that prompt system tests still pass."
+    },
+    {
+      "id": "SC-151-6",
+      "confidence": 55,
+      "issues": [
+        "ACHIEVABILITY: 4 monitoring/scaling files found. Are ALL 4 non-critical? resource_monitor.py might be needed",
+        "DECEPTION RISK: Deleting performance monitoring during optimization cycle could hide performance regressions",
+        "CLARITY ISSUE: Which are 'critical' vs 'non-critical'? No specification given",
+        "TEST METHOD INCOMPLETE: Only checks file count, not whether monitoring functionality is preserved elsewhere"
+      ],
+      "recommendation": "revise",
+      "revised_target": "Non-critical monitoring files in src/monitoring/ deleted (except core logging); src/scaling/ directory deleted; performance monitoring consolidated in src/testing/performance_monitor.py",
+      "revised_test_method": "find src/monitoring src/scaling -type f -name '*.py' | grep -v __pycache__ | wc -l (should be 0); test -f src/testing/performance_monitor.py (should exist); python -m pytest tests/ --tb=short -q | tail -3 (verify no performance test regressions)",
+      "rationale": "Criteria assumes all monitoring/scaling is non-critical. Revise to specify which components are removable and require that core monitoring is preserved."
+    },
+    {
+      "id": "SC-151-OVERALL",
+      "confidence": 28,
+      "issues": [
+        "MATHEMATICAL IMPOSSIBILITY: Claims need -34,280 lines (from 64,280 to 30,000) but criterion SC-151-2 estimates -40,000. Math doesn't align with other criteria.",
+        "ACHIEVABILITY CRISIS: Subcriteria are vague about what to delete. Without clear code removal plan, this target is speculative.",
+        "DECEPTION RISK: Script test_method depends on count_lines.py which includes non-Python files. Is 30,000 Python lines or total lines?",
+        "TESTABILITY: Test method exists but target definition is ambiguous (which code? which files? Python only or all?)",
+        "CRITICAL RISK: No verification that deletions won't break core claim system, prompt system, or LLM integration"
+      ],
+      "recommendation": "reject",
+      "revised_target": "src/ directory contains exactly 30,000 lines of Python code (.py only); core modules verified functional; all unit tests pass",
+      "revised_test_method": "python .agent/scripts/count_lines_python_only.py src/ (output must be ≤30000); python -c 'from src.data.models import Claim; from src.agent.prompt_system import PromptSystem; print(\"Core imports OK\")'; python -m pytest tests/ -m 'unit' -v 2>&1 | grep 'passed' | tail -1 (all unit tests pass)",
+      "rationale": "Reject entire objective until subcriteria are approved. Current state requires clear specification of what code to delete, mathematical validation that target is achievable, and proof of no system breakage."
+    },
+    {
+      "id": "SC-151-VERIFY",
+      "confidence": 42,
+      "issues": [
+        "BASELINE MISSING: Criterion doesn't specify what the baseline test pass rate is. 'Same or better' is undefined.",
+        "TEST METHOD INCOMPLETE: grep for passed/failed shows LAST line only - if tests are running in parallel, might miss failures",
+        "AMBIGUITY: Does 'same rate' mean 100%? 95%? Current rate unknown, so success criteria is undefined",
+        "DECEPTION RISK: Test output parsing is fragile - if test format changes, might false-pass"
+      ],
+      "recommendation": "revise",
+      "revised_target": "All tests that currently pass (baseline: 532 tests collected) continue to pass after code reduction; zero regression in test pass rate",
+      "revised_test_method": "BASELINE=$(python -m pytest tests/ --collect-only -q 2>&1 | grep 'test' | wc -l); python -m pytest tests/ -v --tb=short 2>&1 | grep -E 'passed|failed' | tail -1",
+      "rationale": "Criterion needs explicit baseline specification and more robust test verification. Revise to record baseline and verify post-reduction results."
+    },
+    {
+      "id": "SC-152-1",
+      "confidence": 48,
+      "issues": [
+        "TESTABILITY: awk '{print $4}' assumes specific pytest output format - fragile if format changes",
+        "ACHIEVABILITY: Current coverage 10.01%, target 15% = +4.99% improvement. Is this realistic? No justification provided.",
+        "MEASUREMENT GAMABILITY: Coverage % can be inflated by testing trivial code paths without meaningful test logic",
+        "IMPLICIT GOAL: Criterion says 'all tests pass' but doesn't specify pass rate threshold"
+      ],
+      "recommendation": "revise",
+      "revised_target": "Overall test coverage increases from 10.01% to at least 15%; minimum 80 new lines of source code are covered; all existing passing tests continue to pass",
+      "revised_test_method": "python -m pytest tests/ --cov=src --cov-report=json cov.json; python -c 'import json; c=json.load(open(\"cov.json\")); print(c[\"totals\"][\"percent_covered\"])'",
+      "rationale": "Current test method is fragile. Revise to use JSON output which is more robust, and require actual new code coverage (not just manipulation of percentages)."
+    },
+    {
+      "id": "SC-152-2",
+      "confidence": 32,
+      "issues": [
+        "MISSING FILE: test_adaptive_compression.py does not exist",
+        "ACHIEVABILITY: File src/processing/adaptive_compression.py exists but has no test file. Is this file actually used?",
+        "TESTABILITY: Criterion requires creating 80%+ coverage tests but doesn't specify test approach or scenarios",
+        "DECEPTION RISK: Could create trivial tests that hit lines without meaningful assertions"
+      ],
+      "recommendation": "reject",
+      "revised_target": "If adaptive_compression.py is in active use: create test_adaptive_compression.py with 80%+ line coverage AND semantic tests of compression behavior",
+      "revised_test_method": "test -f tests/test_adaptive_compression.py; python -m pytest tests/test_adaptive_compression.py --cov=src/processing/adaptive_compression --cov-report=json cov.json; python -c 'import json; c=json.load(open(\"cov.json\")); assert c[\"totals\"][\"percent_covered\"] >= 80'",
+      "rationale": "Reject - test file doesn't exist and no clear motivation for testing this specific module. If module is critical, revise to include functional behavior tests, not just line coverage."
+    },
+    {
+      "id": "SC-152-3",
+      "confidence": 28,
+      "issues": [
+        "MISSING FILE: test_data_flow.py does not exist",
+        "ACHIEVABILITY: File src/data/data_flow.py exists but has no test file",
+        "TESTABILITY: Is data_flow.py actually used in the system? Criterion doesn't justify why this needs 80% coverage",
+        "DECEPTION RISK: Similar to SC-152-2, could create hollow tests"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Verify src/data/data_flow.py is actively used; if yes, create comprehensive tests; if no, delete the file instead of testing it",
+      "revised_test_method": "grep -r 'data_flow' src/ --include='*.py' | grep -v 'data_flow.py' | wc -l (if 0, file is unused - delete it; if >5, proceed with testing)",
+      "rationale": "Reject - criterion creates test for potentially unused file. Revise to first verify file is actually needed, then test or delete accordingly."
+    },
+    {
+      "id": "SC-152-4",
+      "confidence": 72,
+      "issues": [
+        "BASELINE UNDEFINED: Criterion doesn't specify baseline pass rate. What was the rate before?",
+        "TEST METHOD FRAGILE: grep -E 'failed|passed' | tail -1 is unreliable for parallel test execution"
+      ],
+      "recommendation": "revise",
+      "revised_target": "Baseline: 532 tests collected (current state); Post-changes: all 532 tests continue to pass (0% regression in pass count)",
+      "revised_test_method": "python -m pytest tests/ -v --tb=short 2>&1 | tail -20 | grep -E 'passed|failed'; verify total count matches 532",
+      "rationale": "Test mechanism is reasonable but needs explicit baseline and more robust output parsing."
+    },
+    {
+      "id": "SC-153-1",
+      "confidence": 22,
+      "issues": [
+        "FILE DOESN'T EXIST: benchmark_results.json is assumed to be auto-generated, no test harness specified to create it",
+        "TESTABILITY: Test method assumes specific JSON structure but doesn't verify what creates this file",
+        "ACHIEVABILITY: ≥90% success rate on ≥20 problems - is this realistic? No baseline provided",
+        "DECEPTION RISK: Could mock benchmark_results.json with inflated success_rate instead of running real benchmarks",
+        "IMPLICIT DEPENDENCY: Test method depends on prior work (hypothesis validation infrastructure) that doesn't exist yet"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create real benchmark infrastructure script; run ≥20 real problems; achieve ≥90% success rate; save results to benchmark_results.json",
+      "revised_test_method": "python benchmarks/run_hypothesis_validation.py --n-problems 20; python -c 'import json; r=json.load(open(\"benchmark_results.json\")); assert r[\"success_rate\"] >= 0.9 and r[\"n_problems\"] >= 20'",
+      "rationale": "Reject - no actual benchmark infrastructure exists. Criterion assumes test file auto-exists. Revise to require building the infrastructure first."
+    },
+    {
+      "id": "SC-153-2",
+      "confidence": 15,
+      "issues": [
+        "DECEPTION CRITICAL: Test method checks for json file existence but doesn't verify the file was created by actual API calls",
+        "ACHIEVABILITY UNKNOWN: Assumes 80% current failure rate - where does this number come from? No baseline API call test exists",
+        "TESTABILITY: Criterion requires implementing retry logic but doesn't specify where in codebase",
+        "MISSING INFRASTRUCTURE: benchmark_results.json depends on SC-153-1 which doesn't exist"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Implement exponential backoff retry in [specific module]; test on real API with ≥20 calls; reduce failure rate from baseline to <10%",
+      "revised_test_method": "python -c 'from src.benchmarking.retry_manager import APIRetry; assert hasattr(APIRetry, \"exponential_backoff\")'; python benchmarks/test_api_reliability.py --n-calls 20; cat benchmark_results.json | python -c 'import json,sys; r=json.load(sys.stdin); assert r[\"api_failure_rate\"] < 0.1'",
+      "rationale": "Reject - no baseline, no implementation location, depends on non-existent infrastructure. Revise to specify exactly where retry logic goes and provide baseline failure rate."
+    },
+    {
+      "id": "SC-153-3",
+      "confidence": 18,
+      "issues": [
+        "DECEPTION CRITICAL: Test assumes benchmark_results.json auto-exists with extraction metrics",
+        "ACHIEVABILITY: 95% extraction success rate - what is baseline? No benchmark tests shown",
+        "TESTABILITY: Which regex patterns to test? Criterion assumes improvements but doesn't specify test cases",
+        "DEPENDENCY CHAIN: Depends on SC-153-1 existing first"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create extraction test suite with 50+ test cases including \\boxed{} patterns, final sentence parsing, edge cases; achieve 95% accuracy",
+      "revised_test_method": "python -m pytest tests/test_number_extraction.py -v; python -c 'import json; r=json.load(open(\"extraction_results.json\")); assert r[\"success_rate\"] >= 0.95'",
+      "rationale": "Reject - assumes infrastructure that doesn't exist. Revise to create actual test suite first, then verify extraction logic."
+    },
+    {
+      "id": "SC-153-4",
+      "confidence": 25,
+      "issues": [
+        "FILE DOESN'T EXIST: benchmark_errors.log assumes benchmark runs will auto-generate this",
+        "TESTABILITY: Test just checks file existence and grep counts, not log quality",
+        "DECEPTION RISK: Could create empty log file with minimal entries and pass test",
+        "MEASURABILITY: Grep finds lines containing keywords but doesn't verify log is USEFUL for debugging"
+      ],
+      "recommendation": "reject",
+      "revised_target": "When benchmark fails, automatically log: problem_id, error_type, error_message, stacktrace, attempt_count, retry_status to benchmark_errors.log",
+      "revised_test_method": "python benchmarks/run_hypothesis_validation.py --n-problems 20; grep -c 'problem_id' benchmark_errors.log (>5); python -c 'import re; log=open(\"benchmark_errors.log\"); assert re.search(r\"problem_id.*error_type.*attempt\", log.read(), re.DOTALL)'",
+      "rationale": "Reject - infrastructure doesn't exist and test method is weak. Revise to require actual logging implementation in benchmark framework."
+    },
+    {
+      "id": "SC-101-1",
+      "confidence": 8,
+      "issues": [
+        "FILE DOESN'T EXIST: benchmarks/swebench_harness.py does not exist",
+        "ACHIEVABILITY: GraniteTiny model - is this installed? No model setup specified",
+        "TESTABILITY: Test method assumes harness exists and has --model, --test-setup flags that don't exist",
+        "DECEPTION RISK: Could create stub harness that prints 'Setup complete' without real testing"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create real SWEBench harness supporting GraniteTiny; verify model loads; run test setup on 5 sample problems",
+      "revised_test_method": "python benchmarks/swebench_harness.py --model GraniteTiny --test-setup 2>&1 | tail -5 (should show model loaded and setup completed)",
+      "rationale": "Reject - harness doesn't exist. This requires building new infrastructure. Revise to be clear about what needs to be built."
+    },
+    {
+      "id": "SC-101-2",
+      "confidence": 12,
+      "issues": [
+        "DEPENDENCY: Depends on SC-101-1 (harness must exist first)",
+        "ACHIEVABILITY: 'Establish baseline' - needs ≥100 SWEBench problems. Where do these come from?",
+        "TESTABILITY: Test assumes harness exists with --run-baseline flag",
+        "DECEPTION RISK: Could record fake baseline without actual problem evaluation"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Download SWEBench dataset (≥100 problems); run GraniteTiny+Conjecture baseline on each; record accuracy, time, token usage",
+      "revised_test_method": "test -d benchmarks/swebench_data && ls benchmarks/swebench_data | wc -l (≥100); python benchmarks/run_swebench_baseline.py | tail -5 (shows baseline_accuracy)",
+      "rationale": "Reject - depends on non-existent infrastructure. Revise to require dataset download and specification of what 'baseline' means."
+    },
+    {
+      "id": "SC-101-3",
+      "confidence": 8,
+      "issues": [
+        "ACHIEVEMENT UNKNOWN: No baseline to compare against. Is 70% realistic?",
+        "TESTABILITY: Test assumes --run-enhanced flag that doesn't exist",
+        "DEPENDENCY CHAIN: Depends on SC-101-1 and SC-101-2",
+        "GAMABILITY: Could achieve 70% on subset of easy problems instead of full evaluation set"
+      ],
+      "recommendation": "reject",
+      "revised_target": "After establishing baseline, improve reasoning through [specific enhancement]; achieve 70% accuracy on same ≥100 SWEBench problems",
+      "revised_test_method": "python benchmarks/run_swebench_enhanced.py | grep 'Enhanced accuracy' | awk '{print $NF}' (should be ≥0.70)",
+      "rationale": "Reject - entire objective depends on prior non-existent infrastructure. Cannot be validated until SC-101-1 and SC-101-2 are completed."
+    },
+    {
+      "id": "SC-102-1",
+      "confidence": 52,
+      "issues": [
+        "ACHIEVABILITY: Criterion says 'Fix DataConfig import paths' but test method checks for import errors during collection",
+        "CLARITY: What ARE the correct import paths? Should it be from src.config.DataConfig or src.data.DataConfig?",
+        "TEST METHOD: Only shows count of errors, not which specific imports are broken or how to fix them"
+      ],
+      "recommendation": "revise",
+      "revised_target": "All test collection succeeds with zero ImportError exceptions; DataConfig, BatchResult available from correct module",
+      "revised_test_method": "python -m pytest tests/ --collect-only 2>&1 | grep -i 'ImportError' | wc -l (should be 0); python -m pytest tests/test_config*.py --collect-only -v (should show ≥5 tests collected)",
+      "rationale": "Test mechanism is sound but needs specification of correct import locations."
+    },
+    {
+      "id": "SC-103-1",
+      "confidence": 58,
+      "issues": [
+        "ACHIEVABILITY: Assumes conftest.py needs sample_claim_data fixture - is this in conftest.py already?",
+        "TEST METHOD: Only counts fixture-not-found errors during collection"
+      ],
+      "recommendation": "revise",
+      "revised_target": "tests/conftest.py contains sample_claim_data fixture returning valid Claim objects; zero fixture-related collection errors",
+      "revised_test_method": "python -m pytest tests/ --collect-only 2>&1 | grep -i 'fixture.*not found' | wc -l (should be 0); python -c 'from tests.conftest import sample_claim_data; c=sample_claim_data(); print(c.id)'",
+      "rationale": "Test needs verification that fixture is actually usable, not just that collection succeeds."
+    },
+    {
+      "id": "SC-104-1",
+      "confidence": 48,
+      "issues": [
+        "ACHIEVABILITY: Test method looks for PASSED keyword but doesn't specify how many tests should pass",
+        "CLARITY: What is EmbeddingService interface? What should it match?"
+      ],
+      "recommendation": "revise",
+      "revised_target": "test_embedding_service.py passes all tests; no interface mismatch errors in test execution",
+      "revised_test_method": "python -m pytest tests/test_embedding_service.py -v | tail -5 (should show X passed, 0 failed)",
+      "rationale": "Test method is reasonable but needs clearer success criteria."
+    },
+    {
+      "id": "SC-105-1",
+      "confidence": 68,
+      "issues": [
+        "ACHIEVABILITY: RoutingStrategy enum import failed - module doesn't exist in src.core.models",
+        "TESTABILITY: Test is direct and executable",
+        "CLARITY: Where should RoutingStrategy be defined? Currently not in src.core.models"
+      ],
+      "recommendation": "revise",
+      "revised_target": "Define RoutingStrategy enum with values including LEAST_LOADED in src/core/models.py; verify import succeeds",
+      "revised_test_method": "python -c 'from src.core.models import RoutingStrategy; assert hasattr(RoutingStrategy, \"LEAST_LOADED\")'",
+      "rationale": "Test is valid but enum doesn't exist yet. Revise to specify where to add it."
+    },
+    {
+      "id": "SC-106-1",
+      "confidence": 62,
+      "issues": [
+        "ACHIEVABILITY: Criterion references missing 'confidence field validation' but doesn't specify which tests fail",
+        "TEST METHOD: Vague - doesn't specify what confidence validation should enforce"
+      ],
+      "recommendation": "revise",
+      "revised_target": "All Claim field validation tests pass, including confidence field (0.0 ≤ confidence ≤ 1.0); zero validation errors",
+      "revised_test_method": "python -m pytest tests/test_claim*.py -v --tb=short 2>&1 | grep -E 'passed|failed' | tail -1",
+      "rationale": "Test method is reasonable but needs specification of validation rules."
+    },
+    {
+      "id": "SC-107-1",
+      "confidence": 15,
+      "issues": [
+        "FILE DOESN'T EXIST: docs/process_presentation_api.md does not exist",
+        "TESTABILITY: Criterion requires '20 lines' matching regex but test method is vague - line count not robust",
+        "ACHIEVABILITY: What should the API documentation contain? No specification",
+        "DECEPTION RISK: Could create document with many 'example' keywords without actual API content"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create docs/process_presentation_api.md documenting Process-Presentation layer boundary with: 5+ async def examples, 3+ code blocks showing integration patterns, clear diagram of data flow",
+      "revised_test_method": "test -f docs/process_presentation_api.md; grep -c 'async def' docs/process_presentation_api.md (≥5); grep -c '^\\`\\`\\`' docs/process_presentation_api.md (≥6 for code blocks)",
+      "rationale": "Reject - file doesn't exist and test method too vague. Revise to specify exactly what documentation should contain."
+    },
+    {
+      "id": "SC-107-2",
+      "confidence": 38,
+      "issues": [
+        "ACHIEVABILITY: Claims to achieve 'clear separation' but current code has both imports",
+        "TEST METHOD: Only checks grep results, doesn't verify actual architectural separation",
+        "DECEPTION RISK: Could move imports to middle layers instead of removing them"
+      ],
+      "recommendation": "revise",
+      "revised_target": "src/process/ modules do not import anything from src/cli/; src/cli/ imports from src/process/ for business logic only; layer boundary enforced",
+      "revised_test_method": "grep -r 'from src.cli' src/process/ --include='*.py' (should return 0 matches); python -c 'from src.cli.base_cli import CLI; c=CLI()' (CLI importable)",
+      "rationale": "Test is valid but needs to check bidirectional imports and verify actual functionality."
+    },
+    {
+      "id": "SC-108-1",
+      "confidence": 12,
+      "issues": [
+        "FILE DOESN'T EXIST: src/endpoint/app.py does not exist (only conjecture_endpoint.py exists)",
+        "TESTABILITY: Test assumes EndPointApp class with test_all_operations() method that doesn't exist",
+        "ACHIEVABILITY: Criterion is too vague about what 'functional' means",
+        "DECEPTION RISK: Could create mock app that prints 'PASS' without real functionality"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create src/endpoint/app.py with EndPointApp class supporting: (1) create_claim(), (2) query_claims(), (3) evaluate_claim() - verify each works with real data",
+      "revised_test_method": "python -c 'from src.endpoint.app import EndPointApp; app = EndPointApp(); c = app.create_claim(\"test\", 0.8); assert c.id' (object creation works)",
+      "rationale": "Reject - app doesn't exist. Revise to be clear about what methods must be implemented."
+    },
+    {
+      "id": "SC-109-1",
+      "confidence": 8,
+      "issues": [
+        "FILE DOESN'T EXIST: tests/test_e2e_endpoint.py does not exist",
+        "ACHIEVABILITY: Requires 95% coverage of 'critical paths' but doesn't define what paths are critical",
+        "TESTABILITY: Assumes test file will auto-generate with unspecified E2E scenarios",
+        "DECEPTION RISK: Could create tests that hit lines without exercising real workflows"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create tests/test_e2e_endpoint.py with E2E workflows: claim creation→validation→updates; recursive claim relationships; database persistence",
+      "revised_test_method": "python -m pytest tests/test_e2e_endpoint.py -v 2>&1 | tail -3 (show test summary)",
+      "rationale": "Reject - file doesn't exist. Revise to specify exact workflows to test."
+    },
+    {
+      "id": "SC-109-2",
+      "confidence": 10,
+      "issues": [
+        "DEPENDS ON: SC-109-1 (test file must exist first)",
+        "ACHIEVABILITY: What exactly is 'database priming with knowledge claims'? No specification",
+        "TESTABILITY: Assumes test function test_db_priming() exists"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Implement database priming workflow: load 10+ foundational claims; verify they're queryable; verify reasoning improves with primed data",
+      "revised_test_method": "python benchmarks/prime_database.py --claims 10; python -c 'from src.data.repositories import ClaimRepository; r = ClaimRepository(); claims = r.query_by_tag(\"foundational\"); assert len(claims) >= 10'",
+      "rationale": "Reject - depends on non-existent test file. Revise to specify priming implementation details."
+    },
+    {
+      "id": "SC-109-3",
+      "confidence": 10,
+      "issues": [
+        "DEPENDS ON: SC-109-1 (test file must exist first)",
+        "ACHIEVABILITY: What is 'recursive claim traversal'? No test cases specified"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Implement recursive claim traversal: follow supporting→supported relationships; handle cycles; verify depth-first search works",
+      "revised_test_method": "python -m pytest tests/test_e2e_endpoint.py::test_recursive_claims -v",
+      "rationale": "Reject - depends on non-existent test file."
+    },
+    {
+      "id": "SC-109-4",
+      "confidence": 28,
+      "issues": [
+        "FILE DOESN'T EXIST: benchmarks/baseline_metrics.json doesn't exist",
+        "ACHIEVABILITY: What are realistic baseline values? No specification of expected ranges",
+        "TEST METHOD: Only checks file existence and JSON keys, not actual metric values"
+      ],
+      "recommendation": "revise",
+      "revised_target": "Run 20 benchmark problems; record: latency (avg ms), accuracy (%), throughput (problems/sec); save as benchmarks/baseline_metrics.json",
+      "revised_test_method": "test -f benchmarks/baseline_metrics.json; python -c 'import json; m=json.load(open(\"benchmarks/baseline_metrics.json\")); assert all(k in m for k in [\"latency\",\"accuracy\",\"throughput\"]); assert m[\"accuracy\"] > 0'",
+      "rationale": "Revise to require actual baseline measurements, not just file existence check."
+    },
+    {
+      "id": "SC-110-1",
+      "confidence": 35,
+      "issues": [
+        "ACHIEVABILITY: What are the 'missing attributes' in DataConfig? Not specified",
+        "TESTABILITY: Test method is reasonable but doesn't list which tests are failing"
+      ],
+      "recommendation": "revise",
+      "revised_target": "DataConfig model in src/config/unified_config.py includes all required fields with proper types; zero validation errors; all tests pass",
+      "revised_test_method": "python -c 'from src.config.unified_config import DataConfig; d = DataConfig.model_validate({\"key\": \"value\"})' (model instantiation works)",
+      "rationale": "Revise to specify which fields are missing and require actual model instantiation test."
+    },
+    {
+      "id": "SC-111-1",
+      "confidence": 42,
+      "issues": [
+        "TEST METHOD: Checks collection for ImportError but doesn't specify which imports are broken",
+        "ACHIEVABILITY: Criterion title says 'add missing imports and model classes' but doesn't list them"
+      ],
+      "recommendation": "revise",
+      "revised_target": "All models and imports referenced in tests are available; pytest test collection succeeds with zero ImportError/ModuleNotFoundError",
+      "revised_test_method": "python -m pytest tests/ --collect-only 2>&1 | grep -c 'error' (should be 0)",
+      "rationale": "Test method is sound but needs specification of which imports to add."
+    },
+    {
+      "id": "SC-112-1",
+      "confidence": 55,
+      "issues": [
+        "ACHIEVABILITY: Criterion assumes Pydantic v1 code exists - is there actually deprecated code?",
+        "TEST METHOD: Checks warnings but actual validation depends on what deprecated code exists"
+      ],
+      "recommendation": "revise",
+      "revised_target": "All Pydantic v2 deprecation warnings eliminated; all model definitions use new syntax; zero deprecation warnings in test output",
+      "revised_test_method": "python -m pytest tests/ -W error::DeprecationWarning 2>&1 | tail -3 (no deprecation errors)",
+      "rationale": "Test mechanism is sound but needs verification that deprecated code actually exists."
+    },
+    {
+      "id": "SC-113-1",
+      "confidence": 32,
+      "issues": [
+        "FILE DOESN'T EXIST: tests/test_regressions.py doesn't exist",
+        "ACHIEVABILITY: Assumes 15+ regression tests will be created but doesn't specify what regression to test",
+        "TESTABILITY: Test method just counts test functions, doesn't verify they actually test regressions"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create tests/test_regressions.py with 15+ tests covering: claim creation, relationships, dirty flags, prompt system, database operations",
+      "revised_test_method": "python -m pytest tests/test_regressions.py -v | grep 'PASSED' | wc -l (≥15)",
+      "rationale": "Reject - test file doesn't exist. Revise to specify what regression cases to test."
+    },
+    {
+      "id": "SC-113-2",
+      "confidence": 25,
+      "issues": [
+        "DEPENDS ON: SC-113-1 (test file must exist first)",
+        "AMBIGUITY: How are 'cycles' defined? What is cycle N? 3 consecutive development cycles over what time period?",
+        "ACHIEVABILITY: Test only records one data point per cycle, hard to verify '3 cycles' without running multiple times"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Run regression test suite 3 times (cycles 1, 2, 3); all tests pass in each cycle; zero regressions introduced across cycles",
+      "revised_test_method": "for i in 1 2 3; do python -m pytest tests/test_regressions.py -v | grep 'passed' | tail -1 >> cycle_results.txt; done; cat cycle_results.txt | wc -l (should be 3)",
+      "rationale": "Reject - depends on non-existent test file. Revise to clarify what 'cycles' means."
+    },
+    {
+      "id": "SC-114-1",
+      "confidence": 15,
+      "issues": [
+        "MODULE DOESN'T EXIST: src/tools/claim_replacement.py doesn't exist",
+        "ACHIEVABILITY: Assumes replace_claim() function exists with preserve_relations parameter",
+        "TESTABILITY: Test assumes specific JSON output structure"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create src/tools/claim_replacement.py with replace_claim(old_id, new_id, preserve_relations=True); verify all relationships maintained",
+      "revised_test_method": "python -c 'from src.tools.claim_replacement import replace_claim; result = replace_claim(\"old\", \"new\", preserve_relations=True); assert isinstance(result, dict)'",
+      "rationale": "Reject - module doesn't exist. Revise to specify implementation requirements."
+    },
+    {
+      "id": "SC-114-2",
+      "confidence": 18,
+      "issues": [
+        "DEPENDS ON: SC-114-1 (module must exist first)",
+        "ACHIEVABILITY: Assumes test_claim_replacement.py will be created",
+        "GAMABILITY: 100% coverage is aggressive - some error paths unreachable"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create comprehensive replacement tests; achieve 85%+ coverage of claim_replacement.py; all transformation types work correctly",
+      "revised_test_method": "python -m pytest tests/test_claim_replacement.py -v --cov=src/tools/claim_replacement | grep 'TOTAL' | awk '{print $4}'",
+      "rationale": "Reject - depends on non-existent module. Revise to require 85% coverage instead of 100%."
+    },
+    {
+      "id": "SC-115-1",
+      "confidence": 8,
+      "issues": [
+        "MODULE DOESN'T EXIST: src/tools/indentation_fixer.py doesn't exist",
+        "ACHIEVABILITY: Assumes module has --test flag that doesn't exist",
+        "TESTABILITY: Test counts words in output - fragile and unclear"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create src/tools/indentation_fixer.py supporting Python (.py), JSON (.json), Markdown (.md) files; auto-detect and fix indentation errors",
+      "revised_test_method": "python -c 'from src.tools.indentation_fixer import IndentationFixer; assert IndentationFixer.supports(\"py\") and IndentationFixer.supports(\"json\")'",
+      "rationale": "Reject - module doesn't exist. Revise to specify supported file types."
+    },
+    {
+      "id": "SC-115-2",
+      "confidence": 12,
+      "issues": [
+        "DEPENDS ON: SC-115-1 (module must exist first)",
+        "ACHIEVABILITY: Assumes test file with 10+ test cases will be created",
+        "VAGUENESS: What are 'all file types'? Specification unclear"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create tests/test_indentation_fixer.py with tests for Python, JSON, Markdown indentation; all tests pass",
+      "revised_test_method": "python -m pytest tests/test_indentation_fixer.py -v | grep 'PASSED' | wc -l (≥10)",
+      "rationale": "Reject - depends on non-existent module."
+    },
+    {
+      "id": "SC-116-1",
+      "confidence": 22,
+      "issues": [
+        "FILE DOESN'T EXIST: docs/lancedb_evaluation.md doesn't exist",
+        "ACHIEVABILITY: Assumes evaluation will be done but doesn't specify evaluation criteria or metrics",
+        "TESTABILITY: Test counts regex matches - fragile metric of documentation quality"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create docs/lancedb_evaluation.md comparing LanceDB vs ChromaDB: performance metrics (latency, throughput), memory usage, API compatibility, migration effort",
+      "revised_test_method": "test -f docs/lancedb_evaluation.md && grep -E 'latency|throughput|memory|migration' docs/lancedb_evaluation.md | wc -l (≥4 sections)",
+      "rationale": "Reject - file doesn't exist. Revise to specify evaluation methodology."
+    },
+    {
+      "id": "SC-116-2",
+      "confidence": 18,
+      "issues": [
+        "FILE DOESN'T EXIST: benchmarks/vector_db_benchmark.py doesn't exist",
+        "ACHIEVABILITY: Assumes benchmark exists with specific output format",
+        "THRESHOLD UNCLEAR: ≥20% improvement or no migration - is 20% a hard threshold?"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create benchmarks/vector_db_benchmark.py comparing LanceDB and ChromaDB on: vector search speed, memory usage, query accuracy; document results",
+      "revised_test_method": "python benchmarks/vector_db_benchmark.py 2>&1 | grep 'LanceDB' (output shows measurements)",
+      "rationale": "Reject - benchmark infrastructure doesn't exist."
+    },
+    {
+      "id": "SC-117-1",
+      "confidence": 12,
+      "issues": [
+        "FILE DOESN'T EXIST: benchmarks/knowledge_foundation_test.py doesn't exist",
+        "ACHIEVABILITY: 25% improvement in reasoning accuracy - is this realistic? No baseline provided",
+        "DECEPTION RISK: Could game accuracy metric by curating easy test cases"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create ConjectureDB knowledge foundation with 20+ domain-specific claims; test on real reasoning problems; measure accuracy improvement with/without knowledge",
+      "revised_test_method": "python benchmarks/knowledge_foundation_test.py --baseline | grep 'Baseline accuracy'; python benchmarks/knowledge_foundation_test.py --with-knowledge | grep 'Knowledge accuracy'",
+      "rationale": "Reject - benchmark infrastructure doesn't exist. Revise to be clear about baseline and test methodology."
+    },
+    {
+      "id": "SC-117-2",
+      "confidence": 15,
+      "issues": [
+        "DEPENDS ON": SC-117-1 (knowledge foundation test must exist first)",
+        "ACHIEVABILITY": 3+ test domains - which three? Math, logic, science are examples but not specified as required",
+        "TESTABILITY: Test counts 'Domain.*improvement' lines but doesn't verify actual improvements"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Test knowledge foundation on mathematical reasoning, logical inference, scientific explanation; verify improvement in all 3 domains",
+      "revised_test_method": "python benchmarks/knowledge_foundation_test.py --domains math,logic,science | grep -E 'Math|Logic|Science' | wc -l (should be 3)",
+      "rationale": "Reject - depends on non-existent test infrastructure."
+    },
+    {
+      "id": "SC-118-1",
+      "confidence": 15,
+      "issues": [
+        "FILE DOESN'T EXIST: benchmarks/context_optimization_test.py doesn't exist",
+        "ACHIEVABILITY: 30% improvement in 'reasoning depth' - what is this measured in? Hops? Token count?",
+        "AMBIGUITY: No baseline provided"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Optimize context building with prioritization and recursion; test on reasoning problems; measure improvement in reasoning depth (num claim hops)",
+      "revised_test_method": "python benchmarks/context_optimization_test.py | grep 'Depth improvement' | awk '{print $NF}'",
+      "rationale": "Reject - benchmark doesn't exist. Revise to clarify depth measurement."
+    },
+    {
+      "id": "SC-118-2",
+      "confidence": 25,
+      "issues": [
+        "FILE DOESN'T EXIST: context_metrics.json assumed to auto-generate from SC-118-1",
+        "ACHIEVABILITY: ≥2 levels depth increase - what is 'depth'? From what baseline?",
+        "TESTABILITY: Depends on context_metrics.json having exact structure"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Measure recursion depth before/after optimization; ensure increase of 2+ levels in average traversal depth on test problems",
+      "revised_test_method": "python benchmarks/measure_context_depth.py | grep 'Avg depth' (show before/after)",
+      "rationale": "Reject - depends on non-existent metrics file."
+    },
+    {
+      "id": "SC-119-1",
+      "confidence": 12,
+      "issues": [
+        "FILE DOESN'T EXIST: benchmarks/context_generation_test.py doesn't exist",
+        "ACHIEVABILITY: 20% improvement in 'reasoning quality' - how is quality measured?",
+        "VAGUENESS: 'Maintained response times' - what counts as maintained?"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Optimize context generation with smart pruning; achieve 20% improvement in accuracy; keep response time within 10% of baseline",
+      "revised_test_method": "python benchmarks/context_generation_test.py | tail -10 (show quality and latency results)",
+      "rationale": "Reject - benchmark doesn't exist. Revise to clarify what 'quality' and 'maintained' mean."
+    },
+    {
+      "id": "SC-119-2",
+      "confidence": 28,
+      "issues": [
+        "FILE DOESN'T EXIST: context_metrics.json assumes auto-generation",
+        "ACHIEVABILITY: ≤10% change - from what baseline?",
+        "TESTABILITY: Depends on specific JSON structure"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Record baseline response time; ensure optimization keeps response time within 10% of baseline measurement",
+      "revised_test_method": "python -c 'import json; m=json.load(open(\"context_metrics.json\")); change = abs((m[\"response_time_after\"] - m[\"response_time_baseline\"]) / m[\"response_time_baseline\"]); assert change <= 0.1'",
+      "rationale": "Reject - depends on non-existent infrastructure."
+    },
+    {
+      "id": "SC-120-1",
+      "confidence": 28,
+      "issues": [
+        "MODULE DOESN'T EXIST: src/agent/evaluation_prompt.py (or get_tag_suggestions function) doesn't exist in expected form",
+        "ACHIEVABILITY: 20 common + 20 relevant tags - what should they be?",
+        "TESTABILITY: Test assumes very specific function signature and return structure"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Create evaluation_prompt.py with tag suggestion system; define 20 common domain tags + custom tag support",
+      "revised_test_method": "python -c 'from src.agent.evaluation_prompt import get_tag_suggestions; tags = get_tag_suggestions(); assert len(tags[\"common\"]) >= 20'",
+      "rationale": "Reject - module doesn't exist. Revise to specify tag categories."
+    },
+    {
+      "id": "SC-120-2",
+      "confidence": 35,
+      "issues": [
+        "MODULE DOESN'T EXIST: CORE_TAGS constant assumed",
+        "ACHIEVABILITY: 22 specific tags listed - should verify these are appropriate",
+        "TESTABILITY: Direct python check is good, but assumes tags are hardcoded in specific module"
+      ],
+      "recommendation": "revise",
+      "revised_target": "Define CORE_TAGS in src/agent/evaluation_prompt.py with all 22 specified tags; make available to claim creation",
+      "revised_test_method": "python -c 'from src.agent.evaluation_prompt import CORE_TAGS; assert len(CORE_TAGS) >= 22 and \"definition\" in CORE_TAGS'",
+      "rationale": "Revise to require implementation in specific location."
+    },
+    {
+      "id": "SC-120-3",
+      "confidence": 32,
+      "issues": [
+        "FILE DOESN'T EXIST: test_claims.json assumed to auto-generate from evaluation prompts",
+        "ACHIEVABILITY: 2-3 tags per claim 'on average' - who enforces this? The evaluation prompt?",
+        "GAMABILITY: Could create claims with 2-3 tags while evaluation system tags with different counts"
+      ],
+      "recommendation": "reject",
+      "revised_target": "Evaluation prompt enforces 2-3 tag selection; verify claims created through evaluation have 2-3 tags; test on 50+ created claims",
+      "revised_test_method": "python -c 'import json; claims=json.load(open(\"test_claims.json\")); avg_tags = sum(len(c[\"tags\"]) for c in claims) / len(claims); assert 1.8 <= avg_tags <= 3.2'",
+      "rationale": "Reject - depends on evaluation prompt enforcement that doesn't exist."
+    }
+  ]
+}

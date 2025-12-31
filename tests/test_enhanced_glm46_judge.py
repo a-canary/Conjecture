@@ -7,7 +7,11 @@ Tests advanced evaluation methodology and domain-specific criteria
 import pytest
 import asyncio
 from unittest.mock import Mock, AsyncMock, patch
-from src.benchmarking.enhanced_glm46_judge import EnhancedGLM46Judge, JudgeEvaluation
+from benchmarks.benchmarking.enhanced_glm46_judge import (
+    EnhancedGLM46Judge,
+    JudgeEvaluation,
+)
+
 
 class TestEnhancedGLM46Judge:
     """Test the enhanced GLM-4.6 judge system"""
@@ -15,11 +19,7 @@ class TestEnhancedGLM46Judge:
     @pytest.fixture
     def judge_config(self):
         """Create judge configuration for testing"""
-        return {
-            "key": "test_api_key",
-            "url": "http://test-api.com",
-            "model": "glm-4.6"
-        }
+        return {"key": "test_api_key", "url": "http://test-api.com", "model": "glm-4.6"}
 
     @pytest.fixture
     def sample_evaluation_response(self):
@@ -73,7 +73,7 @@ class TestEnhancedGLM46Judge:
                 response="The answer is 180. I calculated 15 × 12 = 180.",
                 expected="180",
                 problem_type="mathematical",
-                difficulty="medium"
+                difficulty="medium",
             )
 
             # Should contain mathematical-specific criteria
@@ -91,7 +91,7 @@ class TestEnhancedGLM46Judge:
                 response="Since all A are B and some B are C, some A might be C.",
                 expected="Some A might be C",
                 problem_type="logical",
-                difficulty="medium"
+                difficulty="medium",
             )
 
             # Should contain logical-specific criteria
@@ -108,7 +108,7 @@ class TestEnhancedGLM46Judge:
                 response="4",
                 expected="4",
                 problem_type="mathematical",
-                difficulty="easy"
+                difficulty="easy",
             )
 
             hard_prompt = judge._create_enhanced_judge_prompt(
@@ -116,7 +116,7 @@ class TestEnhancedGLM46Judge:
                 response="Complex proof...",
                 expected="Complex proof...",
                 problem_type="mathematical",
-                difficulty="hard"
+                difficulty="hard",
             )
 
             assert "EASY" in easy_prompt
@@ -129,6 +129,7 @@ class TestEnhancedGLM46Judge:
             """Test successful JSON parsing"""
             judge = EnhancedGLM46Judge(judge_config)
             from datetime import datetime
+
             start_time = datetime.now()
 
             evaluation = judge._parse_evaluation_response(
@@ -147,10 +148,13 @@ class TestEnhancedGLM46Judge:
             """Test text parsing fallback for non-JSON responses"""
             judge = EnhancedGLM46Judge(judge_config)
             from datetime import datetime
+
             start_time = datetime.now()
 
             text_response = "The answer is CORRECT and the reasoning is EXCELLENT."
-            evaluation = judge._parse_evaluation_response(text_response, "general", start_time)
+            evaluation = judge._parse_evaluation_response(
+                text_response, "general", start_time
+            )
 
             assert isinstance(evaluation, JudgeEvaluation)
             assert evaluation.is_correct is True
@@ -161,10 +165,13 @@ class TestEnhancedGLM46Judge:
             """Test handling of malformed JSON"""
             judge = EnhancedGLM46Judge(judge_config)
             from datetime import datetime
+
             start_time = datetime.now()
 
             malformed_response = '{"is_correct": true, "confidence": invalid}'
-            evaluation = judge._parse_evaluation_response(malformed_response, "general", start_time)
+            evaluation = judge._parse_evaluation_response(
+                malformed_response, "general", start_time
+            )
 
             # Should fall back gracefully
             assert isinstance(evaluation, JudgeEvaluation)
@@ -176,13 +183,14 @@ class TestEnhancedGLM46Judge:
             """Test fallback evaluation for correct responses"""
             judge = EnhancedGLM46Judge(judge_config)
             from datetime import datetime
+
             start_time = datetime.now()
 
             evaluation = judge._fallback_evaluation(
                 problem="What is 2+2?",
                 response="The answer is 4",
                 expected="4",
-                start_time=start_time
+                start_time=start_time,
             )
 
             assert isinstance(evaluation, JudgeEvaluation)
@@ -194,13 +202,14 @@ class TestEnhancedGLM46Judge:
             """Test fallback evaluation for incorrect responses"""
             judge = EnhancedGLM46Judge(judge_config)
             from datetime import datetime
+
             start_time = datetime.now()
 
             evaluation = judge._fallback_evaluation(
                 problem="What is 2+2?",
                 response="The answer is 5",
                 expected="4",
-                start_time=start_time
+                start_time=start_time,
             )
 
             assert isinstance(evaluation, JudgeEvaluation)
@@ -216,7 +225,7 @@ class TestEnhancedGLM46Judge:
             judge = EnhancedGLM46Judge(judge_config)
 
             # Mock the API call
-            with patch.object(judge, '_call_glm46_judge') as mock_call:
+            with patch.object(judge, "_call_glm46_judge") as mock_call:
                 mock_call.return_value = '{"is_correct": true, "confidence": 80}'
 
                 # First evaluation
@@ -252,36 +261,60 @@ class TestEnhancedGLM46Judge:
             # Create sample evaluations
             evaluations = [
                 JudgeEvaluation(
-                    is_correct=True, confidence=90, reasoning_quality="excellent",
-                    problem_type_match=True, enhancement_usage="extensive",
-                    feedback="Great response", detailed_scores={
-                        "correctness": 95, "methodology": 90, "clarity": 88,
-                        "completeness": 92, "enhancement_usage": 85
-                    }, evaluation_time=1.5
+                    is_correct=True,
+                    confidence=90,
+                    reasoning_quality="excellent",
+                    problem_type_match=True,
+                    enhancement_usage="extensive",
+                    feedback="Great response",
+                    detailed_scores={
+                        "correctness": 95,
+                        "methodology": 90,
+                        "clarity": 88,
+                        "completeness": 92,
+                        "enhancement_usage": 85,
+                    },
+                    evaluation_time=1.5,
                 ),
                 JudgeEvaluation(
-                    is_correct=False, confidence=30, reasoning_quality="fair",
-                    problem_type_match=True, enhancement_usage="minimal",
-                    feedback="Needs improvement", detailed_scores={
-                        "correctness": 40, "methodology": 50, "clarity": 45,
-                        "completeness": 35, "enhancement_usage": 25
-                    }, evaluation_time=1.2
+                    is_correct=False,
+                    confidence=30,
+                    reasoning_quality="fair",
+                    problem_type_match=True,
+                    enhancement_usage="minimal",
+                    feedback="Needs improvement",
+                    detailed_scores={
+                        "correctness": 40,
+                        "methodology": 50,
+                        "clarity": 45,
+                        "completeness": 35,
+                        "enhancement_usage": 25,
+                    },
+                    evaluation_time=1.2,
                 ),
                 JudgeEvaluation(
-                    is_correct=True, confidence=75, reasoning_quality="good",
-                    problem_type_match=True, enhancement_usage="moderate",
-                    feedback="Good response", detailed_scores={
-                        "correctness": 80, "methodology": 75, "clarity": 78,
-                        "completeness": 72, "enhancement_usage": 60
-                    }, evaluation_time=1.3
-                )
+                    is_correct=True,
+                    confidence=75,
+                    reasoning_quality="good",
+                    problem_type_match=True,
+                    enhancement_usage="moderate",
+                    feedback="Good response",
+                    detailed_scores={
+                        "correctness": 80,
+                        "methodology": 75,
+                        "clarity": 78,
+                        "completeness": 72,
+                        "enhancement_usage": 60,
+                    },
+                    evaluation_time=1.3,
+                ),
             ]
 
             summary = judge.get_evaluation_summary(evaluations)
 
             assert summary["total_evaluations"] == 3
             assert summary["correct_count"] == 2
-            assert summary["accuracy"] == 2/3
+            assert summary["accuracy"] == 2 / 3
             assert summary["average_confidence"] == (90 + 30 + 75) / 3
             assert "average_scores" in summary
             assert "reasoning_quality_distribution" in summary
@@ -295,7 +328,7 @@ class TestEnhancedGLM46Judge:
             judge = EnhancedGLM46Judge(judge_config)
 
             # Mock API responses for different evaluation types
-            with patch.object(judge, '_call_glm46_judge') as mock_call:
+            with patch.object(judge, "_call_glm46_judge") as mock_call:
                 # Enhanced evaluation response
                 enhanced_response = """{
                     "is_correct": true,
@@ -323,7 +356,7 @@ class TestEnhancedGLM46Judge:
                         "problem": "What is 15 × 12?",
                         "response": "180",
                         "expected": "180",
-                        "type": "mathematical"
+                        "type": "mathematical",
                     }
                 ]
 
@@ -341,7 +374,9 @@ class TestEnhancedGLM46Judge:
 
                 assert enhanced_eval.detailed_scores is not None
                 assert len(enhanced_eval.detailed_scores) > 1
-                assert standard_eval.detailed_scores == {"correctness": 80}  # Standard fallback
+                assert standard_eval.detailed_scores == {
+                    "correctness": 80
+                }  # Standard fallback
 
     class TestErrorHandling:
         """Test error handling and robustness"""
@@ -352,7 +387,7 @@ class TestEnhancedGLM46Judge:
             judge = EnhancedGLM46Judge(judge_config)
 
             # Mock API error
-            with patch.object(judge, '_call_glm46_judge') as mock_call:
+            with patch.object(judge, "_call_glm46_judge") as mock_call:
                 mock_call.side_effect = Exception("API Error")
 
                 evaluation = await judge.evaluate_response(
@@ -361,7 +396,9 @@ class TestEnhancedGLM46Judge:
 
                 # Should fall back to evaluation
                 assert isinstance(evaluation, JudgeEvaluation)
-                assert evaluation.feedback == "Fallback evaluation - GLM-4.6 unavailable"
+                assert (
+                    evaluation.feedback == "Fallback evaluation - GLM-4.6 unavailable"
+                )
 
         @pytest.mark.asyncio
         async def test_timeout_handling(self, judge_config):
@@ -369,7 +406,7 @@ class TestEnhancedGLM46Judge:
             judge = EnhancedGLM46Judge(judge_config)
 
             # Mock timeout
-            with patch('aiohttp.ClientSession.post') as mock_post:
+            with patch("aiohttp.ClientSession.post") as mock_post:
                 mock_post.side_effect = asyncio.TimeoutError("Request timeout")
 
                 evaluation = await judge.evaluate_response(
@@ -386,7 +423,7 @@ class TestEnhancedGLM46Judge:
             judge = EnhancedGLM46Judge(judge_config)
 
             # Mock malformed response
-            with patch.object(judge, '_call_glm46_judge') as mock_call:
+            with patch.object(judge, "_call_glm46_judge") as mock_call:
                 mock_call.return_value = "This is not valid JSON {"
 
                 evaluation = await judge.evaluate_response(
@@ -409,7 +446,7 @@ class TestJudgePerformance:
         judge = EnhancedGLM46Judge(judge_config)
 
         # Mock fast API response
-        with patch.object(judge, '_call_glm46_judge') as mock_call:
+        with patch.object(judge, "_call_glm46_judge") as mock_call:
             mock_call.return_value = '{"is_correct": true, "confidence": 80}'
 
             start_time = time.time()
@@ -419,7 +456,9 @@ class TestJudgePerformance:
             end_time = time.time()
 
             # Should complete quickly
-            assert end_time - start_time < 2.0, f"Evaluation too slow: {end_time - start_time}s"
+            assert end_time - start_time < 2.0, (
+                f"Evaluation too slow: {end_time - start_time}s"
+            )
             assert isinstance(evaluation, JudgeEvaluation)
 
     @pytest.mark.asyncio
@@ -430,25 +469,29 @@ class TestJudgePerformance:
         judge = EnhancedGLM46Judge(judge_config)
 
         # Mock API response
-        with patch.object(judge, '_call_glm46_judge') as mock_call:
+        with patch.object(judge, "_call_glm46_judge") as mock_call:
             mock_call.return_value = '{"is_correct": true, "confidence": 80}'
 
             # Create multiple test cases
             test_cases = [
                 ("Problem 1", "Response 1", "Expected 1", "mathematical"),
                 ("Problem 2", "Response 2", "Expected 2", "logical"),
-                ("Problem 3", "Response 3", "Expected 3", "general")
+                ("Problem 3", "Response 3", "Expected 3", "general"),
             ]
 
             start_time = time.time()
             evaluations = []
             for problem, response, expected, ptype in test_cases:
-                eval_result = await judge.evaluate_response(problem, response, expected, ptype)
+                eval_result = await judge.evaluate_response(
+                    problem, response, expected, ptype
+                )
                 evaluations.append(eval_result)
             end_time = time.time()
 
             # Should handle multiple evaluations efficiently
-            assert end_time - start_time < 5.0, f"Batch evaluation too slow: {end_time - start_time}s"
+            assert end_time - start_time < 5.0, (
+                f"Batch evaluation too slow: {end_time - start_time}s"
+            )
             assert len(evaluations) == 3
             assert all(isinstance(e, JudgeEvaluation) for e in evaluations)
 

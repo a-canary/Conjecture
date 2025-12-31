@@ -4,17 +4,21 @@ Unified processing system with OpenAI-compatible providers only
 """
 
 # Core simplified processing components
-from .simplified_llm_manager import (
-    SimplifiedLLMManager,
-    get_simplified_llm_manager
-)
+from .simplified_llm_manager import SimplifiedLLMManager, get_simplified_llm_manager
 
-from .unified_bridge import (
-    UnifiedLLMBridge,
-    get_unified_bridge,
-    LLMRequest,
-    LLMResponse
-)
+# Unified bridge components (optional)
+try:
+    from .unified_bridge import (
+        UnifiedLLMBridge,
+        get_unified_bridge,
+        LLMRequest,
+        LLMResponse,
+    )
+except ImportError:
+    UnifiedLLMBridge = None
+    get_unified_bridge = None
+    LLMRequest = None
+    LLMResponse = None
 
 # Legacy components (maintained for backward compatibility)
 try:
@@ -37,11 +41,10 @@ __all__ = [
     # Simplified components
     "SimplifiedLLMManager",
     "get_simplified_llm_manager",
-    "UnifiedLLMBridge", 
+    "UnifiedLLMBridge",
     "get_unified_bridge",
     "LLMRequest",
     "LLMResponse",
-    
     # Legacy components (backward compatibility)
     "ResponseParser",
     "ToolExecutor",

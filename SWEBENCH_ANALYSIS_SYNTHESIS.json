@@ -1,0 +1,132 @@
+{
+  "combination": [
+    "Functional Requirements",
+    "Performance Criteria",
+    "Scalability & Maintainability"
+  ],
+  "problem_summary": "Achieve >70% accuracy on SWE-Bench-Bash-Only with GraniteTiny model by combining efficient problem classification, specialized prompt templates, pattern caching, and progressive complexity refinement across 500 instances",
+  "reasoning": "SWE-Bench analysis reveals 80% of issues fall into predictable categories (import errors, assertion failures, exceptions, timeouts). A simple, efficient agent that handles these common patterns will outperform complex agents. GraniteTiny's 512-token limit and 0.3 temperature require focused, domain-specific prompts. Bash-only subset (vs full SWE-Bench) provides more targeted validation with clearer success metrics.",
+  "solution_steps": [
+    "1. Classify bug types: import error, assertion fail, exception, timeout, syntax error (5 categories cover ~80% of bash issues)",
+    "2. Create specialized prompt templates per bug type with minimal context (max 5 claims per Conjecture context)",
+    "3. Cache successful patterns for similar future bugs using semantic similarity (ChromaDB vector store)",
+    "4. Implement parallel instance evaluation with batch processing (3-5 instances per batch for GraniteTiny stability)",
+    "5. Use progressive complexity: simple fix → iterative refinement → validation (2-3 iteration max per instance)"
+  ],
+  "expected_outcome": "70%+ accuracy with sub-3min average time per instance (1500 min total for 500 instances)",
+  "detailed_analysis": {
+    "current_state": {
+      "infrastructure": "✅ Production-ready SWE-Bench evaluator exists (895 lines, swe_bench_evaluator.py)",
+      "model_integration": "✅ GraniteTiny fully configured with optimized parameters (512 tokens, 0.3 temp, 5-claim context)",
+      "benchmark_framework": "✅ Comprehensive framework with 55+ benchmark files and multiple evaluation approaches",
+      "backlog_tracking": "✅ SC-FEAT-001 tracked in success_criteria.json with clear target (>70% accuracy)",
+      "test_coverage": "✅ 18.20% overall coverage, 377 tests passing (100% pass rate)"
+    },
+    "key_constraints": {
+      "model_size": "GraniteTiny is tiny (1.3B parameters) - requires focused prompts, limited context",
+      "token_budget": "512 max tokens per response - no room for verbose reasoning or multi-step explanations",
+      "temperature": "0.3 (low) - model is conservative, needs explicit guidance for creative fixes",
+      "context_window": "5 claims max per Conjecture context - must be highly selective about supporting evidence",
+      "bash_only_scope": "Subset of SWE-Bench focusing on bash/shell scripts - different patterns than Python/JS"
+    },
+    "failure_patterns_to_address": {
+      "import_errors": "Missing modules, incorrect paths - fix via: (1) identify missing module, (2) suggest import statement, (3) validate syntax",
+      "assertion_failures": "Test assertions fail - fix via: (1) understand expected vs actual, (2) trace logic, (3) minimal code change",
+      "timeout_errors": "Script hangs or takes too long - fix via: (1) identify infinite loop/blocking call, (2) add timeout/skip, (3) optimize",
+      "syntax_errors": "Invalid bash syntax - fix via: (1) identify syntax issue, (2) correct quoting/escaping, (3) validate",
+      "permission_errors": "File/command permission denied - fix via: (1) identify permission issue, (2) add chmod/sudo, (3) validate"
+    },
+    "optimization_opportunities": {
+      "prompt_engineering": "Domain-specific prompts for bash (vs Python) - use bash idioms, common patterns, error messages",
+      "context_selection": "Semantic search for similar past fixes - cache successful patterns in ChromaDB",
+      "batch_processing": "Process 3-5 instances in parallel - GraniteTiny stable with small batches",
+      "early_termination": "Stop after 2-3 iterations if confidence >0.85 - avoid wasting tokens on low-confidence fixes",
+      "fallback_strategies": "If GraniteTiny fails, try: (1) simpler prompt, (2) different context, (3) human review"
+    },
+    "success_metrics": {
+      "primary": "Accuracy >70% on SWE-Bench-Bash-Only (500 instances)",
+      "secondary": "Average time per instance <3 minutes (1500 min total)",
+      "tertiary": "Maintain >85% test coverage, 100% test pass rate",
+      "quality": "No regressions on AIME2025 or LiveCodeBench v6 benchmarks"
+    }
+  },
+  "implementation_roadmap": {
+    "phase_1_foundation": {
+      "duration": "2-3 days",
+      "tasks": [
+        "Analyze 50 SWE-Bench-Bash-Only instances to identify top 5 bug categories",
+        "Create 5 specialized prompt templates (one per category)",
+        "Implement bug type classifier using simple keyword/pattern matching",
+        "Set up ChromaDB vector store for pattern caching"
+      ],
+      "success_criteria": "Classifier achieves >80% accuracy on bug type detection"
+    },
+    "phase_2_integration": {
+      "duration": "3-4 days",
+      "tasks": [
+        "Integrate classifier with SWE-Bench evaluator",
+        "Implement prompt template selection logic",
+        "Add pattern caching and retrieval from ChromaDB",
+        "Implement batch processing (3-5 instances per batch)"
+      ],
+      "success_criteria": "End-to-end pipeline runs on 50 instances with <3min average time"
+    },
+    "phase_3_refinement": {
+      "duration": "3-4 days",
+      "tasks": [
+        "Implement progressive complexity (simple → iterative → validation)",
+        "Add early termination logic (stop at 2-3 iterations if confidence >0.85)",
+        "Optimize prompt templates based on failure analysis",
+        "Implement fallback strategies for low-confidence cases"
+      ],
+      "success_criteria": "Achieve >65% accuracy on 100-instance test set"
+    },
+    "phase_4_scaling": {
+      "duration": "2-3 days",
+      "tasks": [
+        "Scale to full 500-instance SWE-Bench-Bash-Only set",
+        "Monitor performance metrics and adjust parameters",
+        "Implement comprehensive logging and error tracking",
+        "Validate no regressions on other benchmarks"
+      ],
+      "success_criteria": "Achieve >70% accuracy on full 500-instance set"
+    }
+  },
+  "risk_mitigation": {
+    "risk_low_accuracy": {
+      "probability": "medium",
+      "impact": "high",
+      "mitigation": "Start with 50-instance test set, iterate on prompts before scaling to 500"
+    },
+    "risk_timeout_issues": {
+      "probability": "medium",
+      "impact": "medium",
+      "mitigation": "Implement early termination at 2-3 iterations, add timeout handling in evaluator"
+    },
+    "risk_pattern_cache_misses": {
+      "probability": "low",
+      "impact": "medium",
+      "mitigation": "Fall back to generic prompt if no similar patterns found in cache"
+    },
+    "risk_regression_other_benchmarks": {
+      "probability": "low",
+      "impact": "high",
+      "mitigation": "Run AIME2025 and LiveCodeBench v6 after each phase to verify no regressions"
+    }
+  },
+  "evidence_from_codebase": {
+    "swe_bench_evaluator": "895-line production-ready evaluator at benchmarks/benchmarking/swe_bench_evaluator.py with real SWE-bench-lite dataset integration",
+    "granite_tiny_config": "Fully documented integration guide at docs/ibm_granite_tiny_integration_guide.md with optimized parameters (512 tokens, 0.3 temp, 5-claim context)",
+    "benchmark_framework": "55+ benchmark files in benchmarks/benchmarking/ with comprehensive evaluation infrastructure",
+    "success_criteria": "SC-FEAT-001 in .agent/success_criteria.json tracking >70% accuracy target on SWE-Bench-Bash-Only",
+    "backlog_item": "Item 101 in .agent/backlog.md promoted to SC-FEAT-001 with clear purpose and target"
+  },
+  "next_steps": [
+    "1. Analyze 50 SWE-Bench-Bash-Only instances to identify top 5 bug categories (2 hours)",
+    "2. Create 5 specialized prompt templates with examples (4 hours)",
+    "3. Implement bug type classifier and test on 50-instance set (6 hours)",
+    "4. Integrate with SWE-Bench evaluator and run Phase 1 validation (4 hours)",
+    "5. Iterate on prompts based on Phase 1 results (8 hours)",
+    "6. Scale to full 500-instance set and achieve >70% accuracy (ongoing)"
+  ]
+}
