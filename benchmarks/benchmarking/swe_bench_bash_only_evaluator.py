@@ -33,7 +33,11 @@ from src.processing.unified_bridge import UnifiedLLMBridge, LLMRequest, LLMRespo
 from src.processing.simplified_llm_manager import get_simplified_llm_manager
 
 # SC-FEAT-001: Sandbox integration for secure execution
-from swe_bench_sandbox import get_sandbox_executor
+# Use Windows-native sandbox when Docker is not available
+try:
+    from benchmarks.benchmarking.windows_sandbox import get_sandbox_executor
+except ImportError:
+    from benchmarks.benchmarking.swe_bench_sandbox import get_sandbox_executor
 
 
 class Conjecture:
@@ -223,7 +227,6 @@ class BashOnlySWEBenchEvaluator:
             dataset = load_dataset(
                 "princeton-nlp/swe-bench_lite",
                 split="test",
-                verification_mode="no_configs",
             )
 
             tasks = []
