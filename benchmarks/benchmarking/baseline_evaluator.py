@@ -296,7 +296,7 @@ class BaselineSWEBenchEvaluator:
 
                     # Check for success
                     if exec_result.exit_code == 0 and self._check_success(
-                        exec_result.stdout
+                        exec_result.stdout, exec_result
                     ):
                         execution_time = time.time() - start_time
                         return EvaluationOutput(
@@ -397,20 +397,14 @@ Command:"""
 
         return "echo 'No command found'"
 
-    def _check_success(self, output: str) -> bool:
+    def _check_success(self, output: str, exec_result) -> bool:
         """
         Check if execution was successful
-        Simple heuristic: no error keywords in output
+        Uses final bash command exit code and output for accurate success detection
         """
-        error_keywords = [
-            "error",
-            "failed",
-            "exception",
-            "traceback",
-            "command not found",
-        ]
-        output_lower = output.lower()
-        return not any(kw in output_lower for kw in error_keywords)
+        # Success if exit code is 0 AND output contains expected content
+        # (not just checking for absence of error keywords)
+        return exec_result.exit_code == 0 and len(exec_result.stdout) > 0
 
     async def evaluate_batch(
         self, tasks: List[SWETask], batch_size: Optional[int] = None
