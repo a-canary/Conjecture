@@ -4,7 +4,7 @@ Tests all pure functions for claim relationship management without mocking
 """
 
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 
 from src.core.models import Claim, ClaimType, ClaimState

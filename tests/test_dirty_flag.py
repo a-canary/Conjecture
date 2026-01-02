@@ -12,7 +12,7 @@ Tests cover:
 """
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Dict
 
 from src.core.models import Claim, DirtyReason, ClaimState, ClaimType
@@ -179,9 +179,9 @@ class TestMarkClaimDirty:
 
     def test_mark_dirty_updates_timestamp(self, sample_claim):
         """Test that marking dirty updates the timestamp"""
-        before = datetime.utcnow()
+        before = datetime.now(timezone.utc)
         dirty_claim = mark_dirty(sample_claim, DirtyReason.MANUAL_MARK)
-        after = datetime.utcnow()
+        after = datetime.now(timezone.utc)
 
         assert dirty_claim.dirty_timestamp is not None
         assert before <= dirty_claim.dirty_timestamp <= after

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-=============================================================================
+==============================================================================
 GENERATED CODE - SC-FEAT-001 - TEST BRANCH
 Quick-start script for SWE-Bench Bash-Only Evaluator
 
@@ -8,11 +8,13 @@ Modified 2025-12-30:
   - Added Docker sandbox support
   - Added sandbox control options
   - All generated code marked for test branch
-=============================================================================
-Run immediately with: python run_bash_only_evaluator.py
+  - Added argparse for non-interactive CLI execution (2025-12-31)
+==============================================================================
+Run immediately with: python run_bash_only_evaluator.py --quick
 """
 
 import asyncio
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -250,49 +252,135 @@ def main():
     SC-FEAT-001: Main entry point with sandbox options.
 
     Generated for SC-FEAT-001 test branch.
+    Supports both interactive and command-line execution.
     """
-    print("\n[TARGET] SWE-Bench Bash-Only Evaluator")
-    print("=" * 70)
-    print("\nOptions:")
-    print("  1. Quick evaluation (10 tasks) - ~2-3 minutes")
-    print("  2. Full evaluation (500 tasks) - ~30-60 minutes")
-    print("  3. Exit")
-    print()
+    import argparse
 
-    # SC-FEAT-001: Sandbox options
-    sandbox_choice = input("Use Docker sandbox? (recommended) [Y/n]: ").strip().lower()
-    use_sandbox = sandbox_choice != "n"
+    # SC-FEAT-001: Parse command-line arguments first (non-interactive mode)
+    parser = argparse.ArgumentParser(
+        description="SWE-Bench Bash-Only Evaluator", add_help=False
+    )
+    parser.add_argument(
+        "--use-sandbox",
+        action="store_true",
+        default=None,
+        help="Enable Docker sandbox (default: yes)",
+    )
+    parser.add_argument(
+        "--no-sandbox",
+        action="store_true",
+        help="Disable Docker sandbox, use direct execution",
+    )
+    parser.add_argument(
+        "--docker-image",
+        type=str,
+        default="ubuntu:22.04",
+        help="Docker image to use (default: ubuntu:22.04)",
+    )
+    parser.add_argument(
+        "--quick", action="store_true", help="Run quick evaluation (10 tasks)"
+    )
+    parser.add_argument(
+        "--full", action="store_true", help="Run full evaluation (500 tasks)"
+    )
+    parser.add_argument("-h", "--help", action="store_true", help="Show help message")
 
-    if use_sandbox:
-        docker_image = input("Docker image [ubuntu:22.04]: ").strip()
-        if not docker_image:
-            docker_image = "ubuntu:22.04"
+    # Parse known args, ignore unknown ones
+    args, _ = parser.parse_known_args()
+
+    # Handle help
+    if args.help:
+        parser.print_help()
+        sys.exit(0)
+
+    # Determine if we're in interactive or CLI mode
+    # CLI mode if any of --quick, --full, --use-sandbox, --no-sandbox specified
+    cli_mode = args.quick or args.full or args.use_sandbox or args.no_sandbox
+
+    # Parse sandbox settings
+    if args.no_sandbox:
+        use_sandbox = False
+    elif args.use_sandbox:
+        use_sandbox = True
     else:
-        print("[WARN] Direct execution mode - commands will run on HOST system!")
-        docker_image = "ubuntu:22.04"
+        use_sandbox = None  # Will prompt in interactive mode
 
-    choice = input("Select option (1-3): ").strip()
+    docker_image = args.docker_image
 
-    if choice == "1":
-        asyncio.run(
-            run_quick_evaluation(use_sandbox=use_sandbox, docker_image=docker_image)
-        )
-    elif choice == "2":
-        confirm = (
-            input("\n[WARN] Full evaluation will take 30-60 minutes. Continue? (y/n): ")
-            .strip()
-            .lower()
-        )
-        if confirm == "y":
+    # Interactive mode (default, no CLI args)
+    if not cli_mode:
+        print("\n[TARGET] SWE-Bench Bash-Only Evaluator")
+        print("=" * 70)
+        print("\nOptions:")
+        print("  1. Quick evaluation (10 tasks) - ~2-3 minutes")
+        print("  2. Full evaluation (500 tasks) - ~30-60 minutes")
+        print("  3. Exit")
+        print()
+
+        # SC-FEAT-001: Sandbox options
+        if use_sandbox is None:
+            sandbox_choice = (
+                input("Use Docker sandbox? (recommended) [Y/n]: ").strip().lower()
+            )
+            use_sandbox = sandbox_choice != "n"
+
+        if use_sandbox:
+            docker_input = input(f"Docker image [{docker_image}]: ").strip()
+            if docker_input:
+                docker_image = docker_input
+        else:
+            print("[WARN] Direct execution mode - commands will run on HOST system!")
+
+        choice = input("Select option (1-3): ").strip()
+
+        if choice == "1":
+            asyncio.run(
+                run_quick_evaluation(use_sandbox=use_sandbox, docker_image=docker_image)
+            )
+        elif choice == "2":
+            confirm = (
+                input(
+                    "\n[WARN] Full evaluation will take 30-60 minutes. Continue? (y/n): "
+                )
+                .strip()
+                .lower()
+            )
+            if confirm == "y":
+                asyncio.run(
+                    run_full_evaluation(
+                        use_sandbox=use_sandbox, docker_image=docker_image
+                    )
+                )
+            else:
+                print("Cancelled.")
+        elif choice == "3":
+            print("Exiting.")
+        else:
+            print("Invalid option.")
+    else:
+        # CLI mode: non-interactive execution
+        if use_sandbox is None:
+            use_sandbox = True  # Default to sandbox in CLI mode
+
+        if not use_sandbox:
+            print("[WARN] Direct execution mode - commands will run on HOST system!")
+
+        if args.quick:
+            print("\n[TARGET] SWE-Bench Bash-Only Evaluator (Quick Mode)")
+            print("=" * 70)
+            asyncio.run(
+                run_quick_evaluation(use_sandbox=use_sandbox, docker_image=docker_image)
+            )
+        elif args.full:
+            print("\n[TARGET] SWE-Bench Bash-Only Evaluator (Full Mode)")
+            print("=" * 70)
             asyncio.run(
                 run_full_evaluation(use_sandbox=use_sandbox, docker_image=docker_image)
             )
         else:
-            print("Cancelled.")
-    elif choice == "3":
-        print("Exiting.")
-    else:
-        print("Invalid option.")
+            print("Error: Must specify --quick or --full")
+            parser.print_help()
+            sys.exit(1)
 
 
 if __name__ == "__main__":

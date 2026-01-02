@@ -105,8 +105,11 @@ class UnifiedLLMBridge:
 
             # Extract content from LLMProcessingResult
             response_content = ""
-            if hasattr(response, "content"):
-                response_content = response.content
+            if hasattr(response, "content") and response.content:
+                # CRITICAL FIX: Check content is not just truthy, but actually has content
+                content = response.content
+                if isinstance(content, str) and content.strip():
+                    response_content = content
             elif hasattr(response, "processed_claims") and response.processed_claims:
                 response_content = str(response.processed_claims)
             else:

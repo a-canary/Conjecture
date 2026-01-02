@@ -82,6 +82,15 @@ class DockerSandboxExecutor:
             )
             self.enable_sandbox = False
 
+    async def initialize(self):
+        """
+        Initialize the sandbox executor.
+
+        This is an async method that can be awaited for initialization.
+        Currently a no-op since initialization happens in __init__.
+        """
+        pass
+
     # ------------------------------------------------------------------------
     # MARKER: GENERATED - Docker availability check
     # ------------------------------------------------------------------------

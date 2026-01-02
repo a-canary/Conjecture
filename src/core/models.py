@@ -181,8 +181,17 @@ class Claim(BaseModel):
     @model_validator(mode="after")
     def validate_timestamps(self):
         """Validate timestamp relationships"""
-        if self.updated and self.created and self.updated < self.created:
-            raise ValueError("Updated time cannot be before created time")
+        # Normalize timestamps to handle naive vs aware comparison
+        created = self.created
+        updated = self.updated
+        if created and updated:
+            # Make both naive for comparison if mixed
+            if created.tzinfo is not None and updated.tzinfo is None:
+                updated = updated.replace(tzinfo=timezone.utc)
+            elif created.tzinfo is None and updated.tzinfo is not None:
+                created = created.replace(tzinfo=timezone.utc)
+            if updated < created:
+                raise ValueError("Updated time cannot be before created time")
         return self
 
     def to_chroma_metadata(self) -> Dict[str, Any]:

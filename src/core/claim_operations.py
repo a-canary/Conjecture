@@ -3,7 +3,7 @@ Pure functions for claim operations - Separated from data models
 This is the Tools layer for claim manipulation operations.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional, Dict, Any, Tuple
 from .models import Claim, DirtyReason
 
@@ -23,7 +23,7 @@ def update_confidence(claim: Claim, new_confidence: float) -> Claim:
         scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
-        updated=datetime.utcnow(),
+        updated=datetime.now(timezone.utc),
         embedding=claim.embedding,
         is_dirty=claim.is_dirty,
         dirty_reason=claim.dirty_reason,
@@ -48,11 +48,11 @@ def add_support(claim: Claim, supporting_claim_id: str) -> Claim:
         scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
-        updated=datetime.utcnow(),
+        updated=datetime.now(timezone.utc),
         embedding=claim.embedding,
         is_dirty=True,  # Mark as dirty when support is added
         dirty_reason=DirtyReason.SUPPORTING_CLAIM_CHANGED,
-        dirty_timestamp=datetime.utcnow(),
+        dirty_timestamp=datetime.now(timezone.utc),
         dirty_priority=claim.dirty_priority,
     )
 
@@ -73,11 +73,11 @@ def add_supports(claim: Claim, supported_claim_id: str) -> Claim:
         scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
-        updated=datetime.utcnow(),
+        updated=datetime.now(timezone.utc),
         embedding=claim.embedding,
         is_dirty=True,  # Mark as dirty when support is added
         dirty_reason=DirtyReason.SUPPORTING_CLAIM_CHANGED,
-        dirty_timestamp=datetime.utcnow(),
+        dirty_timestamp=datetime.now(timezone.utc),
         dirty_priority=claim.dirty_priority,
     )
 
@@ -94,11 +94,11 @@ def mark_dirty(claim: Claim, reason: DirtyReason, priority: int = 0) -> Claim:
         scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
-        updated=datetime.utcnow(),
+        updated=datetime.now(timezone.utc),
         embedding=claim.embedding,
         is_dirty=True,
         dirty_reason=reason,
-        dirty_timestamp=datetime.utcnow(),
+        dirty_timestamp=datetime.now(timezone.utc),
         dirty_priority=priority,
     )
 
@@ -115,7 +115,7 @@ def mark_clean(claim: Claim) -> Claim:
         scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
-        updated=datetime.utcnow(),
+        updated=datetime.now(timezone.utc),
         embedding=claim.embedding,
         is_dirty=False,
         dirty=False,
@@ -137,7 +137,7 @@ def set_dirty_priority(claim: Claim, priority: int) -> Claim:
         scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
-        updated=datetime.utcnow(),
+        updated=datetime.now(timezone.utc),
         embedding=claim.embedding,
         is_dirty=claim.is_dirty,
         dirty_reason=claim.dirty_reason,
