@@ -34,7 +34,7 @@ Implement Conjecture evaluation system with Claude Agent SDK integration and ARC
 - [x] 3.2 Implement bare Haiku baseline measurement
 - [x] 3.3 Implement Haiku+Conjecture measurement (enhanced prompting placeholder)
 - [x] 3.4 Create comparison report generator and metrics
-- [ ] 3.5 Download real ARC-AGI-2 task data
+- [x] 3.5 Download real ARC-AGI-2 task data (1000 training tasks)
 - [ ] 3.6 Integrate full Conjecture harness (claims, dirty flags, cascade)
 - [ ] 3.7 Run full benchmark with API key
 ### Gates

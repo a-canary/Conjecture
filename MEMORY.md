@@ -2,11 +2,12 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-Phases 1-3 framework complete. Code refactor verified (supers/subs). Claude SDK integrated (Haiku 4.5 default). ARC-AGI-2 benchmark framework created (experiments/arc_agi2_benchmark.py). Ready for live testing with ANTHROPIC_API_KEY and real ARC data.
+ARC-AGI-2 data downloaded (1000 training tasks). 287 tests passing. Framework complete. Ready for live benchmark testing with ANTHROPIC_API_KEY.
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-02-24: GATES_MET — Test suite fixed after supers/subs rename. 287 passed, 8 xfailed. 7 test files updated. All imports working.
 - 2026-02-24: WORK_DISPATCHED — Phase 3 framework created. experiments/arc_agi2_benchmark.py compares bare Haiku vs Haiku+Conjecture. Sample tasks included.
 - 2026-02-24: GATES_MET — Phase 1+2 verified. 55 tests pass (8 model, 47 ops). Added file_utils.py stub. Dashboard updated.
 - 2026-02-24: WORK_DISPATCHED — Phase 2 in progress. Added anthropic SDK, implemented AnthropicProcessor with claude-3-5-haiku-latest default. Updated providers.json.
