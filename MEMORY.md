@@ -2,11 +2,12 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-ARC-AGI-2 data downloaded (1000 training tasks). 287 tests passing. Framework complete. Ready for live benchmark testing with ANTHROPIC_API_KEY.
+Conjecture harness integration complete. 1000 ARC tasks loaded. 287 tests passing. Framework tracks claims, reasoning steps, halt conditions. Ready for LLM integration and live benchmark with ANTHROPIC_API_KEY.
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-02-24: WORK_DISPATCHED — Conjecture harness created (experiments/conjecture_harness.py). Claim tracking, reasoning steps, halt conditions working. ARC data loaded.
 - 2026-02-24: GATES_MET — Test suite fixed after supers/subs rename. 287 passed, 8 xfailed. 7 test files updated. All imports working.
 - 2026-02-24: WORK_DISPATCHED — Phase 3 framework created. experiments/arc_agi2_benchmark.py compares bare Haiku vs Haiku+Conjecture. Sample tasks included.
 - 2026-02-24: GATES_MET — Phase 1+2 verified. 55 tests pass (8 model, 47 ops). Added file_utils.py stub. Dashboard updated.
