@@ -203,7 +203,7 @@ Claims support four scopes: USER_WORKSPACE, TEAM_WORKSPACE, TEAM_WIDE, PUBLIC. S
 ### D-0006: Dirty Flag for Re-Evaluation Queue
 Supports: D-0001, D-0002
 
-Claims track dirty state with reasons (NEW_CLAIM_ADDED, CONFIDENCE_THRESHOLD, SUPPORTING_CLAIM_CHANGED). Priority calculated from confidence gap. Enables efficient selective re-evaluation.
+Claims track dirty state with reasons. When supporting claim changes, parent (supported) claims marked dirty — cascades toward root context. Clean = no support changed, re-eval would be no-op. Evaluation loop only processes dirty claims. Priority from confidence gap.
 
 ### D-0007: Acyclic Graph Enforcement
 Supports: D-0003
@@ -215,10 +215,10 @@ Supports: D-0003, D-0001
 
 Relationships have source_id, target_id, type, confidence (0.0-1.0), metadata dict, timestamp. Enables rich relationship semantics beyond simple edges.
 
-### D-0009: Root Context as Conversation
+### D-0009: Root Context as Claim
 Supports: D-0001, M-0003, A-0009
 
-Root context = entire conversation (user messages + harness responses). Decomposed into root claims via LLM. Root claims are GOALs to be answered/addressed. Root similarity measures claim relevance to full conversation, not just last message.
+Root context = entire conversation (user + harness messages) stored as a single claim. Context decomposed into supporting claims (questions, assumptions, conjectures) via LLM. Root similarity measures claim relevance to this conversation claim. Session-scoped: same session appends, new session resets.
 
 ---
 
@@ -280,9 +280,9 @@ Supports: A-0004, D-0006, M-0004
 When a claim changes, all claims that depend on it (via supported_by) are marked dirty. Evaluation cascades through the graph until convergence. Ensures downstream conclusions stay consistent with upstream evidence.
 
 ### A-0012: Halt Condition for Final Response
-Supports: A-0004, M-0002, M-0006
+Supports: A-0004, M-0002, M-0006, D-0009
 
-Evaluation halts when: (1) no dirty root claims remain, OR (2) processed N claims (default=20). Root context = full conversation decomposed into root claims. Response synthesized from root claims and top supporting evidence. Budget prevents infinite evaluation loops.
+Evaluation runs in batches until root context claim is clean and LLM is satisfied with supporting claims and confidence to respond fully. No fixed evaluation limit — runs until satisfied. Response synthesized from root context and top supporting evidence.
 
 ---
 
