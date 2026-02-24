@@ -2,11 +2,15 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-CHOICES.md finalized (~63 choices). Docs cleaned up: essential files at root (6), streamlined specs (6), trimmed docs (8). Claude Agent SDK + ARC-AGI-2 benchmarking direction set. Ready for implementation: code rename (supers/subs), SDK integration, benchmark framework.
+Phases 1-3 framework complete. Code refactor verified (supers/subs). Claude SDK integrated (Haiku 4.5 default). ARC-AGI-2 benchmark framework created (experiments/arc_agi2_benchmark.py). Ready for live testing with ANTHROPIC_API_KEY and real ARC data.
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-02-24: WORK_DISPATCHED — Phase 3 framework created. experiments/arc_agi2_benchmark.py compares bare Haiku vs Haiku+Conjecture. Sample tasks included.
+- 2026-02-24: GATES_MET — Phase 1+2 verified. 55 tests pass (8 model, 47 ops). Added file_utils.py stub. Dashboard updated.
+- 2026-02-24: WORK_DISPATCHED — Phase 2 in progress. Added anthropic SDK, implemented AnthropicProcessor with claude-3-5-haiku-latest default. Updated providers.json.
+- 2026-02-24: GATES_MET — Phase 1 complete. Renamed supported_by→subs, supports→supers in 6 core/agent files + 3 specs. Fixed cascade direction. All imports verified.
 - 2026-02-24: WORK_DISPATCHED — Doc cleanup: root 36→6, specs 13→6, docs 30→8, README 606→100 lines. Archived stale analysis/swebench/emoji docs.
 - 2026-02-24: PLAN_CREATED — Gap analysis fixes complete. Added T-0008 (Claude Agent SDK), O-0006 (ARC-AGI-2 benchmark). 5-scope model. supers/subs naming.
 - 2026-02-24: USER_INPUT — Root context refined: single claim (not multiple), session-scoped, no eval limit. Verified dirty_flag.py matches cascading behavior.
@@ -25,5 +29,7 @@ CHOICES.md finalized (~63 choices). Docs cleaned up: essential files at root (6)
 
 ## Known Issues
 <!-- Recurring failures, provider errors, environment quirks -->
-- **Rename needed**: `supports` → `supers`, `supported_by` → `subs` in models.py, dirty_flag.py, claim_operations.py, repositories, and all references.
-- **dirty_flag.py line 98**: `_cascade_dirty_flags()` cascades bidirectionally. Should only cascade to `supers` (unidirectional upward).
+- ~~**Rename needed**: `supports` → `supers`, `supported_by` → `subs`~~ **FIXED 2026-02-24**
+- ~~**dirty_flag.py line 98**: bidirectional cascade~~ **FIXED 2026-02-24** — Now unidirectional to supers only
+- **Specs subdirs need update**: specs/context/, specs/implementation/, specs/llm/ still have old naming (low priority - example code)
+- **Python venv required**: Use `/workspace/.venv/bin/python` for testing

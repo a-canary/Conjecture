@@ -1,6 +1,10 @@
 """
 Support Relationship Manager for Simplified Universal Claim Architecture
 Handles efficient bidirectional relationship traversal, validation, and optimization
+
+Naming convention:
+- subs: claims that provide evidence FOR this claim (children)
+- supers: claims this claim provides evidence FOR (toward root, parents)
 """
 
 from typing import List, Dict, Set, Tuple, Optional
@@ -43,14 +47,18 @@ class SupportRelationshipManager:
     - Circular dependency detection
     - Relationship validation and consistency checking
     - Performance optimization for large claim networks
+
+    Relationship semantics:
+    - subs: claims that provide evidence FOR this claim (children)
+    - supers: claims this provides evidence FOR (toward root, parents)
     """
 
     def __init__(self, claims: List[Claim]):
         """Initialize with a list of claims"""
         self.claims = claims
         self.claim_index = {claim.id: claim for claim in claims}
-        self._support_map = None
-        self._supporter_map = None
+        self._super_map = None
+        self._sub_map = None
         self._relationship_metrics = None
 
         # Build optimized lookup structures
@@ -58,46 +66,46 @@ class SupportRelationshipManager:
 
     def _build_relationship_maps(self) -> None:
         """Build optimized relationship lookup maps"""
-        self._support_map = defaultdict(set)  # claim_id -> set of supported claim IDs
-        self._supporter_map = defaultdict(set)  # claim_id -> set of supporter claim IDs
+        self._super_map = defaultdict(set)  # claim_id -> set of super claim IDs (claims this provides evidence FOR)
+        self._sub_map = defaultdict(set)  # claim_id -> set of sub claim IDs (claims that provide evidence FOR this)
 
         for claim in self.claims:
-            # Build forward support map
-            for supported_id in claim.supports:
-                if supported_id in self.claim_index:
-                    self._support_map[claim.id].add(supported_id)
+            # Build forward super map (claim -> claims it provides evidence FOR)
+            for super_id in claim.supers:
+                if super_id in self.claim_index:
+                    self._super_map[claim.id].add(super_id)
 
-            # Build backward supporter map
-            for supporter_id in claim.supported_by:
-                if supporter_id in self.claim_index:
-                    self._supporter_map[claim.id].add(supporter_id)
+            # Build backward sub map (claim -> claims that provide evidence FOR it)
+            for sub_id in claim.subs:
+                if sub_id in self.claim_index:
+                    self._sub_map[claim.id].add(sub_id)
 
-    def get_supporting_claims(self, claim_id: str) -> List[Claim]:
-        """Get all claims that directly support the given claim"""
+    def get_sub_claims(self, claim_id: str) -> List[Claim]:
+        """Get all claims that provide evidence FOR the given claim (subs, children)"""
         if claim_id not in self.claim_index:
             return []
 
-        supporters = []
-        for supporter_id in self._supporter_map[claim_id]:
-            supporters.append(self.claim_index[supporter_id])
-        return supporters
+        subs = []
+        for sub_id in self._sub_map[claim_id]:
+            subs.append(self.claim_index[sub_id])
+        return subs
 
-    def get_supported_claims(self, claim_id: str) -> List[Claim]:
-        """Get all claims that are directly supported by the given claim"""
+    def get_super_claims(self, claim_id: str) -> List[Claim]:
+        """Get all claims that this claim provides evidence FOR (supers, toward root)"""
         if claim_id not in self.claim_index:
             return []
 
-        supported = []
-        for supported_id in self._support_map[claim_id]:
-            supported.append(self.claim_index[supported_id])
-        return supported
+        supers = []
+        for super_id in self._super_map[claim_id]:
+            supers.append(self.claim_index[super_id])
+        return supers
 
-    def get_all_supporting_ancestors(
+    def get_all_sub_ancestors(
         self, claim_id: str, max_depth: int = 100
     ) -> TraversalResult:
         """
-        Get all claims that support the given claim (transitive closure upward)
-        Traverses to root claims
+        Get all claims that provide evidence FOR the given claim (transitive closure of subs)
+        Traverses down through the sub tree
         """
         if claim_id not in self.claim_index:
             return TraversalResult([], [], 0, [])
@@ -118,19 +126,19 @@ class SupportRelationshipManager:
             traversal_path.append(current_id)
             depth = max(depth, current_depth)
 
-            # Get supporters
-            supporters = self._supporter_map[current_id]
-            for supporter_id in supporters:
-                new_path = current_path + [supporter_id]
+            # Get subs (claims that provide evidence FOR current claim)
+            subs = self._sub_map[current_id]
+            for sub_id in subs:
+                new_path = current_path + [sub_id]
 
                 # Check for cycles
-                if supporter_id in current_path:
-                    cycle_start = current_path.index(supporter_id)
-                    cycle = current_path[cycle_start:] + [supporter_id]
+                if sub_id in current_path:
+                    cycle_start = current_path.index(sub_id)
+                    cycle = current_path[cycle_start:] + [sub_id]
                     cycles.append(cycle)
                     continue
 
-                queue.append((supporter_id, current_depth + 1, new_path))
+                queue.append((sub_id, current_depth + 1, new_path))
 
         # Remove the starting claim from ancestors
         visited.discard(claim_id)
@@ -138,12 +146,12 @@ class SupportRelationshipManager:
 
         return TraversalResult(list(visited), traversal_path, depth, cycles)
 
-    def get_all_supported_descendants(
+    def get_all_super_descendants(
         self, claim_id: str, max_depth: int = 100
     ) -> TraversalResult:
         """
-        Get all claims supported by the given claim (transitive closure downward)
-        Traverses to leaf claims
+        Get all claims this claim provides evidence FOR (transitive closure of supers)
+        Traverses up toward root claims
         """
         if claim_id not in self.claim_index:
             return TraversalResult([], [], 0, [])
@@ -164,19 +172,19 @@ class SupportRelationshipManager:
             traversal_path.append(current_id)
             depth = max(depth, current_depth)
 
-            # Get supported claims
-            supported = self._support_map[current_id]
-            for supported_id in supported:
-                new_path = current_path + [supported_id]
+            # Get super claims (claims this claim provides evidence FOR)
+            supers = self._super_map[current_id]
+            for super_id in supers:
+                new_path = current_path + [super_id]
 
                 # Check for cycles
-                if supported_id in current_path:
-                    cycle_start = current_path.index(supported_id)
-                    cycle = current_path[cycle_start:] + [supported_id]
+                if super_id in current_path:
+                    cycle_start = current_path.index(super_id)
+                    cycle = current_path[cycle_start:] + [super_id]
                     cycles.append(cycle)
                     continue
 
-                queue.append((supported_id, current_depth + 1, new_path))
+                queue.append((super_id, current_depth + 1, new_path))
 
         # Remove the starting claim from descendants
         visited.discard(claim_id)
@@ -203,9 +211,9 @@ class SupportRelationshipManager:
 
             visited.add(current_id)
 
-            # Check both supporters and supported claims
-            neighbors = list(self._supporter_map[current_id]) + list(
-                self._support_map[current_id]
+            # Check both subs and supers
+            neighbors = list(self._sub_map[current_id]) + list(
+                self._super_map[current_id]
             )
 
             for neighbor_id in neighbors:
@@ -242,8 +250,8 @@ class SupportRelationshipManager:
         rec_stack.add(node)
         path.append(node)
 
-        # Check all neighbors (both supporters and supported)
-        neighbors = list(self._supporter_map[node]) + list(self._support_map[node])
+        # Check all neighbors (both subs and supers)
+        neighbors = list(self._sub_map[node]) + list(self._super_map[node])
 
         for neighbor in neighbors:
             if neighbor in rec_stack:
@@ -267,37 +275,37 @@ class SupportRelationshipManager:
         for claim in self.claims:
             claim_id = claim.id
 
-            # Check supported_by relationships
-            for supporter_id in claim.supported_by:
-                if supporter_id not in self.claim_index:
+            # Check subs relationships (claims that provide evidence FOR this claim)
+            for sub_id in claim.subs:
+                if sub_id not in self.claim_index:
                     errors.append(
-                        f"Claim {claim_id} references non-existent supporter {supporter_id}"
+                        f"Claim {claim_id} references non-existent sub {sub_id}"
                     )
                 else:
-                    supporter = self.claim_index[supporter_id]
-                    if claim_id not in supporter.supports:
+                    sub = self.claim_index[sub_id]
+                    if claim_id not in sub.supers:
                         errors.append(
-                            f"Unidirectional relationship: {supporter_id} supports {claim_id} but not reciprocated"
+                            f"Unidirectional relationship: {sub_id} is sub of {claim_id} but not reciprocated in supers"
                         )
 
-            # Check supports relationships
-            for supported_id in claim.supports:
-                if supported_id not in self.claim_index:
+            # Check supers relationships (claims this provides evidence FOR)
+            for super_id in claim.supers:
+                if super_id not in self.claim_index:
                     errors.append(
-                        f"Claim {claim_id} references non-existent supported claim {supported_id}"
+                        f"Claim {claim_id} references non-existent super {super_id}"
                     )
                 else:
-                    supported = self.claim_index[supported_id]
-                    if claim_id not in supported.supported_by:
+                    super_claim = self.claim_index[super_id]
+                    if claim_id not in super_claim.subs:
                         errors.append(
-                            f"Unidirectional relationship: {claim_id} supports {supported_id} but not reciprocated"
+                            f"Unidirectional relationship: {claim_id} is super of {super_id} but not reciprocated in subs"
                         )
 
         # Check for cycles
         cycles = self.detect_all_cycles()
         if cycles:
             for i, cycle in enumerate(cycles):
-                errors.append(f"Circular dependency #{i + 1}: {' → '.join(cycle)}")
+                errors.append(f"Circular dependency #{i + 1}: {' -> '.join(cycle)}")
 
         return errors
 
@@ -305,29 +313,29 @@ class SupportRelationshipManager:
         """Calculate performance and structure metrics"""
         if self._relationship_metrics is None:
             total_claims = len(self.claims)
-            total_relationships = sum(len(claim.supports) for claim in self.claims)
+            total_relationships = sum(len(claim.supers) for claim in self.claims)
 
             # Calculate max depth
             max_depth = 0
             for claim in self.claims:
-                # Root claim has no supporters
-                if len(claim.supported_by) == 0:
-                    descendants = self.get_all_supported_descendants(claim.id)
+                # Leaf claim has no subs (no claims provide evidence FOR it)
+                if len(claim.subs) == 0:
+                    descendants = self.get_all_super_descendants(claim.id)
                     max_depth = max(max_depth, descendants.depth)
 
             # Count cycles
             cycles = self.detect_all_cycles()
 
-            # Count orphaned claims (no supporters and no supported)
+            # Count orphaned claims (no subs and no supers)
             orphaned = [
                 claim
                 for claim in self.claims
-                if len(claim.supported_by) == 0 and len(claim.supports) == 0
+                if len(claim.subs) == 0 and len(claim.supers) == 0
             ]
 
             # Calculate average branching factor
             branching_factors = [
-                len(claim.supports) for claim in self.claims if claim.supports
+                len(claim.supers) for claim in self.claims if claim.supers
             ]
             avg_branching = (
                 sum(branching_factors) / len(branching_factors)
@@ -355,71 +363,82 @@ class SupportRelationshipManager:
 
         return self._relationship_metrics
 
-    def add_support_relationship(self, supporter_id: str, supported_id: str) -> bool:
+    def add_relationship(self, sub_id: str, super_id: str) -> bool:
         """
-        Add a bidirectional support relationship between two claims
+        Add a bidirectional relationship between two claims.
+        sub_id provides evidence FOR super_id.
+
+        Args:
+            sub_id: ID of claim that provides evidence (child)
+            super_id: ID of claim that receives evidence (parent, toward root)
+
         Returns True if relationship was added successfully
         """
-        if supporter_id not in self.claim_index or supported_id not in self.claim_index:
+        if sub_id not in self.claim_index or super_id not in self.claim_index:
             return False
 
-        if supporter_id == supported_id:
+        if sub_id == super_id:
             return False
 
-        supporter = self.claim_index[supporter_id]
-        supported = self.claim_index[supported_id]
+        sub = self.claim_index[sub_id]
+        super_claim = self.claim_index[super_id]
 
         # Avoid duplicates
-        if supported_id in supporter.supports or supporter_id in supported.supported_by:
+        if super_id in sub.supers or sub_id in super_claim.subs:
             return False
 
         # Add bidirectional relationship
-        supporter.supports.append(supported_id)
-        supported.supported_by.append(supporter_id)
+        sub.supers.append(super_id)
+        super_claim.subs.append(sub_id)
 
         # Update timestamps
-        supporter.updated = datetime.utcnow()
-        supported.updated = datetime.utcnow()
+        sub.updated = datetime.utcnow()
+        super_claim.updated = datetime.utcnow()
 
         # Update internal maps
-        self._support_map[supporter_id].add(supported_id)
-        self._supporter_map[supported_id].add(supporter_id)
+        self._super_map[sub_id].add(super_id)
+        self._sub_map[super_id].add(sub_id)
 
         # Invalidate cached metrics
         self._relationship_metrics = None
 
         return True
 
-    def remove_support_relationship(self, supporter_id: str, supported_id: str) -> bool:
+    def remove_relationship(self, sub_id: str, super_id: str) -> bool:
         """
-        Remove a bidirectional support relationship between two claims
+        Remove a bidirectional relationship between two claims.
+
+        Args:
+            sub_id: ID of claim that provides evidence (child)
+            super_id: ID of claim that receives evidence (parent, toward root)
+
         Returns True if relationship was removed successfully
         """
-        if supporter_id not in self.claim_index or supported_id not in self.claim_index:
+        if sub_id not in self.claim_index or super_id not in self.claim_index:
             return False
 
-        supporter = self.claim_index[supporter_id]
-        supported = self.claim_index[supported_id]
+        sub = self.claim_index[sub_id]
+        super_claim = self.claim_index[super_id]
 
         # Remove if exists
         relationship_existed = False
 
-        if supported_id in supporter.supports:
-            supporter.supports.remove(supported_id)
+        if super_id in sub.supers:
+            sub.supers.remove(super_id)
             relationship_existed = True
 
-        if supporter_id in supported.supported_by:
-            supported.supported_by.remove(supporter_id)
+        if sub_id in super_claim.subs:
+            super_claim.subs.remove(sub_id)
             relationship_existed = True
 
         if relationship_existed:
             # Update timestamps
-            supporter.updated = datetime.utcnow()
-            supported.updated = datetime.utcnow()
+            sub.updated = datetime.utcnow()
+            super_claim.updated = datetime.utcnow()
 
             # Update internal maps
-            self._support_map[supporter_id].discard(supported_id)
-            self._supporter_map[supported_id].discard(supporter_id)
+            self._super_map[sub_id].discard(super_id)
+            self._sub_map[super_id].discard(sub_id)
 
             # Invalidate cached metrics
             self._relationship_metrics = None
@@ -444,10 +463,10 @@ class SupportRelationshipManager:
             visited.add(current_id)
             depth_map[depth].append(current_id)
 
-            # Add all supported claims to queue
-            for supported_id in self._support_map[current_id]:
-                if supported_id not in visited:
-                    queue.append((supported_id, depth + 1))
+            # Add all super claims to queue (claims this provides evidence FOR)
+            for super_id in self._super_map[current_id]:
+                if super_id not in visited:
+                    queue.append((super_id, depth + 1))
 
         return dict(depth_map)
 
@@ -468,11 +487,10 @@ class SupportRelationshipManager:
 
     def export_relationship_graph(self) -> Dict[str, Dict[str, List[str]]]:
         """Export the relationship graph as a dictionary structure"""
-        graph = {"supports": {}, "supported_by": {}}
+        graph = {"supers": {}, "subs": {}}
 
         for claim_id in self.claim_index:
-            claim = self.claim_index[claim_id]
-            graph["supports"][claim_id] = list(self._support_map[claim_id])
-            graph["supported_by"][claim_id] = list(self._supporter_map[claim_id])
+            graph["supers"][claim_id] = list(self._super_map[claim_id])
+            graph["subs"][claim_id] = list(self._sub_map[claim_id])
 
         return graph

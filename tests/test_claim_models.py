@@ -21,8 +21,8 @@ class TestClaimModel:
         assert claim.content == "Test claim content"
         assert claim.confidence == 0.5
         assert claim.state == ClaimState.EXPLORE
-        assert claim.supported_by == []
-        assert claim.supports == []
+        assert claim.subs == []
+        assert claim.supers == []
         assert claim.tags == []
         assert claim.is_dirty is True  # Default for new claims
 
@@ -34,8 +34,8 @@ class TestClaimModel:
             content="Full test claim",
             confidence=0.8,
             state=ClaimState.VALIDATED,
-            supported_by=["claim1", "claim2"],
-            supports=["claim3"],
+            subs=["claim1", "claim2"],
+            supers=["claim3"],
             tags=["test", "validation"],
             scope=ClaimScope.PUBLIC,
             created=now,
@@ -48,8 +48,8 @@ class TestClaimModel:
         assert claim.id == "test456"
         assert claim.confidence == 0.8
         assert claim.state == ClaimState.VALIDATED
-        assert len(claim.supported_by) == 2
-        assert len(claim.supports) == 1
+        assert len(claim.subs) == 2
+        assert len(claim.supers) == 1
         assert len(claim.tags) == 2
         assert claim.scope == ClaimScope.PUBLIC
         assert claim.is_dirty is False

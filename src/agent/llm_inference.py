@@ -11,7 +11,7 @@ import logging
 
 from ..core.models import Claim, ClaimState
 from ..core.claim_operations import (
-    should_prioritize, find_supporting_claims, find_supported_claims,
+    should_prioritize, find_sub_claims, find_super_claims,
     calculate_support_strength, filter_claims_by_confidence,
     filter_claims_by_type, filter_claims_by_tags
 )
@@ -132,7 +132,7 @@ def format_claims_for_llm(claims: List[Claim]) -> str:
         formatted_sections.append(f"## {state.upper()} CLAIMS:")
         for claim in state_claims:
             type_str = ",".join([t.value for t in claim.type])
-            support_info = f" (supports: {len(claim.supports)}, supported_by: {len(claim.supported_by)})"
+            support_info = f" (supers: {len(claim.supers)}, subs: {len(claim.subs)})"
             dirty_info = " [DIRTY]" if claim.is_dirty else ""
             formatted_sections.append(
                 f"- [{claim.id}] C:{claim.confidence:.2f} T:{type_str}{support_info}{dirty_info} {claim.content}"

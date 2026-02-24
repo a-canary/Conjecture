@@ -40,8 +40,8 @@
 
 ### 2.1 Claim Structure and Management
 2.1.1 Claims shall include unique identifiers, statements, confidence scores, and dirty flags
-2.1.2 Claims shall maintain list of claims that support this claim, collected for context generation
-2.1.2 Claims shall maintain list of claims that are supported_by this claim, to flag dirty when this claim is updated
+2.1.2 Claims shall maintain `subs` (claims that provide evidence FOR this claim), collected for context generation
+2.1.3 Claims shall maintain `supers` (claims this provides evidence FOR), to flag dirty when this claim is updated
 2.1.3 Claims shall include scope information (session, user, project, team, global)
 2.1.4 Claims shall maintain creation and modification timestamps
 .1.6 New claims shall default to session scope with dirty flag set to true
@@ -50,7 +50,7 @@
 2.2.1 The system shall create claims only from LLM responses
 2.2.2 The system shall evaluate dirty claims until LLM sets confidence and marks as clean
 2.2.3 The system shall revise claims when new evidence arrives or contradictions are found (sets dirty=true)
-2.2.4 The system shall establish relationships between claims: supporting or supported_by
+2.2.4 The system shall establish bidirectional relationships between claims: `supers` and `subs`
 2.2.5 the system shall have a configurable maximum database size, when the database size exceeds the configured limit, the system shall delete 10% of claims that are [oldest and lowest confidence] claims 
 
 ### 2.3 Claim Scopes and Access Control

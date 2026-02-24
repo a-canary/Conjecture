@@ -106,13 +106,13 @@ class Claim(BaseModel):
     )
 
     # Bidirectional relationship fields
-    supports: List[str] = Field(
+    supers: List[str] = Field(
         default_factory=list,
-        description="Claims this claim supports (upward relationships)",
+        description="Claims this claim provides evidence FOR (toward root, parents)",
     )
-    supported_by: List[str] = Field(
+    subs: List[str] = Field(
         default_factory=list,
-        description="Claims that support this claim (downward relationships)",
+        description="Claims that provide evidence FOR this claim (children)",
     )
 
     # Metadata fields
@@ -173,8 +173,8 @@ class Claim(BaseModel):
     def validate_relationships(self):
         """Validate bidirectional relationships"""
         # Check for self-references
-        if self.id in self.supports or self.id in self.supported_by:
-            raise ValueError("Claim cannot support itself")
+        if self.id in self.supers or self.id in self.subs:
+            raise ValueError("Claim cannot reference itself in relationships")
 
         return self
 
@@ -204,8 +204,8 @@ class Claim(BaseModel):
             "scope": self.scope.value,
             "confidence": self.confidence,
             "created": self.created.isoformat(),
-            "supports": self.supports,
-            "supported_by": self.supported_by,
+            "supers": self.supers,
+            "subs": self.subs,
             "is_dirty": self.is_dirty,
             "dirty_reason": self.dirty_reason.value if self.dirty_reason else None,
             "dirty_timestamp": self.dirty_timestamp.isoformat()
@@ -231,8 +231,8 @@ State: {self.state.value}
 Type: {[t.value for t in self.type]}
 Tags: {",".join(self.tags)}
 Scope: {self.scope.value}
-Supports: {self.supports}
-Supported By: {self.supported_by}"""
+Supers: {self.supers}
+Subs: {self.subs}"""
 
     def __hash__(self) -> int:
         """Make Claim hashable for use in sets"""
@@ -427,22 +427,22 @@ def generate_claim_id() -> str:
 
 
 def get_orphaned_claims(claims: List[Claim]) -> List[Claim]:
-    """Get claims that have no supporting relationships (orphans)"""
+    """Get claims that have no sub relationships (orphans)"""
     return [
         claim
         for claim in claims
-        if not claim.supported_by and claim.state != ClaimState.ORPHANED
+        if not claim.subs and claim.state != ClaimState.ORPHANED
     ]
 
 
 def get_root_claims(claims: List[Claim]) -> List[Claim]:
-    """Get root claims (claims that support others but are not supported by any)"""
-    return [claim for claim in claims if claim.supports and not claim.supported_by]
+    """Get root claims (claims that have supers but no subs - toward the root of the tree)"""
+    return [claim for claim in claims if claim.supers and not claim.subs]
 
 
 def get_leaf_claims(claims: List[Claim]) -> List[Claim]:
-    """Get leaf claims (claims that are supported but don't support others)"""
-    return [claim for claim in claims if claim.supported_by and not claim.supports]
+    """Get leaf claims (claims that have subs but no supers - at the leaf level)"""
+    return [claim for claim in claims if claim.subs and not claim.supers]
 
 
 def filter_claims_by_tags(claims: List[Claim], tags: List[str]) -> List[Claim]:

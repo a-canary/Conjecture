@@ -1,6 +1,10 @@
 """
 Pure functions for claim operations - Separated from data models
 This is the Tools layer for claim manipulation operations.
+
+Naming convention:
+- subs: claims that provide evidence FOR this claim (children)
+- supers: claims this claim provides evidence FOR (toward root, parents)
 """
 
 from datetime import datetime, timezone
@@ -18,8 +22,8 @@ def update_confidence(claim: Claim, new_confidence: float) -> Claim:
         content=claim.content,
         confidence=new_confidence,
         state=claim.state,
-        supported_by=claim.supported_by.copy(),
-        supports=claim.supports.copy(),
+        subs=claim.subs.copy(),
+        supers=claim.supers.copy(),
         scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
@@ -32,50 +36,50 @@ def update_confidence(claim: Claim, new_confidence: float) -> Claim:
     )
 
 
-def add_support(claim: Claim, supporting_claim_id: str) -> Claim:
-    """Pure function to add a supporting claim ID"""
-    supported_by = claim.supported_by.copy()
-    if supporting_claim_id not in supported_by:
-        supported_by.append(supporting_claim_id)
+def add_sub(claim: Claim, sub_claim_id: str) -> Claim:
+    """Pure function to add a sub claim ID (claim that provides evidence FOR this claim)"""
+    subs = claim.subs.copy()
+    if sub_claim_id not in subs:
+        subs.append(sub_claim_id)
 
     return Claim(
         id=claim.id,
         content=claim.content,
         confidence=claim.confidence,
         state=claim.state,
-        supported_by=supported_by,
-        supports=claim.supports.copy(),
+        subs=subs,
+        supers=claim.supers.copy(),
         scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
         updated=datetime.now(timezone.utc),
         embedding=claim.embedding,
-        is_dirty=True,  # Mark as dirty when support is added
+        is_dirty=True,  # Mark as dirty when sub is added
         dirty_reason=DirtyReason.SUPPORTING_CLAIM_CHANGED,
         dirty_timestamp=datetime.now(timezone.utc),
         dirty_priority=claim.dirty_priority,
     )
 
 
-def add_supports(claim: Claim, supported_claim_id: str) -> Claim:
-    """Pure function to add a claim this claim supports"""
-    supports = claim.supports.copy()
-    if supported_claim_id not in supports:
-        supports.append(supported_claim_id)
+def add_super(claim: Claim, super_claim_id: str) -> Claim:
+    """Pure function to add a super claim ID (claim this provides evidence FOR, toward root)"""
+    supers = claim.supers.copy()
+    if super_claim_id not in supers:
+        supers.append(super_claim_id)
 
     return Claim(
         id=claim.id,
         content=claim.content,
         confidence=claim.confidence,
         state=claim.state,
-        supported_by=claim.supported_by.copy(),
-        supports=supports,
+        subs=claim.subs.copy(),
+        supers=supers,
         scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
         updated=datetime.now(timezone.utc),
         embedding=claim.embedding,
-        is_dirty=True,  # Mark as dirty when support is added
+        is_dirty=True,  # Mark as dirty when super is added
         dirty_reason=DirtyReason.SUPPORTING_CLAIM_CHANGED,
         dirty_timestamp=datetime.now(timezone.utc),
         dirty_priority=claim.dirty_priority,
@@ -89,8 +93,8 @@ def mark_dirty(claim: Claim, reason: DirtyReason, priority: int = 0) -> Claim:
         content=claim.content,
         confidence=claim.confidence,
         state=claim.state,
-        supported_by=claim.supported_by.copy(),
-        supports=claim.supports.copy(),
+        subs=claim.subs.copy(),
+        supers=claim.supers.copy(),
         scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
@@ -110,8 +114,8 @@ def mark_clean(claim: Claim) -> Claim:
         content=claim.content,
         confidence=claim.confidence,
         state=claim.state,
-        supported_by=claim.supported_by.copy(),
-        supports=claim.supports.copy(),
+        subs=claim.subs.copy(),
+        supers=claim.supers.copy(),
         scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
@@ -132,8 +136,8 @@ def set_dirty_priority(claim: Claim, priority: int) -> Claim:
         content=claim.content,
         confidence=claim.confidence,
         state=claim.state,
-        supported_by=claim.supported_by.copy(),
-        supports=claim.supports.copy(),
+        subs=claim.subs.copy(),
+        supers=claim.supers.copy(),
         scope=claim.scope,
         tags=claim.tags.copy(),
         created=claim.created,
@@ -151,29 +155,29 @@ def should_prioritize(claim: Claim, confidence_threshold: float = 0.90) -> bool:
     return claim.is_dirty and claim.confidence < confidence_threshold
 
 
-def find_supporting_claims(claim: Claim, all_claims: List[Claim]) -> List[Claim]:
-    """Pure function to find all supporting claims"""
-    return [c for c in all_claims if c.id in claim.supported_by]
+def find_sub_claims(claim: Claim, all_claims: List[Claim]) -> List[Claim]:
+    """Pure function to find all sub claims (claims that provide evidence FOR this claim)"""
+    return [c for c in all_claims if c.id in claim.subs]
 
 
-def find_supported_claims(claim: Claim, all_claims: List[Claim]) -> List[Claim]:
-    """Pure function to find all claims supported by this claim"""
-    return [c for c in all_claims if c.id in claim.supports]
+def find_super_claims(claim: Claim, all_claims: List[Claim]) -> List[Claim]:
+    """Pure function to find all super claims (claims this provides evidence FOR)"""
+    return [c for c in all_claims if c.id in claim.supers]
 
 
 def calculate_support_strength(
     claim: Claim, all_claims: List[Claim]
 ) -> Tuple[float, int]:
-    """Pure function to calculate support strength from supporting claims"""
-    supporting_claims = find_supporting_claims(claim, all_claims)
-    if not supporting_claims:
+    """Pure function to calculate support strength from sub claims"""
+    sub_claims = find_sub_claims(claim, all_claims)
+    if not sub_claims:
         return 0.0, 0
 
     # Simple strength calculation: average confidence weighted by relationship
-    total_confidence = sum(c.confidence for c in supporting_claims)
-    avg_confidence = total_confidence / len(supporting_claims)
+    total_confidence = sum(c.confidence for c in sub_claims)
+    avg_confidence = total_confidence / len(sub_claims)
 
-    return avg_confidence, len(supporting_claims)
+    return avg_confidence, len(sub_claims)
 
 
 def validate_relationship_integrity(claim: Claim, all_claims: List[Claim]) -> List[str]:
@@ -181,15 +185,15 @@ def validate_relationship_integrity(claim: Claim, all_claims: List[Claim]) -> Li
     errors = []
     claim_ids = {c.id for c in all_claims}
 
-    # Check if supported_by claim IDs exist
-    for claim_id in claim.supported_by:
+    # Check if sub claim IDs exist
+    for claim_id in claim.subs:
         if claim_id not in claim_ids:
-            errors.append(f"Supporting claim {claim_id} not found")
+            errors.append(f"Sub claim {claim_id} not found")
 
-    # Check if supports claim IDs exist
-    for claim_id in claim.supports:
+    # Check if super claim IDs exist
+    for claim_id in claim.supers:
         if claim_id not in claim_ids:
-            errors.append(f"Supported claim {claim_id} not found")
+            errors.append(f"Super claim {claim_id} not found")
 
     return errors
 
@@ -202,39 +206,39 @@ def get_claim_hierarchy(
         "claim_id": claim.id,
         "confidence": claim.confidence,
         "state": claim.state.value,
-        "supports_count": len(claim.supports),
-        "supported_by_count": len(claim.supported_by),
-        "supporters": [],
-        "supported": [],
+        "supers_count": len(claim.supers),
+        "subs_count": len(claim.subs),
+        "subs": [],
+        "supers": [],
     }
 
-    # Get supporters (supporting claims)
-    supporter_details = []
-    for supporter in find_supporting_claims(claim, all_claims):
-        supporter_details.append(
+    # Get subs (claims that provide evidence FOR this claim)
+    sub_details = []
+    for sub in find_sub_claims(claim, all_claims):
+        sub_details.append(
             {
-                "id": supporter.id,
-                "confidence": supporter.confidence,
-                "content": supporter.content[:100] + "..."
-                if len(supporter.content) > 100
-                else supporter.content,
+                "id": sub.id,
+                "confidence": sub.confidence,
+                "content": sub.content[:100] + "..."
+                if len(sub.content) > 100
+                else sub.content,
             }
         )
-    hierarchy["supporters"] = supporter_details
+    hierarchy["subs"] = sub_details
 
-    # Get supported claims
-    supported_details = []
-    for supported in find_supported_claims(claim, all_claims):
-        supported_details.append(
+    # Get super claims (claims this provides evidence FOR)
+    super_details = []
+    for super_claim in find_super_claims(claim, all_claims):
+        super_details.append(
             {
-                "id": supported.id,
-                "confidence": supported.confidence,
-                "content": supported.content[:100] + "..."
-                if len(supported.content) > 100
-                else supported.content,
+                "id": super_claim.id,
+                "confidence": super_claim.confidence,
+                "content": super_claim.content[:100] + "..."
+                if len(super_claim.content) > 100
+                else super_claim.content,
             }
         )
-    hierarchy["supported"] = supported_details
+    hierarchy["supers"] = super_details
 
     return hierarchy
 
@@ -289,7 +293,7 @@ def update_claim_with_dirty_propagation(
     dirty_system: Optional["DirtyFlagSystem"] = None,
 ) -> Tuple[Claim, List[str]]:
     """
-    Update a claim and propagate dirty flags to supported claims
+    Update a claim and propagate dirty flags to super claims (claims this provides evidence FOR).
 
     Args:
         updated_claim: The new version of the claim
@@ -307,27 +311,27 @@ def update_claim_with_dirty_propagation(
         updated_claim.content != original_claim.content
         or abs(updated_claim.confidence - original_claim.confidence) > 0.01
     ):
-        # Find claims that this claim supports (B claims where A supports B)
-        supported_claim_ids = updated_claim.supports
+        # Find claims that this claim provides evidence FOR (supers, toward root)
+        super_claim_ids = updated_claim.supers
 
-        for supported_id in supported_claim_ids:
-            if supported_id in all_claims:
-                supported_claim = all_claims[supported_id]
+        for super_id in super_claim_ids:
+            if super_id in all_claims:
+                super_claim = all_claims[super_id]
 
-                # Mark the supported claim as dirty
+                # Mark the super claim as dirty
                 if dirty_system:
                     dirty_system.mark_claim_dirty(
-                        supported_claim,
+                        super_claim,
                         DirtyReason.SUPPORTING_CLAIM_CHANGED,
                         priority=8,
                         cascade=False,
                     )
                 else:
                     # Fallback: mark dirty directly
-                    supported_claim.mark_dirty(
+                    super_claim.mark_dirty(
                         DirtyReason.SUPPORTING_CLAIM_CHANGED, priority=8
                     )
 
-                marked_dirty_ids.append(supported_id)
+                marked_dirty_ids.append(super_id)
 
     return updated_claim, marked_dirty_ids

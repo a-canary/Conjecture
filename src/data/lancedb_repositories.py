@@ -131,8 +131,8 @@ class LanceDBClaimRepository:
                 "dirty_reason",
                 "dirty_priority",
                 "dirty_timestamp",
-                "supported_by",
-                "supports",
+                "subs",
+                "supers",
                 "embedding",
             }
 
@@ -508,62 +508,62 @@ class LanceDBRelationshipRepository:
             logger.error(f"Failed to get relationships for {claim_id}: {e}")
             return []
 
-    async def get_supporting_claims(self, claim_id: str) -> List[Claim]:
+    async def get_sub_claims(self, claim_id: str) -> List[Claim]:
         """
-        Get all claims that support the given claim.
+        Get all claims that provide evidence FOR the given claim (subs).
 
         Args:
-            claim_id: ID of claim to get supporters for
+            claim_id: ID of claim to get subs for
 
         Returns:
-            List of supporting claims
+            List of sub claims
         """
         try:
             relationships = await self.get_relationships(claim_id)
-            supporting_ids = [
+            sub_ids = [
                 rel.supporter_id
                 for rel in relationships
                 if rel.supported_id == claim_id
             ]
 
-            supporting_claims = []
-            for sid in supporting_ids:
+            sub_claims = []
+            for sid in sub_ids:
                 claim = await self.adapter.get_claim(sid)
                 if claim:
-                    supporting_claims.append(claim)
+                    sub_claims.append(claim)
 
-            return supporting_claims
+            return sub_claims
         except Exception as e:
-            logger.error(f"Failed to get supporting claims for {claim_id}: {e}")
+            logger.error(f"Failed to get sub claims for {claim_id}: {e}")
             return []
 
-    async def get_supported_claims(self, claim_id: str) -> List[Claim]:
+    async def get_super_claims(self, claim_id: str) -> List[Claim]:
         """
-        Get all claims that are supported by the given claim.
+        Get all claims this claim provides evidence FOR (supers, toward root).
 
         Args:
-            claim_id: ID of claim to get supported claims for
+            claim_id: ID of claim to get supers for
 
         Returns:
-            List of supported claims
+            List of super claims
         """
         try:
             relationships = await self.get_relationships(claim_id)
-            supported_ids = [
+            super_ids = [
                 rel.supported_id
                 for rel in relationships
                 if rel.supporter_id == claim_id
             ]
 
-            supported_claims = []
-            for sid in supported_ids:
+            super_claims = []
+            for sid in super_ids:
                 claim = await self.adapter.get_claim(sid)
                 if claim:
-                    supported_claims.append(claim)
+                    super_claims.append(claim)
 
-            return supported_claims
+            return super_claims
         except Exception as e:
-            logger.error(f"Failed to get supported claims for {claim_id}: {e}")
+            logger.error(f"Failed to get super claims for {claim_id}: {e}")
             return []
 
 

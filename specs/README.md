@@ -145,8 +145,8 @@ class Claim(BaseModel):
     content: str
     confidence: float
     state: ClaimState
-    supported_by: List[str]
-    supports: List[str]
+    subs: List[str]    # Claims that provide evidence FOR this (children)
+    supers: List[str]  # Claims this provides evidence FOR (toward root)
     type: List[ClaimType]
     tags: List[str]
     created_by: str
@@ -240,8 +240,8 @@ claim = Claim(
     content="Always validate user input before processing",
     confidence=0.95,
     state=ClaimState.EXPLORE,
-    supported_by=["security_principle_001"],
-    supports=[],
+    subs=["security_principle_001"],
+    supers=[],
     type=[ClaimType.CONCEPT],
     tags=["security", "validation", "best-practice"],
     created_by="developer",

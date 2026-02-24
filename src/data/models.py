@@ -111,11 +111,11 @@ class Claim(BaseModel):
     )
 
     # Relationship fields (for SQLite)
-    supported_by: List[str] = Field(
-        default_factory=list, description="Claim IDs that support this claim"
+    subs: List[str] = Field(
+        default_factory=list, description="Claim IDs that provide evidence FOR this claim (children)"
     )
-    supports: List[str] = Field(
-        default_factory=list, description="Claim IDs this claim supports"
+    supers: List[str] = Field(
+        default_factory=list, description="Claim IDs this claim provides evidence FOR (toward root, parents)"
     )
 
     model_config = ConfigDict()
@@ -189,8 +189,8 @@ class Claim(BaseModel):
             if self.dirty_timestamp
             else "",
             "dirty_priority": self.dirty_priority,
-            "supported_by": json.dumps(self.supported_by),
-            "supports": json.dumps(self.supports),
+            "subs": json.dumps(self.subs),
+            "supers": json.dumps(self.supers),
             "embedding": self.embedding,
         }
 
@@ -213,20 +213,20 @@ class Claim(BaseModel):
             tags = []
 
         try:
-            supported_by = (
-                json.loads(data.get("supported_by", "[]"))
-                if data.get("supported_by")
+            subs = (
+                json.loads(data.get("subs", "[]"))
+                if data.get("subs")
                 else []
             )
         except:
-            supported_by = []
+            subs = []
 
         try:
-            supports = (
-                json.loads(data.get("supports", "[]")) if data.get("supports") else []
+            supers = (
+                json.loads(data.get("supers", "[]")) if data.get("supers") else []
             )
         except:
-            supports = []
+            supers = []
 
         # Parse dates
         try:
@@ -272,8 +272,8 @@ class Claim(BaseModel):
             dirty_reason=data.get("dirty_reason") or None,
             dirty_timestamp=dirty_timestamp,
             dirty_priority=data.get("dirty_priority", 0),
-            supported_by=supported_by,
-            supports=supports,
+            subs=subs,
+            supers=supers,
             embedding=data.get("embedding"),
         )
 
@@ -282,8 +282,8 @@ class Claim(BaseModel):
         return {
             "confidence": self.confidence,
             "state": self.state.value,
-            "supported_by": ",".join(self.supported_by) if self.supported_by else "",
-            "supports": ",".join(self.supports) if self.supports else "",
+            "subs": ",".join(self.subs) if self.subs else "",
+            "supers": ",".join(self.supers) if self.supers else "",
             "type": ",".join([t.value for t in self.type]),
             "tags": ",".join(self.tags) if self.tags else "",
             "created": self.created.isoformat(),
@@ -303,11 +303,11 @@ class Claim(BaseModel):
             content=content,
             confidence=metadata["confidence"],
             state=ClaimState(metadata["state"]),
-            supported_by=metadata.get("supported_by", "").split(",")
-            if metadata.get("supported_by")
+            subs=metadata.get("subs", "").split(",")
+            if metadata.get("subs")
             else [],
-            supports=metadata.get("supports", "").split(",")
-            if metadata.get("supports")
+            supers=metadata.get("supers", "").split(",")
+            if metadata.get("supers")
             else [],
             type=[
                 ClaimType(t) for t in metadata.get("type", "concept").split(",") if t
@@ -337,16 +337,16 @@ class Claim(BaseModel):
         self.confidence = new_confidence
         self.mark_dirty()
 
-    def add_support(self, supporting_claim_id: str):
-        """Add a supporting claim ID"""
-        if supporting_claim_id and supporting_claim_id not in self.supported_by:
-            self.supported_by.append(supporting_claim_id)
+    def add_sub(self, sub_claim_id: str):
+        """Add a sub claim ID (claim that provides evidence FOR this claim)"""
+        if sub_claim_id and sub_claim_id not in self.subs:
+            self.subs.append(sub_claim_id)
             self.mark_dirty()
 
-    def add_supports(self, supported_claim_id: str):
-        """Add a claim this claim supports"""
-        if supported_claim_id and supported_claim_id not in self.supports:
-            self.supports.append(supported_claim_id)
+    def add_super(self, super_claim_id: str):
+        """Add a super claim ID (claim this provides evidence FOR, toward root)"""
+        if super_claim_id and super_claim_id not in self.supers:
+            self.supers.append(super_claim_id)
             self.mark_dirty()
 
     def __repr__(self):

@@ -71,16 +71,16 @@ class Claim(BaseModel):
     tags: List[str]         # Organized via Tag Lifecycle
     
     # Bidirectional Relationships
-    supports: List[str]     # Claims this claim supports (Upward)
-    supported_by: List[str] # Claims that support this claim (Downward)
+    supers: List[str]  # Claims this provides evidence FOR (toward root, parents)
+    subs: List[str]    # Claims that provide evidence FOR this (children)
 ```
 
 ## Context Building Strategy
 
 The "Intelligent Context" is built by traversing the claim graph:
 
-1.  **Traverse Upward (Supports)**: Follow `supports` links to the Root. (100% inclusion).
-2.  **Traverse Downward (Supported By)**: Follow `supported_by` links to **Depth 2**.
+1.  **Traverse Upward (Supers)**: Follow `supers` links toward Root Context. (100% inclusion).
+2.  **Traverse Downward (Subs)**: Follow `subs` links to **Depth 2**.
 3.  **Semantic Fill**: If token budget permits, add semantically similar claims.
 
 ## Intelligent Processing

@@ -94,8 +94,9 @@ class DirtyFlagSystem:
         if current_depth > self.cascade_depth:
             return
 
-        # Get related claims (both supported by and supports)
-        related_ids = set(source_claim.supported_by) | set(source_claim.supports)
+        # Cascade only to supers (unidirectional upward toward root)
+        # When a claim changes, only claims it provides evidence FOR need re-evaluation
+        related_ids = set(source_claim.supers)
 
         cascade_reason = DirtyReason.SUPPORTING_CLAIM_CHANGED
         priority_penalty = max(
@@ -147,8 +148,8 @@ class DirtyFlagSystem:
             updated_claim.content != original_claim.content
             or updated_claim.confidence != original_claim.confidence
         ):
-            # Find claims that this claim supports (B claims where A supports B)
-            supported_claim_ids = updated_claim.supports
+            # Find claims that this claim provides evidence FOR (supers - toward root)
+            supported_claim_ids = updated_claim.supers
 
             for supported_id in supported_claim_ids:
                 if supported_id in all_claims:
@@ -160,7 +161,7 @@ class DirtyFlagSystem:
                         cascade=False,  # Don't cascade from here to avoid infinite loops
                     )
                     self.logger.info(
-                        f"Marked claim {supported_id} dirty due to update in supporting claim {updated_claim.id}"
+                        f"Marked claim {supported_id} dirty due to update in sub claim {updated_claim.id}"
                     )
 
     def mark_claims_dirty_by_confidence_threshold(
@@ -260,8 +261,8 @@ class DirtyFlagSystem:
 
         # Check for existing relationships
         if (
-            existing_claim.id in new_claim.supported_by
-            or existing_claim.id in new_claim.supports
+            existing_claim.id in new_claim.subs
+            or existing_claim.id in new_claim.supers
         ):
             return True
 
