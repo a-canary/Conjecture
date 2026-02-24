@@ -13,7 +13,7 @@ CHOICES.md initialized with 59 choices across 8 sections. Recent work refined ta
 
 ## Learnings
 <!-- Distilled lessons. Pruned when stale. -->
-- **Tags are LLM-generated**: Users don't create tags directly. LLM creates tags when creating claims. Tag maintenance (split >10% usage, merge >500 total) triggers programmatically on each CRUD operation.
+- **Tags are LLM-generated**: Users don't create tags directly. LLM creates tags when creating claims. Split: >20% usage → sample 100 → LLM suggests ≤8 replacements → batch 20 → LLM assigns per claim. Merge: >500 total.
 - **Root context = single claim**: Full conversation stored as one claim, decomposed into supporting claims. Halt when root is clean + LLM satisfied. No fixed eval limit.
 - **Dirty cascades upward only**: When claim changes, mark claims in `.supports` dirty (parents). Never mark `.supported_by` (children). Unidirectional toward root context.
 - **Counter-claims are implicit**: LLM naturally creates alternatives when questioning validity. No formal system needed — just fallacy awareness.

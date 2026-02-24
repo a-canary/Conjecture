@@ -193,7 +193,7 @@ Claims link via `supports` (this claim supports other claims) and `supported_by`
 ### D-0004: Tag Lifecycle Management
 Supports: D-0001, F-0003
 
-Tags are LLM-generated, not user-assigned. On each claim CRUD: if tag >10% usage → split to specifics; if total >500 → merge similar. Max 20 per claim.
+Tags are LLM-generated, not user-assigned. Split trigger: tag >20% usage. Process: sample ≤100 claims → LLM suggests ≤8 replacement tags → batch claims (20) → LLM assigns replacement per claim. JSON in/out. If total >500 → merge similar. Max 20 per claim.
 
 ### D-0005: Four-Level Scope Model
 Supports: M-0005, D-0001
