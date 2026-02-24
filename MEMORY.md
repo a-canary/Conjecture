@@ -12,7 +12,7 @@ CHOICES.md initialized with 59 choices across 8 sections. Recent work refined ta
 
 ## Learnings
 <!-- Distilled lessons. Pruned when stale. -->
-- **Tags are LLM-generated**: Users don't create tags directly. LLM creates tags when creating claims, sees all existing tags in prompt, can reuse or create new. Nightly condensation keeps tags useful.
+- **Tags are LLM-generated**: Users don't create tags directly. LLM creates tags when creating claims. Tag maintenance (split >10% usage, merge >500 total) triggers programmatically on each CRUD operation.
 
 ## Known Issues
 <!-- Recurring failures, provider errors, environment quirks -->
