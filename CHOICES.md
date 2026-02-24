@@ -183,7 +183,7 @@ Single data model across all layers: id, content, confidence, state, type, tags,
 ### D-0002: Evaluation Priority Tuple
 Supports: D-0001, M-0002
 
-Claims are selected for evaluation by [dirty, confidence, root_similarity] tuple. Root similarity is vector distance to the original user prompt. Dirty claims with low confidence and high relevance to the root prompt are evaluated first. No discrete state machine — just continuous priority scoring.
+Claims are selected for evaluation by [dirty, confidence, root_similarity] tuple. Root similarity is vector distance to the root context (full conversation). Dirty claims with low confidence and high relevance evaluated first. No discrete state machine — just continuous priority scoring.
 
 ### D-0003: Bidirectional Relationships
 Supports: D-0001, F-0001
@@ -214,6 +214,11 @@ Claims form directed acyclic graph (DAG). Relationship manager detects cycles vi
 Supports: D-0003, D-0001
 
 Relationships have source_id, target_id, type, confidence (0.0-1.0), metadata dict, timestamp. Enables rich relationship semantics beyond simple edges.
+
+### D-0009: Root Context as Conversation
+Supports: D-0001, M-0003, A-0009
+
+Root context = entire conversation (user messages + harness responses). Decomposed into root claims via LLM. Root claims are GOALs to be answered/addressed. Root similarity measures claim relevance to full conversation, not just last message.
 
 ---
 
@@ -277,7 +282,7 @@ When a claim changes, all claims that depend on it (via supported_by) are marked
 ### A-0012: Halt Condition for Final Response
 Supports: A-0004, M-0002, M-0006
 
-The harness delivers a final answer when sufficient supporting evidence exists: 20+ claims at ≥80% confidence, OR 40+ claims at ≥70%, OR 50+ claims at any confidence. Until threshold is met, evaluation continues. Ensures responses are grounded in verified claims.
+Evaluation halts when: (1) no dirty root claims remain, OR (2) processed N claims (default=20). Root context = full conversation decomposed into root claims. Response synthesized from root claims and top supporting evidence. Budget prevents infinite evaluation loops.
 
 ---
 
