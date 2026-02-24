@@ -203,7 +203,7 @@ Claims support four scopes: USER_WORKSPACE, TEAM_WORKSPACE, TEAM_WIDE, PUBLIC. S
 ### D-0006: Dirty Flag for Re-Evaluation Queue
 Supports: D-0001, D-0002
 
-Claims track dirty state with reasons. When supporting claim changes, parent (supported) claims marked dirty — cascades toward root context. Clean = no support changed, re-eval would be no-op. Evaluation loop only processes dirty claims. Priority from confidence gap.
+Claims track dirty state with reasons. When supporting claim changes, mark claims it `supports` (parents) dirty — unidirectional cascade toward root context. Never cascade to `supported_by` (children). Clean = no support changed, re-eval would be no-op. Evaluation loop only processes dirty claims.
 
 ### D-0007: Acyclic Graph Enforcement
 Supports: D-0003
@@ -277,7 +277,7 @@ The LLM is given tools to CRUD claims, respond to user, and invoke other skills.
 ### A-0011: Cascading Evaluation on Upstream Changes
 Supports: A-0004, D-0006, M-0004
 
-When a claim changes, all claims that depend on it (via supported_by) are marked dirty. Evaluation cascades through the graph until convergence. Ensures downstream conclusions stay consistent with upstream evidence.
+When claim A changes, mark all claims in A.supports dirty (claims that A provides evidence for). Unidirectional cascade toward root context. Never mark A.supported_by (children) dirty. Ensures parent conclusions re-evaluated when evidence changes.
 
 ### A-0012: Halt Condition for Final Response
 Supports: A-0004, M-0002, M-0006, D-0009

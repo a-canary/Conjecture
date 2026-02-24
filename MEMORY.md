@@ -15,7 +15,8 @@ CHOICES.md initialized with 59 choices across 8 sections. Recent work refined ta
 <!-- Distilled lessons. Pruned when stale. -->
 - **Tags are LLM-generated**: Users don't create tags directly. LLM creates tags when creating claims. Tag maintenance (split >10% usage, merge >500 total) triggers programmatically on each CRUD operation.
 - **Root context = single claim**: Full conversation stored as one claim, decomposed into supporting claims. Halt when root is clean + LLM satisfied. No fixed eval limit.
-- **Dirty cascades upward**: When supporting claim changes, parent claims marked dirty. Cascades toward root context. Clean = re-eval would be no-op.
+- **Dirty cascades upward only**: When claim changes, mark claims in `.supports` dirty (parents). Never mark `.supported_by` (children). Unidirectional toward root context.
 
 ## Known Issues
 <!-- Recurring failures, provider errors, environment quirks -->
+- **dirty_flag.py line 98**: `_cascade_dirty_flags()` cascades bidirectionally (`supported_by | supports`). Should only cascade to `supports` (unidirectional upward).
