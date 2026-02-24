@@ -6,6 +6,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Conjecture treats all knowledge as provisional claims, not facts. Claims are impressions, assumptions, observations, and conjectures with variable confidence that may be wrong and subject to revision.
 
+## Choice Management
+
+This project uses CHOICES.md as the Source of Plan. All project choices are recorded in priority order — higher choices constrain lower ones (gravity rule). Each choice lists explicit `Supports:` references forming a dependency graph.
+
+- Read CHOICES.md before proposing changes that affect project direction
+- Use `/choose-wisely` to add, change, remove, or reorder choices (triggers cascading review + independent commit)
+- Use `/choose-wisely audit` to check for contradictions and structural issues
+- Never edit CHOICES.md directly without running cascading review
+- If a specification in another doc contradicts CHOICES.md, the choice wins and the spec should be updated
+- Architecture choices are tool-agnostic; Technology choices name specific tools
+- Git diff is the change record — no status annotations in the file
+
 ## Essential Development Commands
 
 ### Testing Infrastructure
