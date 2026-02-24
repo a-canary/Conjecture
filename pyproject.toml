@@ -43,6 +43,7 @@ dependencies = [
     "ddgs>=9.0.0",
     "emoji>=2.15.0",
     "windows-curses>=2.3.0; sys_platform == \"win32\"",
+    "anthropic>=0.39.0",  # Claude Agent SDK - Primary LLM provider (T-0008)
 ]
 
 [project.optional-dependencies]

@@ -13,7 +13,7 @@ Implement Conjecture evaluation system with Claude Agent SDK integration and ARC
 ### Gates (all must pass to complete phase)
 - [x] Gate: All `supported_by`/`supports` references replaced with `subs`/`supers` in core files
 - [x] Gate: No import errors on core modules
-- [ ] Gate: Core unit tests pass (tests need venv setup)
+- [x] Gate: Core unit tests pass (55 tests: 8 model, 47 operations)
 
 ## Phase 2: Claude Agent SDK Integration ✓
 ### Steps

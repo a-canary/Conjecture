@@ -62,6 +62,12 @@ class LLMProcessingResult:
     processing_time_ms: Optional[int] = None
     metadata: Dict[str, Any] = None
 
+    # Additional fields for provider compatibility
+    response_text: Optional[str] = None
+    error_message: Optional[str] = None
+    model_name: Optional[str] = None
+    provider_name: Optional[str] = None
+
     def __post_init__(self):
         if self.processed_claims is None:
             self.processed_claims = []
@@ -69,3 +75,13 @@ class LLMProcessingResult:
             self.errors = []
         if self.metadata is None:
             self.metadata = {}
+        # Sync content and response_text
+        if self.response_text and not self.content:
+            self.content = self.response_text
+        elif self.content and not self.response_text:
+            self.response_text = self.content
+        # Sync model fields
+        if self.model_name and not self.model_used:
+            self.model_used = self.model_name
+        elif self.model_used and not self.model_name:
+            self.model_name = self.model_used
