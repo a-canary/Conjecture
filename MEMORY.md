@@ -2,11 +2,12 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-CHOICES.md initialized with 59 choices across 8 sections. Recent work refined tag lifecycle (D-0004) to specify LLM-generated tags with nightly condensation process. Architecture choices clarified: input decomposition, claim tools, cascading evaluation, halt conditions. Ready for implementation planning.
+CHOICES.md finalized (~63 choices). Docs cleaned up: essential files at root (6), streamlined specs (6), trimmed docs (8). Claude Agent SDK + ARC-AGI-2 benchmarking direction set. Ready for implementation: code rename (supers/subs), SDK integration, benchmark framework.
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-02-24: WORK_DISPATCHED — Doc cleanup: root 36→6, specs 13→6, docs 30→8, README 606→100 lines. Archived stale analysis/swebench/emoji docs.
 - 2026-02-24: PLAN_CREATED — Gap analysis fixes complete. Added T-0008 (Claude Agent SDK), O-0006 (ARC-AGI-2 benchmark). 5-scope model. supers/subs naming.
 - 2026-02-24: USER_INPUT — Root context refined: single claim (not multiple), session-scoped, no eval limit. Verified dirty_flag.py matches cascading behavior.
 - 2026-02-24: USER_INPUT — Investigated D-0004 tag lifecycle; updated to LLM-generated tags (not user-assigned), programmatic maintenance on CRUD
