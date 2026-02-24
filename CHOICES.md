@@ -171,6 +171,11 @@ Supports: O-0004, F-0004
 
 LLM operations use exponential backoff (10s-10min range) with error-type-specific multipliers. Circuit breaker pattern prevents cascading failures during provider outages.
 
+### O-0006: ARC-AGI-2 Benchmark Focus
+Supports: M-0001, O-0002
+
+Primary benchmark: ARC-AGI-2 tests. Compare bare Haiku vs Haiku+Conjecture to validate harness value-add. Measures reasoning improvement, not just speed.
+
 ---
 
 ## Data
@@ -195,10 +200,10 @@ Supports: D-0001, F-0003
 
 Tags are LLM-generated, not user-assigned. Split trigger: tag >20% usage. Process: sample ≤100 claims → LLM suggests ≤8 replacement tags → batch claims (20) → LLM assigns replacement per claim. JSON in/out. If total >500 → merge similar. Max 20 per claim.
 
-### D-0005: Four-Level Scope Model
+### D-0005: Five-Level Scope Model
 Supports: M-0005, D-0001
 
-Claims support four scopes: USER_WORKSPACE, TEAM_WORKSPACE, TEAM_WIDE, PUBLIC. Scope determines visibility and access. Enables multi-workspace isolation with privacy boundaries.
+Claims support five scopes: SESSION, WORKSPACE, USER, TEAM, PUBLIC. LLM assigns to Session/Workspace/User directly. LLM suggests promotion to Team/Public (requires approval). Scope determines visibility and claim persistence.
 
 ### D-0006: Dirty Flag for Re-Evaluation Queue
 Supports: D-0001, D-0002
@@ -318,10 +323,15 @@ Supports: M-0005, F-0004
 
 Ollama (localhost:11434) and LM Studio (localhost:1234) for local inference. No API keys required. Complete data privacy.
 
-### T-0007: Cloud LLM Providers
+### T-0007: Custom LLM Endpoints
 Supports: M-0005, F-0004
 
-Chutes.ai, OpenRouter, OpenAI, Anthropic, Google. API keys stored in user config (`~/.conjecture/config.json`), never in repository.
+OpenAI/Anthropic-compatible endpoints (Chutes.ai, OpenRouter, etc.) configured via JSON. Enables self-hosted or alternative providers.
+
+### T-0008: Claude Agent SDK (Primary)
+Supports: M-0001, F-0004, A-0010
+
+Claude Agent SDK with Claude Max for primary inference. Default model: Haiku 4.5 (cost-effective). SDK handles authentication and secrets. Enables tool use and structured claim operations.
 
 ---
 
@@ -330,7 +340,7 @@ Chutes.ai, OpenRouter, OpenAI, Anthropic, Google. API keys stored in user config
 ### I-0001: Hierarchical Configuration
 Supports: A-0001, T-0001
 
-Priority: Workspace config (`.conjecture/config.json`) → User config (`~/.conjecture/config.json`) → Default config. JSON format. No environment variables.
+Priority: Workspace config (`.conjecture/config.json`) → User config (`~/.conjecture/config.json`) → Default config. JSON format. Claude Agent SDK handles Claude secrets. Custom OpenAI/Anthropic-compatible endpoints configured via JSON.
 
 ### I-0002: Async by Default
 Supports: T-0001, F-0004

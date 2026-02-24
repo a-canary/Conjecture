@@ -91,9 +91,10 @@ Instead of a rigid "Instruction" class, we use:
 2.  **LLM Validation**: The Process layer analyzes the content + tags to confirm if it's actionable.
 
 ### Tag Lifecycle
-*   **Creation**: User adds tags freely.
-*   **Consolidation**: Process layer periodically suggests merging synonymous tags.
-*   **Retirement**: Unused tags are purged.
+*   **Creation**: LLM generates tags when creating claims (not user-assigned).
+*   **Split**: Tags >20% usage trigger LLM-suggested replacements (sample 100 → suggest ≤8 → batch assign).
+*   **Merge**: Tags >500 total trigger similarity-based merging.
+*   **Limit**: Max 20 tags per claim.
 
 ## Migration Note
 This architecture supersedes all previous "Three-Layer" or "Enhanced" designs. Code matching this spec is the target state.

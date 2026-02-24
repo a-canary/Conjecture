@@ -8,7 +8,7 @@
 ## 1. System Architecture
 
 ### 1.1 Architecture Overview
-1.1.1 The system shall implement a three-layer architecture comprising Data Layer, Process Layer, and Presentation Layer
+1.1.1 The system shall implement a four-layer architecture: Presentation Layer, Endpoint Layer, Process Layer, and Data Layer
 1.1.2 The system shall follow a claim-centric approach where all knowledge, including methodologies, is represented as claims
 1.1.3 The system shall operate without conversation history context, using claims as persistent context
 1.1.4 The system shall implement an Async Claim Evaluation Service as the operational core
@@ -18,7 +18,7 @@
 1.2.1 The system shall store structured claims as the primary knowledge representation
 1.2.2 The system shall implement specialized claim types: Knowledge Claims, Skill Claims, Tool Claims, and Evaluation Claims
 1.2.3 The system shall include tool mechanisms for data collection and production
-1.2.4 The system shall maintain claim scopes: Global, Team, Project, User, and Session
+1.2.4 The system shall maintain claim scopes: SESSION, WORKSPACE, USER, TEAM, PUBLIC. LLM assigns to Session/Workspace/User; LLM suggests promotion to Team/Public
 1.2.5 The system shall implement a dirty flag mechanism to identify claims requiring re-evaluation
 
 ### 1.3 Process Layer Requirements
