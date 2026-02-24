@@ -52,7 +52,7 @@ Break complex problems into claim graphs that persist across sessions. Enable mo
 ### M-0004: Verify Assumptions Explicitly
 Supports: M-0001, M-0002
 
-Surface implicit assumptions as explicit claims. Challenge high-confidence assertions. Generate counter-claims for evaluation. Make the reasoning chain auditable and correctable.
+Surface implicit assumptions as explicit claims. Counter-claims are implicit LLM behavior — LLM may create alternative claims (course corrections or opposites to disprove) when questioning validity. Must be fallacy-aware. Reasoning chain auditable and correctable.
 
 ### M-0005: Privacy-First with Cloud Option
 Supports: M-0001
