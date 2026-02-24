@@ -88,7 +88,7 @@ class TestClaimLifecycleE2EFixed:
             content="Python has extensive libraries for web development like Django and Flask.",
             confidence=0.9,
             state=ClaimState.VALIDATED,
-            supports=["lifecycle_test"],
+            supers=["lifecycle_test"],
             tags=["web", "django", "flask"]
         )
 
@@ -97,7 +97,7 @@ class TestClaimLifecycleE2EFixed:
             content="Python is widely used in data science with libraries like pandas and numpy.",
             confidence=0.85,
             state=ClaimState.VALIDATED,
-            supports=["lifecycle_test"],
+            supers=["lifecycle_test"],
             tags=["data-science", "pandas", "numpy"]
         )
 
@@ -108,9 +108,9 @@ class TestClaimLifecycleE2EFixed:
         assert supporter1_id == supporter1.id
         assert supporter2_id == supporter2.id
 
-        # Step 7: Simulate relationship updates by updating main claim's supported_by field
+        # Step 7: Simulate relationship updates by updating main claim's subs field
         main_claim_updates = {
-            "supported_by": ["supporter1", "supporter2"],
+            "subs": ["supporter1", "supporter2"],
             "is_dirty": True,
             "dirty_reason": DirtyReason.SUPPORTING_CLAIM_CHANGED.value
         }
@@ -121,7 +121,7 @@ class TestClaimLifecycleE2EFixed:
         # Step 8: Verify main claim was updated with supporters
         final_main_claim = await db_manager.get_claim("lifecycle_test")
         assert final_main_claim is not None
-        assert set(final_main_claim["supported_by"]) == {"supporter1", "supporter2"}
+        assert set(final_main_claim["subs"]) == {"supporter1", "supporter2"}
         assert final_main_claim["is_dirty"] in [True, 1]  # Database may return as integer
         assert final_main_claim["dirty_reason"] == DirtyReason.SUPPORTING_CLAIM_CHANGED.value
 
@@ -141,9 +141,9 @@ class TestClaimLifecycleE2EFixed:
         assert final_verified["confidence"] == 0.95
         assert final_verified["state"] == ClaimState.VALIDATED.value
         assert final_verified["is_dirty"] in [False, 0]  # Database may return as integer
-        assert len(final_verified["supported_by"]) == 2
-        assert "supporter1" in final_verified["supported_by"]
-        assert "supporter2" in final_verified["supported_by"]
+        assert len(final_verified["subs"]) == 2
+        assert "supporter1" in final_verified["subs"]
+        assert "supporter2" in final_verified["subs"]
 
     @pytest.mark.asyncio
     async def test_dirty_flag_propagation_cascade(self, db_manager):
@@ -155,7 +155,7 @@ class TestClaimLifecycleE2EFixed:
             content="Fundamental principle A",
             confidence=0.9,
             state=ClaimState.VALIDATED,
-            supports=["cascade_b"],
+            supers=["cascade_b"],
             tags=["fundamental"]
         )
 
@@ -164,8 +164,8 @@ class TestClaimLifecycleE2EFixed:
             content="Derived principle B",
             confidence=0.7,
             state=ClaimState.VALIDATED,
-            supported_by=["cascade_a"],
-            supports=["cascade_c"],
+            subs=["cascade_a"],
+            supers=["cascade_c"],
             tags=["derived"]
         )
 
@@ -174,7 +174,7 @@ class TestClaimLifecycleE2EFixed:
             content="Specific conclusion C",
             confidence=0.5,
             state=ClaimState.EXPLORE,
-            supported_by=["cascade_b"],
+            subs=["cascade_b"],
             tags=["specific"]
         )
 
@@ -235,7 +235,7 @@ class TestClaimLifecycleE2EFixed:
                 content="Deep learning is a subset of machine learning",
                 confidence=0.8,
                 state=ClaimState.VALIDATED,
-                supports=["batch_1"],
+                supers=["batch_1"],
                 tags=["dl", "ml"]
             ),
             Claim(
@@ -243,7 +243,7 @@ class TestClaimLifecycleE2EFixed:
                 content="Neural networks are the foundation of deep learning",
                 confidence=0.9,
                 state=ClaimState.VALIDATED,
-                supports=["batch_2"],
+                supers=["batch_2"],
                 tags=["neural", "dl"]
             )
         ]

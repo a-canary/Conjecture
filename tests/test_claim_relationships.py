@@ -9,8 +9,8 @@ from pydantic import ValidationError
 from src.core.models import Claim, ClaimState
 from src.core.claim_operations import (
     validate_relationship_integrity,
-    find_supporting_claims,
-    find_supported_claims,
+    find_sub_claims,
+    find_super_claims,
     calculate_support_strength,
 )
 
@@ -24,32 +24,32 @@ class TestClaimRelationships:
             id="supporter1",
             content="Supporting claim",
             confidence=0.8,
-            supports=["supported1"],
+            supers=["supported1"],
         )
 
         supported = Claim(
             id="supported1",
             content="Supported claim",
             confidence=0.6,
-            supported_by=["supporter1"],
+            subs=["supporter1"],
         )
 
-        assert "supported1" in supporter.supports
-        assert "supporter1" in supported.supported_by
+        assert "supported1" in supporter.supers
+        assert "supporter1" in supported.subs
 
     def test_bidirectional_relationships(self):
         """Test bidirectional relationship consistency"""
         claim_a = Claim(
-            id="claim_a", content="Claim A", confidence=0.7, supports=["claim_b"]
+            id="claim_a", content="Claim A", confidence=0.7, supers=["claim_b"]
         )
 
         claim_b = Claim(
-            id="claim_b", content="Claim B", confidence=0.5, supported_by=["claim_a"]
+            id="claim_b", content="Claim B", confidence=0.5, subs=["claim_a"]
         )
 
         # Verify bidirectional consistency
-        assert "claim_b" in claim_a.supports
-        assert "claim_a" in claim_b.supported_by
+        assert "claim_b" in claim_a.supers
+        assert "claim_a" in claim_b.subs
 
     def test_multiple_supporters(self):
         """Test claim with multiple supporters"""
@@ -57,7 +57,7 @@ class TestClaimRelationships:
             id="main_claim",
             content="Main claim with support",
             confidence=0.6,
-            supported_by=["supporter1", "supporter2", "supporter3"],
+            subs=["supporter1", "supporter2", "supporter3"],
         )
 
         supporters = [
@@ -65,26 +65,26 @@ class TestClaimRelationships:
                 id="supporter1",
                 content="Supporter 1",
                 confidence=0.8,
-                supports=["main_claim"],
+                supers=["main_claim"],
             ),
             Claim(
                 id="supporter2",
                 content="Supporter 2",
                 confidence=0.7,
-                supports=["main_claim"],
+                supers=["main_claim"],
             ),
             Claim(
                 id="supporter3",
                 content="Supporter 3",
                 confidence=0.9,
-                supports=["main_claim"],
+                supers=["main_claim"],
             ),
         ]
 
         all_claims = [supported_claim] + supporters
 
         # Test finding supporters
-        found_supporters = find_supporting_claims(supported_claim, all_claims)
+        found_supporters = find_sub_claims(supported_claim, all_claims)
         assert len(found_supporters) == 3
         assert all(
             s.id in ["supporter1", "supporter2", "supporter3"] for s in found_supporters
@@ -96,7 +96,7 @@ class TestClaimRelationships:
             id="main_supporter",
             content="Main supporting claim",
             confidence=0.9,
-            supports=["supported1", "supported2", "supported3"],
+            supers=["supported1", "supported2", "supported3"],
         )
 
         supported_claims = [
@@ -104,26 +104,26 @@ class TestClaimRelationships:
                 id="supported1",
                 content="Supported 1",
                 confidence=0.6,
-                supported_by=["main_supporter"],
+                subs=["main_supporter"],
             ),
             Claim(
                 id="supported2",
                 content="Supported 2",
                 confidence=0.7,
-                supported_by=["main_supporter"],
+                subs=["main_supporter"],
             ),
             Claim(
                 id="supported3",
                 content="Supported 3",
                 confidence=0.5,
-                supported_by=["main_supporter"],
+                subs=["main_supporter"],
             ),
         ]
 
         all_claims = [supporter_claim] + supported_claims
 
         # Test finding supported claims
-        found_supported = find_supported_claims(supporter_claim, all_claims)
+        found_supported = find_super_claims(supporter_claim, all_claims)
         assert len(found_supported) == 3
         assert all(
             s.id in ["supported1", "supported2", "supported3"] for s in found_supported
@@ -136,13 +136,13 @@ class TestClaimRelationships:
                 id="claim1",
                 content="Claim 1",
                 confidence=0.8,
-                supports=["claim2", "claim3"],
+                supers=["claim2", "claim3"],
             ),
             Claim(
-                id="claim2", content="Claim 2", confidence=0.6, supported_by=["claim1"]
+                id="claim2", content="Claim 2", confidence=0.6, subs=["claim1"]
             ),
             Claim(
-                id="claim3", content="Claim 3", confidence=0.7, supported_by=["claim1"]
+                id="claim3", content="Claim 3", confidence=0.7, subs=["claim1"]
             ),
         ]
 
@@ -157,7 +157,7 @@ class TestClaimRelationships:
                 id="claim1",
                 content="Claim 1",
                 confidence=0.6,
-                supported_by=["nonexistent"],
+                subs=["nonexistent"],
             ),
             Claim(id="claim2", content="Claim 2", confidence=0.8),
         ]
@@ -171,7 +171,7 @@ class TestClaimRelationships:
         """Test relationship validation with missing supported claim"""
         claims = [
             Claim(
-                id="claim1", content="Claim 1", confidence=0.8, supports=["nonexistent"]
+                id="claim1", content="Claim 1", confidence=0.8, supers=["nonexistent"]
             ),
             Claim(id="claim2", content="Claim 2", confidence=0.6),
         ]
@@ -193,7 +193,7 @@ class TestClaimRelationships:
             id="supported",
             content="Supported claim",
             confidence=0.5,
-            supported_by=["supporter1", "supporter2", "supporter3"],
+            subs=["supporter1", "supporter2", "supporter3"],
         )
 
         all_claims = supporters + [supported_claim]
@@ -208,7 +208,7 @@ class TestClaimRelationships:
     def test_support_strength_no_supporters(self):
         """Test support strength calculation with no supporters"""
         claim = Claim(
-            id="isolated", content="Isolated claim", confidence=0.5, supported_by=[]
+            id="isolated", content="Isolated claim", confidence=0.5, subs=[]
         )
 
         strength, count = calculate_support_strength(claim, [claim])
@@ -220,19 +220,19 @@ class TestClaimRelationships:
         """Test handling of circular relationships"""
         # Create circular relationship: A supports B, B supports C, C supports A
         claim_a = Claim(
-            id="claim_a", content="Claim A", confidence=0.7, supports=["claim_b"]
+            id="claim_a", content="Claim A", confidence=0.7, supers=["claim_b"]
         )
         claim_b = Claim(
-            id="claim_b", content="Claim B", confidence=0.6, supports=["claim_c"]
+            id="claim_b", content="Claim B", confidence=0.6, supers=["claim_c"]
         )
         claim_c = Claim(
-            id="claim_c", content="Claim C", confidence=0.5, supports=["claim_a"]
+            id="claim_c", content="Claim C", confidence=0.5, supers=["claim_a"]
         )
 
         # Add backward references
-        claim_a.supported_by = ["claim_c"]
-        claim_b.supported_by = ["claim_a"]
-        claim_c.supported_by = ["claim_b"]
+        claim_a.subs = ["claim_c"]
+        claim_b.subs = ["claim_a"]
+        claim_c.subs = ["claim_b"]
 
         all_claims = [claim_a, claim_b, claim_c]
 
@@ -249,12 +249,12 @@ class TestClaimRelationships:
                 id="self_ref",
                 content="Self-referencing claim",
                 confidence=0.5,
-                supports=["self_ref"],  # This would be invalid
-                supported_by=["self_ref"],  # This would also be invalid
+                supers=["self_ref"],  # This would be invalid
+                subs=["self_ref"],  # This would also be invalid
             )
 
-        # Verify the error message mentions self-support
-        assert "cannot support itself" in str(exc_info.value)
+        # Verify the error message mentions self-reference
+        assert "cannot reference itself" in str(exc_info.value)
 
     def test_complex_relationship_network(self):
         """Test complex relationship network"""
@@ -264,50 +264,50 @@ class TestClaimRelationships:
                 id="root1",
                 content="Root claim 1",
                 confidence=0.9,
-                supports=["mid1", "mid2"],
+                supers=["mid1", "mid2"],
             ),
             Claim(
-                id="root2", content="Root claim 2", confidence=0.8, supports=["mid2"]
+                id="root2", content="Root claim 2", confidence=0.8, supers=["mid2"]
             ),
             # Middle claims (both support and are supported)
             Claim(
                 id="mid1",
                 content="Middle claim 1",
                 confidence=0.7,
-                supports=["leaf1"],
-                supported_by=["root1"],
+                supers=["leaf1"],
+                subs=["root1"],
             ),
             Claim(
                 id="mid2",
                 content="Middle claim 2",
                 confidence=0.6,
-                supports=["leaf1", "leaf2"],
-                supported_by=["root1", "root2"],
+                supers=["leaf1", "leaf2"],
+                subs=["root1", "root2"],
             ),
             # Leaf claims (only supported, don't support others)
             Claim(
                 id="leaf1",
                 content="Leaf claim 1",
                 confidence=0.5,
-                supported_by=["mid1", "mid2"],
+                subs=["mid1", "mid2"],
             ),
             Claim(
                 id="leaf2",
                 content="Leaf claim 2",
                 confidence=0.4,
-                supported_by=["mid2"],
+                subs=["mid2"],
             ),
         ]
 
         # Test finding supporters for a middle claim
-        mid2_supporters = find_supporting_claims(claims[3], claims)  # mid2
+        mid2_supporters = find_sub_claims(claims[3], claims)  # mid2
         assert len(mid2_supporters) == 2
         supporter_ids = [s.id for s in mid2_supporters]
         assert "root1" in supporter_ids
         assert "root2" in supporter_ids
 
         # Test finding supported claims for a root claim
-        root1_supported = find_supported_claims(claims[0], claims)  # root1
+        root1_supported = find_super_claims(claims[0], claims)  # root1
         assert len(root1_supported) == 2
         supported_ids = [s.id for s in root1_supported]
         assert "mid1" in supported_ids

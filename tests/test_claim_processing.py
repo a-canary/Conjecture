@@ -10,8 +10,8 @@ from datetime import datetime, timezone
 from src.core.models import Claim, ClaimState, DirtyReason
 from src.core.claim_operations import (
     update_confidence,
-    add_support,
-    add_supports,
+    add_sub,
+    add_super,
     mark_dirty,
     mark_clean,
     set_dirty_priority,
@@ -55,7 +55,7 @@ class TestClaimProcessing:
         with pytest.raises(ValueError, match="Confidence must be between 0.0 and 1.0"):
             update_confidence(claim, 1.1)
 
-    def test_add_support_new(self):
+    def test_add_sub_new(self):
         """Test adding new support relationship"""
         claim = Claim(id="main", content="Main claim", confidence=0.5)
 
@@ -65,9 +65,9 @@ class TestClaimProcessing:
         time.sleep(0.001)  # 1ms delay
 
         # Add first supporter
-        with_support = add_support(claim, "supporter1")
-        assert "supporter1" in with_support.supported_by
-        assert len(with_support.supported_by) == 1
+        with_support = add_sub(claim, "supporter1")
+        assert "supporter1" in with_support.subs
+        assert len(with_support.subs) == 1
         assert with_support.updated > claim.updated
 
         # Small delay to ensure different timestamps
@@ -76,38 +76,38 @@ class TestClaimProcessing:
         time.sleep(0.001)  # 1ms delay
 
         # Add second supporter
-        with_second_support = add_support(with_support, "supporter2")
-        assert "supporter2" in with_second_support.supported_by
-        assert len(with_second_support.supported_by) == 2
-        assert "supporter1" in with_second_support.supported_by
+        with_second_support = add_sub(with_support, "supporter2")
+        assert "supporter2" in with_second_support.subs
+        assert len(with_second_support.subs) == 2
+        assert "supporter1" in with_second_support.subs
 
-    def test_add_support_duplicate(self):
+    def test_add_sub_duplicate(self):
         """Test adding duplicate support relationship"""
         claim = Claim(id="main", content="Main claim", confidence=0.5)
 
         # Add supporter
-        with_support = add_support(claim, "supporter1")
-        assert len(with_support.supported_by) == 1
+        with_support = add_sub(claim, "supporter1")
+        assert len(with_support.subs) == 1
 
         # Try to add same supporter again
-        with_duplicate = add_support(with_support, "supporter1")
-        assert len(with_duplicate.supported_by) == 1  # Should not duplicate
-        assert with_duplicate.supported_by.count("supporter1") == 1
+        with_duplicate = add_sub(with_support, "supporter1")
+        assert len(with_duplicate.subs) == 1  # Should not duplicate
+        assert with_duplicate.subs.count("supporter1") == 1
 
-    def test_add_supports_new(self):
+    def test_add_super_new(self):
         """Test adding new supports relationship"""
         claim = Claim(id="supporter", content="Supporting claim", confidence=0.8)
 
         # Add first supported claim
-        with_supports = add_supports(claim, "supported1")
-        assert "supported1" in with_supports.supports
-        assert len(with_supports.supports) == 1
+        with_supports = add_super(claim, "supported1")
+        assert "supported1" in with_supports.supers
+        assert len(with_supports.supers) == 1
 
         # Add second supported claim
-        with_second = add_supports(with_supports, "supported2")
-        assert len(with_second.supports) == 2
-        assert "supported1" in with_second.supports
-        assert "supported2" in with_second.supports
+        with_second = add_super(with_supports, "supported2")
+        assert len(with_second.supers) == 2
+        assert "supported1" in with_second.supers
+        assert "supported2" in with_second.supers
 
     def test_mark_dirty_with_reason(self):
         """Test marking claim as dirty with specific reason"""
@@ -178,7 +178,7 @@ class TestClaimProcessing:
         # Small delay to ensure different timestamps
         time.sleep(0.001)  # 1ms delay
 
-        step2 = add_support(step1, "supporter1")
+        step2 = add_sub(step1, "supporter1")
 
         # Small delay to ensure different timestamps
         time.sleep(0.001)  # 1ms delay
@@ -195,7 +195,7 @@ class TestClaimProcessing:
         assert step4.content == "Original claim"
         assert step4.confidence == 0.7
         assert step4.is_dirty is False
-        assert "supporter1" in step4.supported_by
+        assert "supporter1" in step4.subs
         assert step4.updated > original.updated
 
     def test_immutability_of_original(self):

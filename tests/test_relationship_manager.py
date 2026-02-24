@@ -14,17 +14,17 @@ from src.core.relationship_manager import (
     RelationshipChange,
     # Pure functions
     establish_bidirectional_relationship,
-    remove_support_relationship,
-    remove_supports_relationship,
-    create_support_map,
-    create_supporter_map,
+    remove_sub_relationship,
+    remove_super_relationship,
+    create_super_map,
+    create_sub_map,
     detect_circular_dependencies,
     find_orphaned_claims,
     find_root_claims,
     find_leaf_claims,
     calculate_relationship_depth,
     analyze_claim_relationships,
-    suggest_support_relationships,
+    suggest_sub_relationships,
     validate_relationship_consistency,
     propagate_confidence_updates,
     create_relationship_heatmap,
@@ -88,19 +88,19 @@ class TestBidirectionalRelationships:
         )
 
         # claim1 supports claim2
-        assert "c002" in updated_claim1.supports
+        assert "c002" in updated_claim1.supers
         # claim2 is supported by claim1
-        assert "c001" in updated_claim2.supported_by
+        assert "c001" in updated_claim2.subs
 
         # Original claims unchanged (pure function)
-        assert "c002" not in claim1.supports
-        assert "c001" not in claim2.supported_by
+        assert "c002" not in claim1.supers
+        assert "c001" not in claim2.subs
 
     def test_establish_bidirectional_relationship_preserves_existing(self):
         """Test that establishing relationship preserves existing relationships"""
-        claim1 = Claim(id="c001", content="Claim 1", confidence=0.8, supports=["c003"])
+        claim1 = Claim(id="c001", content="Claim 1", confidence=0.8, supers=["c003"])
         claim2 = Claim(
-            id="c002", content="Claim 2", confidence=0.7, supported_by=["c004"]
+            id="c002", content="Claim 2", confidence=0.7, subs=["c004"]
         )
 
         updated_claim1, updated_claim2 = establish_bidirectional_relationship(
@@ -108,160 +108,160 @@ class TestBidirectionalRelationships:
         )
 
         # New relationships added
-        assert "c002" in updated_claim1.supports
-        assert "c001" in updated_claim2.supported_by
+        assert "c002" in updated_claim1.supers
+        assert "c001" in updated_claim2.subs
 
         # Existing relationships preserved
-        assert "c003" in updated_claim1.supports
-        assert "c004" in updated_claim2.supported_by
+        assert "c003" in updated_claim1.supers
+        assert "c004" in updated_claim2.subs
 
 
 class TestRemoveRelationships:
     """Test relationship removal operations"""
 
-    def test_remove_support_relationship(self):
-        """Test removing a support relationship"""
+    def test_remove_sub_relationship(self):
+        """Test removing a sub relationship"""
         claim = Claim(
             id="c001",
             content="Supported claim",
             confidence=0.7,
-            supported_by=["c002", "c003", "c004"],
+            subs=["c002", "c003", "c004"],
         )
 
-        updated = remove_support_relationship(claim, "c003")
+        updated = remove_sub_relationship(claim, "c003")
 
-        assert "c003" not in updated.supported_by
-        assert "c002" in updated.supported_by
-        assert "c004" in updated.supported_by
-        assert len(updated.supported_by) == 2
+        assert "c003" not in updated.subs
+        assert "c002" in updated.subs
+        assert "c004" in updated.subs
+        assert len(updated.subs) == 2
 
         # Original unchanged
-        assert "c003" in claim.supported_by
+        assert "c003" in claim.subs
 
-    def test_remove_support_relationship_nonexistent(self):
-        """Test removing nonexistent support relationship (no error)"""
+    def test_remove_sub_relationship_nonexistent(self):
+        """Test removing nonexistent sub relationship (no error)"""
         claim = Claim(
             id="c001",
             content="Supported claim",
             confidence=0.7,
-            supported_by=["c002", "c003"],
+            subs=["c002", "c003"],
         )
 
-        updated = remove_support_relationship(claim, "c999")
+        updated = remove_sub_relationship(claim, "c999")
 
         # No change, no error
-        assert len(updated.supported_by) == 2
-        assert "c002" in updated.supported_by
-        assert "c003" in updated.supported_by
+        assert len(updated.subs) == 2
+        assert "c002" in updated.subs
+        assert "c003" in updated.subs
 
-    def test_remove_supports_relationship(self):
-        """Test removing a supports relationship"""
+    def test_remove_super_relationship(self):
+        """Test removing a super relationship"""
         claim = Claim(
             id="c001",
             content="Supporting claim",
             confidence=0.8,
-            supports=["c002", "c003", "c004"],
+            supers=["c002", "c003", "c004"],
         )
 
-        updated = remove_supports_relationship(claim, "c003")
+        updated = remove_super_relationship(claim, "c003")
 
-        assert "c003" not in updated.supports
-        assert "c002" in updated.supports
-        assert "c004" in updated.supports
-        assert len(updated.supports) == 2
+        assert "c003" not in updated.supers
+        assert "c002" in updated.supers
+        assert "c004" in updated.supers
+        assert len(updated.supers) == 2
 
         # Original unchanged
-        assert "c003" in claim.supports
+        assert "c003" in claim.supers
 
-    def test_remove_supports_relationship_nonexistent(self):
-        """Test removing nonexistent supports relationship (no error)"""
+    def test_remove_super_relationship_nonexistent(self):
+        """Test removing nonexistent super relationship (no error)"""
         claim = Claim(
             id="c001",
             content="Supporting claim",
             confidence=0.8,
-            supports=["c002", "c003"],
+            supers=["c002", "c003"],
         )
 
-        updated = remove_supports_relationship(claim, "c999")
+        updated = remove_super_relationship(claim, "c999")
 
         # No change, no error
-        assert len(updated.supports) == 2
-        assert "c002" in updated.supports
-        assert "c003" in updated.supports
+        assert len(updated.supers) == 2
+        assert "c002" in updated.supers
+        assert "c003" in updated.supers
 
 
 class TestRelationshipMaps:
     """Test relationship map creation"""
 
-    def test_create_support_map_simple(self):
-        """Test creating support map from claims"""
+    def test_create_super_map_simple(self):
+        """Test creating super map from claims"""
         claims = [
             Claim(
-                id="c001", content="Claim 1", confidence=0.8, supports=["c002", "c003"]
+                id="c001", content="Claim 1", confidence=0.8, supers=["c002", "c003"]
             ),
-            Claim(id="c002", content="Claim 2", confidence=0.7, supports=["c003"]),
+            Claim(id="c002", content="Claim 2", confidence=0.7, supers=["c003"]),
             Claim(id="c003", content="Claim 3", confidence=0.6),
         ]
 
-        support_map = create_support_map(claims)
+        super_map = create_super_map(claims)
 
-        assert len(support_map) == 3
-        assert support_map["c001"] == {"c002", "c003"}
-        assert support_map["c002"] == {"c003"}
-        assert support_map["c003"] == set()
+        assert len(super_map) == 3
+        assert super_map["c001"] == {"c002", "c003"}
+        assert super_map["c002"] == {"c003"}
+        assert super_map["c003"] == set()
 
-    def test_create_support_map_filters_missing_claims(self):
-        """Test that support map only includes existing claims"""
+    def test_create_super_map_filters_missing_claims(self):
+        """Test that super map only includes existing claims"""
         claims = [
             Claim(
-                id="c001", content="Claim 1", confidence=0.8, supports=["c002", "c999"]
+                id="c001", content="Claim 1", confidence=0.8, supers=["c002", "c999"]
             ),
             Claim(id="c002", content="Claim 2", confidence=0.7),
         ]
 
-        support_map = create_support_map(claims)
+        super_map = create_super_map(claims)
 
         # c999 not in map because it doesn't exist
-        assert support_map["c001"] == {"c002"}
-        assert "c999" not in support_map["c001"]
+        assert super_map["c001"] == {"c002"}
+        assert "c999" not in super_map["c001"]
 
-    def test_create_supporter_map_simple(self):
-        """Test creating supporter map from claims"""
+    def test_create_sub_map_simple(self):
+        """Test creating sub map from claims"""
         claims = [
             Claim(id="c001", content="Claim 1", confidence=0.8),
-            Claim(id="c002", content="Claim 2", confidence=0.7, supported_by=["c001"]),
+            Claim(id="c002", content="Claim 2", confidence=0.7, subs=["c001"]),
             Claim(
                 id="c003",
                 content="Claim 3",
                 confidence=0.6,
-                supported_by=["c001", "c002"],
+                subs=["c001", "c002"],
             ),
         ]
 
-        supporter_map = create_supporter_map(claims)
+        sub_map = create_sub_map(claims)
 
-        assert len(supporter_map) == 3
-        assert supporter_map["c001"] == set()
-        assert supporter_map["c002"] == {"c001"}
-        assert supporter_map["c003"] == {"c001", "c002"}
+        assert len(sub_map) == 3
+        assert sub_map["c001"] == set()
+        assert sub_map["c002"] == {"c001"}
+        assert sub_map["c003"] == {"c001", "c002"}
 
-    def test_create_supporter_map_filters_missing_claims(self):
-        """Test that supporter map only includes existing claims"""
+    def test_create_sub_map_filters_missing_claims(self):
+        """Test that sub map only includes existing claims"""
         claims = [
             Claim(id="c001", content="Claim 1", confidence=0.8),
             Claim(
                 id="c002",
                 content="Claim 2",
                 confidence=0.7,
-                supported_by=["c001", "c999"],
+                subs=["c001", "c999"],
             ),
         ]
 
-        supporter_map = create_supporter_map(claims)
+        sub_map = create_sub_map(claims)
 
         # c999 not in map because it doesn't exist
-        assert supporter_map["c002"] == {"c001"}
-        assert "c999" not in supporter_map["c002"]
+        assert sub_map["c002"] == {"c001"}
+        assert "c999" not in sub_map["c002"]
 
 
 class TestCircularDependencies:
@@ -269,22 +269,22 @@ class TestCircularDependencies:
 
     def test_detect_circular_dependencies_no_cycles(self):
         """Test detecting no cycles in clean graph"""
-        support_map = {
+        super_map = {
             "c001": {"c002", "c003"},
             "c002": {"c004"},
             "c003": {"c004"},
             "c004": set(),
         }
 
-        cycles = detect_circular_dependencies(support_map)
+        cycles = detect_circular_dependencies(super_map)
 
         assert len(cycles) == 0
 
     def test_detect_circular_dependencies_simple_cycle(self):
         """Test detecting simple 2-node cycle"""
-        support_map = {"c001": {"c002"}, "c002": {"c001"}}
+        super_map = {"c001": {"c002"}, "c002": {"c001"}}
 
-        cycles = detect_circular_dependencies(support_map)
+        cycles = detect_circular_dependencies(super_map)
 
         assert len(cycles) > 0
         # Check that detected cycle contains both nodes
@@ -294,9 +294,9 @@ class TestCircularDependencies:
 
     def test_detect_circular_dependencies_complex_cycle(self):
         """Test detecting 3-node cycle"""
-        support_map = {"c001": {"c002"}, "c002": {"c003"}, "c003": {"c001"}}
+        super_map = {"c001": {"c002"}, "c002": {"c003"}, "c003": {"c001"}}
 
-        cycles = detect_circular_dependencies(support_map)
+        cycles = detect_circular_dependencies(super_map)
 
         assert len(cycles) > 0
         cycle = cycles[0]
@@ -306,9 +306,9 @@ class TestCircularDependencies:
 
     def test_detect_circular_dependencies_self_reference(self):
         """Test detecting self-reference cycle"""
-        support_map = {"c001": {"c001"}}
+        super_map = {"c001": {"c001"}}
 
-        cycles = detect_circular_dependencies(support_map)
+        cycles = detect_circular_dependencies(super_map)
 
         assert len(cycles) > 0
 
@@ -321,7 +321,7 @@ class TestClaimCategories:
         claims = [
             Claim(id="c001", content="Orphan 1", confidence=0.8),
             Claim(
-                id="c002", content="Connected", confidence=0.7, supported_by=["c001"]
+                id="c002", content="Connected", confidence=0.7, subs=["c001"]
             ),
             Claim(id="c003", content="Orphan 2", confidence=0.6),
         ]
@@ -337,8 +337,8 @@ class TestClaimCategories:
     def test_find_orphaned_claims_none(self):
         """Test when no orphaned claims exist"""
         claims = [
-            Claim(id="c001", content="Claim 1", confidence=0.8, supports=["c002"]),
-            Claim(id="c002", content="Claim 2", confidence=0.7, supported_by=["c001"]),
+            Claim(id="c001", content="Claim 1", confidence=0.8, supers=["c002"]),
+            Claim(id="c002", content="Claim 2", confidence=0.7, subs=["c001"]),
         ]
 
         orphaned = find_orphaned_claims(claims)
@@ -348,16 +348,16 @@ class TestClaimCategories:
     def test_find_root_claims(self):
         """Test finding root claims (support but not supported)"""
         claims = [
-            Claim(id="c001", content="Root claim", confidence=0.8, supports=["c002"]),
+            Claim(id="c001", content="Root claim", confidence=0.8, supers=["c002"]),
             Claim(
                 id="c002",
                 content="Middle claim",
                 confidence=0.7,
-                supported_by=["c001"],
-                supports=["c003"],
+                subs=["c001"],
+                supers=["c003"],
             ),
             Claim(
-                id="c003", content="Leaf claim", confidence=0.6, supported_by=["c002"]
+                id="c003", content="Leaf claim", confidence=0.6, subs=["c002"]
             ),
         ]
 
@@ -373,15 +373,15 @@ class TestClaimCategories:
                 id="c001",
                 content="Claim 1",
                 confidence=0.8,
-                supported_by=["c002"],
-                supports=["c002"],
+                subs=["c002"],
+                supers=["c002"],
             ),
             Claim(
                 id="c002",
                 content="Claim 2",
                 confidence=0.7,
-                supported_by=["c001"],
-                supports=["c001"],
+                subs=["c001"],
+                supers=["c001"],
             ),
         ]
 
@@ -392,16 +392,16 @@ class TestClaimCategories:
     def test_find_leaf_claims(self):
         """Test finding leaf claims (supported but don't support)"""
         claims = [
-            Claim(id="c001", content="Root claim", confidence=0.8, supports=["c002"]),
+            Claim(id="c001", content="Root claim", confidence=0.8, supers=["c002"]),
             Claim(
                 id="c002",
                 content="Middle claim",
                 confidence=0.7,
-                supported_by=["c001"],
-                supports=["c003"],
+                subs=["c001"],
+                supers=["c003"],
             ),
             Claim(
-                id="c003", content="Leaf claim", confidence=0.6, supported_by=["c002"]
+                id="c003", content="Leaf claim", confidence=0.6, subs=["c002"]
             ),
         ]
 
@@ -417,16 +417,16 @@ class TestClaimCategories:
                 id="c001",
                 content="Root claim",
                 confidence=0.8,
-                supports=["c002", "c003", "c004"],
+                supers=["c002", "c003", "c004"],
             ),
             Claim(
-                id="c002", content="Leaf claim 1", confidence=0.7, supported_by=["c001"]
+                id="c002", content="Leaf claim 1", confidence=0.7, subs=["c001"]
             ),
             Claim(
-                id="c003", content="Leaf claim 2", confidence=0.6, supported_by=["c001"]
+                id="c003", content="Leaf claim 2", confidence=0.6, subs=["c001"]
             ),
             Claim(
-                id="c004", content="Leaf claim 3", confidence=0.5, supported_by=["c001"]
+                id="c004", content="Leaf claim 3", confidence=0.5, subs=["c001"]
             ),
         ]
 
@@ -442,15 +442,15 @@ class TestRelationshipDepth:
 
     def test_calculate_relationship_depth_simple(self):
         """Test calculating depth in simple chain"""
-        support_map = {"c001": {"c002"}, "c002": {"c003"}, "c003": set()}
+        super_map = {"c001": {"c002"}, "c002": {"c003"}, "c003": set()}
 
-        depth = calculate_relationship_depth(support_map, "c001")
+        depth = calculate_relationship_depth(super_map, "c001")
 
         assert depth == 3
 
     def test_calculate_relationship_depth_branching(self):
         """Test calculating depth with branching"""
-        support_map = {
+        super_map = {
             "c001": {"c002", "c003"},
             "c002": {"c004"},
             "c003": {"c005"},
@@ -458,29 +458,29 @@ class TestRelationshipDepth:
             "c005": set(),
         }
 
-        depth = calculate_relationship_depth(support_map, "c001")
+        depth = calculate_relationship_depth(super_map, "c001")
 
         assert depth == 3  # Longest path
 
     def test_calculate_relationship_depth_cycle_handling(self):
         """Test that cycles don't cause infinite recursion"""
-        support_map = {
+        super_map = {
             "c001": {"c002"},
             "c002": {"c003"},
             "c003": {"c001"},  # Cycle back
         }
 
         # Should handle cycle without infinite loop
-        depth = calculate_relationship_depth(support_map, "c001")
+        depth = calculate_relationship_depth(super_map, "c001")
 
         # Depth should be finite
         assert depth >= 0
 
     def test_calculate_relationship_depth_single_node(self):
         """Test calculating depth for isolated node"""
-        support_map = {"c001": set()}
+        super_map = {"c001": set()}
 
-        depth = calculate_relationship_depth(support_map, "c001")
+        depth = calculate_relationship_depth(super_map, "c001")
 
         assert depth == 1
 
@@ -504,9 +504,9 @@ class TestRelationshipAnalysis:
         """Test analyzing claim with only supporters"""
         claims = [
             Claim(
-                id="c001", content="Supported", confidence=0.7, supported_by=["c002"]
+                id="c001", content="Supported", confidence=0.7, subs=["c002"]
             ),
-            Claim(id="c002", content="Supporter", confidence=0.8, supports=["c001"]),
+            Claim(id="c002", content="Supporter", confidence=0.8, supers=["c001"]),
         ]
 
         analysis = analyze_claim_relationships(claims[0], claims)
@@ -524,12 +524,12 @@ class TestRelationshipAnalysis:
                 id="c001",
                 content="Middle",
                 confidence=0.7,
-                supported_by=["c002"],
-                supports=["c003"],
+                subs=["c002"],
+                supers=["c003"],
             ),
-            Claim(id="c002", content="Supporter", confidence=0.8, supports=["c001"]),
+            Claim(id="c002", content="Supporter", confidence=0.8, supers=["c001"]),
             Claim(
-                id="c003", content="Supported", confidence=0.6, supported_by=["c001"]
+                id="c003", content="Supported", confidence=0.6, subs=["c001"]
             ),
         ]
 
@@ -545,7 +545,7 @@ class TestRelationshipAnalysis:
 class TestSuggestRelationships:
     """Test relationship suggestions"""
 
-    def test_suggest_support_relationships_similar_content(self):
+    def test_suggest_sub_relationships_similar_content(self):
         """Test suggesting relationships based on content similarity"""
         claim = Claim(
             id="c001", content="machine learning model accuracy", confidence=0.7
@@ -558,7 +558,7 @@ class TestSuggestRelationships:
             Claim(id="c003", content="completely different topic", confidence=0.6),
         ]
 
-        suggestions = suggest_support_relationships(
+        suggestions = suggest_sub_relationships(
             claim, all_claims, max_suggestions=5
         )
 
@@ -568,10 +568,10 @@ class TestSuggestRelationships:
         assert "c002" in suggested_ids
         assert "c003" not in suggested_ids
 
-    def test_suggest_support_relationships_excludes_existing(self):
+    def test_suggest_sub_relationships_excludes_existing(self):
         """Test that suggestions exclude existing supporters"""
         claim = Claim(
-            id="c001", content="machine learning", confidence=0.7, supported_by=["c002"]
+            id="c001", content="machine learning", confidence=0.7, subs=["c002"]
         )
         all_claims = [
             claim,
@@ -579,7 +579,7 @@ class TestSuggestRelationships:
             Claim(id="c003", content="machine learning accuracy", confidence=0.6),
         ]
 
-        suggestions = suggest_support_relationships(
+        suggestions = suggest_sub_relationships(
             claim, all_claims, max_suggestions=5
         )
 
@@ -589,7 +589,7 @@ class TestSuggestRelationships:
         # Should suggest c003
         assert "c003" in suggested_ids
 
-    def test_suggest_support_relationships_max_suggestions(self):
+    def test_suggest_sub_relationships_max_suggestions(self):
         """Test that max_suggestions is respected"""
         claim = Claim(id="c001", content="test claim", confidence=0.7)
         all_claims = [claim] + [
@@ -597,7 +597,7 @@ class TestSuggestRelationships:
             for i in range(2, 12)
         ]
 
-        suggestions = suggest_support_relationships(
+        suggestions = suggest_sub_relationships(
             claim, all_claims, max_suggestions=3
         )
 
@@ -610,9 +610,9 @@ class TestValidateConsistency:
     def test_validate_relationship_consistency_valid(self):
         """Test validating consistent relationships"""
         claims = [
-            Claim(id="c001", content="Root claim", confidence=0.8, supports=["c002"]),
+            Claim(id="c001", content="Root claim", confidence=0.8, supers=["c002"]),
             Claim(
-                id="c002", content="Leaf claim", confidence=0.7, supported_by=["c001"]
+                id="c002", content="Leaf claim", confidence=0.7, subs=["c001"]
             ),
         ]
 
@@ -623,7 +623,7 @@ class TestValidateConsistency:
     def test_validate_relationship_consistency_missing_claim(self):
         """Test detecting missing claim references"""
         claims = [
-            Claim(id="c001", content="Claim", confidence=0.8, supports=["c999"]),
+            Claim(id="c001", content="Claim", confidence=0.8, supers=["c999"]),
         ]
 
         errors = validate_relationship_consistency(claims)
@@ -634,8 +634,8 @@ class TestValidateConsistency:
     def test_validate_relationship_consistency_circular(self):
         """Test detecting circular dependencies"""
         claims = [
-            Claim(id="c001", content="Claim 1", confidence=0.8, supports=["c002"]),
-            Claim(id="c002", content="Claim 2", confidence=0.7, supports=["c001"]),
+            Claim(id="c001", content="Claim 1", confidence=0.8, supers=["c002"]),
+            Claim(id="c002", content="Claim 2", confidence=0.7, supers=["c001"]),
         ]
 
         errors = validate_relationship_consistency(claims)
@@ -666,9 +666,9 @@ class TestConfidencePropagation:
     def test_propagate_confidence_updates_simple(self):
         """Test simple confidence propagation"""
         claims = [
-            Claim(id="c001", content="Supporter", confidence=0.5, supports=["c002"]),
+            Claim(id="c001", content="Supporter", confidence=0.5, supers=["c002"]),
             Claim(
-                id="c002", content="Supported", confidence=0.5, supported_by=["c001"]
+                id="c002", content="Supported", confidence=0.5, subs=["c001"]
             ),
         ]
 
@@ -723,10 +723,10 @@ class TestRelationshipHeatmap:
                 id="c001",
                 content="Supported",
                 confidence=0.7,
-                supported_by=["c002", "c003"],
+                subs=["c002", "c003"],
             ),
-            Claim(id="c002", content="Supporter 1", confidence=0.8, supports=["c001"]),
-            Claim(id="c003", content="Supporter 2", confidence=0.6, supports=["c001"]),
+            Claim(id="c002", content="Supporter 1", confidence=0.8, supers=["c001"]),
+            Claim(id="c003", content="Supporter 2", confidence=0.6, supers=["c001"]),
         ]
 
         heatmap = create_relationship_heatmap(claims)
@@ -760,17 +760,17 @@ class TestRelationshipStatistics:
                 id="c001",
                 content="Root claim",
                 confidence=0.8,
-                supports=["c002", "c003"],
+                supers=["c002", "c003"],
             ),
             Claim(
                 id="c002",
                 content="Middle",
                 confidence=0.7,
-                supported_by=["c001"],
-                supports=["c004"],
+                subs=["c001"],
+                supers=["c004"],
             ),
-            Claim(id="c003", content="Leaf 1", confidence=0.6, supported_by=["c001"]),
-            Claim(id="c004", content="Leaf 2", confidence=0.5, supported_by=["c002"]),
+            Claim(id="c003", content="Leaf 1", confidence=0.6, subs=["c001"]),
+            Claim(id="c004", content="Leaf 2", confidence=0.5, subs=["c002"]),
             Claim(id="c005", content="Orphan", confidence=0.4),
         ]
 
@@ -807,8 +807,8 @@ class TestRelationshipStatistics:
     def test_get_relationship_statistics_circular(self):
         """Test statistics with circular dependencies"""
         claims = [
-            Claim(id="c001", content="Claim 1", confidence=0.8, supports=["c002"]),
-            Claim(id="c002", content="Claim 2", confidence=0.7, supports=["c001"]),
+            Claim(id="c001", content="Claim 1", confidence=0.8, supers=["c002"]),
+            Claim(id="c002", content="Claim 2", confidence=0.7, supers=["c001"]),
         ]
 
         stats = get_relationship_statistics(claims)
@@ -822,17 +822,17 @@ class TestRelationshipStatistics:
                 id="c001",
                 content="Claim 1",
                 confidence=0.8,
-                supported_by=["c002", "c003"],
-                supports=["c004"],
+                subs=["c002", "c003"],
+                supers=["c004"],
             ),
-            Claim(id="c002", content="Claim 2", confidence=0.7, supports=["c001"]),
-            Claim(id="c003", content="Claim 3", confidence=0.6, supports=["c001"]),
-            Claim(id="c004", content="Claim 4", confidence=0.5, supported_by=["c001"]),
+            Claim(id="c002", content="Claim 2", confidence=0.7, supers=["c001"]),
+            Claim(id="c003", content="Claim 3", confidence=0.6, supers=["c001"]),
+            Claim(id="c004", content="Claim 4", confidence=0.5, subs=["c001"]),
         ]
 
         stats = get_relationship_statistics(claims)
 
-        # c001 has 2 supported_by, others have 0 or 1 -> avg = (2+0+0+1)/4 = 0.75
-        assert "avg_supported_by" in stats
-        # c001 has 1 supports, c002 has 1, c003 has 1, c004 has 0 -> avg = (1+1+1+0)/4 = 0.75
-        assert "avg_supports" in stats
+        # c001 has 2 subs, others have 0 or 1 -> avg = (2+0+0+1)/4 = 0.75
+        assert "avg_subs" in stats
+        # c001 has 1 supers, c002 has 1, c003 has 1, c004 has 0 -> avg = (1+1+1+0)/4 = 0.75
+        assert "avg_supers" in stats

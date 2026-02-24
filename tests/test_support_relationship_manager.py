@@ -34,8 +34,8 @@ class TestBasicInitialization:
         manager = SupportRelationshipManager([])
         assert manager.claims == []
         assert manager.claim_index == {}
-        assert manager._support_map is not None
-        assert manager._supporter_map is not None
+        assert manager._super_map is not None
+        assert manager._sub_map is not None
 
     def test_init_single_claim(self):
         """Test initialization with single claim"""
@@ -51,18 +51,18 @@ class TestBasicInitialization:
             id="c001",
             content="Supporting claim",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported claim",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
         assert len(manager.claims) == 2
-        assert "c001" in manager._support_map
-        assert "c002" in manager._support_map["c001"]
+        assert "c001" in manager._super_map
+        assert "c002" in manager._super_map["c001"]
 
     def test_build_relationship_maps(self):
         """Test relationship maps are built correctly"""
@@ -70,146 +70,146 @@ class TestBasicInitialization:
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
         # Check support map (forward direction)
-        assert "c002" in manager._support_map["c001"]
-        assert len(manager._support_map["c002"]) == 0
+        assert "c002" in manager._super_map["c001"]
+        assert len(manager._super_map["c002"]) == 0
 
         # Check supporter map (backward direction)
-        assert "c001" in manager._supporter_map["c002"]
-        assert len(manager._supporter_map["c001"]) == 0
+        assert "c001" in manager._sub_map["c002"]
+        assert len(manager._sub_map["c001"]) == 0
 
 
 class TestGetRelationships:
     """Test getting direct relationships"""
 
-    def test_get_supporting_claims_simple(self):
+    def test_get_sub_claims_simple(self):
         """Test retrieving direct supporters"""
         claim1 = Claim(
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
-        supporters = manager.get_supporting_claims("c002")
+        supporters = manager.get_sub_claims("c002")
         assert len(supporters) == 1
         assert supporters[0].id == "c001"
 
-    def test_get_supporting_claims_empty(self):
+    def test_get_sub_claims_empty(self):
         """Test retrieving supporters when none exist"""
         claim = Claim(id="c001", content="Root claim", confidence=0.9)
         manager = SupportRelationshipManager([claim])
 
-        supporters = manager.get_supporting_claims("c001")
+        supporters = manager.get_sub_claims("c001")
         assert len(supporters) == 0
 
-    def test_get_supporting_claims_nonexistent(self):
+    def test_get_sub_claims_nonexistent(self):
         """Test retrieving supporters for nonexistent claim"""
         manager = SupportRelationshipManager([])
-        supporters = manager.get_supporting_claims("c999")
+        supporters = manager.get_sub_claims("c999")
         assert supporters == []
 
-    def test_get_supporting_claims_multiple(self):
+    def test_get_sub_claims_multiple(self):
         """Test retrieving multiple supporters"""
         claim1 = Claim(
             id="c001",
             content="Supporter 1",
             confidence=0.9,
-            supports=["c003"],
+            supers=["c003"],
         )
         claim2 = Claim(
             id="c002",
             content="Supporter 2",
             confidence=0.85,
-            supports=["c003"],
+            supers=["c003"],
         )
         claim3 = Claim(
             id="c003",
             content="Supported",
             confidence=0.8,
-            supported_by=["c001", "c002"],
+            subs=["c001", "c002"],
         )
         manager = SupportRelationshipManager([claim1, claim2, claim3])
 
-        supporters = manager.get_supporting_claims("c003")
+        supporters = manager.get_sub_claims("c003")
         assert len(supporters) == 2
         supporter_ids = {s.id for s in supporters}
         assert supporter_ids == {"c001", "c002"}
 
-    def test_get_supported_claims_simple(self):
+    def test_get_super_claims_simple(self):
         """Test retrieving direct supported claims"""
         claim1 = Claim(
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
-        supported = manager.get_supported_claims("c001")
+        supported = manager.get_super_claims("c001")
         assert len(supported) == 1
         assert supported[0].id == "c002"
 
-    def test_get_supported_claims_empty(self):
+    def test_get_super_claims_empty(self):
         """Test retrieving supported claims when none exist"""
         claim = Claim(id="c001", content="Leaf claim", confidence=0.9)
         manager = SupportRelationshipManager([claim])
 
-        supported = manager.get_supported_claims("c001")
+        supported = manager.get_super_claims("c001")
         assert len(supported) == 0
 
-    def test_get_supported_claims_nonexistent(self):
+    def test_get_super_claims_nonexistent(self):
         """Test retrieving supported claims for nonexistent claim"""
         manager = SupportRelationshipManager([])
-        supported = manager.get_supported_claims("c999")
+        supported = manager.get_super_claims("c999")
         assert supported == []
 
-    def test_get_supported_claims_multiple(self):
+    def test_get_super_claims_multiple(self):
         """Test retrieving multiple supported claims"""
         claim1 = Claim(
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002", "c003"],
+            supers=["c002", "c003"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported 1",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         claim3 = Claim(
             id="c003",
             content="Supported 2",
             confidence=0.85,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2, claim3])
 
-        supported = manager.get_supported_claims("c001")
+        supported = manager.get_super_claims("c001")
         assert len(supported) == 2
         supported_ids = {s.id for s in supported}
         assert supported_ids == {"c002", "c003"}
@@ -218,141 +218,141 @@ class TestGetRelationships:
 class TestTransitiveTraversal:
     """Test transitive relationship traversal"""
 
-    def test_get_all_supporting_ancestors_simple_chain(self):
+    def test_get_all_sub_ancestors_simple_chain(self):
         """Test upward traversal in simple chain"""
         claim1 = Claim(
             id="c001",
             content="Root claim",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Middle claim",
             confidence=0.85,
-            supports=["c003"],
-            supported_by=["c001"],
+            supers=["c003"],
+            subs=["c001"],
         )
         claim3 = Claim(
             id="c003",
             content="Leaf claim",
             confidence=0.8,
-            supported_by=["c002"],
+            subs=["c002"],
         )
         manager = SupportRelationshipManager([claim1, claim2, claim3])
 
-        result = manager.get_all_supporting_ancestors("c003")
+        result = manager.get_all_sub_ancestors("c003")
         assert isinstance(result, TraversalResult)
         assert "c001" in result.visited_claims
         assert "c002" in result.visited_claims
         assert "c003" not in result.visited_claims  # Exclude starting claim
         assert result.depth >= 1
 
-    def test_get_all_supporting_ancestors_empty(self):
+    def test_get_all_sub_ancestors_empty(self):
         """Test upward traversal with no ancestors"""
         claim = Claim(id="c001", content="Root claim", confidence=0.9)
         manager = SupportRelationshipManager([claim])
 
-        result = manager.get_all_supporting_ancestors("c001")
+        result = manager.get_all_sub_ancestors("c001")
         assert len(result.visited_claims) == 0
         assert result.depth == 0
 
-    def test_get_all_supporting_ancestors_nonexistent(self):
+    def test_get_all_sub_ancestors_nonexistent(self):
         """Test upward traversal for nonexistent claim"""
         manager = SupportRelationshipManager([])
-        result = manager.get_all_supporting_ancestors("c999")
+        result = manager.get_all_sub_ancestors("c999")
         assert result.visited_claims == []
         assert result.traversal_path == []
 
-    def test_get_all_supporting_ancestors_max_depth(self):
+    def test_get_all_sub_ancestors_max_depth(self):
         """Test upward traversal respects max_depth"""
         # Create deep chain
         claims = []
         for i in range(10):
             claim_id = f"c{i:03d}"
-            supports = [f"c{i + 1:03d}"] if i < 9 else []
-            supported_by = [f"c{i - 1:03d}"] if i > 0 else []
+            supers = [f"c{i + 1:03d}"] if i < 9 else []
+            subs = [f"c{i - 1:03d}"] if i > 0 else []
             claims.append(
                 Claim(
                     id=claim_id,
                     content=f"Claim {i}",
                     confidence=0.9,
-                    supports=supports,
-                    supported_by=supported_by,
+                    supers=supers,
+                    subs=subs,
                 )
             )
 
         manager = SupportRelationshipManager(claims)
-        result = manager.get_all_supporting_ancestors("c009", max_depth=3)
+        result = manager.get_all_sub_ancestors("c009", max_depth=3)
         # With max_depth=3, should not traverse more than 3 levels
         assert result.depth <= 3
 
-    def test_get_all_supported_descendants_simple_chain(self):
+    def test_get_all_super_descendants_simple_chain(self):
         """Test downward traversal in simple chain"""
         claim1 = Claim(
             id="c001",
             content="Root claim",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Middle claim",
             confidence=0.85,
-            supports=["c003"],
-            supported_by=["c001"],
+            supers=["c003"],
+            subs=["c001"],
         )
         claim3 = Claim(
             id="c003",
             content="Leaf claim",
             confidence=0.8,
-            supported_by=["c002"],
+            subs=["c002"],
         )
         manager = SupportRelationshipManager([claim1, claim2, claim3])
 
-        result = manager.get_all_supported_descendants("c001")
+        result = manager.get_all_super_descendants("c001")
         assert isinstance(result, TraversalResult)
         assert "c002" in result.visited_claims
         assert "c003" in result.visited_claims
         assert "c001" not in result.visited_claims  # Exclude starting claim
         assert result.depth >= 1
 
-    def test_get_all_supported_descendants_empty(self):
+    def test_get_all_super_descendants_empty(self):
         """Test downward traversal with no descendants"""
         claim = Claim(id="c001", content="Leaf claim", confidence=0.9)
         manager = SupportRelationshipManager([claim])
 
-        result = manager.get_all_supported_descendants("c001")
+        result = manager.get_all_super_descendants("c001")
         assert len(result.visited_claims) == 0
         assert result.depth == 0
 
-    def test_get_all_supported_descendants_nonexistent(self):
+    def test_get_all_super_descendants_nonexistent(self):
         """Test downward traversal for nonexistent claim"""
         manager = SupportRelationshipManager([])
-        result = manager.get_all_supported_descendants("c999")
+        result = manager.get_all_super_descendants("c999")
         assert result.visited_claims == []
         assert result.traversal_path == []
 
-    def test_get_all_supported_descendants_max_depth(self):
+    def test_get_all_super_descendants_max_depth(self):
         """Test downward traversal respects max_depth"""
         # Create deep chain
         claims = []
         for i in range(10):
             claim_id = f"c{i:03d}"
-            supports = [f"c{i + 1:03d}"] if i < 9 else []
-            supported_by = [f"c{i - 1:03d}"] if i > 0 else []
+            supers = [f"c{i + 1:03d}"] if i < 9 else []
+            subs = [f"c{i - 1:03d}"] if i > 0 else []
             claims.append(
                 Claim(
                     id=claim_id,
                     content=f"Claim {i}",
                     confidence=0.9,
-                    supports=supports,
-                    supported_by=supported_by,
+                    supers=supers,
+                    subs=subs,
                 )
             )
 
         manager = SupportRelationshipManager(claims)
-        result = manager.get_all_supported_descendants("c000", max_depth=3)
+        result = manager.get_all_super_descendants("c000", max_depth=3)
         # With max_depth=3, should not traverse more than 3 levels
         assert result.depth <= 3
 
@@ -366,13 +366,13 @@ class TestCycleDetection:
             id="c001",
             content="Root claim",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Leaf claim",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
@@ -390,15 +390,15 @@ class TestCycleDetection:
             id="c001",
             content="Claim 1",
             confidence=0.9,
-            supports=["c002"],
-            supported_by=["c002"],
+            supers=["c002"],
+            subs=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Claim 2",
             confidence=0.8,
-            supports=["c001"],
-            supported_by=["c001"],
+            supers=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
@@ -412,19 +412,19 @@ class TestCycleDetection:
             id="c001",
             content="Claim 1",
             confidence=0.9,
-            supports=["c002"],
-            supported_by=["c002"],
+            supers=["c002"],
+            subs=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Claim 2",
             confidence=0.8,
-            supports=["c001"],
-            supported_by=["c001"],
+            supers=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
-        result = manager.get_all_supporting_ancestors("c001")
+        result = manager.get_all_sub_ancestors("c001")
         # Should detect cycle
         assert len(result.cycles) > 0 or len(result.visited_claims) < 10
 
@@ -438,13 +438,13 @@ class TestShortestPath:
             id="c001",
             content="Start claim",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="End claim",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
@@ -490,20 +490,20 @@ class TestShortestPath:
             id="c001",
             content="Start claim",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Middle claim",
             confidence=0.85,
-            supports=["c003"],
-            supported_by=["c001"],
+            supers=["c003"],
+            subs=["c001"],
         )
         claim3 = Claim(
             id="c003",
             content="End claim",
             confidence=0.8,
-            supported_by=["c002"],
+            subs=["c002"],
         )
         manager = SupportRelationshipManager([claim1, claim2, claim3])
 
@@ -517,71 +517,71 @@ class TestShortestPath:
 class TestAddRemoveRelationships:
     """Test adding and removing relationships"""
 
-    def test_add_support_relationship_success(self):
+    def test_add_relationship_success(self):
         """Test successfully adding a support relationship"""
         claim1 = Claim(id="c001", content="Supporter", confidence=0.9)
         claim2 = Claim(id="c002", content="Supported", confidence=0.8)
         manager = SupportRelationshipManager([claim1, claim2])
 
-        result = manager.add_support_relationship("c001", "c002")
+        result = manager.add_relationship("c001", "c002")
         assert result is True
-        assert "c002" in claim1.supports
-        assert "c001" in claim2.supported_by
+        assert "c002" in claim1.supers
+        assert "c001" in claim2.subs
 
-    def test_add_support_relationship_nonexistent_supporter(self):
+    def test_add_relationship_nonexistent_supporter(self):
         """Test adding relationship with nonexistent supporter"""
         claim = Claim(id="c001", content="Exists", confidence=0.9)
         manager = SupportRelationshipManager([claim])
 
-        result = manager.add_support_relationship("c999", "c001")
+        result = manager.add_relationship("c999", "c001")
         assert result is False
 
-    def test_add_support_relationship_nonexistent_supported(self):
+    def test_add_relationship_nonexistent_supported(self):
         """Test adding relationship with nonexistent supported claim"""
         claim = Claim(id="c001", content="Exists", confidence=0.9)
         manager = SupportRelationshipManager([claim])
 
-        result = manager.add_support_relationship("c001", "c999")
+        result = manager.add_relationship("c001", "c999")
         assert result is False
 
-    def test_add_support_relationship_self_reference(self):
+    def test_add_relationship_self_reference(self):
         """Test adding relationship from claim to itself"""
         claim = Claim(id="c001", content="Self claim", confidence=0.9)
         manager = SupportRelationshipManager([claim])
 
-        result = manager.add_support_relationship("c001", "c001")
+        result = manager.add_relationship("c001", "c001")
         assert result is False
 
-    def test_add_support_relationship_duplicate(self):
+    def test_add_relationship_duplicate(self):
         """Test adding duplicate relationship"""
         claim1 = Claim(
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
-        result = manager.add_support_relationship("c001", "c002")
+        result = manager.add_relationship("c001", "c002")
         assert result is False  # Already exists
 
-    def test_add_support_relationship_updates_maps(self):
+    def test_add_relationship_updates_maps(self):
         """Test that adding relationship updates internal maps"""
         claim1 = Claim(id="c001", content="Supporter", confidence=0.9)
         claim2 = Claim(id="c002", content="Supported", confidence=0.8)
         manager = SupportRelationshipManager([claim1, claim2])
 
-        manager.add_support_relationship("c001", "c002")
-        assert "c002" in manager._support_map["c001"]
-        assert "c001" in manager._supporter_map["c002"]
+        manager.add_relationship("c001", "c002")
+        assert "c002" in manager._super_map["c001"]
+        assert "c001" in manager._sub_map["c002"]
 
-    def test_add_support_relationship_invalidates_metrics(self):
+    def test_add_relationship_invalidates_metrics(self):
         """Test that adding relationship invalidates cached metrics"""
         claim1 = Claim(id="c001", content="Supporter", confidence=0.9)
         claim2 = Claim(id="c002", content="Supported", confidence=0.8)
@@ -592,66 +592,66 @@ class TestAddRemoveRelationships:
         assert metrics is not None
 
         # Add relationship
-        manager.add_support_relationship("c001", "c002")
+        manager.add_relationship("c001", "c002")
 
         # Metrics should be invalidated
         assert manager._relationship_metrics is None
 
-    def test_remove_support_relationship_success(self):
+    def test_remove_relationship_success(self):
         """Test successfully removing a support relationship"""
         claim1 = Claim(
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
-        result = manager.remove_support_relationship("c001", "c002")
+        result = manager.remove_relationship("c001", "c002")
         assert result is True
-        assert "c002" not in claim1.supports
-        assert "c001" not in claim2.supported_by
+        assert "c002" not in claim1.supers
+        assert "c001" not in claim2.subs
 
-    def test_remove_support_relationship_nonexistent(self):
+    def test_remove_relationship_nonexistent(self):
         """Test removing relationship that doesn't exist"""
         claim1 = Claim(id="c001", content="Claim 1", confidence=0.9)
         claim2 = Claim(id="c002", content="Claim 2", confidence=0.8)
         manager = SupportRelationshipManager([claim1, claim2])
 
-        result = manager.remove_support_relationship("c001", "c002")
+        result = manager.remove_relationship("c001", "c002")
         assert result is False
 
-    def test_remove_support_relationship_nonexistent_claims(self):
+    def test_remove_relationship_nonexistent_claims(self):
         """Test removing relationship with nonexistent claims"""
         manager = SupportRelationshipManager([])
-        result = manager.remove_support_relationship("c001", "c002")
+        result = manager.remove_relationship("c001", "c002")
         assert result is False
 
-    def test_remove_support_relationship_updates_maps(self):
+    def test_remove_relationship_updates_maps(self):
         """Test that removing relationship updates internal maps"""
         claim1 = Claim(
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
-        manager.remove_support_relationship("c001", "c002")
-        assert "c002" not in manager._support_map["c001"]
-        assert "c001" not in manager._supporter_map["c002"]
+        manager.remove_relationship("c001", "c002")
+        assert "c002" not in manager._super_map["c001"]
+        assert "c001" not in manager._sub_map["c002"]
 
 
 class TestRelationshipValidation:
@@ -663,13 +663,13 @@ class TestRelationshipValidation:
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
@@ -687,27 +687,27 @@ class TestRelationshipValidation:
             id="c001",
             content="Claim",
             confidence=0.9,
-            supported_by=["c999"],  # Nonexistent
+            subs=["c999"],  # Nonexistent
         )
         manager = SupportRelationshipManager([claim])
 
         errors = manager.validate_relationship_consistency()
         assert len(errors) > 0
-        assert any("non-existent supporter" in err for err in errors)
+        assert any("non-existent sub" in err for err in errors)
 
     def test_validate_relationship_consistency_missing_supported(self):
-        """Test validation detects missing supported claim"""
+        """Test validation detects missing super claim"""
         claim = Claim(
             id="c001",
             content="Claim",
             confidence=0.9,
-            supports=["c999"],  # Nonexistent
+            supers=["c999"],  # Nonexistent
         )
         manager = SupportRelationshipManager([claim])
 
         errors = manager.validate_relationship_consistency()
         assert len(errors) > 0
-        assert any("non-existent supported" in err for err in errors)
+        assert any("non-existent super" in err for err in errors)
 
     def test_validate_relationship_consistency_unidirectional(self):
         """Test validation detects unidirectional relationships"""
@@ -715,13 +715,13 @@ class TestRelationshipValidation:
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported",
             confidence=0.8,
-            # Missing supported_by=["c001"]
+            # Missing subs=["c001"]
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
@@ -748,13 +748,13 @@ class TestMetrics:
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
@@ -777,13 +777,13 @@ class TestMetrics:
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
@@ -802,20 +802,20 @@ class TestDepthOrganization:
             id="c001",
             content="Root claim",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Level 1",
             confidence=0.85,
-            supports=["c003"],
-            supported_by=["c001"],
+            supers=["c003"],
+            subs=["c001"],
         )
         claim3 = Claim(
             id="c003",
             content="Level 2",
             confidence=0.8,
-            supported_by=["c002"],
+            subs=["c002"],
         )
         manager = SupportRelationshipManager([claim1, claim2, claim3])
 
@@ -849,13 +849,13 @@ class TestUtilityOperations:
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
@@ -900,24 +900,24 @@ class TestUtilityOperations:
             id="c001",
             content="Supporter",
             confidence=0.9,
-            supports=["c002"],
+            supers=["c002"],
         )
         claim2 = Claim(
             id="c002",
             content="Supported",
             confidence=0.8,
-            supported_by=["c001"],
+            subs=["c001"],
         )
         manager = SupportRelationshipManager([claim1, claim2])
 
         graph = manager.export_relationship_graph()
-        assert "supports" in graph
-        assert "supported_by" in graph
-        assert "c002" in graph["supports"]["c001"]
-        assert "c001" in graph["supported_by"]["c002"]
+        assert "supers" in graph
+        assert "subs" in graph
+        assert "c002" in graph["supers"]["c001"]
+        assert "c001" in graph["subs"]["c002"]
 
     def test_export_relationship_graph_empty(self):
         """Test exporting empty graph"""
         manager = SupportRelationshipManager([])
         graph = manager.export_relationship_graph()
-        assert graph == {"supports": {}, "supported_by": {}}
+        assert graph == {"supers": {}, "subs": {}}
