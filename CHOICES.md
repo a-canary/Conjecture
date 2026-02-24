@@ -193,7 +193,7 @@ Claims link via `supports` (this claim supports other claims) and `supported_by`
 ### D-0004: Tag Lifecycle Management
 Supports: D-0001, F-0003
 
-Tags are user-assigned keywords. Lifecycle: Creation (user adds freely) → Consolidation (system suggests merging synonyms) → Retirement (unused tags purged).
+Tags are LLM-generated, not user-assigned. LLM prompts include all existing tags; LLM reuses or creates new. Nightly condensation: tags >10% usage → split to specifics; total >500 → merge similar. Max 20 per claim.
 
 ### D-0005: Four-Level Scope Model
 Supports: M-0005, D-0001
@@ -265,9 +265,9 @@ Supports: A-0004, M-0002, M-0003
 The Process Layer treats all input as compound. Prompts are decomposed into constituent claims (questions, assertions, references, context) using LLM analysis before reasoning. This is not a separate step — decomposition is how the harness thinks.
 
 ### A-0010: LLM Operates via Claim Tools
-Supports: A-0004, M-0002, M-0006, F-0001
+Supports: A-0004, M-0002, M-0006, F-0001, D-0004
 
-The LLM is given tools to CRUD claims, respond to user, and invoke other skills. Responses aren't raw text — they're structured claim operations. This makes all LLM reasoning traceable through the claim graph.
+The LLM is given tools to CRUD claims, respond to user, and invoke other skills. Responses aren't raw text — they're structured claim operations. This makes all LLM reasoning traceable through the claim graph. Tag generation occurs here — LLM sees all existing tags and can reuse or create new ones.
 
 ### A-0011: Cascading Evaluation on Upstream Changes
 Supports: A-0004, D-0006, M-0004
