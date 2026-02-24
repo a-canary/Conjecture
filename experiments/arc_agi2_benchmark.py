@@ -303,33 +303,17 @@ Respond only with the output grid as a JSON array of arrays.
         reasoning_steps = 0
 
         try:
-            processor = self._get_conjecture_processor()
-            prompt = self._format_task_prompt(task, include_reasoning=True)
+            # Use Conjecture harness for claim-based reasoning
+            from conjecture_harness import create_conjecture_harness
 
-            # TODO: Integrate with full Conjecture harness
-            # For now, use enhanced prompting as placeholder
-            system_prompt = """You are an expert at visual pattern recognition and abstract reasoning.
-Use the Conjecture method:
-1. Create claims about the patterns you observe
-2. Assign confidence to each claim
-3. Verify claims against training examples
-4. Synthesize a solution from validated claims
-"""
+            harness = create_conjecture_harness(self._conjecture_processor)
+            session, predicted = harness.process_task(task)
 
-            response = processor.generate_response(
-                prompt=prompt,
-                system_prompt=system_prompt,
-                max_tokens=1000,
-            )
+            # Get stats from harness
+            stats = harness.get_session_stats(session)
+            claims_generated = stats["total_claims"]
+            reasoning_steps = stats["reasoning_steps"]
 
-            # Count reasoning indicators
-            if "REASONING:" in response:
-                reasoning_text = response.split("REASONING:")[-1].split("OUTPUT:")[0]
-                reasoning_steps = reasoning_text.count("\n") + 1
-                # Estimate claims from reasoning
-                claims_generated = max(1, reasoning_steps // 2)
-
-            predicted = self._parse_output(response)
             correct = self._grids_match(predicted, task.test_output)
 
             return BenchmarkResult(
@@ -342,6 +326,57 @@ Use the Conjecture method:
                 claims_generated=claims_generated,
                 reasoning_steps=reasoning_steps,
             )
+
+        except ImportError:
+            # Fallback if harness not available: use enhanced prompting
+            try:
+                processor = self._get_conjecture_processor()
+                prompt = self._format_task_prompt(task, include_reasoning=True)
+
+                system_prompt = """You are an expert at visual pattern recognition and abstract reasoning.
+Use the Conjecture method:
+1. Create claims about the patterns you observe
+2. Assign confidence to each claim
+3. Verify claims against training examples
+4. Synthesize a solution from validated claims
+"""
+
+                response = processor.generate_response(
+                    prompt=prompt,
+                    system_prompt=system_prompt,
+                    max_tokens=1000,
+                )
+
+                # Count reasoning indicators
+                if "REASONING:" in response:
+                    reasoning_text = response.split("REASONING:")[-1].split("OUTPUT:")[0]
+                    reasoning_steps = reasoning_text.count("\n") + 1
+                    claims_generated = max(1, reasoning_steps // 2)
+
+                predicted = self._parse_output(response)
+                correct = self._grids_match(predicted, task.test_output)
+
+                return BenchmarkResult(
+                    task_id=task.task_id,
+                    mode="haiku_conjecture",
+                    correct=correct,
+                    predicted_output=predicted,
+                    expected_output=task.test_output,
+                    processing_time=time.time() - start_time,
+                    claims_generated=claims_generated,
+                    reasoning_steps=reasoning_steps,
+                )
+
+            except Exception as e:
+                return BenchmarkResult(
+                    task_id=task.task_id,
+                    mode="haiku_conjecture",
+                    correct=False,
+                    predicted_output=None,
+                    expected_output=task.test_output,
+                    processing_time=time.time() - start_time,
+                    error_message=str(e),
+                )
 
         except Exception as e:
             return BenchmarkResult(
