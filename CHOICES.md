@@ -105,7 +105,7 @@ Users can inspect the breakdown and supporting claims for any past or current pr
 ### F-0001: Claim Management Core
 Supports: M-0002, M-0003
 
-Create, retrieve, search, and analyze claims. Each claim has: id, content, confidence (0.0-1.0), state, type, tags, and bidirectional relationships (supports/supported_by).
+Create, retrieve, search, and analyze claims. Each claim has: id, content, confidence (0.0-1.0), state, type, tags, and bidirectional relationships (supers/subs).
 
 ### F-0002: Confidence Scoring
 Supports: M-0002, F-0001
@@ -178,7 +178,7 @@ LLM operations use exponential backoff (10s-10min range) with error-type-specifi
 ### D-0001: Universal Claim Model
 Supports: M-0002, F-0001
 
-Single data model across all layers: id, content, confidence, state, type, tags, supports, supported_by. No complex derived models. Simplicity over expressiveness.
+Single data model across all layers: id, content, confidence, state, type, tags, supers, subs. No complex derived models. Simplicity over expressiveness.
 
 ### D-0002: Evaluation Priority Tuple
 Supports: D-0001, M-0002
@@ -188,7 +188,7 @@ Claims are selected for evaluation by [dirty, confidence, root_similarity] tuple
 ### D-0003: Bidirectional Relationships
 Supports: D-0001, F-0001
 
-Claims link via `supports` (this claim supports other claims) and `supported_by` (other claims support this claim). Enables graph traversal for context building.
+Claims link via `supers` (claims this provides evidence FOR, toward root) and `subs` (claims that provide evidence FOR this). Naming reflects decomposition: break down into subs, build up to supers. Enables graph traversal for context building.
 
 ### D-0004: Tag Lifecycle Management
 Supports: D-0001, F-0003
@@ -203,7 +203,7 @@ Claims support four scopes: USER_WORKSPACE, TEAM_WORKSPACE, TEAM_WIDE, PUBLIC. S
 ### D-0006: Dirty Flag for Re-Evaluation Queue
 Supports: D-0001, D-0002
 
-Claims track dirty state with reasons. When supporting claim changes, mark claims it `supports` (parents) dirty — unidirectional cascade toward root context. Never cascade to `supported_by` (children). Clean = no support changed, re-eval would be no-op. Evaluation loop only processes dirty claims.
+Claims track dirty state with reasons. When claim changes, mark all `supers` dirty — unidirectional cascade toward root context. Never cascade to `subs`. Clean = no subs changed, re-eval would be no-op. Evaluation loop only processes dirty claims.
 
 ### D-0007: Acyclic Graph Enforcement
 Supports: D-0003
@@ -247,7 +247,7 @@ Context Builder assembles claim graphs. LLM Processor interprets context and gen
 ### A-0005: Context Building Strategy
 Supports: A-0004, D-0003, D-0007
 
-Build context by: 1) Traverse upward (supports) to root (100% inclusion), 2) Traverse downward (supported_by) to depth 2, 3) Semantic fill if token budget permits. Relies on acyclic graph property to prevent infinite traversal.
+Build context by: 1) Traverse `supers` to root (100% inclusion), 2) Traverse `subs` to depth 2, 3) Semantic fill if token budget permits. Relies on acyclic graph property to prevent infinite traversal.
 
 ### A-0006: Provider Pattern for LLM Backends
 Supports: A-0001, F-0004
@@ -277,7 +277,7 @@ The LLM is given tools to CRUD claims, respond to user, and invoke other skills.
 ### A-0011: Cascading Evaluation on Upstream Changes
 Supports: A-0004, D-0006, M-0004
 
-When claim A changes, mark all claims in A.supports dirty (claims that A provides evidence for). Unidirectional cascade toward root context. Never mark A.supported_by (children) dirty. Ensures parent conclusions re-evaluated when evidence changes.
+When claim changes, mark all `supers` dirty. Unidirectional cascade toward root context. Never mark `subs` dirty. Ensures parent conclusions re-evaluated when evidence changes.
 
 ### A-0012: Halt Condition for Final Response
 Supports: A-0004, M-0002, M-0006, D-0009
