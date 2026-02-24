@@ -44,4 +44,4 @@ Implement Conjecture evaluation system with Claude Agent SDK integration and ARC
 
 ## Current Phase: 3
 ## Status: in-progress
-## Notes: Framework complete. Need real ARC data and API key for full validation.
+## Notes: Framework complete. ARC data downloaded (1000 tasks). Conjecture harness integrated. Awaiting ANTHROPIC_API_KEY for live benchmark.
