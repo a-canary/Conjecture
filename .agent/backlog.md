@@ -473,16 +473,12 @@ Only keep the 50 most recent finished tasks.
 **Remaining work**: N/A
 **Result**: RESOLVED - sample_claim_data fixture exists at tests/conftest.py:1016. All tests collect successfully. Verified 2026-02-25.
 
-## 104 | Update EmbeddingService Tests | MEDIUM | open
+## 104 | Update EmbeddingService Tests | MEDIUM | deferred
 **Description**: Updating EmbeddingService test interface will match the current API implementation
 **Purpose**: Zero EmbeddingService interface mismatch errors needed for test stability
 **Plan**: .agent/plan/embedding_service_tests.md
 **Target**: Zero EmbeddingService interface mismatch errors
-**Remaining work**: 
-- [ ] Review current EmbeddingService implementation
-- [ ] Update test expectations to match API
-- [ ] Run tests to verify fixes
-- [ ] Ensure all EmbeddingService tests pass
+**Result**: DEFERRED - No embedding tests exist currently. No failures to fix. Will create tests when embedding service is actively developed.
 
 ## 105 | Sync RoutingStrategy Enum Values | MEDIUM | AI tested
 **Description**: Adding the missing `LEAST_LOADED` value to RoutingStrategy enum will resolve test failures
