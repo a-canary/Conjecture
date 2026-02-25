@@ -1,9 +1,9 @@
 {
-    "chutes": {"processor": "ChutesProcessor", "default_model": "zai-org/GLM-4.6"},
+    "chutes": {"processor": "ChutesProcessor", "default_model": "deepseek-ai/DeepSeek-V3", "primary": true},
     "openrouter": {"processor": "OpenRouterProcessor", "default_model": "openai/gpt-3.5-turbo"},
     "groq": {"processor": "GroqProcessor", "default_model": "llama3-8b-8192"},
     "openai": {"processor": "OpenAIProcessor", "default_model": "gpt-3.5-turbo"},
-    "anthropic": {"processor": "AnthropicProcessor", "default_model": "claude-3-5-haiku-latest", "primary": true},
+    "anthropic": {"processor": "AnthropicProcessor", "default_model": "claude-3-5-haiku-latest"},
     "google": {"processor": "GoogleProcessor", "default_model": "gemini-pro", "available": "GOOGLE_AVAILABLE"},
     "cohere": {"processor": "CohereProcessor", "default_model": "command"},
     "gemini": {"processor": "GeminiProcessor", "model_name": "gemini-1.5-flash", "available": "GEMINI_AVAILABLE"},

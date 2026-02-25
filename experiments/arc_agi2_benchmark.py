@@ -4,8 +4,8 @@ ARC-AGI-2 Benchmark Runner
 Primary benchmark per CHOICES.md O-0006
 
 Compares:
-- Bare Haiku: Direct prompting with claude-3-5-haiku-latest
-- Haiku+Conjecture: Same model with Conjecture harness for enhanced reasoning
+- Bare LLM: Direct prompting (Chutes/glm-4.5-air or Anthropic/Haiku)
+- LLM+Conjecture: Same model with Conjecture harness for enhanced reasoning
 
 The goal is to measure reasoning improvement from the Conjecture harness,
 not just speed or token efficiency.
@@ -16,6 +16,7 @@ import json
 import time
 import uuid
 import statistics
+import requests
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -28,6 +29,64 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 logger = logging.getLogger(__name__)
+
+
+class ChutesLLMWrapper:
+    """Wrapper for Chutes.ai API with compatible interface"""
+
+    def __init__(self, api_key: str, api_url: str, model_name: str):
+        self.api_key = api_key
+        self.api_url = api_url
+        self.model_name = model_name
+        self.stats = {"total_requests": 0, "successful_requests": 0, "total_tokens": 0}
+
+    def generate_response(
+        self,
+        prompt: str,
+        system_prompt: Optional[str] = None,
+        max_tokens: int = 1000,
+        temperature: float = 0.7,
+        **kwargs
+    ) -> str:
+        """Generate response using Chutes.ai"""
+        self.stats["total_requests"] += 1
+
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": prompt})
+
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+
+        data = {
+            "model": self.model_name,
+            "messages": messages,
+            "max_tokens": max_tokens,
+            "temperature": temperature
+        }
+
+        try:
+            response = requests.post(
+                f"{self.api_url}/chat/completions",
+                headers=headers,
+                json=data,
+                timeout=60
+            )
+            response.raise_for_status()
+            result = response.json()
+
+            content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+            self.stats["successful_requests"] += 1
+            self.stats["total_tokens"] += result.get("usage", {}).get("total_tokens", 0)
+
+            return content
+
+        except Exception as e:
+            logger.error(f"Chutes API error: {e}")
+            raise
 
 
 @dataclass
@@ -81,18 +140,20 @@ class ComparisonResult:
 
 class ARCBenchmarkRunner:
     """
-    Runs ARC-AGI-2 benchmark comparing bare Haiku vs Haiku+Conjecture
+    Runs ARC-AGI-2 benchmark comparing bare LLM vs LLM+Conjecture
     """
 
     def __init__(
         self,
         data_dir: str = "./data/arc_agi2",
         results_dir: str = "./results/arc_agi2",
-        haiku_model: str = "claude-3-5-haiku-latest",
+        model: str = "deepseek-ai/DeepSeek-V3",
+        provider: str = "chutes",
     ):
         self.data_dir = Path(data_dir)
         self.results_dir = Path(results_dir)
-        self.haiku_model = haiku_model
+        self.model = model
+        self.provider = provider
         self.results_dir.mkdir(parents=True, exist_ok=True)
 
         # Lazy-loaded components
@@ -100,21 +161,29 @@ class ARCBenchmarkRunner:
         self._conjecture_processor = None
 
     def _get_bare_processor(self):
-        """Get bare Haiku processor (direct prompting)"""
+        """Get bare LLM processor (direct prompting)"""
         if self._bare_processor is None:
-            try:
-                from processing.llm.anthropic_integration import create_anthropic_processor
-                self._bare_processor = create_anthropic_processor(model=self.haiku_model)
-            except ImportError:
-                logger.error("Cannot import Anthropic processor")
-                raise
+            if self.provider == "chutes":
+                api_key = os.environ.get("CHUTES_API_KEY")
+                if not api_key:
+                    raise ValueError("CHUTES_API_KEY environment variable required")
+                self._bare_processor = ChutesLLMWrapper(
+                    api_key=api_key,
+                    api_url="https://llm.chutes.ai/v1",
+                    model_name=self.model,
+                )
+            else:
+                try:
+                    from processing.llm.anthropic_integration import create_anthropic_processor
+                    self._bare_processor = create_anthropic_processor(model=self.model)
+                except ImportError:
+                    logger.error("Cannot import Anthropic processor")
+                    raise
         return self._bare_processor
 
     def _get_conjecture_processor(self):
-        """Get Haiku+Conjecture processor (enhanced reasoning)"""
+        """Get LLM+Conjecture processor (enhanced reasoning)"""
         if self._conjecture_processor is None:
-            # For now, use the same processor
-            # TODO: Integrate with full Conjecture harness
             self._conjecture_processor = self._get_bare_processor()
         return self._conjecture_processor
 
