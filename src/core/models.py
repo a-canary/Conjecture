@@ -234,6 +234,43 @@ Scope: {self.scope.value}
 Supers: {self.supers}
 Subs: {self.subs}"""
 
+    def mark_dirty(self, reason: str = "manual", priority: int = 0) -> None:
+        """Mark claim as dirty (needs re-evaluation).
+
+        Args:
+            reason: Reason for marking dirty (e.g., 'content_change', 'relationship_change')
+            priority: Priority level for re-evaluation (higher = more urgent)
+        """
+        self.is_dirty = True
+        self.dirty = True
+        self.dirty_priority = priority
+        self.dirty_timestamp = datetime.now(timezone.utc)
+        # Map string reason to DirtyReason enum if possible
+        reason_map = {
+            "content_change": DirtyReason.CONTENT_CHANGE,
+            "relationship_change": DirtyReason.RELATIONSHIP_CHANGE,
+            "confidence_change": DirtyReason.CONFIDENCE_CHANGE,
+            "state_change": DirtyReason.STATE_CHANGE,
+            "manual": DirtyReason.MANUAL_FLAG,
+        }
+        self.dirty_reason = reason_map.get(reason.lower(), DirtyReason.MANUAL_FLAG)
+
+    def mark_clean(self) -> None:
+        """Mark claim as clean (no longer needs re-evaluation)."""
+        self.is_dirty = False
+        self.dirty = False
+        self.dirty_reason = None
+        self.dirty_timestamp = None
+        self.dirty_priority = 0
+
+    def should_prioritize(self) -> bool:
+        """Check if claim should be prioritized for evaluation.
+
+        Returns:
+            True if claim has high confidence (>0.90) and is dirty
+        """
+        return self.is_dirty and self.confidence > 0.90
+
     def __hash__(self) -> int:
         """Make Claim hashable for use in sets"""
         return hash((self.id, self.content, self.confidence))

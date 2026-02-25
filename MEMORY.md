@@ -2,11 +2,13 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-Test infrastructure fully operational. 342 tests collect, 331 pass, 11 xfailed. Coverage 18.36% exceeds 15% target. Hypothesis validation infrastructure improved (#153): retry logic and \boxed{} extraction added. 41+ commits ahead of origin (push blocked by SSH key permissions).
+Test infrastructure operational. 342 tests, 331 pass, 11 xfailed. Gap analysis revealed ~20% of CHOICES.md implemented. Created repositories.py (GAP-1 fix) unblocking Process Layer imports. Critical gaps remain: database stubs, process layer incomplete, LLM integration untested. 42 commits ahead of origin (SSH blocked).
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-02-25: GATES_MET — Added mark_dirty(), mark_clean(), should_prioritize() to Claim model. Dirty flag infrastructure complete. 331 tests pass.
+- 2026-02-25: RESEARCH_COMPLETE — Gap analysis: ~20% of CHOICES.md implemented. Created repositories.py (280 lines) with ClaimRepository, RepositoryFactory. Fixed GAP-1 blocker. Remaining: GAP-2 (DB stubs), GAP-3 (Process stubs), GAP-4 (FastAPI missing).
 - 2026-02-25: WORK_DISPATCHED — Hypothesis validation infra (#153): added retry logic to gpt_oss_integration.py, improved \boxed{} extraction in external_benchmarks.py. 3 of 6 remaining items done.
 - 2026-02-25: GATES_MET — Backlog cleanup: marked 6 items resolved (#102, #103, #105, #106, #111, #112). Removed 3 TODOs from src/. 331 tests pass, 0 collection errors.
 - 2026-02-25: GATES_MET — Cycle complete. LanceDB removed (43 skipped→0). 342 tests, 331 pass, 11 xfail. Coverage 18.36%. optimized_sqlite_manager extended with batch methods.
@@ -37,6 +39,9 @@ Test infrastructure fully operational. 342 tests collect, 331 pass, 11 xfailed. 
 <!-- Recurring failures, provider errors, environment quirks -->
 - ~~**Rename needed**: `supports` → `supers`, `supported_by` → `subs`~~ **FIXED 2026-02-24**
 - ~~**dirty_flag.py line 98**: bidirectional cascade~~ **FIXED 2026-02-24** — Now unidirectional to supers only
-- **Git push blocked**: SSH key not configured for git@github.com:a-canary/Conjecture.git — requires user to configure SSH keys or use HTTPS
-- **Specs subdirs need update**: specs/context/, specs/implementation/, specs/llm/ still have old naming (low priority - example code)
+- ~~**GAP-1: Missing repositories.py**~~ **FIXED 2026-02-25** — Created with ClaimRepository, RepositoryFactory
+- **GAP-2: Database stubs** — data_manager.py, optimized_sqlite_manager.py raise NotImplementedError
+- **GAP-3: Process layer stubs** — llm_processor.py, context_builder.py at 0% coverage
+- **GAP-4: FastAPI missing** — endpoint_app.py import fails
+- **Git push blocked**: SSH key not configured — requires user to configure SSH keys or use HTTPS
 - **Python venv required**: Use `/workspace/.venv/bin/python` for testing
