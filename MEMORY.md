@@ -2,11 +2,12 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-Test infrastructure fully operational. 342 tests collect, 331 pass, 11 xfailed. Coverage 18.36% exceeds 15% target. LanceDB removed (backlog 116 cancelled). 36 commits ahead of origin (push blocked by SSH key permissions). Ready for next development cycle.
+Test infrastructure fully operational. 342 tests collect, 331 pass, 11 xfailed. Coverage 18.36% exceeds 15% target. Hypothesis validation infrastructure improved (#153): retry logic and \boxed{} extraction added. 41+ commits ahead of origin (push blocked by SSH key permissions).
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-02-25: WORK_DISPATCHED — Hypothesis validation infra (#153): added retry logic to gpt_oss_integration.py, improved \boxed{} extraction in external_benchmarks.py. 3 of 6 remaining items done.
 - 2026-02-25: GATES_MET — Backlog cleanup: marked 6 items resolved (#102, #103, #105, #106, #111, #112). Removed 3 TODOs from src/. 331 tests pass, 0 collection errors.
 - 2026-02-25: GATES_MET — Cycle complete. LanceDB removed (43 skipped→0). 342 tests, 331 pass, 11 xfail. Coverage 18.36%. optimized_sqlite_manager extended with batch methods.
 - 2026-02-25: GATES_MET — Fixed import chain in agent_harness.py (DataManager from support_systems, not non-existent data_manager). All 385 tests now collect and pass.

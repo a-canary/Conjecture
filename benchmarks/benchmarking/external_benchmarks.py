@@ -219,17 +219,36 @@ class ExternalBenchmarks:
             )
 
     def _extract_answer(self, response: str, task: ExternalBenchmarkTask) -> str:
-        """Extract the answer from model response"""
+        """Extract the answer from model response with improved parsing (backlog #153)"""
+        import re
         response_lower = response.lower()
 
         if task.choices:
             # Multiple choice - look for A, B, C, D
-            import re
             match = re.search(r'\b([ABCD])\b', response.upper())
             if match:
                 choice_idx = ord(match.group(1)) - ord('A')
                 if 0 <= choice_idx < len(task.choices):
                     return task.choices[choice_idx]
+
+        # Try to extract \boxed{} format (common in LaTeX math answers)
+        boxed_match = re.search(r'\\boxed\{([^}]+)\}', response)
+        if boxed_match:
+            return boxed_match.group(1).strip()
+
+        # Try to extract final numeric answer from last sentence
+        sentences = response.strip().split('.')
+        if sentences:
+            last_sentence = sentences[-1].strip()
+            # Look for numbers in the final sentence
+            number_match = re.search(r'(\d+(?:\.\d+)?)', last_sentence)
+            if number_match:
+                return number_match.group(1)
+
+        # Try "the answer is X" pattern
+        answer_match = re.search(r'(?:the\s+)?answer\s+(?:is|=)\s*[:\s]*([^\.\n,]+)', response_lower)
+        if answer_match:
+            return answer_match.group(1).strip()
 
         # For open-ended or fallback, try to extract from response
         # Simple extraction - look for the correct answer in response

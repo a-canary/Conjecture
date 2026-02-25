@@ -1,21 +1,40 @@
 """
 GPT-OSS-20B Integration for Benchmarks
 Faster model for quick iteration and Conjecture testing
+
+Includes exponential backoff retry logic for reliability (backlog #153).
 """
 
 import aiohttp
 import asyncio
 import json
+import logging
 from typing import Dict, Any, Optional
 
+# Import retry utilities for exponential backoff
+import sys
+sys.path.insert(0, '/workspace/src')
+from utils.retry_utils import EnhancedRetryConfig, EnhancedRetryHandler, RetryErrorType
+
+logger = logging.getLogger(__name__)
+
 class GPTOSSIntegration:
-    """Direct integration with GPT-OSS-20B via OpenRouter"""
+    """Direct integration with GPT-OSS-20B via OpenRouter with retry logic"""
 
     def __init__(self, api_key: str = None, model: str = "openrouter/gpt-oss-20b"):
         self.model = model
         self.api_key = api_key or "sk-or-your-api-key-here"  # You'll need to set this
         self.base_url = "https://openrouter.ai/api/v1"
         self.session: Optional[aiohttp.ClientSession] = None
+
+        # Configure retry handler for reliability (backlog #153)
+        self.retry_config = EnhancedRetryConfig(
+            max_attempts=5,
+            base_delay=10.0,  # 10 second base
+            max_delay=300.0,  # 5 minute max
+            rate_limit_multiplier=3.0,
+        )
+        self.retry_handler = EnhancedRetryHandler(self.retry_config)
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
@@ -26,7 +45,13 @@ class GPTOSSIntegration:
             await self.session.close()
 
     async def get_response(self, prompt: str, **kwargs) -> str:
-        """Get response from GPT-OSS-20B"""
+        """Get response from GPT-OSS-20B with exponential backoff retry"""
+        return await self.retry_handler.execute_with_retry_async(
+            self._make_request, prompt, **kwargs
+        )
+
+    async def _make_request(self, prompt: str, **kwargs) -> str:
+        """Internal method to make API request (called by retry handler)"""
         if not self.session:
             self.session = aiohttp.ClientSession()
 
@@ -59,14 +84,17 @@ class GPTOSSIntegration:
                 if response.status == 200:
                     result = await response.json()
                     return result["choices"][0]["message"]["content"]
+                elif response.status == 429:
+                    error_text = await response.text()
+                    raise Exception(f"Rate limit error 429: {error_text}")
                 else:
                     error_text = await response.text()
                     raise Exception(f"GPT-OSS API error {response.status}: {error_text}")
 
         except asyncio.TimeoutError:
             raise Exception("GPT-OSS request timed out")
-        except Exception as e:
-            raise Exception(f"Failed to get response from GPT-OSS: {str(e)}")
+        except aiohttp.ClientError as e:
+            raise Exception(f"Network error: {str(e)}")
 
     async def test_connection(self) -> bool:
         """Test if GPT-OSS is accessible"""
