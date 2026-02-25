@@ -11,9 +11,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 import logging
 
-from ..data.data_manager import DataManager
 from ..core.models import Claim
-from .support_systems import ContextBuilder, DataManager as SupportDataManager
+from .support_systems import ContextBuilder, DataManager
 from .prompt_system import PromptBuilder, ResponseParser
 
 logger = logging.getLogger(__name__)
