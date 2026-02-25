@@ -6,7 +6,7 @@ Naming convention:
 - subs: claims that provide evidence FOR this claim (children)
 - supers: claims this claim provides evidence FOR (toward root, parents)
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict, Any
 import logging
 
@@ -97,8 +97,8 @@ def create_sample_claims() -> List[Claim]:
             supers=["claim_002", "claim_003"],  # This claim provides evidence FOR claim_002 and claim_003
             type=[ClaimType.CONCEPT],
             tags=["quantum", "computer", "qubit", "superposition"],
-            created=datetime.utcnow(),
-            updated=datetime.utcnow()
+            created=datetime.now(timezone.utc),
+            updated=datetime.now(timezone.utc)
         ),
         Claim(
             id="claim_002", 
@@ -109,8 +109,8 @@ def create_sample_claims() -> List[Claim]:
             supers=["claim_004"],  # This claim provides evidence FOR claim_004
             type=[ClaimType.CONCEPT],
             tags=["quantum", "superposition", "processing"],
-            created=datetime.utcnow(),
-            updated=datetime.utcnow()
+            created=datetime.now(timezone.utc),
+            updated=datetime.now(timezone.utc)
         ),
         Claim(
             id="claim_003",
@@ -121,8 +121,8 @@ def create_sample_claims() -> List[Claim]:
             supers=[],  # This claim doesn't provide evidence for any other claims
             type=[ClaimType.CONCEPT],
             tags=["quantum", "entanglement", "qubit"],
-            created=datetime.utcnow(),
-            updated=datetime.utcnow()
+            created=datetime.now(timezone.utc),
+            updated=datetime.now(timezone.utc)
         ),
         Claim(
             id="claim_004",
@@ -133,11 +133,11 @@ def create_sample_claims() -> List[Claim]:
             supers=[],  # This claim doesn't provide evidence for any other claims (root-level thesis)
             type=[ClaimType.THESIS],
             tags=["quantum", "performance", "complexity", "advantage"],
-            created=datetime.utcnow(),
-            updated=datetime.utcnow(),
+            created=datetime.now(timezone.utc),
+            updated=datetime.now(timezone.utc),
             is_dirty=True,
             dirty_reason=DirtyReason.CONFIDENCE_THRESHOLD,
-            dirty_timestamp=datetime.utcnow(),
+            dirty_timestamp=datetime.now(timezone.utc),
             dirty_priority=5
         )
     ]
@@ -238,8 +238,8 @@ def demonstrate_relationship_handling():
         supers=[],  # This claim doesn't provide evidence for any other claims
         type=[ClaimType.CONCEPT],
         tags=["ml", "data", "training"],
-        created=datetime.utcnow(),
-        updated=datetime.utcnow()
+        created=datetime.now(timezone.utc),
+        updated=datetime.now(timezone.utc)
     )
     
     supporting_claim = Claim(
@@ -251,8 +251,8 @@ def demonstrate_relationship_handling():
         supers=["base_001"],  # This claim provides evidence FOR base_001
         type=[ClaimType.EXAMPLE],
         tags=["ml", "deep-learning", "training-data"],
-        created=datetime.utcnow(),
-        updated=datetime.utcnow()
+        created=datetime.now(timezone.utc),
+        updated=datetime.now(timezone.utc)
     )
     
     # Use pure functions to establish relationships
@@ -308,8 +308,8 @@ def demonstrate_architectural_violations_fixed():
         supers=[],
         type=[ClaimType.CONCEPT],
         tags=["test"],
-        created=datetime.utcnow(),
-        updated=datetime.utcnow()
+        created=datetime.now(timezone.utc),
+        updated=datetime.now(timezone.utc)
     )
     
     execution_methods = [method for method in dir(claim) if not method.startswith('_') and callable(getattr(claim, method))]

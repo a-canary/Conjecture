@@ -8,7 +8,7 @@ Naming convention:
 """
 
 from typing import List, Dict, Set, Tuple, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from dataclasses import dataclass
 from collections import defaultdict, deque
 
@@ -392,8 +392,8 @@ class SupportRelationshipManager:
         super_claim.subs.append(sub_id)
 
         # Update timestamps
-        sub.updated = datetime.utcnow()
-        super_claim.updated = datetime.utcnow()
+        sub.updated = datetime.now(timezone.utc)
+        super_claim.updated = datetime.now(timezone.utc)
 
         # Update internal maps
         self._super_map[sub_id].add(super_id)
@@ -433,8 +433,8 @@ class SupportRelationshipManager:
 
         if relationship_existed:
             # Update timestamps
-            sub.updated = datetime.utcnow()
-            super_claim.updated = datetime.utcnow()
+            sub.updated = datetime.now(timezone.utc)
+            super_claim.updated = datetime.now(timezone.utc)
 
             # Update internal maps
             self._super_map[sub_id].discard(super_id)

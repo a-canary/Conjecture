@@ -59,7 +59,7 @@ class TestRelationshipDataStructures:
 
     def test_relationship_change_creation(self):
         """Test creating RelationshipChange"""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         change = RelationshipChange(
             claim_id="c001",
             change_type="add_support",

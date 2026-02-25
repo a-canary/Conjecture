@@ -5,7 +5,7 @@ Consolidated ProcessingResult to reduce duplication across modules
 
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 @dataclass
 class ProcessingResult:
@@ -36,7 +36,7 @@ class ProcessingResult:
     def __post_init__(self):
         """Set completion timestamp if success"""
         if self.success and not self.completed_at:
-            self.completed_at = datetime.utcnow()
+            self.completed_at = datetime.now(timezone.utc)
 
     def add_error(self, error: str):
         """Add an error and mark as failed"""

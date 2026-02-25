@@ -39,8 +39,8 @@ class TestProcessingResult:
 
     def test_full_processing_result(self):
         """Test creating ProcessingResult with all fields"""
-        started_at = datetime.utcnow()
-        completed_at = datetime.utcnow()
+        started_at = datetime.now(timezone.utc)
+        completed_at = datetime.now(timezone.utc)
 
         result = ProcessingResult(
             success=True,
@@ -224,13 +224,17 @@ class TestProcessingResult:
 
     def test_post_init_completion_timestamp(self):
         """Test __post_init__ sets completion timestamp for success"""
-        before = datetime.utcnow()
+        before = datetime.now(timezone.utc)
 
         result = ProcessingResult(success=True, operation_type="auto_timestamp")
 
-        after = datetime.utcnow()
+        after = datetime.now(timezone.utc)
 
         assert result.completed_at is not None
+        # Handle both timezone-aware and naive datetimes
+        if result.completed_at.tzinfo is None:
+            before = before.replace(tzinfo=None)
+            after = after.replace(tzinfo=None)
         assert before <= result.completed_at <= after
 
     def test_post_init_no_completion_timestamp_for_failure(self):

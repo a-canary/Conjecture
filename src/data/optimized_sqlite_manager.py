@@ -59,3 +59,15 @@ class OptimizedSQLiteManager:
     async def list_claims(self, filter_dict: Optional[Dict[str, Any]] = None) -> List[Any]:
         """List claims with optional filtering."""
         raise NotImplementedError("OptimizedSQLiteManager.list_claims not implemented.")
+
+    async def batch_create_claims(self, claims: List[Any]) -> List[str]:
+        """Create multiple claims in a batch."""
+        raise NotImplementedError("OptimizedSQLiteManager.batch_create_claims not implemented.")
+
+    async def batch_update_claims(self, updates: Dict[str, Dict[str, Any]]) -> int:
+        """Update multiple claims in a batch."""
+        raise NotImplementedError("OptimizedSQLiteManager.batch_update_claims not implemented.")
+
+    async def get_dirty_claims(self) -> List[Any]:
+        """Get claims that need re-evaluation."""
+        raise NotImplementedError("OptimizedSQLiteManager.get_dirty_claims not implemented.")

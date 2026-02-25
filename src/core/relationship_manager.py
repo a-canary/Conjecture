@@ -4,7 +4,7 @@ Manages subs and supers relationships with validation and analysis.
 """
 from typing import List, Dict, Any, Set, Tuple, Optional
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 
 from .models import Claim, ClaimType, ClaimState
 from .claim_operations import (
@@ -58,7 +58,7 @@ def remove_sub_relationship(claim: Claim, sub_claim_id: str) -> Claim:
         type=claim.type.copy(),
         tags=claim.tags.copy(),
         created=claim.created,
-        updated=datetime.utcnow(),
+        updated=datetime.now(timezone.utc),
         embedding=claim.embedding,
         is_dirty=claim.is_dirty,
         dirty_reason=claim.dirty_reason,
@@ -80,7 +80,7 @@ def remove_super_relationship(claim: Claim, super_claim_id: str) -> Claim:
         type=claim.type.copy(),
         tags=claim.tags.copy(),
         created=claim.created,
-        updated=datetime.utcnow(),
+        updated=datetime.now(timezone.utc),
         embedding=claim.embedding,
         is_dirty=claim.is_dirty,
         dirty_reason=claim.dirty_reason,

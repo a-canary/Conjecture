@@ -15,12 +15,12 @@
 | tests_errors | 0 |
 | test_pass_rate | 86.0% |
 | code_coverage | 18.31% |
-| deprecation_warnings | 57 |
-| commits_ahead_origin | 29 |
+| deprecation_warnings | 4 |
+| commits_ahead_origin | 31 |
 
 ## Summary
 
-Test infrastructure restored with zero errors. 385 tests collect, 331 pass (86%). Coverage at 18.31% exceeds 15% target. 3 e2e lifecycle tests properly marked xfail (stub infrastructure). Main concern: 29 unpushed commits, 57 datetime.utcnow() deprecation warnings.
+Test infrastructure restored with zero errors. 385 tests collect, 331 pass (86%). Coverage at 18.31% exceeds 15% target. Deprecation warnings reduced from 57 to 4 (93% reduction). Main concern: 31 unpushed commits.
 
 ## Improvements This Cycle
 
@@ -28,9 +28,11 @@ Test infrastructure restored with zero errors. 385 tests collect, 331 pass (86%)
 - All 385 tests now collect (up from 295 with 5 errors)
 - Zero test errors (3 e2e tests marked xfail appropriately)
 - 331 tests passing with 86% pass rate
+- Reduced datetime.utcnow() warnings from 57 to 4 (fixed 7 src files, 3 test files)
+- Fixed forward reference issue in support_systems.py
 
 ## Concerns
 
-- `datetime.utcnow()` deprecation warnings (57 total)
-- 29 commits not pushed to origin
+- 4 remaining deprecation warnings (in test_claim_models.py)
+- 31 commits not pushed to origin
 - 11 xfailed tests awaiting infrastructure implementation

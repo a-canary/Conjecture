@@ -8,7 +8,6 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime
 import logging
 
-from ..data.data_manager import DataManager
 from ..core.models import Claim
 
 logger = logging.getLogger(__name__)
@@ -75,7 +74,7 @@ class ContextBuilder:
     Builds context for LLM prompts by collecting relevant information.
     """
 
-    def __init__(self, data_manager: DataManager):
+    def __init__(self, data_manager: "DataManager"):
         self.data_manager = data_manager
         self.skill_templates = self._load_skill_templates()
         self.available_tools = self._load_available_tools()
