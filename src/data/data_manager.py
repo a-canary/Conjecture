@@ -15,10 +15,8 @@ class DataManager:
     """
     Stub data manager for test collection.
 
-    TODO: Implement full data manager with:
-    - Claim persistence
-    - Session management
-    - Database integration
+    Full implementation pending - see backlog item #110 (DataConfig Model Fix).
+    Required features: Claim persistence, session management, database integration.
     """
 
     def __init__(self, db_path: str = "data/conjecture.db"):

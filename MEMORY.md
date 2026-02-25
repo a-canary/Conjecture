@@ -2,7 +2,7 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-Test infrastructure fully operational. 342 tests collect, 331 pass, 11 xfailed. Coverage 18.36% exceeds 15% target. LanceDB removed (backlog 116 cancelled). 34 commits ahead of origin. Ready for next development cycle.
+Test infrastructure fully operational. 342 tests collect, 331 pass, 11 xfailed. Coverage 18.36% exceeds 15% target. LanceDB removed (backlog 116 cancelled). 36 commits ahead of origin (push blocked by SSH key permissions). Ready for next development cycle.
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
@@ -35,5 +35,6 @@ Test infrastructure fully operational. 342 tests collect, 331 pass, 11 xfailed. 
 <!-- Recurring failures, provider errors, environment quirks -->
 - ~~**Rename needed**: `supports` → `supers`, `supported_by` → `subs`~~ **FIXED 2026-02-24**
 - ~~**dirty_flag.py line 98**: bidirectional cascade~~ **FIXED 2026-02-24** — Now unidirectional to supers only
+- **Git push blocked**: SSH key not configured for git@github.com:a-canary/Conjecture.git — requires user to configure SSH keys or use HTTPS
 - **Specs subdirs need update**: specs/context/, specs/implementation/, specs/llm/ still have old naming (low priority - example code)
 - **Python venv required**: Use `/workspace/.venv/bin/python` for testing

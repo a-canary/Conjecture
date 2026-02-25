@@ -178,8 +178,8 @@ class UnifiedLLMBridge:
         Returns:
             LLMResponse object with generation results
         """
-        # For now, process synchronously
-        # TODO: Add true async support when underlying processors support it
+        # Process synchronously - async wrapper for compatibility
+        # True async pending backlog item #130 (Process Layer Performance Optimization)
         return self.process(request)
 
     def batch_process(self, requests: List[LLMRequest]) -> List[LLMResponse]:
