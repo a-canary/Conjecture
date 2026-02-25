@@ -7,6 +7,7 @@ Gap analysis ~45% complete. 367 tests, 359 pass, 8 xfailed. Coverage 22.00%. All
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-02-25: GATES_MET — Fixed datetime.utcnow() (21 warnings → 0) and to_dict bug in process/models.py. Full serialization now works. 359 pass, 8 xfailed. Zero deprecation warnings.
 - 2026-02-25: GATES_MET — Added 25 tests for process/models.py (0% → 97.92%). Overall coverage 19% → 22%. 359 pass, 8 xfailed. Gap analysis ~45%.
 - 2026-02-25: GATES_MET — Created ConjectureProcessingInterface, bridged DataManager→OptimizedSQLiteManager. endpoint_app now uses real implementation. 334 pass, 8 xfailed. Gap analysis ~40% complete.
 - 2026-02-25: GATES_MET — Fixed GAP-4: Added FastAPI to requirements, fixed ProcessingInterface→SimpleProcessingInterface. 334 pass, 8 xfailed (3 more tests unblocked).
@@ -45,7 +46,7 @@ Gap analysis ~45% complete. 367 tests, 359 pass, 8 xfailed. Coverage 22.00%. All
 - ~~**dirty_flag.py line 98**: bidirectional cascade~~ **FIXED 2026-02-24** — Now unidirectional to supers only
 - ~~**GAP-1: Missing repositories.py**~~ **FIXED 2026-02-25** — Created with ClaimRepository, RepositoryFactory
 - ~~**GAP-2: Database stubs**~~ **FIXED 2026-02-25** — OptimizedSQLiteManager fully implemented with async CRUD
-- **GAP-3: Process layer 0% coverage** — ProcessLLMProcessor and ProcessContextBuilder import correctly but have no test coverage
+- ~~**GAP-3: Process layer 0% coverage**~~ **IMPROVED 2026-02-25** — process/models.py 97.92%, context_builder 15.18%, llm_processor 16.54%
 - ~~**GAP-4: FastAPI missing**~~ **FIXED 2026-02-25** — Added fastapi/uvicorn to requirements, fixed SimpleProcessingInterface usage
 - **Git push blocked**: SSH key not configured — requires user to configure SSH keys or use HTTPS
 - **Python venv required**: Use `/workspace/.venv/bin/python` for testing
