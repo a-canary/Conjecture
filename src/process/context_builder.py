@@ -164,31 +164,40 @@ class ProcessContextBuilder:
     ) -> List[Claim]:
         """
         Get claims related to the given claim.
-        
+
         Args:
             claim: The claim to find related claims for
             context_hints: Hints for finding relevant claims
-            
+
         Returns:
             List of related claims
         """
-        # This is a skeleton implementation
-        # In a full implementation, this would consider:
-        # - Direct references/connections
-        # - Similar claim types
-        # - Text similarity
-        # - Context hints
-        
         related_claims = []
-        
-        # Example: Find claims by type similarity
+
         try:
-            # This would be implemented based on the actual data layer API
-            # For now, return empty list as skeleton
-            pass
+            # Get claims from supers (claims this provides evidence FOR)
+            for super_id in claim.supers:
+                super_claim = await self.claim_repository.get_by_id(super_id)
+                if super_claim:
+                    related_claims.append(super_claim)
+
+            # Get claims from subs (claims that provide evidence FOR this)
+            for sub_id in claim.subs:
+                sub_claim = await self.claim_repository.get_by_id(sub_id)
+                if sub_claim:
+                    related_claims.append(sub_claim)
+
+            # Search by context hints (tag-based)
+            if context_hints:
+                for hint in context_hints:
+                    hint_claims = await self.claim_repository.search(hint, limit=5)
+                    for hc in hint_claims:
+                        if hc.id != claim.id and hc not in related_claims:
+                            related_claims.append(hc)
+
         except Exception as e:
             logger.warning(f"Failed to get related claims for {claim.id}: {str(e)}")
-        
+
         return related_claims
     
     def _estimate_context_size(self, claims: List[Claim]) -> int:
@@ -203,7 +212,7 @@ class ProcessContextBuilder:
         """
         # Simplified token estimation (rough approximation)
         # In practice, this would use actual tokenization
-        total_chars = sum(len(claim.text) for claim in claims)
+        total_chars = sum(len(claim.content) for claim in claims)
         # Rough approximation: ~4 characters per token
         return total_chars // 4
     
