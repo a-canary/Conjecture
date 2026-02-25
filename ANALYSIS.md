@@ -16,11 +16,11 @@
 | test_pass_rate | 86.0% |
 | code_coverage | 18.31% |
 | deprecation_warnings | 0 |
-| commits_ahead_origin | 32 |
+| commits_ahead_origin | 31 |
 
 ## Summary
 
-Test infrastructure at peak quality. 385 tests collect, 331 pass (86%), zero errors, zero warnings. Coverage at 18.31% exceeds 15% target. All datetime.utcnow() deprecation warnings eliminated. Main concern: 32 unpushed commits.
+Test infrastructure at peak quality. 385 tests collect, 331 pass (86%), zero errors, zero warnings. Coverage at 18.31% exceeds 15% target. All datetime.utcnow() deprecation warnings eliminated. 43 skipped tests are intentional (LanceDB not available). Main concern: 31 unpushed commits.
 
 ## Improvements This Cycle
 
@@ -31,7 +31,14 @@ Test infrastructure at peak quality. 385 tests collect, 331 pass (86%), zero err
 - Eliminated ALL datetime.utcnow() warnings (57 -> 0)
 - Fixed forward reference issue in support_systems.py
 
+## Skipped/XFailed Test Analysis
+
+- **43 skipped**: LanceDB adapter/repository tests - skipped because `lancedb` package not installed (intentional, pending backlog item 116)
+- **11 xfailed**:
+  - 3 e2e lifecycle tests (OptimizedSQLiteManager stub)
+  - 8 other tests with expected failures
+
 ## Concerns
 
-- 32 commits not pushed to origin
+- 31 commits not pushed to origin (risk of data loss)
 - 11 xfailed tests awaiting infrastructure implementation
