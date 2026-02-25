@@ -105,18 +105,25 @@ class TestContextResult:
         assert result.metadata["source"] == "test"
 
     def test_context_result_serialization(self):
-        """Test ContextResult serialization (without context_claims due to to_dict bug)."""
-        # Note: ContextResult.serialize_context_claims uses claim.to_dict() which doesn't exist
-        # Testing without context_claims to avoid triggering this bug
+        """Test ContextResult serialization with context_claims."""
+        claim = Claim(
+            id="related_1",
+            content="Related claim for context",
+            confidence=0.8,
+            type=[ClaimType.CONCEPT],
+            scope=ClaimScope.USER_WORKSPACE,
+        )
         result = ContextResult(
             claim_id="c123",
+            context_claims=[claim],
             context_size=100,
             traversal_depth=2,
         )
         data = result.model_dump()
         assert data["claim_id"] == "c123"
         assert data["context_size"] == 100
-        assert data["context_claims"] == []
+        assert len(data["context_claims"]) == 1
+        assert data["context_claims"][0]["id"] == "related_1"
 
 
 class TestInstruction:

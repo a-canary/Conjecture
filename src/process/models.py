@@ -7,8 +7,13 @@ for claim evaluation, instruction identification, and processing workflow.
 
 from enum import Enum
 from typing import List, Dict, Any, Optional, Union
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel, Field, ConfigDict, field_serializer
+
+
+def _utc_now() -> datetime:
+    """Return current UTC datetime (Python 3.12+ compatible)."""
+    return datetime.now(timezone.utc)
 
 from src.core.models import Claim
 
@@ -49,7 +54,7 @@ class ContextResult(BaseModel):
     
     @field_serializer('context_claims')
     def serialize_context_claims(self, value: List[Claim]) -> List[Dict[str, Any]]:
-        return [claim.to_dict() for claim in value]
+        return [claim.model_dump() for claim in value]
 
 class Instruction(BaseModel):
     """Instruction identified during claim processing."""
@@ -60,7 +65,7 @@ class Instruction(BaseModel):
     confidence: float = Field(default=0.0, ge=0.0, le=1.0, description="Confidence in this instruction")
     priority: int = Field(default=0, description="Priority of this instruction (higher = more important)")
     source_claim_id: Optional[str] = Field(None, description="ID of claim that generated this instruction")
-    created_at: datetime = Field(default_factory=datetime.utcnow, description="When this instruction was created")
+    created_at: datetime = Field(default_factory=_utc_now, description="When this instruction was created")
     
     model_config = ConfigDict(protected_namespaces=())
     
@@ -79,7 +84,7 @@ class ProcessingResult(BaseModel):
     processing_time_ms: int = Field(default=0, description="Total processing time in milliseconds")
     error_message: Optional[str] = Field(None, description="Error message if processing failed")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional processing metadata")
-    created_at: datetime = Field(default_factory=datetime.utcnow, description="When processing was completed")
+    created_at: datetime = Field(default_factory=_utc_now, description="When processing was completed")
     
     model_config = ConfigDict(protected_namespaces=())
     
@@ -111,7 +116,7 @@ class ProcessingRequest(BaseModel):
     context_hints: List[str] = Field(default_factory=list, description="Hints for context building")
     instruction_types: List[InstructionType] = Field(default_factory=list, description="Specific instruction types to look for")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional request metadata")
-    requested_at: datetime = Field(default_factory=datetime.utcnow, description="When the request was made")
+    requested_at: datetime = Field(default_factory=_utc_now, description="When the request was made")
     
     model_config = ConfigDict(protected_namespaces=())
     
@@ -129,7 +134,7 @@ class ProcessingBatch(BaseModel):
     requests: List[ProcessingRequest] = Field(..., description="List of processing requests")
     batch_id: str = Field(..., description="Unique identifier for this batch")
     config: Optional[ProcessingConfig] = Field(None, description="Batch-level configuration")
-    created_at: datetime = Field(default_factory=datetime.utcnow, description="When the batch was created")
+    created_at: datetime = Field(default_factory=_utc_now, description="When the batch was created")
     
     model_config = ConfigDict(protected_namespaces=())
     
