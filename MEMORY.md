@@ -7,6 +7,7 @@ Test infrastructure fully operational. 342 tests collect, 331 pass, 11 xfailed. 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-02-25: GATES_MET — Backlog cleanup: marked 6 items resolved (#102, #103, #105, #106, #111, #112). Removed 3 TODOs from src/. 331 tests pass, 0 collection errors.
 - 2026-02-25: GATES_MET — Cycle complete. LanceDB removed (43 skipped→0). 342 tests, 331 pass, 11 xfail. Coverage 18.36%. optimized_sqlite_manager extended with batch methods.
 - 2026-02-25: GATES_MET — Fixed import chain in agent_harness.py (DataManager from support_systems, not non-existent data_manager). All 385 tests now collect and pass.
 - 2026-02-24: WORK_DISPATCHED — Conjecture harness created (experiments/conjecture_harness.py). Claim tracking, reasoning steps, halt conditions working. ARC data loaded.
