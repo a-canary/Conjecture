@@ -2,13 +2,14 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-Test infrastructure operational. 342 tests, 331 pass, 11 xfailed. Gap analysis revealed ~20% of CHOICES.md implemented. Created repositories.py (GAP-1 fix) unblocking Process Layer imports. Critical gaps remain: database stubs, process layer incomplete, LLM integration untested. 42 commits ahead of origin (SSH blocked).
+Gap analysis ~30% complete. 342 tests, 334 pass, 8 xfailed. Fixed GAP-1 (repositories.py) and GAP-2 (SQLite persistence). Data Layer now functional with full CRUD. Remaining gaps: GAP-3 (Process stubs), GAP-4 (FastAPI). 44 commits ahead of origin (SSH blocked).
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
-- 2026-02-25: GATES_MET — Added mark_dirty(), mark_clean(), should_prioritize() to Claim model. Dirty flag infrastructure complete. 331 tests pass.
-- 2026-02-25: RESEARCH_COMPLETE — Gap analysis: ~20% of CHOICES.md implemented. Created repositories.py (280 lines) with ClaimRepository, RepositoryFactory. Fixed GAP-1 blocker. Remaining: GAP-2 (DB stubs), GAP-3 (Process stubs), GAP-4 (FastAPI missing).
+- 2026-02-25: GATES_MET — Implemented SQLite persistence (GAP-2). OptimizedSQLiteManager now functional with async CRUD, batch ops, dirty queries. E2E tests updated and passing. 334 pass, 8 xfailed.
+- 2026-02-25: GATES_MET — Created repositories.py (GAP-1). ClaimRepository, RepositoryFactory unblock Process Layer. Context builder and dynamic priming engine now import.
+- 2026-02-25: RESEARCH_COMPLETE — Gap analysis: ~20% of CHOICES.md implemented. Identified 4 critical gaps. Data Layer ~70% complete, Process Layer ~10%, Endpoint Layer ~5%.
 - 2026-02-25: WORK_DISPATCHED — Hypothesis validation infra (#153): added retry logic to gpt_oss_integration.py, improved \boxed{} extraction in external_benchmarks.py. 3 of 6 remaining items done.
 - 2026-02-25: GATES_MET — Backlog cleanup: marked 6 items resolved (#102, #103, #105, #106, #111, #112). Removed 3 TODOs from src/. 331 tests pass, 0 collection errors.
 - 2026-02-25: GATES_MET — Cycle complete. LanceDB removed (43 skipped→0). 342 tests, 331 pass, 11 xfail. Coverage 18.36%. optimized_sqlite_manager extended with batch methods.
@@ -40,8 +41,8 @@ Test infrastructure operational. 342 tests, 331 pass, 11 xfailed. Gap analysis r
 - ~~**Rename needed**: `supports` → `supers`, `supported_by` → `subs`~~ **FIXED 2026-02-24**
 - ~~**dirty_flag.py line 98**: bidirectional cascade~~ **FIXED 2026-02-24** — Now unidirectional to supers only
 - ~~**GAP-1: Missing repositories.py**~~ **FIXED 2026-02-25** — Created with ClaimRepository, RepositoryFactory
-- **GAP-2: Database stubs** — data_manager.py, optimized_sqlite_manager.py raise NotImplementedError
+- ~~**GAP-2: Database stubs**~~ **FIXED 2026-02-25** — OptimizedSQLiteManager fully implemented with async CRUD
 - **GAP-3: Process layer stubs** — llm_processor.py, context_builder.py at 0% coverage
-- **GAP-4: FastAPI missing** — endpoint_app.py import fails
+- **GAP-4: FastAPI missing** — endpoint_app.py import fails (requires adding fastapi to requirements.txt)
 - **Git push blocked**: SSH key not configured — requires user to configure SSH keys or use HTTPS
 - **Python venv required**: Use `/workspace/.venv/bin/python` for testing
