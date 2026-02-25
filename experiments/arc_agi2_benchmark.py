@@ -57,7 +57,7 @@ class ChutesLLMWrapper:
         messages.append({"role": "user", "content": prompt})
 
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "X-API-Key": self.api_key,
             "Content-Type": "application/json"
         }
 
@@ -68,25 +68,41 @@ class ChutesLLMWrapper:
             "temperature": temperature
         }
 
-        try:
-            response = requests.post(
-                f"{self.api_url}/chat/completions",
-                headers=headers,
-                json=data,
-                timeout=60
-            )
-            response.raise_for_status()
-            result = response.json()
+        max_retries = 5
+        for attempt in range(max_retries):
+            try:
+                response = requests.post(
+                    f"{self.api_url}/chat/completions",
+                    headers=headers,
+                    json=data,
+                    timeout=120
+                )
 
-            content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
-            self.stats["successful_requests"] += 1
-            self.stats["total_tokens"] += result.get("usage", {}).get("total_tokens", 0)
+                if response.status_code == 429:
+                    wait_time = (2 ** attempt) + 1  # Exponential backoff
+                    logger.warning(f"Rate limited, waiting {wait_time}s (attempt {attempt+1}/{max_retries})")
+                    time.sleep(wait_time)
+                    continue
 
-            return content
+                response.raise_for_status()
+                result = response.json()
 
-        except Exception as e:
-            logger.error(f"Chutes API error: {e}")
-            raise
+                content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+                self.stats["successful_requests"] += 1
+                self.stats["total_tokens"] += result.get("usage", {}).get("total_tokens", 0)
+
+                return content
+
+            except requests.exceptions.HTTPError as e:
+                if response.status_code == 429 and attempt < max_retries - 1:
+                    continue
+                logger.error(f"Chutes API error: {e}")
+                raise
+            except Exception as e:
+                logger.error(f"Chutes API error: {e}")
+                raise
+
+        raise Exception("Max retries exceeded for rate limiting")
 
 
 @dataclass
@@ -167,9 +183,10 @@ class ARCBenchmarkRunner:
                 api_key = os.environ.get("CHUTES_API_KEY")
                 if not api_key:
                     raise ValueError("CHUTES_API_KEY environment variable required")
+                api_url = os.environ.get("CHUTES_API_URL", "https://llm.chutes.ai/v1")
                 self._bare_processor = ChutesLLMWrapper(
                     api_key=api_key,
-                    api_url="https://llm.chutes.ai/v1",
+                    api_url=api_url,
                     model_name=self.model,
                 )
             else:
