@@ -1,5 +1,5 @@
 {
-    "chutes": {"processor": "ChutesProcessor", "default_model": "deepseek-ai/DeepSeek-V3", "primary": true},
+    "chutes": {"processor": "ChutesProcessor", "default_model": "zai-org/GLM-4.5-Air", "primary": true},
     "openrouter": {"processor": "OpenRouterProcessor", "default_model": "openai/gpt-3.5-turbo"},
     "groq": {"processor": "GroqProcessor", "default_model": "llama3-8b-8192"},
     "openai": {"processor": "OpenAIProcessor", "default_model": "gpt-3.5-turbo"},

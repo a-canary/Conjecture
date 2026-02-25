@@ -147,7 +147,7 @@ class ARCBenchmarkRunner:
         self,
         data_dir: str = "./data/arc_agi2",
         results_dir: str = "./results/arc_agi2",
-        model: str = "deepseek-ai/DeepSeek-V3",
+        model: str = "zai-org/GLM-4.5-Air",
         provider: str = "chutes",
     ):
         self.data_dir = Path(data_dir)
