@@ -440,16 +440,16 @@ Only keep the 50 most recent finished tasks.
 - [ ] Continue toward 20% milestone
 **Result**: Coverage improved from 10.01% to 18.20% (target exceeded by 21%)
 
-## 153 | Hypothesis Validation Infrastructure Fix | HIGH | open
+## 153 | Hypothesis Validation Infrastructure Fix | HIGH | started
 **Description**: Fix benchmark infrastructure to enable reliable core hypothesis validation
 **Purpose**: Cycle 11 validation was INCONCLUSIVE due to 80% API failure rate, need robust infrastructure
 **Plan**: HYPOTHESIS_VALIDATION_REPORT.md
 **Target**: Reliable validation infrastructure with ≥90% success rate, N≥20 problems for statistical significance
 **Remaining work**:
-- [ ] Add retry logic for API calls (exponential backoff)
-- [ ] Improve number extraction regex (handle \boxed{X}, final sentence parsing)
+- [x] Add retry logic for API calls (exponential backoff) — Added to gpt_oss_integration.py
+- [x] Improve number extraction regex (handle \boxed{X}, final sentence parsing) — Added to external_benchmarks.py
+- [x] Handle rate limiting gracefully — EnhancedRetryHandler with rate_limit_multiplier=3.0
 - [ ] Add comprehensive error logging
-- [ ] Handle rate limiting gracefully
 - [ ] Consider local model (Ollama/LM Studio) for reliability
 - [ ] Re-run hypothesis validation with fixed infrastructure (N≥20 problems)
 
