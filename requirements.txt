@@ -1,6 +1,9 @@
 # ChromaDB + FAISS + sentence-transformers replaced with LanceDB
 lancedb>=0.25.0
 pydantic==2.5.2
+# FastAPI for endpoint app (GAP-4 fix)
+fastapi>=0.100.0
+uvicorn>=0.22.0
 # faiss-cpu  # Replaced by LanceDB built-in vector search
 # sentence-transformers  # Replaced by LanceDB lightweight embeddings
 numpy

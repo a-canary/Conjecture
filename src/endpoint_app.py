@@ -424,8 +424,8 @@ async def lifespan(app: FastAPI):
         config = get_config()
         print(f"Configuration loaded: {len(config.providers)} providers")
 
-        # Initialize ProcessingInterface
-        processing_interface = ProcessingInterface(config)
+        # Initialize ProcessingInterface (use SimpleProcessingInterface concrete impl)
+        processing_interface = SimpleProcessingInterface(config)
         await processing_interface.start_services()
 
         print("Conjecture EndPoint App started successfully")
