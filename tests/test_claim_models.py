@@ -28,7 +28,7 @@ class TestClaimModel:
 
     def test_full_claim_creation(self):
         """Test creating a claim with all fields"""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         claim = Claim(
             id="test456",
             content="Full test claim",
@@ -109,8 +109,8 @@ class TestClaimModel:
 
     def test_timestamp_validation(self):
         """Test timestamp validation logic"""
-        created = datetime.utcnow()
-        updated = datetime.utcnow()
+        created = datetime.now(timezone.utc)
+        updated = datetime.now(timezone.utc)
 
         # Valid timestamps
         claim = Claim(
@@ -124,7 +124,7 @@ class TestClaimModel:
         assert claim.updated == updated
 
         # Invalid: updated before created
-        invalid_updated = datetime.utcnow().replace(year=2020)
+        invalid_updated = datetime.now(timezone.utc).replace(year=2020)
         with pytest.raises(ValidationError):
             Claim(
                 id="test",
