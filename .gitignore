@@ -173,7 +173,8 @@ cython_debug/
 claims.json
 vector_db/
 chroma_db/
-data/
+/data/
+!src/data/
 
 # LLM API keys and secrets
 .env.local
