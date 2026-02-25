@@ -10,15 +10,8 @@ import os
 import asyncio
 from pathlib import Path
 
-from src.core.models import Claim, ClaimState, DirtyReason
+from src.core.models import Claim, ClaimState, ClaimType, DirtyReason
 from src.data.optimized_sqlite_manager import OptimizedSQLiteManager
-
-
-# Skip all tests in this module - OptimizedSQLiteManager is a stub
-pytestmark = pytest.mark.xfail(
-    reason="OptimizedSQLiteManager is a stub - full implementation pending",
-    raises=NotImplementedError
-)
 
 
 class TestClaimLifecycleE2EFixed:
@@ -60,22 +53,21 @@ class TestClaimLifecycleE2EFixed:
         claim_id = await db_manager.create_claim(initial_claim)
         assert claim_id == initial_claim.id
 
-        # Step 3: Retrieve claim and verify
+        # Step 3: Retrieve claim and verify (now returns Claim object)
         retrieved_claim = await db_manager.get_claim(initial_claim.id)
         assert retrieved_claim is not None
-        assert retrieved_claim["id"] == initial_claim.id
-        assert retrieved_claim["content"] == initial_claim.content
-        assert retrieved_claim["confidence"] == initial_claim.confidence
-        assert retrieved_claim["state"] == initial_claim.state.value
-        assert "type" in retrieved_claim
-        assert retrieved_claim["type"] == ["concept"]  # Default type
+        assert retrieved_claim.id == initial_claim.id
+        assert retrieved_claim.content == initial_claim.content
+        assert retrieved_claim.confidence == initial_claim.confidence
+        assert retrieved_claim.state == initial_claim.state
+        assert ClaimType.CONCEPT in retrieved_claim.type  # Default type
 
         # Step 4: Simulate LLM evaluation by updating claim
         updates = {
             "confidence": 0.8,  # Increased confidence after evaluation
-            "state": ClaimState.VALIDATED.value,
+            "state": ClaimState.VALIDATED,
             "tags": initial_claim.tags + ["evaluated"],
-            "is_dirty": 0,  # Use integer for database compatibility
+            "is_dirty": False,
             "dirty_reason": None
         }
 
@@ -84,10 +76,10 @@ class TestClaimLifecycleE2EFixed:
 
         # Step 5: Verify updated claim
         updated_claim = await db_manager.get_claim(initial_claim.id)
-        assert updated_claim["confidence"] == 0.8
-        assert updated_claim["state"] == ClaimState.VALIDATED.value
-        assert "evaluated" in updated_claim["tags"]
-        assert updated_claim["is_dirty"] in [False, 0]  # Database may return as integer
+        assert updated_claim.confidence == 0.8
+        assert updated_claim.state == ClaimState.VALIDATED
+        assert "evaluated" in updated_claim.tags
+        assert updated_claim.is_dirty is False
 
         # Step 6: Add supporting claims
         supporter1 = Claim(
@@ -119,7 +111,7 @@ class TestClaimLifecycleE2EFixed:
         main_claim_updates = {
             "subs": ["supporter1", "supporter2"],
             "is_dirty": True,
-            "dirty_reason": DirtyReason.SUPPORTING_CLAIM_CHANGED.value
+            "dirty_reason": DirtyReason.SUPPORTING_CLAIM_CHANGED
         }
 
         main_update_result = await db_manager.update_claim("lifecycle_test", main_claim_updates)
@@ -128,15 +120,15 @@ class TestClaimLifecycleE2EFixed:
         # Step 8: Verify main claim was updated with supporters
         final_main_claim = await db_manager.get_claim("lifecycle_test")
         assert final_main_claim is not None
-        assert set(final_main_claim["subs"]) == {"supporter1", "supporter2"}
-        assert final_main_claim["is_dirty"] in [True, 1]  # Database may return as integer
-        assert final_main_claim["dirty_reason"] == DirtyReason.SUPPORTING_CLAIM_CHANGED.value
+        assert set(final_main_claim.subs) == {"supporter1", "supporter2"}
+        assert final_main_claim.is_dirty is True
+        assert final_main_claim.dirty_reason == DirtyReason.SUPPORTING_CLAIM_CHANGED
 
         # Step 9: Simulate re-evaluation of main claim with new support
         final_updates = {
             "confidence": 0.95,  # Higher confidence due to support
-            "state": ClaimState.VALIDATED.value,
-            "is_dirty": 0,  # Use integer for database compatibility
+            "state": ClaimState.VALIDATED,
+            "is_dirty": False,
             "dirty_reason": None
         }
 
@@ -145,12 +137,12 @@ class TestClaimLifecycleE2EFixed:
 
         # Step 10: Verify final state
         final_verified = await db_manager.get_claim("lifecycle_test")
-        assert final_verified["confidence"] == 0.95
-        assert final_verified["state"] == ClaimState.VALIDATED.value
-        assert final_verified["is_dirty"] in [False, 0]  # Database may return as integer
-        assert len(final_verified["subs"]) == 2
-        assert "supporter1" in final_verified["subs"]
-        assert "supporter2" in final_verified["subs"]
+        assert final_verified.confidence == 0.95
+        assert final_verified.state == ClaimState.VALIDATED
+        assert final_verified.is_dirty is False
+        assert len(final_verified.subs) == 2
+        assert "supporter1" in final_verified.subs
+        assert "supporter2" in final_verified.subs
 
     @pytest.mark.asyncio
     async def test_dirty_flag_propagation_cascade(self, db_manager):
@@ -202,7 +194,7 @@ class TestClaimLifecycleE2EFixed:
         # Update claim B to simulate cascade effect
         cascade_b_updates = {
             "is_dirty": True,
-            "dirty_reason": DirtyReason.SUPPORTING_CLAIM_CHANGED.value
+            "dirty_reason": DirtyReason.SUPPORTING_CLAIM_CHANGED
         }
 
         await db_manager.update_claim("cascade_b", cascade_b_updates)
@@ -210,19 +202,19 @@ class TestClaimLifecycleE2EFixed:
         # Update claim C to simulate cascade effect
         cascade_c_updates = {
             "is_dirty": True,
-            "dirty_reason": DirtyReason.SUPPORTING_CLAIM_CHANGED.value
+            "dirty_reason": DirtyReason.SUPPORTING_CLAIM_CHANGED
         }
 
         await db_manager.update_claim("cascade_c", cascade_c_updates)
 
-        # Check that B and C are marked dirty
+        # Check that B and C are marked dirty (now returns Claim objects)
         dirty_b = await db_manager.get_claim("cascade_b")
         dirty_c = await db_manager.get_claim("cascade_c")
 
-        assert dirty_b["is_dirty"] in [True, 1]  # Database may return as integer
-        assert dirty_c["is_dirty"] in [True, 1]  # Database may return as integer
-        assert dirty_b["dirty_reason"] == DirtyReason.SUPPORTING_CLAIM_CHANGED.value
-        assert dirty_c["dirty_reason"] == DirtyReason.SUPPORTING_CLAIM_CHANGED.value
+        assert dirty_b.is_dirty is True
+        assert dirty_c.is_dirty is True
+        assert dirty_b.dirty_reason == DirtyReason.SUPPORTING_CLAIM_CHANGED
+        assert dirty_c.dirty_reason == DirtyReason.SUPPORTING_CLAIM_CHANGED
 
     @pytest.mark.asyncio
     async def test_batch_processing_workflow(self, db_manager):
@@ -262,22 +254,21 @@ class TestClaimLifecycleE2EFixed:
         assert "batch_2" in claim_ids
         assert "batch_3" in claim_ids
 
-        # Get dirty claims (batch_1 should be dirty due to relationships)
+        # Get dirty claims (all should be dirty on creation)
         dirty_claims = await db_manager.get_dirty_claims()
-        dirty_ids = [claim["id"] for claim in dirty_claims]
+        dirty_ids = [claim.id for claim in dirty_claims]
         assert len(dirty_claims) >= 1  # At least batch_1 should be dirty
 
-        # Simulate processing results for dirty claims
-        processed_updates = []
+        # Simulate processing results for dirty claims using dict format
+        processed_updates = {}
         for claim in dirty_claims:
-            if claim["id"] == "batch_1":
-                processed_updates.append({
-                    "id": claim["id"],
+            if claim.id == "batch_1":
+                processed_updates[claim.id] = {
                     "confidence": 0.85,  # Improved confidence
-                    "state": ClaimState.VALIDATED.value,
-                    "is_dirty": 0,  # Use integer for database compatibility
+                    "state": ClaimState.VALIDATED,
+                    "is_dirty": False,
                     "dirty_reason": None
-                })
+                }
 
         # Update processed claims
         if processed_updates:
@@ -287,9 +278,9 @@ class TestClaimLifecycleE2EFixed:
         # Verify final state
         final_claim_1 = await db_manager.get_claim("batch_1")
         if final_claim_1:
-            assert final_claim_1["confidence"] >= 0.8
-            assert final_claim_1["state"] == ClaimState.VALIDATED.value
+            assert final_claim_1.confidence >= 0.8
+            assert final_claim_1.state == ClaimState.VALIDATED
 
-        # Test query functionality
-        all_claims = await db_manager.get_dirty_claims()  # Using get_dirty_claims as a query method
-        assert len(all_claims) >= 0  # Should have some claims
+        # Verify count
+        count = await db_manager.count()
+        assert count == 3
