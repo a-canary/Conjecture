@@ -50,6 +50,7 @@ from src.interfaces.processing_interface import (
 from src.core.models import Claim, ClaimFilter, ClaimState
 from src.processing.simplified_llm_manager import SimplifiedLLMManager
 from src.processing.enhanced_llm_router import get_enhanced_llm_router
+from src.interfaces.conjecture_processing_interface import ConjectureProcessingInterface
 
 
 # Simple ProcessingInterface implementation for benchmarking
@@ -424,9 +425,17 @@ async def lifespan(app: FastAPI):
         config = get_config()
         print(f"Configuration loaded: {len(config.providers)} providers")
 
-        # Initialize ProcessingInterface (use SimpleProcessingInterface concrete impl)
-        processing_interface = SimpleProcessingInterface(config)
-        await processing_interface.start_services()
+        # Initialize ProcessingInterface (use ConjectureProcessingInterface for real implementation)
+        # Fall back to SimpleProcessingInterface if ConjectureProcessingInterface fails
+        try:
+            db_path = getattr(config, 'database_path', 'data/conjecture.db')
+            processing_interface = ConjectureProcessingInterface(db_path)
+            await processing_interface.initialize()
+            print("Using ConjectureProcessingInterface (real implementation)")
+        except Exception as e:
+            print(f"ConjectureProcessingInterface failed, falling back to stub: {e}")
+            processing_interface = SimpleProcessingInterface(config)
+            await processing_interface.start_services()
 
         print("Conjecture EndPoint App started successfully")
 
@@ -440,7 +449,11 @@ async def lifespan(app: FastAPI):
         # Shutdown
         if processing_interface:
             print("Stopping Conjecture EndPoint App...")
-            await processing_interface.stop_services()
+            # Handle both interface types
+            if hasattr(processing_interface, 'close'):
+                await processing_interface.close()
+            elif hasattr(processing_interface, 'stop_services'):
+                await processing_interface.stop_services()
             print("EndPoint App stopped")
 
 
