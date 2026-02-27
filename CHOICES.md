@@ -34,10 +34,10 @@ One to two lines of rationale. Not a spec. Just why this choice was made and wha
 
 ## Mission
 
-### M-0001: Agent Harness for Enhanced Model Reasoning
+### M-0001: Evidence-Based Reasoning Framework
 Supports: (top of stack)
 
-Build infrastructure that dramatically improves any LLM's ability to reason accurately, verify assumptions, and produce reliable outputs. The harness augments model capability rather than replacing it.
+Force LLMs to validate assumptions, fact-check sources, and explore/prove/disprove ideas before responding. Track what needs more evidence or confidence. Recursively break down knowledge, questions, and work into verifiable claims. The framework produces reliable, trustworthy responses — even small reasoning models perform extremely well when forced to reason with evidence.
 
 ### M-0002: Minimize Hallucinations via Verified Claims
 Supports: M-0001
@@ -97,6 +97,16 @@ Every claim displays its provenance — the chain or tree of supporting claims. 
 Supports: M-0006, UX-0005
 
 Users can inspect the breakdown and supporting claims for any past or current prompt the harness is processing. Enables real-time transparency into model reasoning.
+
+### UX-0007: Claim Visualization UI
+Supports: M-0006, UX-0005
+
+Web/TUI interface for visualizing the support tree of claims, reasoning chains, and primary sources. Users see how conclusions connect to evidence. Complements MCP delivery — transparency surface for users who want to audit reasoning.
+
+### UX-0008: Chat-First Interaction
+Supports: M-0001, UX-0001
+
+Users interact with Conjecture as an LLM provider via chat, not direct claim CRUD. Claims are internal infrastructure. Users make statements or ask questions; the system manages claims transparently.
 
 ---
 
@@ -174,7 +184,12 @@ LLM operations use exponential backoff (10s-10min range) with error-type-specifi
 ### O-0006: ARC-AGI-2 Benchmark Focus
 Supports: M-0001, O-0002
 
-Primary benchmark: ARC-AGI-2 tests. Compare bare Haiku vs Haiku+Conjecture to validate harness value-add. Measures reasoning improvement, not just speed.
+Primary benchmark: ARC-AGI-2 tests. Compare bare Haiku vs Haiku+Conjecture to validate framework value-add. Measures reasoning improvement, not just speed.
+
+### O-0007: Threshold-Based Garbage Collection
+Supports: D-0010, D-0001
+
+GC runs when claim count exceeds threshold. Removes claims that are both clean (not dirty) and low-confidence. Prevents unbounded growth while preserving valuable knowledge. GC does not run during active reasoning.
 
 ---
 
@@ -200,10 +215,10 @@ Supports: D-0001, F-0003
 
 Tags are LLM-generated, not user-assigned. Split trigger: tag >20% usage. Process: sample ≤100 claims → LLM suggests ≤8 replacement tags → batch claims (20) → LLM assigns replacement per claim. JSON in/out. If total >500 → merge similar. Max 20 per claim.
 
-### D-0005: Five-Level Scope Model
+### D-0005: Four-Level Scope Model
 Supports: M-0005, D-0001
 
-Claims support five scopes: SESSION, WORKSPACE, USER, TEAM, PUBLIC. LLM assigns to Session/Workspace/User directly. LLM suggests promotion to Team/Public (requires approval). Scope determines visibility and claim persistence.
+Claims support four scopes: WORKSPACE (directory-only), USER, PROJECT, TEAM, GLOBAL. No session scope — all claims persist. LLM decides scope assignment. Scope determines visibility and sharing boundaries.
 
 ### D-0006: Dirty Flag for Re-Evaluation Queue
 Supports: D-0001, D-0002
@@ -223,7 +238,12 @@ Relationships have source_id, target_id, type, confidence (0.0-1.0), metadata di
 ### D-0009: Root Context as Claim
 Supports: D-0001, M-0003, A-0009
 
-Root context = entire conversation (user + harness messages) stored as a single claim. Context decomposed into supporting claims (questions, assumptions, conjectures) via LLM. Root similarity measures claim relevance to this conversation claim. Session-scoped: same session appends, new session resets.
+Root context = entire conversation (user + framework messages) stored as a single claim. Context decomposed into supporting claims (questions, assumptions, conjectures) via LLM. Root similarity measures claim relevance to this conversation claim. Workspace-scoped: persists within the workspace directory.
+
+### D-0010: No Claim Deletion by Users
+Supports: D-0001, D-0006, UX-0008
+
+Users cannot delete claims directly. Instead, users mark claims dirty or drop confidence via chat statements. The system re-evaluates dirty claims. Prevents knowledge loss while allowing correction.
 
 ---
 
@@ -284,10 +304,20 @@ Supports: A-0004, D-0006, M-0004
 
 When claim changes, mark all `supers` dirty. Unidirectional cascade toward root context. Never mark `subs` dirty. Ensures parent conclusions re-evaluated when evidence changes.
 
-### A-0012: Halt Condition for Final Response
+### A-0012: LLM-Driven Halt or Explore
 Supports: A-0004, M-0002, M-0006, D-0009
 
-Evaluation runs in batches until root context claim is clean and LLM is satisfied with supporting claims and confidence to respond fully. No fixed evaluation limit — runs until satisfied. Response synthesized from root context and top supporting evidence.
+LLM decides whether to halt and respond OR explore further by creating new claims to question or investigate. Not a system-imposed threshold. If LLM is unsatisfied with confidence or evidence, it creates new claims rather than forcing a response.
+
+### A-0013: MCP Delivery Model
+Supports: A-0001, M-0001, UX-0004
+
+Expose Conjecture as an MCP server with tools: `build_context(query) → context_blob`, `upsert_claim(claim, confidence, super_ids, sub_ids)`, `explore_next() → claim`, `get_claim_support(claim_or_query) → sub-claims`. Any MCP-compatible client (Claude Desktop, Cursor, custom) can use Conjecture as a reasoning backend.
+
+### A-0014: Streaming Evaluation State
+Supports: A-0004, UX-0006
+
+Evaluation state is observable in real-time. Current claims being evaluated, their confidence, and reasoning steps are exposed via streaming API or polling endpoint. Enables live reasoning breakdown for active prompts.
 
 ---
 
@@ -308,10 +338,10 @@ Supports: D-0001, A-0001
 
 SQLite as primary persistent storage. Simple, embedded, no server required. aiosqlite for async access. Parameterized queries for SQL injection protection.
 
-### T-0004: ChromaDB for Vector Search
+### T-0004: FAISS+SQLite for Vector Search
 Supports: F-0003, D-0001
 
-ChromaDB provides vector embeddings for semantic search. Embedded mode for simplicity. Falls back gracefully if unavailable.
+FAISS with SQLite backing for vector embeddings and semantic search. ChromaDB tested and rejected (slow, heavy dependencies). Do not revisit ChromaDB — it is deprecated.
 
 ### T-0005: Typer + Rich for CLI
 Supports: UX-0001, T-0001
