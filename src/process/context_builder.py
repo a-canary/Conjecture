@@ -6,7 +6,7 @@ processing contexts for claim evaluation and instruction identification.
 """
 
 from typing import List, Dict, Any, Optional, Set
-from datetime import datetime
+from datetime import datetime, timezone
 import asyncio
 import logging
 
@@ -63,7 +63,7 @@ class ProcessContextBuilder:
             ValueError: If claim_id is not found
             RuntimeError: If context building fails
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             # Get the primary claim
@@ -85,7 +85,7 @@ class ProcessContextBuilder:
             context_size = self._estimate_context_size(context_claims)
             
             # Create result
-            build_time_ms = int((datetime.utcnow() - start_time).total_seconds() * 1000)
+            build_time_ms = int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000)
             
             result = ContextResult(
                 claim_id=claim_id,
