@@ -272,6 +272,37 @@ class ClaimRepository:
         """
         return list(self._claims.values())[:limit]
 
+    async def search(
+        self,
+        query: str,
+        limit: int = 10
+    ) -> List[Claim]:
+        """
+        Search claims by content or tags.
+
+        Args:
+            query: Search query string
+            limit: Maximum number of claims to return
+
+        Returns:
+            List of matching claims
+        """
+        query_lower = query.lower()
+        results = []
+
+        for claim in self._claims.values():
+            # Search in content
+            if query_lower in claim.content.lower():
+                results.append(claim)
+            # Search in tags
+            elif any(query_lower in tag.lower() for tag in claim.tags):
+                results.append(claim)
+
+            if len(results) >= limit:
+                break
+
+        return results
+
 
 class RepositoryFactory:
     """
