@@ -6,10 +6,15 @@ identification using language models within the Process Layer.
 """
 
 from typing import List, Dict, Any, Optional, Union
-from datetime import datetime
+from datetime import datetime, timezone
 import asyncio
 import logging
 import json
+
+
+def _utc_now() -> datetime:
+    """Return current UTC datetime (Python 3.12+ compatible)."""
+    return datetime.now(timezone.utc)
 
 from src.core.models import Claim
 from src.processing.llm_bridge import LLMBridge
@@ -70,7 +75,7 @@ class ProcessLLMProcessor:
             ValueError: If request is invalid
             RuntimeError: If processing fails
         """
-        start_time = datetime.utcnow()
+        start_time = _utc_now()
         
         try:
             # Validate request
@@ -105,7 +110,7 @@ class ProcessLLMProcessor:
             reasoning = await self._extract_reasoning(llm_response)
             
             # Update result with processing outcomes
-            processing_time_ms = int((datetime.utcnow() - start_time).total_seconds() * 1000)
+            processing_time_ms = int((_utc_now() - start_time).total_seconds() * 1000)
             
             result.status = ProcessingStatus.COMPLETED
             result.instructions = instructions
@@ -135,7 +140,7 @@ class ProcessLLMProcessor:
         except Exception as e:
             logger.error(f"Failed to process claim {request.claim_id}: {str(e)}")
             
-            processing_time_ms = int((datetime.utcnow() - start_time).total_seconds() * 1000)
+            processing_time_ms = int((_utc_now() - start_time).total_seconds() * 1000)
             
             return ProcessingResult(
                 claim_id=request.claim_id,
