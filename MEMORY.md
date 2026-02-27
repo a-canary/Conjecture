@@ -2,11 +2,12 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-Gap analysis ~45% complete. 367 tests, 359 pass, 8 xfailed. Coverage 22.00%. All 4 GAPs addressed. Process Layer models at 97.92% coverage. Data Layer functional. Continuing toward 25% coverage milestone. 53 commits ahead (SSH blocked).
+Gap analysis ~50% complete. All 367 tests pass (0 xfailed). Coverage 22.32%. All 4 GAPs addressed. Dirty flag system fully functional after bug fixes. 58 commits ahead (SSH blocked).
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-02-27: GATES_MET — Fixed 8 xfailed tests (8→0). Bugs: DirtyReason enum mapping, should_prioritize() sig, propagate_confidence_updates() index, fixture field names. 367 pass, 0 xfailed. Coverage 22.32%.
 - 2026-02-25: GATES_MET — Fixed datetime.utcnow() (21 warnings → 0) and to_dict bug in process/models.py. Full serialization now works. 359 pass, 8 xfailed. Zero deprecation warnings.
 - 2026-02-25: GATES_MET — Added 25 tests for process/models.py (0% → 97.92%). Overall coverage 19% → 22%. 359 pass, 8 xfailed. Gap analysis ~45%.
 - 2026-02-25: GATES_MET — Created ConjectureProcessingInterface, bridged DataManager→OptimizedSQLiteManager. endpoint_app now uses real implementation. 334 pass, 8 xfailed. Gap analysis ~40% complete.
