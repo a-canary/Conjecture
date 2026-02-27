@@ -414,6 +414,65 @@ class TestClaimRepositoryRelations:
         assert result["subs"][0].id == "c002"
 
 
+class TestClaimRepositorySearch:
+    """Tests for ClaimRepository search operations."""
+
+    @pytest.mark.asyncio
+    async def test_search_by_content(self):
+        """Test search finds claims by content."""
+        repo = ClaimRepository()
+        await repo.create(Claim(id="c001", content="Mathematics algebra", confidence=0.8))
+        await repo.create(Claim(id="c002", content="Science physics", confidence=0.8))
+        await repo.create(Claim(id="c003", content="Mathematics geometry", confidence=0.8))
+
+        results = await repo.search("math")
+
+        assert len(results) == 2
+
+    @pytest.mark.asyncio
+    async def test_search_by_tag(self):
+        """Test search finds claims by tag."""
+        repo = ClaimRepository()
+        await repo.create(Claim(id="c001", content="Claim one content", confidence=0.8, tags=["algebra"]))
+        await repo.create(Claim(id="c002", content="Claim two content", confidence=0.8, tags=["physics"]))
+
+        results = await repo.search("algebra")
+
+        assert len(results) == 1
+        assert results[0].id == "c001"
+
+    @pytest.mark.asyncio
+    async def test_search_case_insensitive(self):
+        """Test search is case insensitive."""
+        repo = ClaimRepository()
+        await repo.create(Claim(id="c001", content="MATHEMATICS claim", confidence=0.8))
+
+        results = await repo.search("math")
+
+        assert len(results) == 1
+
+    @pytest.mark.asyncio
+    async def test_search_respects_limit(self):
+        """Test search respects limit."""
+        repo = ClaimRepository()
+        for i in range(10):
+            await repo.create(Claim(id=f"c{i:03d}", content=f"Test content {i}", confidence=0.8))
+
+        results = await repo.search("test", limit=3)
+
+        assert len(results) == 3
+
+    @pytest.mark.asyncio
+    async def test_search_no_results(self):
+        """Test search with no matches."""
+        repo = ClaimRepository()
+        await repo.create(Claim(id="c001", content="Hello world content", confidence=0.8))
+
+        results = await repo.search("nothing")
+
+        assert results == []
+
+
 class TestRepositoryFactory:
     """Tests for RepositoryFactory."""
 
