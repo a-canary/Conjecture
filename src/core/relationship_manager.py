@@ -312,14 +312,16 @@ def propagate_confidence_updates(claim_updates: Dict[str, float], all_claims: Li
         for claim_id, new_confidence in claim_updates.items():
             for sub_id in sub_map.get(claim_id, set()):
                 if sub_id in claim_map:
-                    idx, sub_claim = claim_map[updated_claims[idx].id]
+                    sub_idx, sub_claim = claim_map[sub_id]
                     # Apply propagation factor
                     confidence_change = (new_confidence - sub_claim.confidence) * propagation_factor
                     new_sub_confidence = min(1.0, max(0.0, sub_claim.confidence + confidence_change))
 
                     if abs(new_sub_confidence - sub_claim.confidence) > 0.01:
                         from .claim_operations import update_confidence
-                        updated_claims[idx] = update_confidence(updated_claims[idx], new_sub_confidence)
+                        updated_claims[sub_idx] = update_confidence(updated_claims[sub_idx], new_sub_confidence)
+                        # Update claim_map with new reference
+                        claim_map[sub_id] = [sub_idx, updated_claims[sub_idx]]
                         changes_made = True
 
         if not changes_made:

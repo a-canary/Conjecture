@@ -247,13 +247,21 @@ Subs: {self.subs}"""
         self.dirty_timestamp = datetime.now(timezone.utc)
         # Map string reason to DirtyReason enum if possible
         reason_map = {
-            "content_change": DirtyReason.CONTENT_CHANGE,
-            "relationship_change": DirtyReason.RELATIONSHIP_CHANGE,
+            "content_change": DirtyReason.CONTENT_UPDATE,
+            "content_update": DirtyReason.CONTENT_UPDATE,
+            "relationship_change": DirtyReason.RELATIONSHIP_CHANGED,
+            "relationship_changed": DirtyReason.RELATIONSHIP_CHANGED,
             "confidence_change": DirtyReason.CONFIDENCE_CHANGE,
             "state_change": DirtyReason.STATE_CHANGE,
             "manual": DirtyReason.MANUAL_FLAG,
+            "manual_mark": DirtyReason.MANUAL_MARK,
+            "supporting_claim_changed": DirtyReason.SUPPORTING_CLAIM_CHANGED,
         }
-        self.dirty_reason = reason_map.get(reason.lower(), DirtyReason.MANUAL_FLAG)
+        # Handle both string and DirtyReason enum inputs
+        if isinstance(reason, DirtyReason):
+            self.dirty_reason = reason
+        else:
+            self.dirty_reason = reason_map.get(reason.lower(), DirtyReason.MANUAL_FLAG)
 
     def mark_clean(self) -> None:
         """Mark claim as clean (no longer needs re-evaluation)."""

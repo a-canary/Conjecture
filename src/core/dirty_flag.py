@@ -400,7 +400,7 @@ class DirtyFlagSystem:
                 [
                     c
                     for c in dirty_claims
-                    if c.should_prioritize(self.confidence_threshold)
+                    if c.should_prioritize()
                 ]
             ),
             "reasons": defaultdict(int),

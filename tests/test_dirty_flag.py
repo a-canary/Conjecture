@@ -78,33 +78,39 @@ def low_confidence_claim():
 
 @pytest.fixture
 def related_claims():
-    """Create a set of related claims for testing cascading"""
+    """Create a set of related claims for testing cascading.
+
+    Relationship model:
+    - claim_a provides evidence FOR claim_b (a.supers = [b])
+    - claim_b provides evidence FOR claim_c (b.supers = [c])
+    - Dirty flags cascade upward: when a changes, b becomes dirty; when b changes, c becomes dirty
+    """
     claim_a = Claim(
         id="c0000010",
-        content="Claim A - supports B",
+        content="Claim A - provides evidence for B",
         confidence=0.80,
-        supports=["c0000011"],
-        supported_by=[],
+        supers=["c0000011"],  # a supports b (toward root)
+        subs=[],
         is_dirty=False,
         dirty=False,
     )
 
     claim_b = Claim(
         id="c0000011",
-        content="Claim B - supported by A, supports C",
+        content="Claim B - supported by A, provides evidence for C",
         confidence=0.85,
-        supports=["c0000012"],
-        supported_by=["c0000010"],
+        supers=["c0000012"],  # b supports c (toward root)
+        subs=["c0000010"],    # a supports b
         is_dirty=False,
         dirty=False,
     )
 
     claim_c = Claim(
         id="c0000012",
-        content="Claim C - supported by B",
+        content="Claim C - supported by B (root)",
         confidence=0.90,
-        supports=[],
-        supported_by=["c0000011"],
+        supers=[],            # c is root
+        subs=["c0000011"],    # b supports c
         is_dirty=False,
         dirty=False,
     )
@@ -253,9 +259,6 @@ class TestPriorityCalculation:
 class TestCascadeDirtyFlags:
     """Test cascading dirty flags to related claims"""
 
-    @pytest.mark.xfail(
-        reason="BUG: dirty_flag.py line 125 calls claim.mark_dirty() which doesn't exist"
-    )
     def test_cascade_to_related_claims(self, dirty_flag_system, related_claims):
         """Test that dirty flags cascade to related claims"""
         claim_a, claim_b, claim_c = related_claims
@@ -291,18 +294,15 @@ class TestCascadeDirtyFlags:
         # Should not cascade beyond depth limit
         # No claims should be added to tracker at depth 2 when limit is 1
 
-    @pytest.mark.xfail(
-        reason="BUG: dirty_flag.py line 125 calls claim.mark_dirty() which doesn't exist"
-    )
     def test_cascade_prevents_infinite_loops(self, dirty_flag_system):
         """Test that cascade prevents infinite loops"""
-        # Create circular relationship
+        # Create circular relationship (X supports Y, Y supports X)
         claim_x = Claim(
             id="c0000020",
             content="Claim X - circular reference",
             confidence=0.80,
-            supports=["c0000021"],
-            supported_by=["c0000021"],
+            supers=["c0000021"],  # X provides evidence for Y
+            subs=["c0000021"],    # Y provides evidence for X
             is_dirty=False,
             dirty=False,
         )
@@ -311,8 +311,8 @@ class TestCascadeDirtyFlags:
             id="c0000021",
             content="Claim Y - circular reference",
             confidence=0.80,
-            supports=["c0000020"],
-            supported_by=["c0000020"],
+            supers=["c0000020"],  # Y provides evidence for X
+            subs=["c0000020"],    # X provides evidence for Y
             is_dirty=False,
             dirty=False,
         )
@@ -632,9 +632,6 @@ class TestClearDirtyFlags:
 class TestDirtyStatistics:
     """Test dirty claim statistics"""
 
-    @pytest.mark.xfail(
-        reason="BUG: dirty_flag.py line 402 calls claim.should_prioritize() which doesn't exist"
-    )
     def test_get_dirty_statistics_basic(self, dirty_flag_system):
         """Test getting basic dirty statistics"""
         claims = [
@@ -665,9 +662,6 @@ class TestDirtyStatistics:
         assert "reasons" in stats
         assert "priority_ranges" in stats
 
-    @pytest.mark.xfail(
-        reason="BUG: dirty_flag.py line 402 calls claim.should_prioritize() which doesn't exist"
-    )
     def test_dirty_statistics_priority_ranges(self, dirty_flag_system):
         """Test dirty statistics priority range counting"""
         claims = [
@@ -692,9 +686,6 @@ class TestDirtyStatistics:
         assert stats["priority_ranges"]["medium"] == 1
         assert stats["priority_ranges"]["low"] == 1
 
-    @pytest.mark.xfail(
-        reason="BUG: dirty_flag.py line 402 calls claim.should_prioritize() which doesn't exist"
-    )
     def test_dirty_statistics_reasons(self, dirty_flag_system):
         """Test dirty statistics reason counting"""
         claims = [

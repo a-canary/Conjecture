@@ -643,9 +643,6 @@ class TestDirtyPropagation:
 
         assert len(marked_ids) == 0
 
-    @pytest.mark.xfail(
-        reason="Requires DirtyFlagSystem - fallback path calls non-existent mark_dirty() method"
-    )
     def test_update_claim_with_dirty_propagation_content_change(self):
         """Test propagation when content changes"""
         original = Claim(
@@ -663,9 +660,6 @@ class TestDirtyPropagation:
 
         assert "c0000002" in marked_ids
 
-    @pytest.mark.xfail(
-        reason="Requires DirtyFlagSystem - fallback path calls non-existent mark_dirty() method"
-    )
     def test_update_claim_with_dirty_propagation_confidence_change(self):
         """Test propagation when confidence changes significantly"""
         original = Claim(
