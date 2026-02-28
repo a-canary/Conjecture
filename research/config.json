@@ -13,7 +13,7 @@
     {
       "url": "${CHUTES_API_URL:-https://llm.chutes.ai/v1}",
       "api_key": "${CHUTES_API_KEY:-}",
-      "model": "${CHUTES_MODEL:-zai-org/GLM-4.6-FP8}"
+      "model": "${CHUTES_MODEL:-deepseek-ai/DeepSeek-V3-0324}"
     },
     {
       "url": "${OPENROUTER_API_URL:-https://openrouter.ai/api/v1}",
@@ -26,7 +26,7 @@
       "model": "${OPENAI_MODEL:-gpt-3.5-turbo}"
     }
   ],
-  "judge_model": "${JUDGE_MODEL:-chutes:zai-org/GLM-4.6-FP8}",
+  "judge_model": "${JUDGE_MODEL:-chutes:deepseek-ai/DeepSeek-V3-0324}",
   "judge_provider": "${JUDGE_PROVIDER:-chutes}",
   "judge_temperature": "${JUDGE_TEMPERATURE:-0.1}",
   "judge_max_tokens": "${JUDGE_MAX_TOKENS:-1000}",
