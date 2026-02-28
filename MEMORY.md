@@ -2,11 +2,12 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-**CHOICES.md reframed as Evidence-Based Reasoning Framework.** 69 choices total. Harness→Framework rename complete across codebase. ChromaDB fully deprecated. All 497 tests pass. Coverage 25.23%. Phase 3 (ARC-AGI-2) blocked on ANTHROPIC_API_KEY.
+**ARC-AGI-2 benchmark running.** Chutes API working (DeepSeek-V3-0324). Baseline: 0% on ARC-AGI-2 (expected — tasks are hard). ConjectureFramework now calls LLM for synthesis. 69 CHOICES. ChromaDB deprecated. 497 tests pass. Coverage 25.23%.
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-02-28: GATES_MET — ARC-AGI-2 benchmark run. Chutes API working (DeepSeek-V3). Bare LLM: 0/5 (0%). Conjecture+LLM: 0/3 (0%). Framework now calls LLM for synthesis. Chutes model config fixed.
 - 2026-02-28: GATES_MET — CHOICES.md reframed (69 choices). M-0001→Evidence-Based Reasoning Framework. Added MCP delivery (A-0013), streaming (A-0014), chat-first (UX-0008), GC (O-0007). ChromaDB deprecated. Harness→Framework rename complete.
 - 2026-02-27: GATES_MET — 25% coverage target reached! Added 109 tests total: llm_processor (16%→99%), repositories (25%→98%), unified_validator (0%→100%), settings (0%→100%). 497 pass, coverage 25.23%.
 - 2026-02-27: GATES_MET — Added 21 tests for context_builder.py (15%→91%). Fixed datetime.utcnow() deprecation. 388 pass, coverage 23.02%.
