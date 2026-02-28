@@ -2,11 +2,12 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-Gap analysis ~60% complete. All 497 tests pass. **Coverage 25.23% milestone reached.** Process Layer complete. Data Layer repositories complete (98%). 64 commits ahead (SSH blocked).
+**CHOICES.md reframed as Evidence-Based Reasoning Framework.** 69 choices total. Harness→Framework rename complete across codebase. ChromaDB fully deprecated. All 497 tests pass. Coverage 25.23%. Phase 3 (ARC-AGI-2) blocked on ANTHROPIC_API_KEY.
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-02-28: GATES_MET — CHOICES.md reframed (69 choices). M-0001→Evidence-Based Reasoning Framework. Added MCP delivery (A-0013), streaming (A-0014), chat-first (UX-0008), GC (O-0007). ChromaDB deprecated. Harness→Framework rename complete.
 - 2026-02-27: GATES_MET — 25% coverage target reached! Added 109 tests total: llm_processor (16%→99%), repositories (25%→98%), unified_validator (0%→100%), settings (0%→100%). 497 pass, coverage 25.23%.
 - 2026-02-27: GATES_MET — Added 21 tests for context_builder.py (15%→91%). Fixed datetime.utcnow() deprecation. 388 pass, coverage 23.02%.
 - 2026-02-27: GATES_MET — Fixed 8 xfailed tests (8→0). Bugs: DirtyReason enum mapping, should_prioritize() sig, propagate_confidence_updates() index, fixture field names. 367 pass, 0 xfailed. Coverage 22.32%.
