@@ -803,7 +803,7 @@ def backends():
     console.print("Configuration is loaded from ~/.conjecture/config.json")
     
     table.add_row("Processing Interface", "Available", "Conjecture - Async Evidence-Based AI Reasoning")
-    table.add_row("Data Layer", "Integrated", "SQLite + ChromaDB for vector storage")
+    table.add_row("Data Layer", "Integrated", "SQLite + FAISS for vector storage")
     table.add_row("LLM Bridge", "Configurable", "Supports multiple LLM providers")
     table.add_row("Async Evaluation", "Enabled", "Background claim evaluation service")
     table.add_row("Tool Management", "Dynamic", "Runtime tool creation and execution")

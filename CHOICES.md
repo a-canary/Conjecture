@@ -57,7 +57,7 @@ Surface implicit assumptions as explicit claims. Counter-claims are implicit LLM
 ### M-0005: Privacy-First with Cloud Option
 Supports: M-0001
 
-Support local-first operation (Ollama, LM Studio) for complete data privacy. Cloud providers available for users who prioritize performance. The harness works with any OpenAI-compatible backend.
+Support local-first operation (Ollama, LM Studio) for complete data privacy. Cloud providers available for users who prioritize performance. The framework works with any OpenAI-compatible backend.
 
 ### M-0006: Show Your Work for User Trust
 Supports: M-0001, M-0002
@@ -86,7 +86,7 @@ System automatically detects available LLM backends (local first, then cloud). U
 ### UX-0004: Multi-Interface Access (CLI, TUI, Web, MCP)
 Supports: M-0001
 
-Users access the harness via CLI, TUI, web interface, or MCP. All testing and validation occurs through CLI as the most direct raw interface. Other interfaces delegate to the same Endpoint layer.
+Users access the framework via CLI, TUI, web interface, or MCP. All testing and validation occurs through CLI as the most direct raw interface. Other interfaces delegate to the same Endpoint layer.
 
 ### UX-0005: Claim Provenance via Chain/Tree View
 Supports: M-0006, UX-0001
@@ -96,7 +96,7 @@ Every claim displays its provenance — the chain or tree of supporting claims. 
 ### UX-0006: Live Reasoning Breakdown for Active Prompts
 Supports: M-0006, UX-0005
 
-Users can inspect the breakdown and supporting claims for any past or current prompt the harness is processing. Enables real-time transparency into model reasoning.
+Users can inspect the breakdown and supporting claims for any past or current prompt the framework is processing. Enables real-time transparency into model reasoning.
 
 ### UX-0007: Claim Visualization UI
 Supports: M-0006, UX-0005
@@ -292,7 +292,7 @@ Batch operations use ClaimBatch (claims list + batch_id + timestamp). BatchResul
 ### A-0009: Input Decomposition via LLM
 Supports: A-0004, M-0002, M-0003
 
-The Process Layer treats all input as compound. Prompts are decomposed into constituent claims (questions, assertions, references, context) using LLM analysis before reasoning. This is not a separate step — decomposition is how the harness thinks.
+The Process Layer treats all input as compound. Prompts are decomposed into constituent claims (questions, assertions, references, context) using LLM analysis before reasoning. This is not a separate step — decomposition is how the framework thinks.
 
 ### A-0010: LLM Operates via Claim Tools
 Supports: A-0004, M-0002, M-0006, F-0001, D-0004

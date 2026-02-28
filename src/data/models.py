@@ -278,7 +278,7 @@ class Claim(BaseModel):
         )
 
     def to_chroma_metadata(self) -> Dict[str, Any]:
-        """Convert claim to ChromaDB metadata format (deprecated - use to_lancedb_dict)"""
+        """DEPRECATED: ChromaDB removed per CHOICES.md T-0004. Use FAISS+SQLite instead."""
         return {
             "confidence": self.confidence,
             "state": self.state.value,
@@ -297,7 +297,7 @@ class Claim(BaseModel):
     def from_chroma_result(
         cls, id: str, content: str, metadata: Dict[str, Any]
     ) -> "Claim":
-        """Create claim from ChromaDB query result (deprecated - use from_lancedb_result)"""
+        """DEPRECATED: ChromaDB removed per CHOICES.md T-0004. Use FAISS+SQLite instead."""
         return cls(
             id=id,
             content=content,
@@ -467,10 +467,10 @@ class DataConfig(BaseModel):
         default="./data/conjecture.db", description="SQLite database path"
     )
 
-    # ChromaDB configuration
-    chroma_path: str = Field(default="./data/vector_db", description="ChromaDB path")
+    # ChromaDB configuration (DEPRECATED - ChromaDB removed per CHOICES.md T-0004)
+    chroma_path: str = Field(default="./data/vector_db", description="DEPRECATED: ChromaDB removed")
     chroma_collection: str = Field(
-        default="claims", description="ChromaDB collection name"
+        default="claims", description="DEPRECATED: ChromaDB removed"
     )
 
     # Embedding configuration
@@ -499,7 +499,7 @@ class DataConfig(BaseModel):
 
     # Feature flags
     use_chroma: bool = Field(
-        default=True, description="Whether to use ChromaDB for vector storage"
+        default=False, description="DEPRECATED: ChromaDB removed per CHOICES.md T-0004"
     )
     use_embeddings: bool = Field(default=True, description="Whether to use embeddings")
     auto_sync: bool = Field(default=True, description="Auto-sync dirty claims")

@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "chromadb==0.4.15",
+    # chromadb removed - deprecated per CHOICES.md T-0004 (slow, heavy deps)
     "pydantic==2.5.2",
     "pydantic-settings>=2.0.0",
     "faiss-cpu",

@@ -1,6 +1,6 @@
-# Conjecture: Claim-Based Reasoning Harness
+# Conjecture: Evidence-Based Reasoning Framework
 
-An agent harness that improves LLM reasoning, verifies assumptions, minimizes hallucinations, and handles complex tasks through claim-based knowledge management.
+A framework that forces LLMs to validate assumptions, fact-check sources, and explore/prove/disprove ideas before responding. Recursively breaks down knowledge into verifiable claims for reliable, trustworthy responses.
 
 ## Core Philosophy: Claims Are NOT Facts
 
@@ -47,7 +47,7 @@ See [CHOICES.md](CHOICES.md) for all configuration choices.
 1. **Presentation** (`src/cli/`): User interaction (CLI, TUI, Web, MCP)
 2. **Endpoint** (`src/endpoint/`): Public API
 3. **Process** (`src/process/`): Intelligence and context building
-4. **Data** (`src/data/`): Universal claim storage (SQLite + ChromaDB)
+4. **Data** (`src/data/`): Universal claim storage (SQLite + FAISS)
 
 See [specs/architecture.md](specs/architecture.md) for details.
 

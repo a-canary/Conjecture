@@ -73,7 +73,7 @@ python conjecture stats
 1. **Presentation Layer** (`src/cli/`): User interaction and CLI interface
 2. **Endpoint Layer** (`src/endpoint/`): Public API and service endpoints
 3. **Process Layer** (`src/process/`): Intelligence, LLM integration, and context management
-4. **Data Layer** (`src/data/`): Universal claim storage with SQLite/ChromaDB
+4. **Data Layer** (`src/data/`): Universal claim storage with SQLite/FAISS
 
 ### Core Data Models (`src/data/models.py`)
 - **Claim**: Primary knowledge container with confidence scores, state, tags, and relationships
@@ -121,7 +121,7 @@ Core system that implements successful reasoning enhancements:
 
 ### Database Integration (`src/data/`)
 - **SQLite**: Primary claim storage with structured queries
-- **ChromaDB**: Vector embeddings for semantic search (when available)
+- **FAISS**: Vector embeddings for semantic search (ChromaDB deprecated — slow, heavy deps)
 - **Repository Pattern**: Clean separation between data access and business logic
 - **Connection Pooling**: Optimized database performance
 
@@ -134,7 +134,7 @@ Core system that implements successful reasoning enhancements:
 4. **Structured decomposition**: Breaking complex problems into manageable steps
 
 ### Failed Patterns to Avoid
-1. **Knowledge infrastructure attempts**: 0/2 successful (ChromaDB API incompatibility)
+1. **Heavy external dependencies**: ChromaDB rejected (slow, heavy deps) — use FAISS+SQLite instead
 2. **Surface-level changes**: 0/3 successful (formatting, confidence optimization)
 3. **Arbitrary metric gaming**: Leading to false positives (corrected by multi-agent critique)
 
@@ -208,7 +208,6 @@ async def run_cycle(self):
 
 ### Missing/Broken Infrastructure
 - **Knowledge repositories**: Database operations fail (ClaimRepository.create_claim)
-- **ChromaDB integration**: Vector storage not accessible
 - **Local LLM providers**: Ollama/LM Studio not running on localhost
 - **Workspace configuration**: Pydantic validation errors
 
