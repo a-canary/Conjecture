@@ -281,53 +281,77 @@ class ConjectureFramework:
         session: ConjectureSession,
         task: Any,
     ) -> Optional[List[List[int]]]:
-        """Synthesize answer from validated claims."""
-        # Get validated hypotheses
-        validated = [
-            claim for claim in session.claims.values()
-            if claim.state == ClaimState.VALIDATED and "hypothesis" in claim.tags
-        ]
+        """Synthesize answer using LLM reasoning."""
+        import json
 
-        if not validated:
-            return None
+        # Build context from claims
+        claims_context = "\n".join([
+            f"- {c.content} (confidence: {c.confidence:.2f})"
+            for c in session.claims.values()
+            if c.confidence >= 0.5
+        ])
 
-        # Use highest confidence validated hypothesis to guide answer
-        best_hyp = max(validated, key=lambda c: c.confidence)
+        # Format training examples
+        train_str = ""
+        for i, ex in enumerate(task.train_examples):
+            train_str += f"Example {i+1}:\nInput: {json.dumps(ex['input'])}\nOutput: {json.dumps(ex['output'])}\n\n"
 
-        # Simple transformation logic based on patterns observed
-        # In real implementation, LLM would generate the output
+        # Build LLM prompt
+        prompt = f"""You are solving an ARC-AGI pattern recognition task.
+
+Study these input-output examples carefully:
+{train_str}
+
+Based on my analysis, I've identified these patterns:
+{claims_context}
+
+Now predict the output for this input:
+{json.dumps(task.test_input)}
+
+Think step by step:
+1. What pattern do you see in the examples?
+2. How does input transform to output?
+3. Apply that transformation to the test input.
+
+Return ONLY the output grid as a JSON array. No explanation, just the array."""
+
+        # Call LLM if available
+        if self.llm and hasattr(self.llm, 'generate'):
+            try:
+                response = self.llm.generate(prompt, max_tokens=500)
+                if response:
+                    # Record as reasoning step
+                    session.reasoning_steps.append(ReasoningStep(
+                        step_id=f"synth_{session.session_id}",
+                        content=f"LLM synthesis: {response[:100]}...",
+                        claim_type="synthesis",
+                        confidence=0.8,
+                    ))
+
+                    # Parse response
+                    import re
+                    match = re.search(r'\[\[.*?\]\]', response, re.DOTALL)
+                    if match:
+                        return json.loads(match.group())
+                    # Try parsing whole response
+                    return json.loads(response.strip())
+            except Exception as e:
+                logger.warning(f"LLM synthesis failed: {e}")
+
+        # Fallback: rule-based patterns
         test_input = task.test_input
 
-        # Analyze training examples to infer transformation
+        # Check for horizontal flip
         if task.train_examples:
-            # Check for horizontal flip pattern
-            is_horizontal_flip = True
-            for example in task.train_examples:
-                in_grid = example['input']
-                out_grid = example['output']
-                if len(in_grid) == len(out_grid) and len(in_grid[0]) == len(out_grid[0]):
-                    for i, (in_row, out_row) in enumerate(zip(in_grid, out_grid)):
-                        if in_row[::-1] != out_row:
-                            is_horizontal_flip = False
-                            break
-
-            if is_horizontal_flip:
+            is_flip = all(
+                ex['input'][i][::-1] == ex['output'][i]
+                for ex in task.train_examples
+                for i in range(len(ex['input']))
+                if len(ex['input']) == len(ex['output'])
+            )
+            if is_flip:
                 return [row[::-1] for row in test_input]
 
-            # Check for vertical flip pattern
-            is_vertical_flip = True
-            for example in task.train_examples:
-                in_grid = example['input']
-                out_grid = example['output']
-                if len(in_grid) == len(out_grid):
-                    if in_grid[::-1] != out_grid:
-                        is_vertical_flip = False
-                        break
-
-            if is_vertical_flip:
-                return test_input[::-1]
-
-        # Default: return input unchanged (likely wrong, but demonstrates flow)
         return test_input
 
     def _check_halt_condition(self, session: ConjectureSession) -> bool:
