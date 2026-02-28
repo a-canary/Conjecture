@@ -1,7 +1,7 @@
 """
-Conjecture Harness Integration for ARC-AGI-2 Benchmark
+Conjecture Framework Integration for ARC-AGI-2 Benchmark
 
-This module provides the Conjecture harness wrapper that enhances LLM reasoning
+This module provides the Conjecture framework wrapper that enhances LLM reasoning
 through claim-based decomposition and evaluation.
 
 Key concepts:
@@ -59,9 +59,9 @@ class ConjectureSession:
     final_answer: Optional[str] = None
 
 
-class ConjectureHarness:
+class ConjectureFramework:
     """
-    Conjecture Harness for enhanced LLM reasoning.
+    Conjecture Framework for enhanced LLM reasoning.
 
     Wraps an LLM processor to provide claim-based reasoning:
     1. Decompose task into root claim
@@ -78,7 +78,7 @@ class ConjectureHarness:
         max_evaluations: int = 50,  # Safety limit
     ):
         """
-        Initialize Conjecture harness.
+        Initialize Conjecture framework.
 
         Args:
             llm_processor: LLM processor for generating responses
@@ -446,24 +446,29 @@ class ConjectureHarness:
         }
 
 
-def create_conjecture_harness(llm_processor: Any = None) -> ConjectureHarness:
+def create_conjecture_framework(llm_processor: Any = None) -> ConjectureFramework:
     """
-    Factory function to create a Conjecture harness.
+    Factory function to create a Conjecture framework.
 
     Args:
         llm_processor: Optional LLM processor (uses placeholder if None)
 
     Returns:
-        Configured ConjectureHarness instance
+        Configured ConjectureFramework instance
     """
-    return ConjectureHarness(llm_processor=llm_processor)
+    return ConjectureFramework(llm_processor=llm_processor)
+
+
+# Backward compatibility alias (deprecated)
+create_conjecture_harness = create_conjecture_framework
+ConjectureHarness = ConjectureFramework
 
 
 if __name__ == "__main__":
     # Simple test
     logging.basicConfig(level=logging.INFO)
 
-    harness = create_conjecture_harness()
+    framework = create_conjecture_framework()
 
     # Create mock task
     class MockTask:
@@ -476,9 +481,9 @@ if __name__ == "__main__":
         test_output = [[0, 9], [2, 1]]
 
     task = MockTask()
-    session, output = harness.process_task(task)
+    session, output = framework.process_task(task)
 
-    print(f"Session stats: {harness.get_session_stats(session)}")
+    print(f"Session stats: {framework.get_session_stats(session)}")
     print(f"Predicted output: {output}")
     print(f"Expected output: {task.test_output}")
     print(f"Correct: {output == task.test_output}")

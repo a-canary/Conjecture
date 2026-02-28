@@ -117,7 +117,7 @@ python conjecture config
 ### Key Directories
 ```
 src/
-├── agent/                 # Agent coordination and harness systems
+├── agent/                 # Agent coordination and framework systems
 ├── cli/                   # CLI interface and backends
 │   ├── backends/         # Backend implementations (cloud, local)
 │   └── encoding_handler.py # UTF-8 encoding support

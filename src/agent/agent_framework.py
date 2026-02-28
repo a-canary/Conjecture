@@ -1,5 +1,5 @@
 """
-Agent Harness - Core orchestration system for Conjecture AI agent.
+Agent Framework - Core orchestration system for Conjecture AI agent.
 Manages sessions, state, and workflow coordination.
 """
 
@@ -81,7 +81,7 @@ class Session:
         """Get recent interactions from the session."""
         return self.interactions[-count:] if self.interactions else []
 
-class AgentHarness:
+class AgentFramework:
     """
     Main orchestration system for the AI agent.
     Manages sessions, coordinates components, and handles workflows.
@@ -103,7 +103,7 @@ class AgentHarness:
         self._cleanup_task = None
 
     async def initialize(self) -> None:
-        """Initialize the agent harness."""
+        """Initialize the agent framework."""
         try:
             # Initialize support systems
             await self.context_builder.initialize()
@@ -111,14 +111,14 @@ class AgentHarness:
             # Start cleanup task
             self._cleanup_task = asyncio.create_task(self._cleanup_loop())
 
-            logger.info("Agent harness initialized successfully")
+            logger.info("Agent framework initialized successfully")
 
         except Exception as e:
-            logger.error(f"Failed to initialize agent harness: {e}")
+            logger.error(f"Failed to initialize agent framework: {e}")
             raise
 
     async def close(self) -> None:
-        """Close the agent harness and cleanup resources."""
+        """Close the agent framework and cleanup resources."""
         try:
             # Cancel cleanup task
             if self._cleanup_task:
@@ -132,10 +132,10 @@ class AgentHarness:
             for session_id in list(self.sessions.keys()):
                 await self.cleanup_session(session_id)
 
-            logger.info("Agent harness closed successfully")
+            logger.info("Agent framework closed successfully")
 
         except Exception as e:
-            logger.error(f"Error closing agent harness: {e}")
+            logger.error(f"Error closing agent framework: {e}")
 
     async def create_session(self) -> str:
         """
@@ -480,8 +480,8 @@ I've created test cases and will run them to validate the code."""
             await self.cleanup_session(oldest_session_id)
             logger.info(f"Removed oldest idle session: {oldest_session_id}")
 
-    def get_harness_stats(self) -> Dict[str, Any]:
-        """Get statistics about the agent harness."""
+    def get_framework_stats(self) -> Dict[str, Any]:
+        """Get statistics about the agent framework."""
         total_sessions = len(self.sessions)
         active_sessions = sum(
             1

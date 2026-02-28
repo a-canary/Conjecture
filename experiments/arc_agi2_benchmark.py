@@ -5,9 +5,9 @@ Primary benchmark per CHOICES.md O-0006
 
 Compares:
 - Bare LLM: Direct prompting (Chutes/glm-4.5-air or Anthropic/Haiku)
-- LLM+Conjecture: Same model with Conjecture harness for enhanced reasoning
+- LLM+Conjecture: Same model with Conjecture framework for enhanced reasoning
 
-The goal is to measure reasoning improvement from the Conjecture harness,
+The goal is to measure reasoning improvement from the Conjecture framework,
 not just speed or token efficiency.
 """
 
@@ -389,14 +389,14 @@ Respond only with the output grid as a JSON array of arrays.
         reasoning_steps = 0
 
         try:
-            # Use Conjecture harness for claim-based reasoning
-            from conjecture_harness import create_conjecture_harness
+            # Use Conjecture framework for claim-based reasoning
+            from conjecture_framework import create_conjecture_framework
 
-            harness = create_conjecture_harness(self._conjecture_processor)
-            session, predicted = harness.process_task(task)
+            framework = create_conjecture_framework(self._conjecture_processor)
+            session, predicted = framework.process_task(task)
 
-            # Get stats from harness
-            stats = harness.get_session_stats(session)
+            # Get stats from framework
+            stats = framework.get_session_stats(session)
             claims_generated = stats["total_claims"]
             reasoning_steps = stats["reasoning_steps"]
 
@@ -414,7 +414,7 @@ Respond only with the output grid as a JSON array of arrays.
             )
 
         except ImportError:
-            # Fallback if harness not available: use enhanced prompting
+            # Fallback if framework not available: use enhanced prompting
             try:
                 processor = self._get_conjecture_processor()
                 prompt = self._format_task_prompt(task, include_reasoning=True)

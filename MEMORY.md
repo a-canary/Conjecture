@@ -20,8 +20,8 @@ Gap analysis ~60% complete. All 497 tests pass. **Coverage 25.23% milestone reac
 - 2026-02-25: WORK_DISPATCHED — Hypothesis validation infra (#153): added retry logic to gpt_oss_integration.py, improved \boxed{} extraction in external_benchmarks.py. 3 of 6 remaining items done.
 - 2026-02-25: GATES_MET — Backlog cleanup: marked 6 items resolved (#102, #103, #105, #106, #111, #112). Removed 3 TODOs from src/. 331 tests pass, 0 collection errors.
 - 2026-02-25: GATES_MET — Cycle complete. LanceDB removed (43 skipped→0). 342 tests, 331 pass, 11 xfail. Coverage 18.36%. optimized_sqlite_manager extended with batch methods.
-- 2026-02-25: GATES_MET — Fixed import chain in agent_harness.py (DataManager from support_systems, not non-existent data_manager). All 385 tests now collect and pass.
-- 2026-02-24: WORK_DISPATCHED — Conjecture harness created (experiments/conjecture_harness.py). Claim tracking, reasoning steps, halt conditions working. ARC data loaded.
+- 2026-02-25: GATES_MET — Fixed import chain in agent_framework.py (DataManager from support_systems, not non-existent data_manager). All 385 tests now collect and pass.
+- 2026-02-24: WORK_DISPATCHED — Conjecture framework created (experiments/conjecture_framework.py). Claim tracking, reasoning steps, halt conditions working. ARC data loaded.
 - 2026-02-24: GATES_MET — Test suite fixed after supers/subs rename. 287 passed, 8 xfailed. 7 test files updated. All imports working.
 - 2026-02-24: WORK_DISPATCHED — Phase 3 framework created. experiments/arc_agi2_benchmark.py compares bare Haiku vs Haiku+Conjecture. Sample tasks included.
 - 2026-02-24: GATES_MET — Phase 1+2 verified. 55 tests pass (8 model, 47 ops). Added file_utils.py stub. Dashboard updated.

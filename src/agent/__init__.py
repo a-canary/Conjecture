@@ -1,29 +1,32 @@
 """
 Agent Package for Conjecture AI Agent System.
 
-This package provides the orchestration layer that coordinates between the LLM, tools, 
+This package provides the orchestration layer that coordinates between the LLM, tools,
 skills, and data systems with clear separation of concerns.
 
 Components:
-- AgentHarness: Core orchestration and session management
+- AgentFramework: Core orchestration and session management
 - SupportSystems: Data collection, context building, and persistence
 - PromptSystem: LLM prompt assembly and response parsing
 
 Usage:
-    from src.agent import AgentHarness
+    from src.agent import AgentFramework
     from src.data import DataManager
-    
+
     # Initialize components
     data_manager = DataManager()
-    agent = AgentHarness(data_manager)
+    agent = AgentFramework(data_manager)
     await agent.initialize()
-    
+
     # Create session and process request
     session_id = await agent.create_session()
     response = await agent.process_request(session_id, "Research Python weather APIs")
 """
 
-from .agent_harness import AgentHarness, Session, SessionState, Interaction, SessionStatus
+from .agent_framework import AgentFramework, Session, SessionState, Interaction, SessionStatus
+
+# Backward compatibility alias (deprecated)
+AgentHarness = AgentFramework
 from .support_systems import ContextBuilder, Context, DataManager as SupportDataManager
 from .prompt_system import PromptBuilder, ResponseParser
 
@@ -32,9 +35,10 @@ __author__ = "Conjecture Team"
 
 __all__ = [
     # Core orchestration
-    "AgentHarness",
+    "AgentFramework",
+    "AgentHarness",  # Deprecated alias
     "Session",
-    "SessionState", 
+    "SessionState",
     "Interaction",
     "SessionStatus",
     
