@@ -226,11 +226,47 @@ with create_isolated_memory("experiment_name") as memory:
 
 ---
 
+## R&D: Conjecture on Strong Models (DeepSeek-V3)
+
+### Critical Finding
+
+**Conjecture-style enhancements provide NO value for strong models** and actively hurt performance by 30-40 percentage points.
+
+### Experimental Results
+
+| Method | GSM8K Accuracy | Delta vs Direct |
+|--------|----------------|-----------------|
+| **Direct** | **90-96%** | baseline |
+| Decompose→Solve | 56-65% | **-35pp** |
+| Verification | 53% | **-40pp** |
+| Majority Vote (3x) | 85% | **-5pp** |
+
+### Root Cause Analysis
+
+1. **Decomposition hurts**: Truncation (`decomposition[:250]`) loses critical information
+2. **Verification hurts**: Model second-guesses correct answers (6/15 cases made worse, 0/15 helped)
+3. **Majority voting hurts**: Model consistently repeats wrong answers or inconsistently splits on hard problems
+
+### When Conjecture Helps
+
+- **Weaker models** (llama3.1-8b): +4pp learning effect, structured reasoning helps
+- **Complex/novel problems**: Where direct prompting fails
+- **NOT for strong models**: DeepSeek-V3 already reasons well
+
+### Key Insight
+
+> Strong models don't need training wheels. Conjecture is like adding helper wheels to a racing bike.
+
+See: `experiments/R&D_FINDINGS.md` for detailed analysis.
+
+---
+
 ## Known Limitations
 
 1. **MMLU gate not met**: 32% vs 35% target (close)
 2. **Learning effect reduced at scale**: +16pp (50q) → +4pp (200q)
 3. **Small model constraints**: CoT hurts llama3.1-8b
+4. **Strong model constraints**: Conjecture hurts DeepSeek-V3 (-40pp)
 
 ---
 
