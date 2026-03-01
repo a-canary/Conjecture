@@ -60,3 +60,29 @@ Prune claims that don't help.
 ### 3. Production Benchmarking
 Use lm-evaluation-harness for official benchmarks.
 Wrapper created: `src/evaluation/conjecture_lm.py`
+
+## Key Learnings (from archived .agent)
+
+### What Worked
+1. **Removing unused code** cleaner than creating stubs (LanceDB removal eliminated 43 skipped tests)
+2. **Subprocess isolation** provides adequate sandboxing without Docker overhead
+3. **Syntax error resolution** unblocks static analysis systematically
+
+### What Didn't Work
+1. **SWE-Bench "100% accuracy"** was on SYNTHETIC tasks, not real SWE-Bench-lite
+2. **Baseline 0%** suggests LLM never called or silent exception (bug in test, not model)
+3. **"SWE-bench-bash-only"** is misleading - it's synthetic bash test, NOT official SWE-bench methodology
+
+### Test Validity Lessons
+- Real SWE-Bench IDs are `repo__repo-number` format (django__django-11133)
+- Synthetic fallback tasks are generic bash exercises, NOT evidence of real capability
+- Always verify test is measuring what you think it's measuring
+
+## Testing Framework Ideas (from archived .trae)
+
+### No-Mock Testing Approach
+- Use real components only, no mocking of dependencies
+- Local/test configurations to avoid external dependencies
+- In-memory databases for speed
+- Target < 2 seconds per test
+- 20 unit tests + 3 E2E tests covers core functionality

@@ -96,7 +96,7 @@ paths = ["src", "tests"]
 sort_by_size = true
 
 [project.scripts]
-conjecture = "conjecture:main"
+conjecture = "src.cli.modular_cli:main"
 
 
 [tool.setuptools.packages.find]
