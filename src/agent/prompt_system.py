@@ -900,34 +900,89 @@ class ResponseParser:
         # Look for numerical answers
         import re
 
-        numbers = re.findall(r"[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?", response)
+        # Match numbers including comma-formatted (1,234,567) and scientific notation
+        number_pattern = r"[-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[eE][-+]?\d+)?"
+        numbers = re.findall(number_pattern, response)
 
-        # Look for final answer patterns
+        # Look for final answer patterns (priority order)
         final_patterns = [
-            r"answer\s+is\s+([-\d\.]+)",  # "answer is 42" - specific handling
-            r"answer\s*:\s*([-\d\.]+)",  # "answer: 42"
-            r"result[:\s]*([-\d\.]+)",
-            r"equals?[:\s]*([-\d\.]+)",
-            r"=\s*([-\d\.]+)",
+            r"\\boxed\{([^}]+)\}",  # LaTeX boxed format (highest priority)
+            r"\*\*([^*]+)\*\*\s*$",  # Bold at end of response
+            r"final\s+answer[:\s]+([^\n\.]+)",  # "final answer: X"
+            r"answer\s+is\s+([-\d\.,]+)",  # "answer is 42"
+            r"answer\s*:\s*([-\d\.,]+)",  # "answer: 42"
+            r"result[:\s]*([-\d\.,]+)",
+            r"equals?\s+([-\d\.,]+)",
+            r"=\s*([-\d\.,]+)\s*$",  # "= 42" at end of line
         ]
 
         final_answer = None
         for pattern in final_patterns:
-            match = re.search(pattern, response, re.IGNORECASE)
+            match = re.search(pattern, response, re.IGNORECASE | re.MULTILINE)
             if match:
-                final_answer = match.group(1)
+                final_answer = self._normalize_answer(match.group(1))
                 break
 
+        # Fallback: last number in response
+        extracted = final_answer or (self._normalize_answer(numbers[-1]) if numbers else None)
+
         return {
-            "answer": final_answer or (numbers[-1] if numbers else None),
+            "answer": extracted,
             "workings": response,
             "confidence": "high" if final_answer else "medium",
             "numbers_found": numbers,
             "has_final_answer": final_answer is not None,
         }
 
+    def _normalize_answer(self, answer: str) -> str:
+        """Normalize extracted answer for comparison"""
+        if answer is None:
+            return None
+        # Remove commas, whitespace, trailing zeros
+        answer = str(answer).strip().replace(",", "").replace(" ", "")
+        # Normalize decimal: 36.0 -> 36, 36.50 -> 36.5
+        try:
+            num = float(answer)
+            if num == int(num):
+                return str(int(num))
+            return str(num).rstrip('0').rstrip('.')
+        except ValueError:
+            return answer.lower()  # Text answers: lowercase for comparison
+
     def _parse_logical_response(self, response: str) -> Dict[str, Any]:
         """Parse logical reasoning response"""
+        import re
+
+        # Check for multiple choice answer first
+        mc_patterns = [
+            r"answer\s+is\s+\(?([A-Da-d])\)?",  # "answer is (C)" - most specific
+            r"correct\s+answer\s+is\s+\(?([A-Da-d])\)?",  # "correct answer is (C)"
+            r"(?:answer|option)[:\s]+\(?([A-Da-d])\)?(?:\s|$|\.)",  # "answer: A" or "option: B"
+            r"\(?([A-Da-d])\)?\s+is\s+(?:the\s+)?(?:correct|right)\b",  # "(A) is correct"
+            r"(?:^|\n)\s*\(?([A-Da-d])\)?[\.\)]\s*$",  # Standalone letter at end
+        ]
+
+        mc_answer = None
+        for pattern in mc_patterns:
+            match = re.search(pattern, response, re.IGNORECASE | re.MULTILINE)
+            if match:
+                mc_answer = match.group(1).upper()
+                break
+
+        # Look for yes/no answers
+        yn_patterns = [
+            r"(?:answer|conclusion)[:\s]+(yes|no|true|false)",
+            r"^(yes|no)[,\.\s]",  # "No, we cannot..." at start
+            r"(?:^|\n)\s*(yes|no|true|false)\s*[,\.]?\s*(?:$|\n)",
+        ]
+
+        yn_answer = None
+        for pattern in yn_patterns:
+            match = re.search(pattern, response, re.IGNORECASE)
+            if match:
+                yn_answer = match.group(1).lower()
+                break
+
         # Look for conclusion patterns
         conclusion_patterns = [
             r"conclusion[:\s]*(.+?)(?:\n|$)",
@@ -943,10 +998,16 @@ class ResponseParser:
                 conclusion = match.group(1).strip()
                 break
 
+        # Priority: multiple choice > yes/no > conclusion text
+        answer = mc_answer or yn_answer or conclusion
+
         return {
+            "answer": answer,
             "conclusion": conclusion,
+            "multiple_choice": mc_answer,
+            "yes_no": yn_answer,
             "reasoning": response,
-            "confidence": "high" if conclusion else "medium",
+            "confidence": "high" if (mc_answer or yn_answer) else ("medium" if conclusion else "low"),
             "has_conclusion": conclusion is not None,
         }
 

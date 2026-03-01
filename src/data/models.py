@@ -60,6 +60,28 @@ class ClaimType(str, Enum):
     GOAL = "goal"
 
 
+class ClaimDomain(str, Enum):
+    """Domain categories for claim relevance filtering.
+
+    Used by smart claim selection (Phase 3) to filter claims by domain,
+    reducing context pollution from cross-domain claims.
+    """
+
+    # Core reasoning domains
+    MATH = "math"           # Arithmetic, algebra, calculus
+    LOGIC = "logic"         # Syllogisms, deduction, inference
+    SCIENCE = "science"     # Physics, chemistry, biology
+
+    # Specialized domains
+    GEOMETRY = "geometry"   # Shapes, angles, spatial reasoning
+    PROBABILITY = "probability"  # Chance, statistics
+    PATTERN = "pattern"     # Sequences, series recognition
+    CALENDAR = "calendar"   # Dates, days, time calculations
+
+    # Meta domain
+    GENERAL = "general"     # Unclassified / cross-domain
+
+
 class Claim(BaseModel):
     """Enhanced Claim model for data layer operations"""
 
@@ -94,6 +116,16 @@ class Claim(BaseModel):
     # Scope field for access control
     scope: ClaimScope = Field(
         default=ClaimScope.USER_WORKSPACE, description="Claim scope for access control"
+    )
+
+    # Domain field for relevance filtering (Phase 3: Smart Claim Selection)
+    domain: ClaimDomain = Field(
+        default=ClaimDomain.GENERAL, description="Knowledge domain for relevance filtering"
+    )
+
+    # Correctness tracking (Phase 3: Step 3.4)
+    is_correct: Optional[bool] = Field(
+        default=None, description="Whether claim led to correct answer (None=untested)"
     )
 
     # Dirty flag fields
@@ -179,6 +211,8 @@ class Claim(BaseModel):
             "type": json.dumps([t.value for t in self.type]),
             "tags": json.dumps(self.tags),
             "scope": self.scope.value,
+            "domain": self.domain.value,
+            "is_correct": self.is_correct,
             "created": self.created.isoformat(),
             "updated": self.updated.isoformat()
             if self.updated
@@ -258,6 +292,15 @@ class Claim(BaseModel):
         except:
             scope = ClaimScope.USER_WORKSPACE
 
+        # Parse domain (Phase 3: Smart Claim Selection)
+        try:
+            domain = ClaimDomain(data.get("domain", "general"))
+        except:
+            domain = ClaimDomain.GENERAL
+
+        # Parse correctness
+        is_correct = data.get("is_correct")  # Can be None, True, or False
+
         return cls(
             id=data["id"],
             content=data["content"],
@@ -266,6 +309,8 @@ class Claim(BaseModel):
             type=claim_type,
             tags=tags,
             scope=scope,
+            domain=domain,
+            is_correct=is_correct,
             created=created,
             updated=updated,
             is_dirty=data.get("is_dirty", False),
@@ -411,6 +456,14 @@ class ClaimFilter(BaseModel):
     )
     types: Optional[List[ClaimType]] = Field(
         default=None, description="Filter by claim types"
+    )
+
+    # Domain and correctness filters (Phase 3: Smart Claim Selection)
+    domains: Optional[List[ClaimDomain]] = Field(
+        default=None, description="Filter by knowledge domains (Phase 3.1)"
+    )
+    correct_only: Optional[bool] = Field(
+        default=None, description="Only include claims marked as correct (Phase 3.4)"
     )
 
     @field_validator("limit")
