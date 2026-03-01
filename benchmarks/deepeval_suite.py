@@ -20,10 +20,12 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 try:
-    from deepeval.benchmarks import GSM8K, MathQA, HellaSwag
+    from deepeval.benchmarks import GSM8K, MathQA, HellaSwag, LogiQA, TruthfulQA
     from deepeval.benchmarks.gsm8k.template import GSM8KTemplate
     from deepeval.benchmarks.math_qa.template import MathQATemplate
     from deepeval.benchmarks.hellaswag.template import HellaSwagTemplate
+    from deepeval.benchmarks.logi_qa.template import LogiQATemplate
+    from deepeval.benchmarks.truthful_qa.template import TruthfulQATemplate
     from deepeval.models import GPTModel
     DEEPEVAL_AVAILABLE = True
 except ImportError:
@@ -108,6 +110,44 @@ def extract_hellaswag_answer(response: str) -> str:
     return ""
 
 
+def extract_logiqa_answer(response: str) -> str:
+    """Extract multiple choice answer (A-D) from LogiQA response."""
+    # Look for explicit choice markers
+    match = re.search(r'\b([A-D])\s*[\.\):]', response)
+    if match:
+        return match.group(1).upper()
+
+    # Look for "answer is X" pattern
+    match = re.search(r'answer\s+is\s*[:\s]*([A-D])', response, re.I)
+    if match:
+        return match.group(1).upper()
+
+    # Look for standalone letter
+    match = re.search(r'\b([A-D])\b', response)
+    if match:
+        return match.group(1).upper()
+
+    return ""
+
+
+def extract_truthfulqa_answer(response: str) -> str:
+    """Extract multiple choice answer from TruthfulQA response."""
+    # MC1 format - single correct answer (A, B, C, D, etc.)
+    match = re.search(r'\b([A-F])\s*[\.\):]', response)
+    if match:
+        return match.group(1).upper()
+
+    match = re.search(r'answer\s+is\s*[:\s]*([A-F])', response, re.I)
+    if match:
+        return match.group(1).upper()
+
+    match = re.search(r'\b([A-F])\b', response)
+    if match:
+        return match.group(1).upper()
+
+    return ""
+
+
 class ConjectureModel:
     """Wrapper that adds Conjecture enhancement to any base model.
 
@@ -168,6 +208,22 @@ Write your final numeric answer after ####
             enhanced = f"""Think through each option carefully.
 Consider what makes logical sense given the context.
 State your chosen answer clearly.
+
+{prompt}"""
+        elif problem_type == "logic":
+            enhanced = f"""Analyze this logical reasoning problem step-by-step.
+1. Identify the premises and conclusion structure
+2. Check for valid logical relationships
+3. Eliminate incorrect options systematically
+4. State your final answer (A, B, C, or D)
+
+{prompt}"""
+        elif problem_type == "verification":
+            enhanced = f"""Evaluate the truthfulness of this claim carefully.
+1. Consider what factual information is relevant
+2. Check for common misconceptions or false beliefs
+3. Identify the most accurate answer
+4. State your final answer clearly
 
 {prompt}"""
         else:
@@ -410,6 +466,116 @@ class DeepEvalSuite:
             return BenchmarkResult("HellaSwag", n_samples, 0.0, 0.0, 0.0,
                 datetime.now().isoformat(), str(e))
 
+    def run_logiqa(self, n_samples: int = 20) -> BenchmarkResult:
+        """LogiQA: Logical reasoning - multiple choice"""
+        if not DEEPEVAL_AVAILABLE or not self.base_model:
+            return BenchmarkResult("LogiQA", 0, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), "Model not configured")
+
+        try:
+            logiqa_bench = LogiQA(n_problems_per_task=n_samples, n_shots=3)
+            task = logiqa_bench.tasks[0]  # Categorical Reasoning
+            goldens = logiqa_bench.load_benchmark_dataset(task)[:n_samples]
+
+            baseline_correct = 0
+            conj_correct = 0
+            total = len(goldens)
+
+            for i, golden in enumerate(goldens):
+                prompt = LogiQATemplate.generate_output(
+                    input=golden.input,
+                    train_set=logiqa_bench.shots_dataset,
+                    task=task,
+                    n_shots=3,
+                )
+                expected = golden.expected_output  # A, B, C, or D
+
+                # Baseline
+                try:
+                    baseline_response = _call_model(self.base_model, prompt)
+                    extracted = extract_logiqa_answer(baseline_response)
+                    if extracted == expected:
+                        baseline_correct += 1
+                except Exception:
+                    pass
+
+                # Conjecture - use "logic" problem type for reasoning enhancement
+                try:
+                    conj_response = self.conjecture_model.generate(prompt, problem_type="logic")
+                    extracted_c = extract_logiqa_answer(conj_response)
+                    if extracted_c == expected:
+                        conj_correct += 1
+                except Exception:
+                    pass
+
+                if (i + 1) % 5 == 0:
+                    print(f"  LogiQA: {i+1}/{total} done (baseline {baseline_correct}, conj {conj_correct})")
+
+            baseline_score = baseline_correct / total * 100
+            conj_score = conj_correct / total * 100
+
+            return BenchmarkResult(
+                "LogiQA", total, baseline_score, conj_score,
+                conj_score - baseline_score, datetime.now().isoformat()
+            )
+        except Exception as e:
+            return BenchmarkResult("LogiQA", n_samples, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), str(e))
+
+    def run_truthfulqa(self, n_samples: int = 20) -> BenchmarkResult:
+        """TruthfulQA: Truth and factuality - multiple choice"""
+        if not DEEPEVAL_AVAILABLE or not self.base_model:
+            return BenchmarkResult("TruthfulQA", 0, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), "Model not configured")
+
+        try:
+            truthqa_bench = TruthfulQA(n_problems_per_task=n_samples)
+            task = truthqa_bench.tasks[0]
+            goldens = truthqa_bench.load_benchmark_dataset(task)[:n_samples]
+
+            baseline_correct = 0
+            conj_correct = 0
+            total = len(goldens)
+
+            for i, golden in enumerate(goldens):
+                prompt = TruthfulQATemplate.generate_output(
+                    input=golden.input,
+                    task=task,
+                )
+                expected = golden.expected_output  # Answer letter
+
+                # Baseline
+                try:
+                    baseline_response = _call_model(self.base_model, prompt)
+                    extracted = extract_truthfulqa_answer(baseline_response)
+                    if extracted == expected:
+                        baseline_correct += 1
+                except Exception:
+                    pass
+
+                # Conjecture - use verification enhancement
+                try:
+                    conj_response = self.conjecture_model.generate(prompt, problem_type="verification")
+                    extracted_c = extract_truthfulqa_answer(conj_response)
+                    if extracted_c == expected:
+                        conj_correct += 1
+                except Exception:
+                    pass
+
+                if (i + 1) % 5 == 0:
+                    print(f"  TruthfulQA: {i+1}/{total} done (baseline {baseline_correct}, conj {conj_correct})")
+
+            baseline_score = baseline_correct / total * 100
+            conj_score = conj_correct / total * 100
+
+            return BenchmarkResult(
+                "TruthfulQA", total, baseline_score, conj_score,
+                conj_score - baseline_score, datetime.now().isoformat()
+            )
+        except Exception as e:
+            return BenchmarkResult("TruthfulQA", n_samples, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), str(e))
+
     def run_full_suite(self, n_samples: int = 20, session_id: str = "benchmark_session") -> Dict[str, BenchmarkResult]:
         """Run all benchmarks sequentially with persistent session.
 
@@ -424,7 +590,9 @@ class DeepEvalSuite:
             results = {
                 "GSM8K": self.run_gsm8k(n_samples),
                 "MathQA": self.run_mathqa(n_samples),
-                "HellaSwag": self.run_hellaswag(n_samples)
+                "HellaSwag": self.run_hellaswag(n_samples),
+                "LogiQA": self.run_logiqa(n_samples),
+                "TruthfulQA": self.run_truthfulqa(n_samples),
             }
             self.results = list(results.values())
             return results

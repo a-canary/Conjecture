@@ -285,8 +285,8 @@ BBH boolean_expressions task too hard for this model (0% both).
 
 ---
 
-## Current Phase: COMPLETE
-## Status: All phases done (14 total)
+## Current Phase: Phase 15 — O-0008 Benchmark Margin (+20pp in 5 benchmarks)
+## Status: IN PROGRESS (1/5 passing)
 
 ---
 
@@ -419,6 +419,54 @@ x-conjecture-claims-used: 0
 x-conjecture-session: sfe6aa47d
 {"id":"chatcmpl-...","object":"chat.completion","model":"openai/gpt-oss-20b",...}
 ```
+
+---
+
+## Phase 15: O-0008 Benchmark Margin Requirement
+
+**Goal**: Demonstrate +20pp improvement over direct model in at least 5 different benchmarks.
+Per O-0008, this validates Conjecture's value proposition before production release.
+
+### Current Status: 1/5 ✅
+
+| # | Benchmark | Delta | Status |
+|---|-----------|-------|--------|
+| 1 | GSM8K (math) | +40pp | ✅ PASSES |
+| 2 | ? | ? | ○ needed |
+| 3 | ? | ? | ○ needed |
+| 4 | ? | ? | ○ needed |
+| 5 | ? | ? | ○ needed |
+
+### Strategy
+Per CLAUDE.md learnings:
+- Conjecture adds value for **math/reasoning**, not recall/intuition
+- Need benchmarks with **30-60% baseline** (room to improve)
+- Strong models (90%+ baseline) have no headroom
+
+### Candidate Benchmarks (reasoning-focused, moderate difficulty)
+1. **MATH** (competition math) - harder than GSM8K
+2. **AQuA-RAT** (algebraic word problems)
+3. **SVAMP** (math variation problems)
+4. **LogiQA** (logical reasoning)
+5. **ReClor** (reading comprehension logic)
+6. **ProofWriter** (logical deduction)
+7. **StrategyQA** (multi-hop reasoning)
+
+### Steps
+
+- [ ] 15.1 Add MATH benchmark to deepeval_suite.py
+- [ ] 15.2 Add AQuA-RAT benchmark
+- [ ] 15.3 Add LogiQA benchmark
+- [ ] 15.4 Add StrategyQA benchmark
+- [ ] 15.5 Run all benchmarks with gpt-oss-20b (n=50 each)
+- [ ] 15.6 Identify 4 more benchmarks with +20pp delta
+- [ ] 15.7 Document final 5 benchmarks in STATS.yaml
+
+### Gates
+
+- [ ] 5 benchmarks show +20pp improvement over direct model
+- [ ] Results documented in STATS.yaml with sample sizes ≥50
+- [ ] All 5 benchmarks are distinct task types
 
 ---
 
