@@ -14,7 +14,7 @@
       "max_retries": 3
     }
   ],
-  "confidence_threshold": 0.9,
+  "confidence_threshold": 0.5,
   "confident_threshold": 0.75,
   "max_context_size": 5,
   "batch_size": 3,

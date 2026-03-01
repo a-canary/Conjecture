@@ -13,7 +13,7 @@
       "name": "lm_studio"
     }
   ],
-  "confidence_threshold": 0.95,
+  "confidence_threshold": 0.5,
   "confident_threshold": 0.8,
   "max_context_size": 10,
   "batch_size": 10,

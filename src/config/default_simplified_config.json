@@ -29,7 +29,7 @@
       "priority": 4
     }
   ],
-  "confidence_threshold": 0.95,
+  "confidence_threshold": 0.5,
   "max_context_size": 10000,
   "batch_size": 10,
   "database_path": "data/conjecture.db",

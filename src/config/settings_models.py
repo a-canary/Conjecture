@@ -183,7 +183,7 @@ class ProcessingSettings(BaseModel):
         protected_namespaces=()
     )
 
-    confidence_threshold: float = Field(default=0.95, ge=0.0, le=1.0, description="Confidence threshold for validation")
+    confidence_threshold: float = Field(default=0.5, ge=0.0, le=1.0, description="Confidence threshold for claim inclusion in context")
     confident_threshold: float = Field(default=0.8, ge=0.0, le=1.0, description="Confidence threshold for confidence")
     max_context_size: int = Field(default=10, ge=1, description="Maximum context size")
     batch_size: int = Field(default=10, ge=1, description="Batch size for processing")
