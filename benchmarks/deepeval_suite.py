@@ -45,7 +45,7 @@ class DeepEvalSuite:
     async def run_drop(self, n_samples: int = 50) -> BenchmarkResult:
         """DROP: Reading comprehension + discrete reasoning (hard math)"""
         return await self._run_benchmark_pair("DROP", n_samples,
-            lambda n: DROP(n_problems=n) if DEEPEVAL_AVAILABLE else None)
+            lambda n: DROP(n_problems_per_task=n) if DEEPEVAL_AVAILABLE else None)
 
     async def run_arc(self, n_samples: int = 50, mode: str = "challenge") -> BenchmarkResult:
         """ARC: AI2 Reasoning Challenge (science reasoning)"""
@@ -59,7 +59,7 @@ class DeepEvalSuite:
     async def run_bbh(self, n_samples: int = 50) -> BenchmarkResult:
         """BIG-Bench Hard: Logic and multi-step reasoning"""
         return await self._run_benchmark_pair("BBH", n_samples,
-            lambda n: BigBenchHard(n_problems=n) if DEEPEVAL_AVAILABLE else None)
+            lambda n: BigBenchHard(n_problems_per_task=n) if DEEPEVAL_AVAILABLE else None)
 
     async def _run_benchmark_pair(self, name: str, n_samples: int,
                                    benchmark_factory: Callable) -> BenchmarkResult:
@@ -127,7 +127,7 @@ class DeepEvalSuite:
     async def _default_model_call(self, prompt: str) -> str:
         """Default model call via configured provider"""
         try:
-            from src.process.unified_bridge import UnifiedLLMBridge
+            from src.processing.unified_bridge import UnifiedLLMBridge
             bridge = UnifiedLLMBridge()
             return await bridge.generate(prompt)
         except Exception as e:
