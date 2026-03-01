@@ -199,8 +199,10 @@ class ProcessingSettings(BaseModel):
     @model_validator(mode='after')
     def validate_thresholds(self):
         """Validate threshold relationships"""
-        if self.confident_threshold > self.confidence_threshold:
-            raise ValueError("confident_threshold cannot be greater than confidence_threshold")
+        # confident_threshold should be >= confidence_threshold
+        # (stricter standard for "confident" than for "include")
+        if self.confident_threshold < self.confidence_threshold:
+            raise ValueError("confident_threshold must be >= confidence_threshold")
         return self
 
 class DirtyFlagSettings(BaseModel):

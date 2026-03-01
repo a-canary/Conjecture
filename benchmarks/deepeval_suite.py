@@ -2,29 +2,74 @@
 DeepEval Benchmark Suite for Conjecture
 Benchmarks: DROP (math), ARC (science), BIG-Bench Hard (logic)
 Outputs to STATS.yaml
-Uses robust answer extraction to avoid 70pp accuracy swings from extraction bugs.
 """
 
 import asyncio
 import yaml
+import os
 from pathlib import Path
 from datetime import datetime
-from dataclasses import dataclass, asdict
-from typing import Dict, List, Optional, Callable
-
-from answer_extraction import extract_answer, check_answer_match, AnswerType
+from dataclasses import dataclass
+from typing import Dict, List, Optional
 
 try:
     from deepeval.benchmarks import DROP, ARC, BigBenchHard
     from deepeval.benchmarks.modes import ARCMode
+    from deepeval.models import GPTModel
+    from deepeval.models.base_model import DeepEvalBaseLLM
     DEEPEVAL_AVAILABLE = True
 except ImportError:
     DEEPEVAL_AVAILABLE = False
+    DeepEvalBaseLLM = object
+
+
+def create_chutes_model(api_key: str = None, model: str = "deepseek-ai/DeepSeek-V3-0324"):
+    """Create DeepEval model using Chutes.ai endpoint"""
+    api_key = api_key or os.environ.get("CHUTES_API_KEY")
+    if not api_key:
+        raise ValueError("CHUTES_API_KEY required. Set env var or pass api_key")
+    return GPTModel(
+        model=model,
+        api_key=api_key,
+        base_url="https://llm.chutes.ai/v1"
+    )
+
+
+class ConjectureModel(DeepEvalBaseLLM):
+    """Wrapper that adds Conjecture enhancement to any base model"""
+
+    def __init__(self, base_model: DeepEvalBaseLLM):
+        super().__init__()
+        self.base_model = base_model
+        try:
+            from src.agent.prompt_system import PromptSystem
+            self.prompt_system = PromptSystem()
+        except ImportError:
+            self.prompt_system = None
+
+    def generate(self, prompt: str, **kwargs) -> str:
+        if self.prompt_system:
+            enhanced = self.prompt_system.enhance_prompt(prompt)
+        else:
+            enhanced = f"Reason step-by-step. Verify your answer.\n\n{prompt}"
+        return self.base_model.generate(enhanced, **kwargs)
+
+    async def a_generate(self, prompt: str, **kwargs) -> str:
+        if self.prompt_system:
+            enhanced = self.prompt_system.enhance_prompt(prompt)
+        else:
+            enhanced = f"Reason step-by-step. Verify your answer.\n\n{prompt}"
+        return await self.base_model.a_generate(enhanced, **kwargs)
+
+    def get_model_name(self) -> str:
+        return f"{self.base_model.get_model_name()}+Conjecture"
+
+    def load_model(self):
+        return self
 
 
 @dataclass
 class BenchmarkResult:
-    """Single benchmark result"""
     name: str
     sample_count: int
     baseline_score: float
@@ -35,118 +80,98 @@ class BenchmarkResult:
 
 
 class DeepEvalSuite:
-    """DeepEval benchmark suite for Conjecture validation"""
+    """Run DeepEval benchmarks comparing baseline vs Conjecture"""
 
-    def __init__(self, model_callable: Callable = None):
-        self.model = model_callable
+    def __init__(self, base_model: DeepEvalBaseLLM = None):
+        self.base_model = base_model
+        self.conjecture_model = ConjectureModel(base_model) if base_model else None
         self.results: List[BenchmarkResult] = []
         self.stats_path = Path(__file__).parent.parent / "STATS.yaml"
 
-    async def run_drop(self, n_samples: int = 50) -> BenchmarkResult:
-        """DROP: Reading comprehension + discrete reasoning (hard math)"""
-        return await self._run_benchmark_pair("DROP", n_samples,
-            lambda n: DROP(n_problems_per_task=n) if DEEPEVAL_AVAILABLE else None)
+    def run_drop(self, n_samples: int = 10) -> BenchmarkResult:
+        """DROP: Discrete reasoning over paragraphs"""
+        if not DEEPEVAL_AVAILABLE or not self.base_model:
+            return BenchmarkResult("DROP", 0, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), "Model not configured")
 
-    async def run_arc(self, n_samples: int = 50, mode: str = "challenge") -> BenchmarkResult:
-        """ARC: AI2 Reasoning Challenge (science reasoning)"""
-        def create_arc(n):
-            if not DEEPEVAL_AVAILABLE:
-                return None
-            arc_mode = ARCMode.CHALLENGE if mode == "challenge" else ARCMode.EASY
-            return ARC(n_problems=n, mode=arc_mode)
-        return await self._run_benchmark_pair(f"ARC-{mode}", n_samples, create_arc)
-
-    async def run_bbh(self, n_samples: int = 50) -> BenchmarkResult:
-        """BIG-Bench Hard: Logic and multi-step reasoning"""
-        return await self._run_benchmark_pair("BBH", n_samples,
-            lambda n: BigBenchHard(n_problems_per_task=n) if DEEPEVAL_AVAILABLE else None)
-
-    async def _run_benchmark_pair(self, name: str, n_samples: int,
-                                   benchmark_factory: Callable) -> BenchmarkResult:
-        """Run baseline and conjecture versions of a benchmark"""
-        if not DEEPEVAL_AVAILABLE:
-            return BenchmarkResult(name=name, sample_count=0, baseline_score=0.0,
-                conjecture_score=0.0, delta=0.0, timestamp=datetime.now().isoformat(),
-                error="DeepEval not installed")
         try:
-            benchmark = benchmark_factory(n_samples)
-            if benchmark is None:
-                raise ValueError("Could not create benchmark")
+            benchmark = DROP(n_problems_per_task=n_samples)
 
-            baseline = await self._run_single(benchmark, use_conjecture=False)
-            conjecture = await self._run_single(benchmark, use_conjecture=True)
+            # Baseline
+            baseline_result = benchmark.evaluate(self.base_model)
+            baseline_score = baseline_result.overall_score * 100
+
+            # With Conjecture
+            conj_result = benchmark.evaluate(self.conjecture_model)
+            conj_score = conj_result.overall_score * 100
 
             return BenchmarkResult(
-                name=name, sample_count=n_samples,
-                baseline_score=baseline, conjecture_score=conjecture,
-                delta=conjecture - baseline, timestamp=datetime.now().isoformat())
+                "DROP", n_samples, baseline_score, conj_score,
+                conj_score - baseline_score, datetime.now().isoformat()
+            )
         except Exception as e:
-            return BenchmarkResult(name=name, sample_count=n_samples,
-                baseline_score=0.0, conjecture_score=0.0, delta=0.0,
-                timestamp=datetime.now().isoformat(), error=str(e))
+            return BenchmarkResult("DROP", n_samples, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), str(e))
 
-    async def _run_single(self, benchmark, use_conjecture: bool) -> float:
-        """Run benchmark and return accuracy"""
-        correct = 0
-        total = 0
+    def run_arc(self, n_samples: int = 10, mode: str = "challenge") -> BenchmarkResult:
+        """ARC: AI2 Reasoning Challenge"""
+        if not DEEPEVAL_AVAILABLE or not self.base_model:
+            return BenchmarkResult(f"ARC-{mode}", 0, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), "Model not configured")
 
-        for problem in getattr(benchmark, 'problems', []):
-            prompt = getattr(problem, 'input', str(problem))
-            expected = getattr(problem, 'expected_output', None)
-
-            if use_conjecture:
-                response = await self._call_with_conjecture(prompt)
-            else:
-                response = await self._call_baseline(prompt)
-
-            if expected and str(expected).lower().strip() in response.lower():
-                correct += 1
-            total += 1
-
-        return (correct / total * 100) if total > 0 else 0.0
-
-    async def _call_baseline(self, prompt: str) -> str:
-        """Call model without Conjecture"""
-        if self.model:
-            return await self.model(prompt)
-        return await self._default_model_call(prompt)
-
-    async def _call_with_conjecture(self, prompt: str) -> str:
-        """Call model with Conjecture enhancement"""
         try:
-            from src.agent.prompt_system import PromptSystem
-            ps = PromptSystem()
-            enhanced = ps.enhance_prompt(prompt)
-        except ImportError:
-            enhanced = f"Reason step-by-step. Verify your answer.\n\n{prompt}\n\nShow your work."
+            arc_mode = ARCMode.CHALLENGE if mode == "challenge" else ARCMode.EASY
+            benchmark = ARC(n_problems=n_samples, mode=arc_mode)
 
-        if self.model:
-            return await self.model(enhanced)
-        return await self._default_model_call(enhanced)
+            baseline_result = benchmark.evaluate(self.base_model)
+            baseline_score = baseline_result.overall_score * 100
 
-    async def _default_model_call(self, prompt: str) -> str:
-        """Default model call via configured provider"""
-        try:
-            from src.processing.unified_bridge import UnifiedLLMBridge
-            bridge = UnifiedLLMBridge()
-            return await bridge.generate(prompt)
+            conj_result = benchmark.evaluate(self.conjecture_model)
+            conj_score = conj_result.overall_score * 100
+
+            return BenchmarkResult(
+                f"ARC-{mode}", n_samples, baseline_score, conj_score,
+                conj_score - baseline_score, datetime.now().isoformat()
+            )
         except Exception as e:
-            return f"Error: {e}"
+            return BenchmarkResult(f"ARC-{mode}", n_samples, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), str(e))
 
-    async def run_full_suite(self, n_samples: int = 50) -> Dict[str, BenchmarkResult]:
-        """Run all benchmarks in parallel"""
-        tasks = [
-            self.run_drop(n_samples),
-            self.run_arc(n_samples, "challenge"),
-            self.run_bbh(n_samples)
-        ]
-        results_list = await asyncio.gather(*tasks)
-        results = {r.name: r for r in results_list}
-        self.results = results_list
+    def run_bbh(self, n_samples: int = 10) -> BenchmarkResult:
+        """BIG-Bench Hard: Logic and reasoning"""
+        if not DEEPEVAL_AVAILABLE or not self.base_model:
+            return BenchmarkResult("BBH", 0, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), "Model not configured")
+
+        try:
+            benchmark = BigBenchHard(n_problems_per_task=n_samples)
+
+            baseline_result = benchmark.evaluate(self.base_model)
+            baseline_score = baseline_result.overall_score * 100
+
+            conj_result = benchmark.evaluate(self.conjecture_model)
+            conj_score = conj_result.overall_score * 100
+
+            return BenchmarkResult(
+                "BBH", n_samples, baseline_score, conj_score,
+                conj_score - baseline_score, datetime.now().isoformat()
+            )
+        except Exception as e:
+            return BenchmarkResult("BBH", n_samples, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), str(e))
+
+    def run_full_suite(self, n_samples: int = 10) -> Dict[str, BenchmarkResult]:
+        """Run all benchmarks sequentially"""
+        results = {
+            "DROP": self.run_drop(n_samples),
+            "ARC": self.run_arc(n_samples, "challenge"),
+            "BBH": self.run_bbh(n_samples)
+        }
+        self.results = list(results.values())
         return results
 
     def update_stats_yaml(self) -> dict:
-        """Update STATS.yaml with benchmark results"""
+        """Update STATS.yaml with results"""
         stats = {}
         if self.stats_path.exists():
             with open(self.stats_path) as f:
@@ -154,13 +179,13 @@ class DeepEvalSuite:
 
         stats["deepeval_benchmarks"] = {
             "last_run": datetime.now().isoformat(),
+            "model": self.base_model.get_model_name() if self.base_model else "none",
             "benchmarks": {
                 r.name: {
                     "sample_count": r.sample_count,
                     "baseline_score": round(r.baseline_score, 2),
                     "conjecture_score": round(r.conjecture_score, 2),
                     "delta": round(r.delta, 2),
-                    "timestamp": r.timestamp,
                     "error": r.error
                 } for r in self.results
             }
@@ -169,8 +194,10 @@ class DeepEvalSuite:
         valid = [r for r in self.results if r.error is None]
         if valid:
             stats["deepeval_benchmarks"]["summary"] = {
+                "avg_baseline": round(sum(r.baseline_score for r in valid) / len(valid), 2),
+                "avg_conjecture": round(sum(r.conjecture_score for r in valid) / len(valid), 2),
                 "avg_delta": round(sum(r.delta for r in valid) / len(valid), 2),
-                "benchmarks_run": len(valid),
+                "benchmarks_passed": len(valid),
                 "benchmarks_failed": len(self.results) - len(valid)
             }
 
@@ -179,14 +206,27 @@ class DeepEvalSuite:
         return stats
 
 
-async def main():
-    """Run benchmark suite"""
+def main():
+    """Run benchmarks with Chutes.ai model"""
     print("DeepEval Benchmark Suite")
-    print("=" * 40)
+    print("=" * 50)
 
-    suite = DeepEvalSuite()
-    results = await suite.run_full_suite(n_samples=50)
+    api_key = os.environ.get("CHUTES_API_KEY")
+    if not api_key:
+        print("ERROR: Set CHUTES_API_KEY environment variable")
+        print("  export CHUTES_API_KEY=your_key_here")
+        return
 
+    print(f"Using Chutes.ai endpoint...")
+    model = create_chutes_model(api_key)
+
+    suite = DeepEvalSuite(base_model=model)
+    print(f"\nRunning benchmarks (10 samples each)...")
+
+    results = suite.run_full_suite(n_samples=10)
+
+    print("\nResults:")
+    print("-" * 50)
     for name, r in results.items():
         if r.error:
             print(f"{name}: ERROR - {r.error}")
@@ -198,4 +238,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

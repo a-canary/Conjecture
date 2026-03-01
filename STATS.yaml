@@ -550,3 +550,28 @@ test_results:
     - tests/test_id_utilities.py
     - tests/test_claim_processing.py
     tests_run: 32
+deepeval_benchmarks:
+  last_run: '2026-03-01T13:44:49.713002'
+  model: deepseek-ai/DeepSeek-V3-0324
+  benchmarks:
+    DROP:
+      sample_count: 10
+      baseline_score: 0.0
+      conjecture_score: 0.0
+      delta: 0.0
+      error: Evaluation LLM outputted an invalid JSON. Please use a better evaluation
+        model.
+    ARC-challenge:
+      sample_count: 10
+      baseline_score: 0.0
+      conjecture_score: 0.0
+      delta: 0.0
+      error: Evaluation LLM outputted an invalid JSON. Please use a better evaluation
+        model.
+    BBH:
+      sample_count: 10
+      baseline_score: 0.0
+      conjecture_score: 0.0
+      delta: 0.0
+      error: Evaluation LLM outputted an invalid JSON. Please use a better evaluation
+        model.
