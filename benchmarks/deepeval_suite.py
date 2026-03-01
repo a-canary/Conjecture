@@ -1,6 +1,8 @@
 """
 DeepEval Benchmark Suite for Conjecture
-Benchmarks: DROP (math), ARC (science), BIG-Bench Hard (logic)
+Benchmarks: GSM8K (math), MathQA (math reasoning), HellaSwag (commonsense)
+Target: OSS models (20B class) where Conjecture should add value
+Per O-0006: Uses 1 persistent session for claim accumulation across test cases.
 Outputs to STATS.yaml
 """
 
@@ -9,6 +11,7 @@ import asyncio
 import yaml
 import os
 import sys
+import re
 sys.path.insert(0, '/workspace')
 
 from pathlib import Path
@@ -17,24 +20,19 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 try:
-    from deepeval.benchmarks import DROP, ARC, BigBenchHard
-    from deepeval.benchmarks.modes import ARCMode
-    from deepeval.benchmarks.drop.task import DROPTask
-    from deepeval.benchmarks.big_bench_hard.task import BigBenchHardTask
-    from deepeval.benchmarks.big_bench_hard.template import BigBenchHardTemplate
-    from deepeval.benchmarks.drop.template import DROPTemplate
-    from deepeval.benchmarks.arc.template import ARCTemplate
+    from deepeval.benchmarks import GSM8K, MathQA, HellaSwag
+    from deepeval.benchmarks.gsm8k.template import GSM8KTemplate
+    from deepeval.benchmarks.math_qa.template import MathQATemplate
+    from deepeval.benchmarks.hellaswag.template import HellaSwagTemplate
     from deepeval.models import GPTModel
-    from deepeval.models.base_model import DeepEvalBaseLLM
     DEEPEVAL_AVAILABLE = True
 except ImportError:
     DEEPEVAL_AVAILABLE = False
-    DeepEvalBaseLLM = object
 
 from benchmarks.answer_extraction import extract_answer, check_answer_match, AnswerType
 
 
-def create_chutes_model(api_key: str = None, model: str = "Qwen/Qwen3-14B"):
+def create_chutes_model(api_key: str = None, model: str = "openai/gpt-oss-20b"):
     """Create DeepEval model using Chutes.ai endpoint"""
     api_key = api_key or os.environ.get("CHUTES_API_KEY")
     if not api_key:
@@ -54,25 +52,157 @@ def _call_model(model, prompt: str) -> str:
     return str(result)
 
 
-class ConjectureModel:
-    """Wrapper that adds Conjecture enhancement to any base model"""
+def extract_gsm8k_answer(response: str) -> str:
+    """Extract numeric answer from GSM8K response.
 
-    def __init__(self, base_model):
+    GSM8K answers are numbers. Look for:
+    - #### followed by number
+    - "answer is X"
+    - Final number in response
+    """
+    # Pattern 1: #### number
+    match = re.search(r'####\s*(-?\d[\d,]*\.?\d*)', response)
+    if match:
+        return match.group(1).replace(',', '')
+
+    # Pattern 2: "the answer is X" or "= X"
+    match = re.search(r'(?:answer\s+is|=)\s*(-?\d[\d,]*\.?\d*)', response, re.I)
+    if match:
+        return match.group(1).replace(',', '')
+
+    # Pattern 3: Last number in response
+    numbers = re.findall(r'-?\d[\d,]*\.?\d*', response)
+    if numbers:
+        return numbers[-1].replace(',', '')
+
+    return ""
+
+
+def extract_mathqa_answer(response: str) -> str:
+    """Extract multiple choice answer (a-e) from MathQA response."""
+    # Look for explicit choice markers
+    match = re.search(r'\b([a-e])\s*\)', response, re.I)
+    if match:
+        return match.group(1).lower()
+
+    # Look for "answer is X" pattern
+    match = re.search(r'answer\s+is\s*[:\s]*([a-e])', response, re.I)
+    if match:
+        return match.group(1).lower()
+
+    # Look for standalone letter at end
+    match = re.search(r'\b([a-e])\s*$', response.strip(), re.I)
+    if match:
+        return match.group(1).lower()
+
+    return ""
+
+
+def extract_hellaswag_answer(response: str) -> str:
+    """Extract multiple choice answer (A-D) from HellaSwag response."""
+    # Look for explicit choice
+    match = re.search(r'\b([A-D])\b', response)
+    if match:
+        return match.group(1)
+
+    return ""
+
+
+class ConjectureModel:
+    """Wrapper that adds Conjecture enhancement to any base model.
+
+    Per O-0006: Uses persistent session for claim accumulation across test cases.
+    Claims learned during benchmark run persist and can enhance later queries.
+    """
+
+    def __init__(self, base_model, use_endpoint: bool = True):
         self.base_model = base_model
+        self.use_endpoint = use_endpoint
+        self._endpoint = None
+        self._session_id = None
+        self._loop = None
+
+    def _get_loop(self):
+        """Get or create event loop for async operations."""
+        if self._loop is None:
+            try:
+                self._loop = asyncio.get_event_loop()
+            except RuntimeError:
+                self._loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(self._loop)
+        return self._loop
+
+    def initialize_session(self, session_id: str = "benchmark_session"):
+        """Initialize Conjecture endpoint with persistent session.
+
+        Per O-0006: 1 persistent session for claim accumulation.
+        """
+        if not self.use_endpoint:
+            return
+
         try:
-            from src.agent.prompt_system import PromptSystem
-            self.prompt_system = PromptSystem()
-        except ImportError:
-            self.prompt_system = None
+            from src.endpoint.conjecture_endpoint import ConjectureEndpoint
+            self._endpoint = ConjectureEndpoint(db_path="data/benchmark.db")
+            loop = self._get_loop()
+            loop.run_until_complete(self._endpoint.initialize())
+            self._endpoint.start_session(session_id=session_id, metadata={"type": "benchmark"})
+            self._session_id = session_id
+            print(f"  [Session: {session_id}, claims: 0]")
+        except Exception as e:
+            print(f"  [Endpoint init failed: {e}, using prompt-only mode]")
+            self._endpoint = None
 
     def generate(self, prompt: str, problem_type: str = None, **kwargs) -> str:
-        # Simple enhancement: add step-by-step reasoning instruction
-        # More sophisticated: use domain-specific templates via prompt_system
-        enhanced = f"""Think step-by-step. Show your reasoning clearly.
+        """Enhanced generation with step-by-step reasoning.
+
+        If endpoint is available, uses claim context from persistent session.
+        """
+        # Build enhanced prompt based on problem type
+        if problem_type == "math":
+            enhanced = f"""Solve this step-by-step. Show all work clearly.
+After solving, verify your answer by checking it makes sense.
+Write your final numeric answer after ####
+
+{prompt}"""
+        elif problem_type == "commonsense":
+            enhanced = f"""Think through each option carefully.
+Consider what makes logical sense given the context.
+State your chosen answer clearly.
+
+{prompt}"""
+        else:
+            enhanced = f"""Think step-by-step. Show your reasoning clearly.
 After working through the problem, verify your answer makes sense.
 
 {prompt}"""
+
+        # If endpoint available, prepend claim context
+        if self._endpoint and self._endpoint.claim_count() > 0:
+            try:
+                loop = self._get_loop()
+                # Get relevant claims from session
+                search_resp = loop.run_until_complete(
+                    self._endpoint.search_claims(query=prompt[:200], limit=5)
+                )
+                if search_resp.success and search_resp.data.get("claims"):
+                    claims = search_resp.data["claims"]
+                    from src.endpoint.llm_client import build_claim_context
+                    context = build_claim_context(claims)
+                    if context:
+                        enhanced = f"{context}\n\n{enhanced}"
+            except Exception:
+                pass  # Fall back to prompt-only mode
+
         return _call_model(self.base_model, enhanced)
+
+    def close(self):
+        """Close endpoint and report session stats."""
+        if self._endpoint:
+            count = self._endpoint.claim_count()
+            print(f"  [Session ended: {count} claims accumulated]")
+            loop = self._get_loop()
+            loop.run_until_complete(self._endpoint.close())
+            self._endpoint = None
 
     def get_model_name(self) -> str:
         base_name = getattr(self.base_model, 'model_name', None) or getattr(self.base_model, '_model_name', None) or 'unknown'
@@ -108,201 +238,202 @@ class DeepEvalSuite:
             or type(self.base_model).__name__
         )
 
-    def run_drop(self, n_samples: int = 20) -> BenchmarkResult:
-        """DROP: Discrete reasoning over paragraphs — direct answer extraction"""
+    def run_gsm8k(self, n_samples: int = 20) -> BenchmarkResult:
+        """GSM8K: Grade school math — where CoT should help most"""
         if not DEEPEVAL_AVAILABLE or not self.base_model:
-            return BenchmarkResult("DROP", 0, 0.0, 0.0, 0.0,
+            return BenchmarkResult("GSM8K", 0, 0.0, 0.0, 0.0,
                 datetime.now().isoformat(), "Model not configured")
 
         try:
-            # Use a small subset of tasks so we hit exactly n_samples problems
-            drop_bench = DROP(n_problems_per_task=n_samples)
-
-            # Load goldens for the first task only (one task = n_samples problems)
-            task = drop_bench.tasks[0]
-            drop_bench.load_benchmark_dataset(task)
-            goldens = drop_bench.load_benchmark_dataset(task)[:n_samples]
-
-            shots_dataset = drop_bench.shots_dataset
+            gsm_bench = GSM8K(n_problems=n_samples, n_shots=5, enable_cot=True)
+            goldens = gsm_bench.load_benchmark_dataset()[:n_samples]
 
             baseline_correct = 0
             conj_correct = 0
             total = len(goldens)
 
             for i, golden in enumerate(goldens):
-                # Build prompt using DeepEval's DROP template
-                prompt = DROPTemplate.generate_output(
+                prompt = GSM8KTemplate.generate_output(
                     input=golden.input,
-                    train_set=shots_dataset,
-                    n_shots=3,
-                )
-                expected = golden.expected_output
-
-                # Baseline
-                try:
-                    baseline_response = _call_model(self.base_model, prompt)
-                    extracted = extract_answer(baseline_response, expected)
-                    # For DROP, expected may be multi-answer (comma-separated); check any match
-                    expected_parts = [e.strip() for e in expected.split(",")]
-                    if any(check_answer_match(extracted, ep) for ep in expected_parts):
-                        baseline_correct += 1
-                except Exception:
-                    pass
-
-                # Conjecture
-                try:
-                    conj_response = self.conjecture_model.generate(prompt)
-                    extracted_c = extract_answer(conj_response, expected)
-                    if any(check_answer_match(extracted_c, ep) for ep in expected_parts):
-                        conj_correct += 1
-                except Exception:
-                    pass
-
-                if (i + 1) % 5 == 0:
-                    print(f"  DROP: {i+1}/{total} done (baseline {baseline_correct}, conj {conj_correct})")
-
-            baseline_score = baseline_correct / total * 100
-            conj_score = conj_correct / total * 100
-
-            return BenchmarkResult(
-                "DROP", total, baseline_score, conj_score,
-                conj_score - baseline_score, datetime.now().isoformat()
-            )
-        except Exception as e:
-            return BenchmarkResult("DROP", n_samples, 0.0, 0.0, 0.0,
-                datetime.now().isoformat(), str(e))
-
-    def run_arc(self, n_samples: int = 20, mode: str = "challenge") -> BenchmarkResult:
-        """ARC: AI2 Reasoning Challenge — direct answer extraction"""
-        if not DEEPEVAL_AVAILABLE or not self.base_model:
-            return BenchmarkResult(f"ARC-{mode}", 0, 0.0, 0.0, 0.0,
-                datetime.now().isoformat(), "Model not configured")
-
-        try:
-            arc_mode = ARCMode.CHALLENGE if mode == "challenge" else ARCMode.EASY
-            arc_bench = ARC(n_problems=n_samples, mode=arc_mode)
-            goldens = arc_bench.load_benchmark_dataset(arc_mode)[:n_samples]
-
-            baseline_correct = 0
-            conj_correct = 0
-            total = len(goldens)
-
-            for i, golden in enumerate(goldens):
-                # golden.input already contains the formatted question with choices
-                prompt = golden.input + "\n\nOutput 'A', 'B', 'C', or 'D'. Full answer not needed."
-                expected = golden.expected_output  # single letter like "A"
-
-                # Baseline
-                try:
-                    baseline_response = _call_model(self.base_model, prompt)
-                    extracted = extract_answer(baseline_response, expected, AnswerType.MULTIPLE_CHOICE)
-                    if check_answer_match(extracted, expected, AnswerType.MULTIPLE_CHOICE):
-                        baseline_correct += 1
-                except Exception:
-                    pass
-
-                # Conjecture
-                try:
-                    conj_response = self.conjecture_model.generate(prompt)
-                    extracted_c = extract_answer(conj_response, expected, AnswerType.MULTIPLE_CHOICE)
-                    if check_answer_match(extracted_c, expected, AnswerType.MULTIPLE_CHOICE):
-                        conj_correct += 1
-                except Exception:
-                    pass
-
-                if (i + 1) % 5 == 0:
-                    print(f"  ARC-{mode}: {i+1}/{total} done (baseline {baseline_correct}, conj {conj_correct})")
-
-            baseline_score = baseline_correct / total * 100
-            conj_score = conj_correct / total * 100
-
-            return BenchmarkResult(
-                f"ARC-{mode}", total, baseline_score, conj_score,
-                conj_score - baseline_score, datetime.now().isoformat()
-            )
-        except Exception as e:
-            return BenchmarkResult(f"ARC-{mode}", n_samples, 0.0, 0.0, 0.0,
-                datetime.now().isoformat(), str(e))
-
-    def run_bbh(self, n_samples: int = 20) -> BenchmarkResult:
-        """BIG-Bench Hard: Logic and reasoning — direct answer extraction"""
-        if not DEEPEVAL_AVAILABLE or not self.base_model:
-            return BenchmarkResult("BBH", 0, 0.0, 0.0, 0.0,
-                datetime.now().isoformat(), "Model not configured")
-
-        try:
-            bbh_bench = BigBenchHard(n_problems_per_task=n_samples)
-
-            # Use a single task to get exactly n_samples problems
-            task = BigBenchHardTask.BOOLEAN_EXPRESSIONS
-            goldens = bbh_bench.load_benchmark_dataset(task)[:n_samples]
-
-            baseline_correct = 0
-            conj_correct = 0
-            total = len(goldens)
-
-            for i, golden in enumerate(goldens):
-                # Build prompt using BigBenchHard template (3-shot CoT)
-                prompt = BigBenchHardTemplate.generate_output(
-                    input=golden.input,
-                    task=task,
-                    n_shots=3,
+                    train_set=gsm_bench.shots_dataset,
+                    n_shots=5,
                     enable_cot=True,
                 )
-                expected = golden.expected_output  # e.g. "True", "False", "(A)", etc.
-
-                # Determine answer type from expected
-                exp_lower = expected.strip().lower()
-                if exp_lower in ("true", "false", "yes", "no"):
-                    ans_type = AnswerType.CATEGORICAL
-                elif exp_lower.startswith("(") and len(exp_lower) == 3:
-                    ans_type = AnswerType.MULTIPLE_CHOICE
-                else:
-                    ans_type = AnswerType.CATEGORICAL
+                expected = golden.expected_output  # Numeric answer
 
                 # Baseline
                 try:
                     baseline_response = _call_model(self.base_model, prompt)
-                    extracted = extract_answer(baseline_response, expected, ans_type)
-                    if check_answer_match(extracted, expected, ans_type):
+                    extracted = extract_gsm8k_answer(baseline_response)
+                    # Numeric comparison (handle floats)
+                    try:
+                        if abs(float(extracted) - float(expected)) < 0.01:
+                            baseline_correct += 1
+                    except ValueError:
+                        pass
+                except Exception:
+                    pass
+
+                # Conjecture
+                try:
+                    conj_response = self.conjecture_model.generate(prompt, problem_type="math")
+                    extracted_c = extract_gsm8k_answer(conj_response)
+                    try:
+                        if abs(float(extracted_c) - float(expected)) < 0.01:
+                            conj_correct += 1
+                    except ValueError:
+                        pass
+                except Exception:
+                    pass
+
+                if (i + 1) % 5 == 0:
+                    print(f"  GSM8K: {i+1}/{total} done (baseline {baseline_correct}, conj {conj_correct})")
+
+            baseline_score = baseline_correct / total * 100
+            conj_score = conj_correct / total * 100
+
+            return BenchmarkResult(
+                "GSM8K", total, baseline_score, conj_score,
+                conj_score - baseline_score, datetime.now().isoformat()
+            )
+        except Exception as e:
+            return BenchmarkResult("GSM8K", n_samples, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), str(e))
+
+    def run_mathqa(self, n_samples: int = 20) -> BenchmarkResult:
+        """MathQA: Multiple choice math reasoning"""
+        if not DEEPEVAL_AVAILABLE or not self.base_model:
+            return BenchmarkResult("MathQA", 0, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), "Model not configured")
+
+        try:
+            mathqa_bench = MathQA(n_problems_per_task=n_samples, n_shots=5)
+            task = mathqa_bench.tasks[0]
+            goldens = mathqa_bench.load_benchmark_dataset(task)[:n_samples]
+
+            baseline_correct = 0
+            conj_correct = 0
+            total = len(goldens)
+
+            for i, golden in enumerate(goldens):
+                prompt = MathQATemplate.generate_output(
+                    input=golden.input,
+                    n_shots=5,
+                )
+                expected = golden.expected_output.lower()  # a, b, c, d, or e
+
+                # Baseline
+                try:
+                    baseline_response = _call_model(self.base_model, prompt)
+                    extracted = extract_mathqa_answer(baseline_response)
+                    if extracted == expected:
                         baseline_correct += 1
                 except Exception:
                     pass
 
                 # Conjecture
                 try:
-                    conj_response = self.conjecture_model.generate(prompt)
-                    extracted_c = extract_answer(conj_response, expected, ans_type)
-                    if check_answer_match(extracted_c, expected, ans_type):
+                    conj_response = self.conjecture_model.generate(prompt, problem_type="math")
+                    extracted_c = extract_mathqa_answer(conj_response)
+                    if extracted_c == expected:
                         conj_correct += 1
                 except Exception:
                     pass
 
                 if (i + 1) % 5 == 0:
-                    print(f"  BBH: {i+1}/{total} done (baseline {baseline_correct}, conj {conj_correct})")
+                    print(f"  MathQA: {i+1}/{total} done (baseline {baseline_correct}, conj {conj_correct})")
 
             baseline_score = baseline_correct / total * 100
             conj_score = conj_correct / total * 100
 
             return BenchmarkResult(
-                "BBH", total, baseline_score, conj_score,
+                "MathQA", total, baseline_score, conj_score,
                 conj_score - baseline_score, datetime.now().isoformat()
             )
         except Exception as e:
-            return BenchmarkResult("BBH", n_samples, 0.0, 0.0, 0.0,
+            return BenchmarkResult("MathQA", n_samples, 0.0, 0.0, 0.0,
                 datetime.now().isoformat(), str(e))
 
-    def run_full_suite(self, n_samples: int = 20) -> Dict[str, BenchmarkResult]:
-        """Run all benchmarks sequentially"""
-        results = {
-            "DROP": self.run_drop(n_samples),
-            "ARC": self.run_arc(n_samples, "challenge"),
-            "BBH": self.run_bbh(n_samples)
-        }
-        self.results = list(results.values())
-        return results
+    def run_hellaswag(self, n_samples: int = 20) -> BenchmarkResult:
+        """HellaSwag: Commonsense reasoning - sentence completion"""
+        if not DEEPEVAL_AVAILABLE or not self.base_model:
+            return BenchmarkResult("HellaSwag", 0, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), "Model not configured")
 
-    def update_stats_yaml(self, key: str = "deepeval_benchmarks") -> dict:
+        try:
+            hella_bench = HellaSwag(n_problems_per_task=n_samples, n_shots=5)
+            task = hella_bench.tasks[0]
+            goldens = hella_bench.load_benchmark_dataset(task)[:n_samples]
+
+            baseline_correct = 0
+            conj_correct = 0
+            total = len(goldens)
+
+            for i, golden in enumerate(goldens):
+                prompt = HellaSwagTemplate.generate_output(
+                    input=golden.input,
+                    train_set=hella_bench.shots_dataset,
+                    task=task,
+                    n_shots=5,
+                )
+                expected = golden.expected_output  # A, B, C, or D
+
+                # Baseline
+                try:
+                    baseline_response = _call_model(self.base_model, prompt)
+                    extracted = extract_hellaswag_answer(baseline_response)
+                    if extracted == expected:
+                        baseline_correct += 1
+                except Exception:
+                    pass
+
+                # Conjecture
+                try:
+                    conj_response = self.conjecture_model.generate(prompt, problem_type="commonsense")
+                    extracted_c = extract_hellaswag_answer(conj_response)
+                    if extracted_c == expected:
+                        conj_correct += 1
+                except Exception:
+                    pass
+
+                if (i + 1) % 5 == 0:
+                    print(f"  HellaSwag: {i+1}/{total} done (baseline {baseline_correct}, conj {conj_correct})")
+
+            baseline_score = baseline_correct / total * 100
+            conj_score = conj_correct / total * 100
+
+            return BenchmarkResult(
+                "HellaSwag", total, baseline_score, conj_score,
+                conj_score - baseline_score, datetime.now().isoformat()
+            )
+        except Exception as e:
+            return BenchmarkResult("HellaSwag", n_samples, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), str(e))
+
+    def run_full_suite(self, n_samples: int = 20, session_id: str = "benchmark_session") -> Dict[str, BenchmarkResult]:
+        """Run all benchmarks sequentially with persistent session.
+
+        Per O-0006: Uses 1 persistent session for claim accumulation across test cases.
+        Claims from earlier problems may enhance later problem solving.
+        """
+        # Initialize persistent session for Conjecture model
+        if self.conjecture_model:
+            self.conjecture_model.initialize_session(session_id=session_id)
+
+        try:
+            results = {
+                "GSM8K": self.run_gsm8k(n_samples),
+                "MathQA": self.run_mathqa(n_samples),
+                "HellaSwag": self.run_hellaswag(n_samples)
+            }
+            self.results = list(results.values())
+            return results
+        finally:
+            # Close session and report stats
+            if self.conjecture_model:
+                self.conjecture_model.close()
+
+    def update_stats_yaml(self, key: str = "deepeval_benchmarks", session_claims: int = 0) -> dict:
         """Update STATS.yaml with results"""
         stats = {}
         if self.stats_path.exists():
@@ -312,6 +443,7 @@ class DeepEvalSuite:
         stats[key] = {
             "last_run": datetime.now().isoformat(),
             "model": self._get_model_name(),
+            "session_claims": session_claims,  # Per O-0006: track claim accumulation
             "benchmarks": {
                 r.name: {
                     "sample_count": r.sample_count,
@@ -340,13 +472,12 @@ class DeepEvalSuite:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="DeepEval Benchmark Suite — DROP, ARC, BBH via Chutes.ai"
+        description="DeepEval Benchmark Suite — GSM8K, MathQA, HellaSwag via Chutes.ai"
     )
     parser.add_argument(
         "--model",
-        default="Qwen/Qwen3-14B",
-        help="Model ID on Chutes.ai (default: Qwen/Qwen3-14B). "
-             "Use --model deepseek-ai/DeepSeek-V3-0324 for DeepSeek-V3.",
+        default="openai/gpt-oss-20b",
+        help="Model ID on Chutes.ai (default: openai/gpt-oss-20b)",
     )
     parser.add_argument(
         "--n",
@@ -357,14 +488,15 @@ def main():
     parser.add_argument(
         "--stats-key",
         default=None,
-        help="Key to use in STATS.yaml (default: deepeval_benchmarks_8b for 8B models, deepeval_benchmarks otherwise)",
+        help="Key to use in STATS.yaml (default: deepeval_oss)",
     )
     args = parser.parse_args()
 
-    print("DeepEval Benchmark Suite")
+    print("DeepEval Benchmark Suite (OSS Models)")
     print("=" * 50)
     print(f"Model : {args.model}")
     print(f"N     : {args.n} samples per benchmark")
+    print("Benchmarks: GSM8K, MathQA, HellaSwag")
 
     api_key = os.environ.get("CHUTES_API_KEY")
     if not api_key:
@@ -376,8 +508,15 @@ def main():
 
     suite = DeepEvalSuite(base_model=model)
     print(f"\nRunning benchmarks ({args.n} samples each)...")
+    print("Per O-0006: Using 1 persistent session for claim accumulation\n")
 
-    results = suite.run_full_suite(n_samples=args.n)
+    session_id = f"bench_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    results = suite.run_full_suite(n_samples=args.n, session_id=session_id)
+
+    # Get final claim count from session
+    session_claims = 0
+    if suite.conjecture_model and suite.conjecture_model._endpoint:
+        session_claims = suite.conjecture_model._endpoint.claim_count()
 
     print("\nResults:")
     print("-" * 50)
@@ -387,16 +526,9 @@ def main():
         else:
             print(f"{name}: baseline={r.baseline_score:.1f}%  conjecture={r.conjecture_score:.1f}%  delta={r.delta:+.1f}pp")
 
-    # Choose stats key: default to 8b-specific key for 8B class models
-    stats_key = args.stats_key
-    if stats_key is None:
-        if "8b" in args.model.lower() or "8B" in args.model:
-            stats_key = "deepeval_benchmarks_8b"
-        else:
-            stats_key = "deepeval_benchmarks"
-
-    suite.update_stats_yaml(key=stats_key)
-    print(f"\nSTATS.yaml updated (key: {stats_key})")
+    stats_key = args.stats_key or "deepeval_oss"
+    suite.update_stats_yaml(key=stats_key, session_claims=session_claims)
+    print(f"\nSTATS.yaml updated (key: {stats_key}, session_claims: {session_claims})")
 
 
 if __name__ == "__main__":
