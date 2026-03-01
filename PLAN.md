@@ -285,8 +285,8 @@ BBH boolean_expressions task too hard for this model (0% both).
 
 ---
 
-## Current Phase: Phase 14 — HTTP Server for LLM Endpoint
-## Status: PLANNING
+## Current Phase: COMPLETE
+## Status: All phases done (14 total)
 
 ---
 
@@ -403,13 +403,22 @@ Expose OpenAI-compatible API that enhances queries with claim context.
 - [x] 14.4 Add session management (session header or auto-create)
 - [x] 14.5 Add `conjecture serve` CLI command to start server
 - [x] 14.6 Add `conjecture mcp` CLI command (completes step 10.7)
-- [ ] 14.7 Test: curl localhost:8000/v1/chat/completions works
+- [x] 14.7 Test: curl localhost:8000/v1/chat/completions works ✅
 
-### Gates
+### Gates ✅ ALL PASSED
 
 - [x] `conjecture serve` command exists ✅
-- [ ] POST to `/v1/chat/completions` returns OpenAI-compatible response
-- [ ] Response includes claim context used (X-Conjecture-Claims header)
+- [x] POST to `/v1/chat/completions` returns OpenAI-compatible response ✅
+- [x] Response includes X-Conjecture-Claims-Used and X-Conjecture-Session headers ✅
+
+### Test Output
+```
+curl http://localhost:8765/v1/chat/completions -d '{"model":"conjecture","messages":[...]}'
+HTTP/1.1 200 OK
+x-conjecture-claims-used: 0
+x-conjecture-session: sfe6aa47d
+{"id":"chatcmpl-...","object":"chat.completion","model":"openai/gpt-oss-20b",...}
+```
 
 ---
 
