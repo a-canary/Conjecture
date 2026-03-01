@@ -84,6 +84,7 @@ class PromptSystem:
         self._multistep_reasoning_enabled = True
         self._problem_decomposition_enabled = True
         self._self_critique_enabled = True
+        self._error_correction_enabled = True
 
     def _detect_problem_type(self, problem: str) -> ProblemType:
         """Detect problem type for domain-adaptive processing"""
@@ -676,26 +677,236 @@ GENERAL PROBLEM SOLVING CONTEXT:
             "decomposition_enhancement_applied": True,
         }
 
-    def _get_self_verification_prompt(self, problem: str, response: str) -> str:
-        """Generate self-verification prompt (Cycle 3 enhancement)"""
+    def get_error_correction_prompt(
+        self, problem: str, initial_response: str, problem_type: ProblemType
+    ) -> str:
+        """
+        Generate error correction prompt for reconsidering answers.
+
+        Lightweight alternative to full re-generation. Domain-specific guidance
+        that helps the model catch and correct common errors.
+
+        Args:
+            problem: The original problem statement
+            initial_response: The model's initial answer attempt
+            problem_type: The type of problem being solved
+
+        Returns:
+            Formatted error correction prompt with domain-specific guidance
+        """
+        if not self._error_correction_enabled:
+            return ""
+
+        # Map our ProblemType to error correction module's ProblemType
+        type_mapping = {
+            ProblemType.MATHEMATICAL: ErrorCorrectionProblemType.MATHEMATICAL,
+            ProblemType.LOGICAL: ErrorCorrectionProblemType.LOGICAL,
+            ProblemType.SEQUENTIAL: ErrorCorrectionProblemType.SEQUENTIAL,
+            ProblemType.SCIENTIFIC: ErrorCorrectionProblemType.SCIENTIFIC,
+            ProblemType.DECOMPOSITION: ErrorCorrectionProblemType.DECOMPOSITION,
+            ProblemType.GENERAL: ErrorCorrectionProblemType.GENERAL,
+        }
+
+        correction_type = type_mapping.get(problem_type, ErrorCorrectionProblemType.GENERAL)
+        return get_error_correction_text(problem, initial_response, correction_type)
+
+    def get_quick_error_correction(self, problem_type: ProblemType) -> str:
+        """
+        Get a quick, inline error correction reminder.
+
+        Minimal version for low-confidence answers. Can be injected into
+        system prompts as a lightweight error correction mechanism.
+
+        Args:
+            problem_type: The type of problem being solved
+
+        Returns:
+            Brief error correction reminder (1-2 sentences)
+        """
+        if not self._error_correction_enabled:
+            return ""
+
+        # Map our ProblemType to error correction module's ProblemType
+        type_mapping = {
+            ProblemType.MATHEMATICAL: ErrorCorrectionProblemType.MATHEMATICAL,
+            ProblemType.LOGICAL: ErrorCorrectionProblemType.LOGICAL,
+            ProblemType.SEQUENTIAL: ErrorCorrectionProblemType.SEQUENTIAL,
+            ProblemType.SCIENTIFIC: ErrorCorrectionProblemType.SCIENTIFIC,
+            ProblemType.DECOMPOSITION: ErrorCorrectionProblemType.DECOMPOSITION,
+            ProblemType.GENERAL: ErrorCorrectionProblemType.GENERAL,
+        }
+
+        correction_type = type_mapping.get(problem_type, ErrorCorrectionProblemType.GENERAL)
+        return get_quick_error_correction(correction_type)
+
+    def should_trigger_error_correction(
+        self, confidence: float, threshold: float = 0.7
+    ) -> bool:
+        """
+        Determine if error correction should be triggered.
+
+        Simple heuristic based on confidence score. Useful for deciding whether
+        to include error correction prompts in the system message.
+
+        Args:
+            confidence: Model's confidence score (0.0-1.0)
+            threshold: Trigger below this confidence (default 0.7)
+
+        Returns:
+            True if error correction should be triggered
+        """
+        if not self._error_correction_enabled:
+            return False
+
+        return should_trigger_error_correction(confidence, threshold)
+
+    def _get_domain_specific_verification_checklist(self, problem_type: ProblemType) -> str:
+        """Generate domain-specific verification checklists for error detection (Cycle 3 enhancement)"""
+        verifications = {
+            ProblemType.MATHEMATICAL: """MATHEMATICAL VERIFICATION CHECKLIST:
+✓ CALCULATION ACCURACY: Did I compute correctly?
+  • Check arithmetic operations (addition, subtraction, multiplication, division)
+  • Verify order of operations (PEMDAS/BODMAS) is correct
+  • Double-check any percentages, fractions, or decimals
+  • Recompute critical steps using alternative method
+
+✓ UNIT CONSISTENCY: Are units handled correctly?
+  • Ensure all quantities have proper units throughout
+  • Convert units if necessary (e.g., meters to kilometers)
+  • Check that final answer has appropriate units
+
+✓ ANSWER REASONABLENESS: Does the answer make sense?
+  • Is the magnitude reasonable? (not off by orders of magnitude)
+  • Does it satisfy all original constraints?
+  • Estimation check: does exact answer match rough estimate?
+
+✓ COMPLETENESS: Did I address all parts?
+  • Show final answer clearly and prominently
+  • Include all requested forms (exact/approximate, with units)""",
+
+            ProblemType.LOGICAL: """LOGICAL VERIFICATION CHECKLIST:
+✓ PREMISE VALIDITY: Are starting assumptions correct?
+  • Do premises follow logically from the problem statement?
+  • Are implicit assumptions stated and justified?
+  • Identify any unstated assumptions that could be wrong
+
+✓ REASONING STEPS: Does each step follow logically?
+  • Can each conclusion be derived from its premises?
+  • Check for logical fallacies (begging question, false cause, etc.)
+  • Check contrapositive: if conclusion false, would premises be false?
+
+✓ EDGE CASES & COUNTEREXAMPLES: Are there exceptions?
+  • Does conclusion hold for all mentioned cases?
+  • Can you think of any potential counterexamples?
+  • Check boundary cases that might break the logic
+
+✓ CONCLUSION CLARITY: Is the final answer explicit?
+  • State conclusion clearly (yes/no, A/B/C/D, true/false)
+  • Match the format requested in the problem""",
+
+            ProblemType.SCIENTIFIC: """SCIENTIFIC VERIFICATION CHECKLIST:
+✓ HYPOTHESIS & METHOD: Is the approach sound?
+  • Is the hypothesis testable and well-defined?
+  • Are variables properly identified (independent, dependent, controlled)?
+  • Is the experimental/analytical approach appropriate?
+
+✓ DATA & EVIDENCE: Is evidence properly interpreted?
+  • Are data values correctly cited from the problem?
+  • Is there sufficient evidence for the conclusion?
+  • Could the data support alternative explanations?
+
+✓ CAUSATION vs CORRELATION: Is the relationship correct?
+  • Did I claim causation when only correlation was shown?
+  • Are there other possible explanations for the data?
+  • Are confounding variables considered?
+
+✓ LIMITATIONS & CERTAINTY: Are limitations acknowledged?
+  • Are assumptions of the method stated?
+  • Is the conclusion appropriately qualified (certain/likely/possible)?
+  • What conditions would make the conclusion false?""",
+
+            ProblemType.SEQUENTIAL: """SEQUENTIAL VERIFICATION CHECKLIST:
+✓ STEP ORDER: Are steps in the correct sequence?
+  • Does each step depend on previous steps being complete?
+  • Can any steps be reordered without breaking the logic?
+  • Do you have all necessary inputs for each step?
+
+✓ STEP COMPLETENESS: Are all necessary steps included?
+  • Is there any skipped step between what's shown?
+  • Does the final output depend on anything not completed?
+  • Count steps: do you have them all?
+
+✓ DEPENDENCIES: Are relationships between steps clear?
+  • What does each step require from previous steps?
+  • What does each step provide for later steps?
+  • Are there any breaks in the dependency chain?
+
+✓ FINAL RESULT: Does the process reach the goal?
+  • After all steps, is the desired outcome achieved?
+  • Are there any loose ends or incomplete stages?""",
+
+            ProblemType.DECOMPOSITION: """DECOMPOSITION VERIFICATION CHECKLIST:
+✓ COMPONENT IDENTIFICATION: Are all main parts identified?
+  • Did you identify all major components?
+  • Are components mutually exclusive (no overlap)?
+  • Are they collectively exhaustive (cover everything)?
+
+✓ COMPONENT ANALYSIS: Is each component properly addressed?
+  • Did you analyze each component separately and thoroughly?
+  • Is the analysis consistent across components?
+  • Are all relevant aspects of each component covered?
+
+✓ COMPONENT INTERACTIONS: How do components relate?
+  • Do components interact or affect each other?
+  • Are these interactions properly accounted for?
+  • Does the solution reflect how components work together?
+
+✓ INTEGRATION: Is the solution complete?
+  • Do component analyses combine into a complete answer?
+  • Is the final synthesis logical and well-justified?
+  • Does the integrated solution address the original problem?""",
+
+            ProblemType.GENERAL: """GENERAL VERIFICATION CHECKLIST:
+✓ PROBLEM UNDERSTANDING: Did I understand the question?
+  • What is the core question being asked?
+  • What information is provided (given)?
+  • What information is requested (answer format)?
+
+✓ APPROACH VALIDITY: Is my approach sound?
+  • Is this the right method for the problem?
+  • Are there alternative approaches that work better?
+  • Does my approach use all provided information?
+
+✓ LOGICAL CONSISTENCY: Does everything fit together?
+  • Do my conclusions follow from my premises?
+  • Are there any internal contradictions?
+  • Does the reasoning flow logically?
+
+✓ ANSWER QUALITY: Is the response complete and clear?
+  • Is the final answer clearly stated?
+  • Is the format what was requested?
+  • Is the answer supported by the reasoning shown?""",
+        }
+        return verifications.get(problem_type, verifications[ProblemType.GENERAL])
+
+    def _get_self_verification_prompt(self, problem: str, problem_type: ProblemType) -> str:
+        """Generate self-verification prompt with domain awareness (Cycle 3 enhancement)"""
         if not self._self_verification_enabled:
             return ""
 
+        domain_checklist = self._get_domain_specific_verification_checklist(problem_type)
+
         return f"""
 
-SELF-VERIFICATION CHECKLIST:
-Before finalizing your answer, verify each item:
+SELF-VERIFICATION CHECKLIST - ERROR DETECTION (Cycle 3):
+{domain_checklist}
 
-✓ PROBLEM UNDERSTANDING: Did I address exactly what was asked?
-✓ LOGICAL CONSISTENCY: Does my reasoning flow logically?
-✓ CALCULATION ACCURACY: Are all calculations correct?
-✓ UNITS & FORMATS: Are units and answer format appropriate?
-✓ COMPLETENESS: Have I addressed all parts of the problem?
-✓ PLAUSIBILITY: Does the answer make sense in context?
-
-Original problem: {problem}
-Your proposed answer: [Provide your answer here]
-Review your work against this checklist and correct any issues."""
+VERIFICATION PROCESS:
+1. Review your answer carefully using the checklist above
+2. Pay special attention to the domain-specific checks for {problem_type.value} problems
+3. Re-examine any step that seems uncertain or could be wrong
+4. Correct any errors you find before submitting
+5. Provide your final answer"""
 
     def _quick_self_critique(self, response: str, problem_type: ProblemType) -> str:
         """Quick self-critique for response quality enhancement (Cycle 5 enhancement)"""
@@ -812,7 +1023,7 @@ Refine your response to meet these quality standards."""
 
         # Add verification prompts
         verification_prompt = self._get_self_verification_prompt(
-            problem, "[Your response here]"
+            problem, problem_type
         )
         critique_prompt = self._quick_self_critique(
             "[Your response here]", problem_type
@@ -901,7 +1112,52 @@ Refine your response to meet these quality standards."""
             "multistep_reasoning": self._multistep_reasoning_enabled,
             "problem_decomposition": self._problem_decomposition_enabled,
             "self_critique": self._self_critique_enabled,
+            "error_correction": self._error_correction_enabled,
         }
+
+    def get_domain_claim_templates(
+        self, problem_type: ProblemType, max_count: int = 3
+    ) -> str:
+        """Get domain-specific claim templates for enhanced reasoning priming
+
+        Uses position primacy (templates at prompt START) per NEXT.md findings.
+        Selects templates matching the detected problem type and benchmark.
+        """
+        # Import here to avoid circular dependencies
+        try:
+            from src.agent.domain_claim_templates import (
+                format_claims_for_prompt,
+            )
+
+            domain_mapping = {
+                ProblemType.MATHEMATICAL: "mathematical",
+                ProblemType.SCIENTIFIC: "scientific",
+                ProblemType.LOGICAL: "logical",
+                ProblemType.GENERAL: "general",
+                ProblemType.SEQUENTIAL: "general",
+                ProblemType.DECOMPOSITION: "general",
+            }
+
+            domain = domain_mapping.get(problem_type, "general")
+            return format_claims_for_prompt(domain, max_count)
+        except ImportError:
+            # Graceful fallback if domain templates not available
+            return ""
+
+    def enhance_prompt_with_domain_claims(
+        self, prompt: str, problem_type: ProblemType
+    ) -> str:
+        """Inject domain-specific claim templates at prompt START for maximum impact
+
+        Per NEXT.md position primacy findings: claims at START (+10pp) beat MIDDLE.
+        This method prepends domain templates to boost reasoning performance.
+        """
+        claim_templates = self.get_domain_claim_templates(problem_type, max_count=3)
+
+        if claim_templates:
+            # Position claims at START for position primacy effect
+            return claim_templates + "\n" + prompt
+        return prompt
 
 
 class ResponseParser:
