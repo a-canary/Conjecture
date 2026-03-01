@@ -181,10 +181,10 @@ Supports: O-0004, F-0004
 
 LLM operations use exponential backoff (10s-10min range) with error-type-specific multipliers. Circuit breaker pattern prevents cascading failures during provider outages.
 
-### O-0006: DeepEval Benchmark Suite
+### O-0006: DeepEval Benchmark Suite (Small Models)
 Supports: M-0001, O-0002
 
-Three DeepEval benchmarks: DROP (hard math/numerical reasoning), ARC (science reasoning), BIG-Bench Hard (logic). Compare bare Haiku vs Haiku+Conjecture to validate framework value-add across diverse reasoning types.
+Three DeepEval benchmarks: DROP (hard math), ARC (science), BIG-Bench Hard (logic). Test on 8B-class models (llama3.1-8b, Qwen2.5-7B) where Conjecture adds value. R&D confirmed: strong models (DeepSeek-V3) hit 100% baseline — no room to improve.
 
 ### O-0007: Threshold-Based Garbage Collection
 Supports: D-0010, D-0001
