@@ -22,10 +22,15 @@ from pathlib import Path
 from typing import List, Dict, Any, Tuple
 from dataclasses import dataclass, field, asdict
 import httpx
+import sys
 
 # Load environment
 from dotenv import load_dotenv
 load_dotenv("/workspace/.env")
+
+# Import robust answer extraction
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "benchmarks"))
+from answer_extraction import extract_answer, check_answer_match, AnswerType
 
 
 @dataclass
@@ -157,54 +162,30 @@ def load_mmlu(limit: int = None) -> List[Dict]:
         return []
 
 
-def extract_answer(response: str, expected: str) -> str:
-    """Extract answer using proper patterns"""
-    if not response:
-        return ""
-
-    # GSM8K #### pattern
-    match = re.search(r'####\s*(\-?[\d,\.]+)', response)
-    if match:
-        return match.group(1).replace(",", "")
-
-    # Boxed pattern
-    match = re.search(r'\\boxed\{([^}]+)\}', response)
-    if match:
-        return match.group(1).replace(",", "")
-
-    # "answer is X" pattern
-    match = re.search(r'answer\s*(?:is|:)\s*\$?(\-?[\d,\.]+)', response, re.I)
-    if match:
-        return match.group(1).replace(",", "")
-
-    # Multiple choice
+def extract_answer_wrapper(response: str, expected: str) -> str:
+    """
+    Wrapper for robust extraction function.
+    Infers answer type from expected value.
+    """
+    answer_type = None
     if expected in ["A", "B", "C", "D"]:
-        match = re.search(r'\b([A-D])\b', response[:50])
-        if match:
-            return match.group(1)
-
-    # Last number
-    numbers = re.findall(r'\-?[\d,]+\.?\d*', response)
-    if numbers:
-        return numbers[-1].replace(",", "")
-
-    return response.strip()[:20]
+        answer_type = AnswerType.MULTIPLE_CHOICE
+    else:
+        answer_type = AnswerType.NUMERICAL
+    return extract_answer(response, expected, answer_type)
 
 
-def check_answer(pred: str, expected: str) -> bool:
-    """Check if prediction matches expected"""
-    p = str(pred).strip().lower()
-    e = str(expected).strip().lower()
-
-    if p == e:
-        return True
-
-    try:
-        pn = float(p.replace(",", ""))
-        en = float(e.replace(",", ""))
-        return abs(pn - en) < 0.01
-    except:
-        return False
+def check_answer_wrapper(pred: str, expected: str) -> bool:
+    """
+    Wrapper for robust answer checking function.
+    Infers answer type from expected value.
+    """
+    answer_type = None
+    if expected in ["A", "B", "C", "D"]:
+        answer_type = AnswerType.MULTIPLE_CHOICE
+    else:
+        answer_type = AnswerType.NUMERICAL
+    return check_answer_match(pred, expected, answer_type)
 
 
 async def run_direct(llm: LLMClient, problems: List[Dict], task: str) -> BenchmarkResult:

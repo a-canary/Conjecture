@@ -318,15 +318,24 @@ SEQUENTIAL APPROACH:
 - Consider dependencies between steps
 - Maintain clear progression toward the solution
 - Check that no steps are overlooked""",
-            ProblemType.DECOMPOSITION: """You are Conjecture, a decomposition reasoning assistant designed to break complex problems into manageable parts.
+            ProblemType.DECOMPOSITION: """You are Conjecture, an expert decomposition assistant specializing in breaking complex problems into well-defined, manageable parts and recombining solutions systematically.
 
-DECOMPOSITION APPROACH:
-- Identify the main components of the problem
-- Break down complex issues into simpler subproblems
-- Address each component systematically
-- Consider how components interact
-- Integrate partial solutions into a complete answer
-- Verify that all aspects are covered""",
+ADVANCED DECOMPOSITION APPROACH:
+- Analyze the problem structure to identify natural divisions
+- Identify all main subproblems and their relationships
+- Break complex issues into simpler, independent subproblems
+- Address each subproblem completely and thoroughly
+- Track how subproblems depend on and interact with each other
+- Integrate partial solutions respecting all dependencies
+- Verify the combined solution fully addresses the original problem
+
+KEY PRINCIPLES:
+- Subproblems should be as independent as possible
+- Each subproblem should be clearly solvable with available information
+- Document exactly how subproblems connect and relate to each other
+- Ensure no aspects of the original problem are overlooked
+- Check that combining solutions produces a coherent, complete answer
+- Consider alternative decomposition approaches if needed""",
             ProblemType.GENERAL: """You are Conjecture, a general reasoning assistant designed to solve problems thoughtfully and systematically.
 
 GENERAL APPROACH:
@@ -608,64 +617,99 @@ GENERAL PROBLEM SOLVING CONTEXT:
         }
 
     def _enhance_problem_decomposition(self, problem: str) -> Dict[str, Any]:
-        """Enhance problem decomposition with strategy selection (Cycle 12 enhancement)"""
+        """Enhanced problem decomposition with advanced strategy selection (Cycle 12+ improvement)"""
         if not self._problem_decomposition_enabled:
             return {}
 
         problem_lower = problem.lower()
 
-        # Identify decomposition approach
+        # Identify decomposition approach with extended keyword detection
+        # Priority order: more specific approaches first, then general
         if any(
-            word in problem_lower for word in ["component", "part", "piece", "element"]
+            word in problem_lower for word in ["build", "construct", "assemble", "combine", "integrate", "merge", "link", "connect"]
         ):
-            approach = "component_breakdown"
+            approach = "structural_composition"
         elif any(
-            word in problem_lower for word in ["factor", "cause", "reason", "why"]
+            word in problem_lower for word in ["layer", "level", "hierarchy", "nested", "tree", "branch", "depth"]
         ):
-            approach = "factor_analysis"
+            approach = "hierarchical_decomposition"
         elif any(
-            word in problem_lower for word in ["step", "stage", "phase", "process"]
+            word in problem_lower for word in ["step", "stage", "phase", "process", "procedure", "sequence", "order", "first", "then", "next"]
         ):
             approach = "process_decomposition"
         elif any(
+            word in problem_lower for word in ["factor", "cause", "reason", "why", "influence", "contribute", "role"]
+        ):
+            approach = "factor_analysis"
+        elif any(
             word in problem_lower
-            for word in ["option", "alternative", "choice", "either"]
+            for word in ["option", "alternative", "choice", "either", "compare", "versus", "better", "worse"]
         ):
             approach = "alternative_analysis"
+        elif any(
+            word in problem_lower for word in ["component", "part", "piece", "element", "module", "unit", "section"]
+        ):
+            approach = "component_breakdown"
         else:
             approach = "general_decomposition"
 
-        # Strategy based on approach
+        # Enhanced strategies with detailed step-by-step guidance
         strategies = {
             "component_breakdown": [
-                "Identify all major components",
-                "Analyze each component separately",
-                "Consider component interactions",
-                "Integrate component analyses",
+                "1. Identify all major components/subsystems of the problem",
+                "2. List key properties and functions of each component",
+                "3. Analyze each component separately and independently",
+                "4. Map how components interact and depend on each other",
+                "5. Identify all interfaces and communication points",
+                "6. Integrate findings into unified understanding",
             ],
             "factor_analysis": [
-                "List all contributing factors",
-                "Categorize factors by importance",
-                "Analyze factor relationships",
-                "Synthesize factor impacts",
+                "1. Comprehensively list all contributing factors",
+                "2. Categorize factors (primary, secondary, tertiary, etc.)",
+                "3. Estimate relative importance/weight of each factor",
+                "4. Analyze relationships and dependencies between factors",
+                "5. Identify which factors can be controlled or influenced",
+                "6. Synthesize factor impacts into overall conclusion",
             ],
             "process_decomposition": [
-                "Map the complete process",
-                "Break into sequential stages",
-                "Analyze each stage's requirements",
-                "Ensure proper stage transitions",
+                "1. Map the complete end-to-end process flow",
+                "2. Identify prerequisite relationships and dependencies",
+                "3. Break into distinct, sequential stages or phases",
+                "4. Analyze inputs, outputs, and requirements per stage",
+                "5. Verify correct ordering and identify critical path",
+                "6. Ensure smooth transitions between stages",
             ],
             "alternative_analysis": [
-                "Identify all possible options",
-                "Evaluate each option's pros/cons",
-                "Compare against criteria",
-                "Select optimal solution",
+                "1. Comprehensively generate all feasible alternatives",
+                "2. Define clear, measurable evaluation criteria",
+                "3. Evaluate each alternative against all criteria",
+                "4. Score and rank alternatives systematically",
+                "5. Analyze key trade-offs between top alternatives",
+                "6. Select optimal solution with clear justification",
+            ],
+            "structural_composition": [
+                "1. Understand the target structure or desired final form",
+                "2. Identify all required building blocks and components",
+                "3. Determine logical construction sequence and order",
+                "4. Solve each subproblem (building block) independently",
+                "5. Verify built components fit and work together",
+                "6. Assemble into coherent, integrated solution",
+            ],
+            "hierarchical_decomposition": [
+                "1. Identify highest-level problem structure",
+                "2. Break into major logical divisions/subtopics",
+                "3. Further subdivide each major division",
+                "4. Continue until reaching concrete, solvable subproblems",
+                "5. Solve base-level problems independently",
+                "6. Integrate solutions bottom-up through hierarchy",
             ],
             "general_decomposition": [
-                "Identify main problem aspects",
-                "Break into manageable subproblems",
-                "Address each subproblem systematically",
-                "Combine into comprehensive solution",
+                "1. Identify main aspects and dimensions of the problem",
+                "2. Break into 3-5 clearly defined subproblems",
+                "3. Classify subproblems by type and complexity",
+                "4. Address each subproblem systematically and thoroughly",
+                "5. Track relationships and dependencies between subproblems",
+                "6. Combine subproblem solutions into complete answer",
             ],
         }
 

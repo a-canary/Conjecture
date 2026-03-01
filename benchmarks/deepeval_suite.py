@@ -2,6 +2,7 @@
 DeepEval Benchmark Suite for Conjecture
 Benchmarks: DROP (math), ARC (science), BIG-Bench Hard (logic)
 Outputs to STATS.yaml
+Uses robust answer extraction to avoid 70pp accuracy swings from extraction bugs.
 """
 
 import asyncio
@@ -10,6 +11,8 @@ from pathlib import Path
 from datetime import datetime
 from dataclasses import dataclass, asdict
 from typing import Dict, List, Optional, Callable
+
+from answer_extraction import extract_answer, check_answer_match, AnswerType
 
 try:
     from deepeval.benchmarks import DROP, ARC, BigBenchHard

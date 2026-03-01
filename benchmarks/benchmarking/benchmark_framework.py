@@ -11,6 +11,9 @@ from typing import Dict, List, Any, Optional, Callable
 from dataclasses import dataclass, asdict
 from datetime import datetime
 from abc import ABC, abstractmethod
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from answer_extraction import extract_answer, check_answer_match, AnswerType
 
 @dataclass
 class BenchmarkTask:
@@ -191,34 +194,13 @@ class AIME25Benchmark(Benchmark):
             return self.sample_tasks
 
     def evaluate_response(self, task: BenchmarkTask, response: str) -> bool:
-        """Check if response contains the correct numerical answer"""
+        """Check if response contains the correct numerical answer (robust extraction)"""
         if not task.expected_answer:
             return False
 
-        # For mathematical answers, we need to be more sophisticated
-        # Extract numbers from response and check if the expected answer is present
-        import re
-
-        # Clean the expected answer (remove whitespace)
-        expected_clean = task.expected_answer.strip()
-
-        # Look for the exact answer in the response
-        # Check for patterns like "Answer: 42", "42", "The answer is 42", etc.
-        patterns = [
-            rf"(?:answer[:\s]+|is[:\s]+|=[:\s]+){re.escape(expected_clean)}\b",
-            rf"\b{re.escape(expected_clean)}\b",
-            rf"(?:final answer|result)[:\s]+{re.escape(expected_clean)}\b"
-        ]
-
-        for pattern in patterns:
-            if re.search(pattern, response, re.IGNORECASE):
-                return True
-
-        # As a fallback, check if the number appears anywhere in the response
-        if expected_clean in response:
-            return True
-
-        return False
+        # Use robust answer extraction with type awareness
+        extracted = extract_answer(response, task.expected_answer, AnswerType.NUMERICAL)
+        return check_answer_match(extracted, task.expected_answer, AnswerType.NUMERICAL)
 
 class GPQABenchmark(Benchmark):
     """GPQA (Graduate-Level Google-Proof Q&A) Benchmark"""
