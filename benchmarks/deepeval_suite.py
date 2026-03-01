@@ -20,12 +20,13 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 try:
-    from deepeval.benchmarks import GSM8K, MathQA, HellaSwag, LogiQA, TruthfulQA
+    from deepeval.benchmarks import GSM8K, MathQA, HellaSwag, LogiQA, TruthfulQA, BoolQ
     from deepeval.benchmarks.gsm8k.template import GSM8KTemplate
     from deepeval.benchmarks.math_qa.template import MathQATemplate
     from deepeval.benchmarks.hellaswag.template import HellaSwagTemplate
     from deepeval.benchmarks.logi_qa.template import LogiQATemplate
     from deepeval.benchmarks.truthful_qa.template import TruthfulQATemplate
+    from deepeval.benchmarks.bool_q.template import BoolQTemplate
     from deepeval.models import GPTModel
     DEEPEVAL_AVAILABLE = True
 except ImportError:
@@ -154,6 +155,28 @@ def extract_truthfulqa_answer(response: str) -> str:
     match = re.search(r'\b([1-4])\b', response)
     if match:
         return match.group(1)
+
+    return ""
+
+
+def extract_boolq_answer(response: str) -> str:
+    """Extract boolean answer from BoolQ response.
+
+    BoolQ expects Yes/No answers.
+    """
+    response_lower = response.lower()
+
+    # Check for yes/no first (BoolQ format)
+    if re.search(r'\byes\b', response_lower):
+        return "Yes"
+    if re.search(r'\bno\b', response_lower):
+        return "No"
+
+    # Also check for true/false
+    if re.search(r'\btrue\b', response_lower):
+        return "Yes"
+    if re.search(r'\bfalse\b', response_lower):
+        return "No"
 
     return ""
 
@@ -585,6 +608,59 @@ class DeepEvalSuite:
             return BenchmarkResult("TruthfulQA", n_samples, 0.0, 0.0, 0.0,
                 datetime.now().isoformat(), str(e))
 
+    def run_boolq(self, n_samples: int = 20) -> BenchmarkResult:
+        """BoolQ: Boolean question answering"""
+        if not DEEPEVAL_AVAILABLE or not self.base_model:
+            return BenchmarkResult("BoolQ", 0, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), "Model not configured")
+
+        try:
+            boolq_bench = BoolQ(n_problems=n_samples, n_shots=5)
+            goldens = boolq_bench.load_benchmark_dataset()[:n_samples]
+
+            baseline_correct = 0
+            conj_correct = 0
+            total = len(goldens)
+
+            for i, golden in enumerate(goldens):
+                prompt = BoolQTemplate.generate_output(
+                    input=golden.input,
+                    n_shots=5,
+                )
+                expected = golden.expected_output  # "True" or "False"
+
+                # Baseline
+                try:
+                    baseline_response = _call_model(self.base_model, prompt)
+                    extracted = extract_boolq_answer(baseline_response)
+                    if extracted == expected:
+                        baseline_correct += 1
+                except Exception:
+                    pass
+
+                # Conjecture - use verification for fact-checking
+                try:
+                    conj_response = self.conjecture_model.generate(prompt, problem_type="verification")
+                    extracted_c = extract_boolq_answer(conj_response)
+                    if extracted_c == expected:
+                        conj_correct += 1
+                except Exception:
+                    pass
+
+                if (i + 1) % 5 == 0:
+                    print(f"  BoolQ: {i+1}/{total} done (baseline {baseline_correct}, conj {conj_correct})")
+
+            baseline_score = baseline_correct / total * 100
+            conj_score = conj_correct / total * 100
+
+            return BenchmarkResult(
+                "BoolQ", total, baseline_score, conj_score,
+                conj_score - baseline_score, datetime.now().isoformat()
+            )
+        except Exception as e:
+            return BenchmarkResult("BoolQ", n_samples, 0.0, 0.0, 0.0,
+                datetime.now().isoformat(), str(e))
+
     def run_full_suite(self, n_samples: int = 20, session_id: str = "benchmark_session") -> Dict[str, BenchmarkResult]:
         """Run all benchmarks sequentially with persistent session.
 
@@ -602,6 +678,7 @@ class DeepEvalSuite:
                 "HellaSwag": self.run_hellaswag(n_samples),
                 "LogiQA": self.run_logiqa(n_samples),
                 "TruthfulQA": self.run_truthfulqa(n_samples),
+                "BoolQ": self.run_boolq(n_samples),
             }
             self.results = list(results.values())
             return results
