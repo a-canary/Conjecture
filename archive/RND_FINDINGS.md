@@ -21,6 +21,17 @@
 - Optimized (all improvements): 51.0%
 - **Combined optimizations double accuracy!**
 
+### Official GSM8K Benchmark (100 problems): **DIRECT WINS**
+| Method | Accuracy | Tokens | Avg Time |
+|--------|----------|--------|----------|
+| **Direct** | **96.0%** | 32K | 6.3s |
+| Conjecture | 65.0% | 70K | 10.6s |
+| Conjecture+Accum | 62.0% | 78K | 11.2s |
+
+**Finding**: For standard math benchmarks, **direct prompting beats decomposition**.
+- Conjecture adds overhead without benefit on well-formed problems
+- Best use case: Complex/novel problems, not standard benchmarks
+
 Combined improvements:
 1. Position primacy (claims at START)
 2. Strict confidence gating (0.8+)
@@ -77,13 +88,30 @@ Based on literature review and experimental analysis:
 **Experiment**: `experiments/rnd_position_primacy.py`, `experiments/quick_primacy_test.py`
 **Result**: START (55%) > MIDDLE (45%) = **+10pp improvement**
 
-### H3: Confidence Gating
-**Hypothesis**: Higher confidence thresholds (0.8+) reduce noise.
-**Rationale**: Low-confidence claims add noise without signal.
+### H3: Confidence Gating ✅ CONFIRMED (but 0.5 optimal, not 0.8)
+**Hypothesis**: Higher confidence thresholds reduce noise.
 **Experiment**: `experiments/rnd_confidence_gating.py`
-**Status**: PENDING
+**Result**:
+| Threshold | Accuracy |
+|-----------|----------|
+| 0.0 (none) | 11.2% |
+| **0.5** | **18.8%** (+7.5pp) |
+| 0.8 | 18.8% (+7.5pp) |
+| 0.9 | 8.8% (too strict) |
 
-### H4: Semantic Filtering
+**Finding**: 0.5 threshold optimal, 0.9 is too aggressive
+
+### H4: Semantic Filtering ✗ NOT CONFIRMED
+**Hypothesis**: Claims filtered by semantic relevance outperform random selection.
+**Experiment**: `experiments/rnd_semantic_filter.py`
+**Result**:
+| Method | Accuracy | Learning |
+|--------|----------|----------|
+| **None** | **86.0%** | +8.0pp |
+| Semantic | 84.0% | +8.0pp |
+| Category | 77.0% | **+12.0pp** |
+
+**Finding**: No filtering is best for accuracy! Simple inclusion of all correct claims works best.
 **Hypothesis**: Claims filtered by semantic relevance outperform random selection.
 **Rationale**: Category-matched claims provide better signal.
 **Experiment**: `experiments/rnd_semantic_filter.py`

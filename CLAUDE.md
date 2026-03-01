@@ -233,5 +233,20 @@ async def run_cycle(self):
 5. **Document honestly**: Report both successes and failures
 
 The system has demonstrated that **core reasoning enhancements consistently work** while **infrastructure attempts consistently fail**. Focus on what works and maintain the scientific validation approach established through 13 systematic improvement cycles.
-- Always report latest (real, not simulated) scores by benchmark and direct/Contecture-/Conjecture+ (-:before last change,+:after last change)
-- always test and execute code
+
+## R&D Key Findings (2026-03-01)
+
+- **Direct prompting beats decomposition** on standard benchmarks (GSM8K: 96% vs 65%)
+- **Position primacy**: Claims at prompt START (+10pp improvement)
+- **Confidence threshold 0.5** is optimal (not 0.8)
+- **No semantic filtering needed**: Simple inclusion of all correct claims works best
+- See `NEXT.md` for follow-up ideas, `docs/RND_COMPREHENSIVE_REPORT.md` for full report
+
+## Troubleshooting
+
+```bash
+python conjecture config      # Check configuration
+python conjecture backends    # Test provider connectivity
+python conjecture health      # Check system health
+python conjecture providers   # Show available providers
+```

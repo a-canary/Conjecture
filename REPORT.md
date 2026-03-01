@@ -44,10 +44,21 @@ The Conjecture project has completed comprehensive R&D including:
 | Q4 (last 50) | 24.0% |
 | **Delta** | **+4pp** |
 
-### Critical Finding
-**Answer extraction patterns are crucial.** Wrong patterns caused 70pp accuracy swings. Use proper evaluation libraries:
-- [EleutherAI lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)
-- [DeepEval](https://deepeval.com/docs/benchmarks-gsm8k)
+### Critical Findings
+
+1. **Answer extraction patterns are crucial.** Wrong patterns caused 70pp accuracy swings. Use proper evaluation libraries:
+   - [EleutherAI lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)
+   - [DeepEval](https://deepeval.com/docs/benchmarks-gsm8k)
+
+2. **Direct prompting beats decomposition on standard benchmarks:**
+
+| Method | GSM8K Accuracy | Tokens | Time |
+|--------|----------------|--------|------|
+| **Direct** | **96.0%** | 32K | 6.3s |
+| Conjecture | 65.0% | 70K | 10.6s |
+| Conjecture+Accum | 62.0% | 78K | 11.2s |
+
+**Implication**: Conjecture is best for complex/novel problems, not standard benchmarks where direct prompting excels.
 
 ---
 
@@ -175,9 +186,9 @@ Claim accumulation showed +16pp learning effect at 50 questions but degraded to 
 | **Combined Optimizations** | **+26pp** (25%→51%) | ✅ Confirmed |
 | Position Primacy | +10pp (START > MIDDLE) | ✅ Confirmed |
 | Model Accumulation | +8pp on DeepSeek-V3 | ✅ Confirmed |
-| Window Size | Testing | 🔄 In Progress |
-| Semantic Filtering | Testing | 🔄 In Progress |
-| Confidence Gating | Testing | 🔄 In Progress |
+| Window Size | Completed | ✅ Done |
+| Semantic Filtering | None best (86%) | ✅ Surprising |
+| Confidence Gating | 0.5 threshold (+7.5pp) | ✅ Confirmed |
 
 ### Production-Ready Solutions
 
