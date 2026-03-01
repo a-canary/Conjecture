@@ -902,6 +902,72 @@ def quickstart():
     console.print("  • Backend status: [cyan]conjecture backends[/cyan]")
     console.print("  • System health: [cyan]conjecture health[/cyan]")
 
+
+@app.command()
+def serve(
+    host: str = typer.Option("0.0.0.0", help="Host to bind"),
+    port: int = typer.Option(8000, help="Port to listen on"),
+):
+    """Start Conjecture as an LLM endpoint server (M-0007).
+
+    Runs an OpenAI-compatible HTTP server that enhances queries with claim context.
+    Connect any OpenAI-compatible client to http://localhost:8000/v1/chat/completions
+
+    Example:
+        conjecture serve --port 8000
+
+        curl http://localhost:8000/v1/chat/completions \\
+          -H "Content-Type: application/json" \\
+          -d '{"model":"conjecture","messages":[{"role":"user","content":"Hello"}]}'
+    """
+    console.print("[bold blue]Conjecture LLM Endpoint Server[/bold blue]")
+    console.print(f"Starting on [cyan]{host}:{port}[/cyan]...")
+
+    try:
+        from src.endpoint.http_server import ConjectureServer, FASTAPI_AVAILABLE
+
+        if not FASTAPI_AVAILABLE:
+            console.print("[bold red]ERROR: FastAPI not installed[/bold red]")
+            console.print("Run: [cyan]pip install fastapi uvicorn[/cyan]")
+            raise typer.Exit(1)
+
+        import asyncio
+        server = ConjectureServer(host=host, port=port)
+        asyncio.run(server.run())
+
+    except ImportError as e:
+        console.print(f"[bold red]Import error: {e}[/bold red]")
+        console.print("Run: [cyan]pip install fastapi uvicorn[/cyan]")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[bold red]Server error: {e}[/bold red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def mcp():
+    """Start Conjecture as an MCP server (A-0013).
+
+    Model Context Protocol server for Claude Desktop, Cursor, and other MCP clients.
+    Provides tools: build_context, upsert_claim, explore_next, get_claim_support.
+
+    Example:
+        conjecture mcp
+    """
+    console.print("[bold blue]Conjecture MCP Server[/bold blue]")
+
+    try:
+        from src.endpoint.mcp_server import main as mcp_main
+        mcp_main()
+    except ImportError as e:
+        console.print(f"[bold red]Import error: {e}[/bold red]")
+        console.print("Run: [cyan]pip install mcp[/cyan]")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[bold red]MCP error: {e}[/bold red]")
+        raise typer.Exit(1)
+
+
 if __name__ == "__main__":
     try:
         app()
