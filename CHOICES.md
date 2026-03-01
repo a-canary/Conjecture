@@ -196,6 +196,11 @@ Supports: D-0010, D-0001
 
 GC runs when claim count exceeds threshold. Removes claims that are both clean (not dirty) and low-confidence. Prevents unbounded growth while preserving valuable knowledge. GC does not run during active reasoning.
 
+### O-0008: Benchmark Margin Requirement (+20pp)
+Supports: M-0001, O-0006
+
+Conjecture must demonstrate +20pp improvement over direct model queries in at least 5 different benchmarks before production release. This validates the framework's value proposition — if claim enhancement doesn't meaningfully improve reasoning, the overhead isn't justified.
+
 ---
 
 ## Data
