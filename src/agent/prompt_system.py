@@ -11,6 +11,7 @@ This system includes:
 - Multi-step reasoning (Cycle 11: 10% improvement)
 - Problem decomposition (Cycle 12: 9% improvement)
 - Response quality via self-critique (Cycle 5: SUCCESS)
+- Error correction prompts (R&D: lightweight alternative to full re-generation)
 """
 
 import asyncio
@@ -22,6 +23,12 @@ from enum import Enum
 
 # Import for integration with Conjecture systems
 from src.config.unified_config import UnifiedConfig as Config
+from src.agent.error_correction_prompts import (
+    get_error_correction_prompt as get_error_correction_text,
+    get_quick_error_correction,
+    should_trigger_error_correction,
+    ProblemType as ErrorCorrectionProblemType,
+)
 
 
 def _keyword_matches(keyword: str, problem_lower: str) -> bool:
@@ -404,17 +411,38 @@ Common sequential patterns:
 - Process optimization and efficiency""",
             ProblemType.DECOMPOSITION: """
 PROBLEM DECOMPOSITION CONTEXT:
-- Component analysis: Identify main parts
-- Hierarchy: Organize from general to specific
-- Interface identification: How parts connect
-- Subproblem isolation: Address separately
-- Integration: Combine partial solutions
 
-Decomposition strategies:
-- Divide and conquer approach
-- Functional decomposition
-- Spatial/temporal breakdown
-- Causal factor analysis""",
+CORE DECOMPOSITION PRINCIPLES:
+- Component analysis: Systematically identify all major parts/elements
+- Hierarchy: Organize from abstract to concrete, general to specific
+- Interface identification: Document how parts connect and interact
+- Dependency tracking: Identify prerequisites and relationships
+- Subproblem isolation: Address each part independently and thoroughly
+- Integration: Combine partial solutions respecting all dependencies
+
+STEP-BY-STEP DECOMPOSITION PROCESS:
+1. ANALYZE STRUCTURE: Understand the overall problem and its boundaries
+2. IDENTIFY DIVISIONS: Find natural breaking points for the problem
+3. CHOOSE APPROACH: Select most effective decomposition strategy
+4. BREAK DOWN: Create well-defined, independent subproblems
+5. SOLVE INDEPENDENTLY: Address each subproblem completely
+6. TRACK RELATIONSHIPS: Document how subproblems connect
+7. INTEGRATE: Combine solutions respecting dependencies
+8. VALIDATE: Verify combined solution addresses original problem
+
+DECOMPOSITION STRATEGIES:
+- Divide and Conquer: Break into non-overlapping independent parts
+- Functional Decomposition: Group by function or responsibility
+- Spatial/Temporal Breakdown: Organize by location, time, or sequence
+- Causal Factor Analysis: Identify and analyze contributing factors
+- Hierarchical Decomposition: Multi-level breakdown (abstract to concrete)
+- Structural Composition: Identify building blocks and assembly order
+
+CRITICAL VALIDATION STEPS:
+- Every aspect of original problem is addressed
+- No redundancy or overlap between subproblem solutions
+- Dependencies are properly respected in combination
+- Final solution is more comprehensive than any single approach alone""",
             ProblemType.GENERAL: """
 GENERAL PROBLEM SOLVING CONTEXT:
 - Problem identification: What exactly is being asked?
