@@ -64,6 +64,11 @@ Supports: M-0001, M-0002
 
 Increase user trust through transparent reasoning. Display breakdown of supporting claims, confidence scores, tool calls, and primary sources. Users can audit any conclusion back to its evidence chain.
 
+### M-0007: Host Conjecture as LLM Endpoint
+Supports: M-0001, M-0005
+
+Conjecture is a middle-layer LLM provider that hosts as localhost or VPS. Enhances queries with claim context, routes to gpt-oss-20B by default. Sessions store claims in local DB; LLM can elevate claims to project/team scope. This is the primary deployment model.
+
 ---
 
 ## User Experiences
@@ -181,10 +186,10 @@ Supports: O-0004, F-0004
 
 LLM operations use exponential backoff (10s-10min range) with error-type-specific multipliers. Circuit breaker pattern prevents cascading failures during provider outages.
 
-### O-0006: DeepEval Benchmark Suite (Small Models)
-Supports: M-0001, O-0002
+### O-0006: DeepEval Benchmark Suite (OSS Models)
+Supports: M-0001, M-0007, O-0002
 
-Three DeepEval benchmarks: DROP (hard math), ARC (science), BIG-Bench Hard (logic). Test on 8B-class models (llama3.1-8b, Qwen2.5-7B) where Conjecture adds value. R&D confirmed: strong models (DeepSeek-V3) hit 100% baseline — no room to improve.
+Three DeepEval benchmarks for OSS models people can run locally: GSM8K (grade school math), MathQA (math reasoning), HellaSwag (commonsense). Target model: openai/gpt-oss-20b. Proven: GSM8K +40pp (16.7% → 56.7%) demonstrates Conjecture's value for math reasoning. In benchmark suite runs, use 1 persistent session for claim accumulation across test cases.
 
 ### O-0007: Threshold-Based Garbage Collection
 Supports: D-0010, D-0001
