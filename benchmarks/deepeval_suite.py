@@ -131,19 +131,29 @@ def extract_logiqa_answer(response: str) -> str:
 
 
 def extract_truthfulqa_answer(response: str) -> str:
-    """Extract multiple choice answer from TruthfulQA response."""
-    # MC1 format - single correct answer (A, B, C, D, etc.)
-    match = re.search(r'\b([A-F])\s*[\.\):]', response)
-    if match:
-        return match.group(1).upper()
+    """Extract multiple choice answer from TruthfulQA response.
 
-    match = re.search(r'answer\s+is\s*[:\s]*([A-F])', response, re.I)
+    TruthfulQA MC1 uses numeric answers (1, 2, 3, 4, etc.)
+    """
+    # Pattern 1: "answer is X" with number
+    match = re.search(r'answer\s+is\s*[:\s]*(\d+)', response, re.I)
     if match:
-        return match.group(1).upper()
+        return match.group(1)
 
-    match = re.search(r'\b([A-F])\b', response)
+    # Pattern 2: Number at end of response
+    match = re.search(r'\b([1-4])\s*$', response.strip())
     if match:
-        return match.group(1).upper()
+        return match.group(1)
+
+    # Pattern 3: "option X" or "choice X"
+    match = re.search(r'(?:option|choice)\s*[:\s]*(\d+)', response, re.I)
+    if match:
+        return match.group(1)
+
+    # Pattern 4: First standalone number 1-4
+    match = re.search(r'\b([1-4])\b', response)
+    if match:
+        return match.group(1)
 
     return ""
 
@@ -484,8 +494,6 @@ class DeepEvalSuite:
             for i, golden in enumerate(goldens):
                 prompt = LogiQATemplate.generate_output(
                     input=golden.input,
-                    train_set=logiqa_bench.shots_dataset,
-                    task=task,
                     n_shots=3,
                 )
                 expected = golden.expected_output  # A, B, C, or D
@@ -529,9 +537,10 @@ class DeepEvalSuite:
                 datetime.now().isoformat(), "Model not configured")
 
         try:
-            truthqa_bench = TruthfulQA(n_problems_per_task=n_samples)
-            task = truthqa_bench.tasks[0]
-            goldens = truthqa_bench.load_benchmark_dataset(task)[:n_samples]
+            from deepeval.benchmarks.truthful_qa.mode import TruthfulQAMode
+            truthqa_bench = TruthfulQA(n_problems_per_task=n_samples, mode=TruthfulQAMode.MC1)
+            task = truthqa_bench.tasks[0]  # Language task
+            goldens = truthqa_bench.load_benchmark_dataset(task, TruthfulQAMode.MC1)[:n_samples]
 
             baseline_correct = 0
             conj_correct = 0
@@ -540,9 +549,9 @@ class DeepEvalSuite:
             for i, golden in enumerate(goldens):
                 prompt = TruthfulQATemplate.generate_output(
                     input=golden.input,
-                    task=task,
+                    mode=TruthfulQAMode.MC1,
                 )
-                expected = golden.expected_output  # Answer letter
+                expected = golden.expected_output  # Answer number (1-4)
 
                 # Baseline
                 try:
