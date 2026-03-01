@@ -181,10 +181,10 @@ Supports: O-0004, F-0004
 
 LLM operations use exponential backoff (10s-10min range) with error-type-specific multipliers. Circuit breaker pattern prevents cascading failures during provider outages.
 
-### O-0006: ARC-AGI-2 Benchmark Focus
+### O-0006: DeepEval Benchmark Suite
 Supports: M-0001, O-0002
 
-Primary benchmark: ARC-AGI-2 tests. Compare bare Haiku vs Haiku+Conjecture to validate framework value-add. Measures reasoning improvement, not just speed.
+Three DeepEval benchmarks: DROP (hard math/numerical reasoning), ARC (science reasoning), BIG-Bench Hard (logic). Compare bare Haiku vs Haiku+Conjecture to validate framework value-add across diverse reasoning types.
 
 ### O-0007: Threshold-Based Garbage Collection
 Supports: D-0010, D-0001
