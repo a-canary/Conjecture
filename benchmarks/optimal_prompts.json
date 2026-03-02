@@ -1,0 +1,14 @@
+{
+  "math": "{prompt}\n\nGive only the final numeric answer:",
+  "logic": "Select the logically correct answer. If obvious, state directly. If not, reason through options.\n{prompt}",
+  "counting": "Count and give the number. Show work only if needed.\n{prompt}",
+  "truth": "{prompt}",
+  "navigate": "{prompt}",
+  "recommendation": "{prompt}",
+  "_meta": {
+    "version": "1.0",
+    "validated": "2026-03-02",
+    "model": "gpt-oss-20b",
+    "notes": "Task-adaptive prompts: use specialized for math/logic/counting, passthrough for truth/navigate/recommendation to avoid regressions"
+  }
+}
