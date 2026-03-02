@@ -78,28 +78,38 @@ def get_processing_interface(backend_type: str = "auto") -> ProcessingInterface:
         return current_processing_interface
 
     # Import and create Conjecture instance (implements ProcessingInterface)
-    from src.conjecture import Conjecture
+    from src.interfaces.conjecture_processing_interface import ConjectureProcessingInterface
     from src.config.unified_config import UnifiedConfig as Config
-    
+
     try:
         # Create configuration
         config = Config()
-        
+
         # Create Conjecture instance (implements ProcessingInterface)
-        interface = Conjecture(config=config)
+        # Use database path from config if available, otherwise use default
+        db_path = getattr(config, 'database_path', 'data/conjecture.db')
+        interface = ConjectureProcessingInterface(db_path=db_path)
         current_processing_interface = interface
-        
-        # Start services only if there's an event loop
+
+        # Initialize interface (synchronously if no event loop)
         try:
             import asyncio
-            asyncio.create_task(current_processing_interface.start_services())
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                asyncio.create_task(current_processing_interface.initialize())
+            else:
+                loop.run_until_complete(current_processing_interface.initialize())
             console.print("[green]+ Processing interface initialized[/green]")
         except RuntimeError as e:
             if "no running event loop" in str(e):
-                console.print("[yellow]+ Processing interface created (services not started - no event loop)[/yellow]")
+                # Create new loop and initialize
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(current_processing_interface.initialize())
+                console.print("[green]+ Processing interface initialized[/green]")
             else:
                 raise
-        
+
         # Always return the interface
         return current_processing_interface
         
@@ -231,11 +241,11 @@ def create(
             # Check if we're in an async context
             loop = asyncio.get_running_loop()
         except RuntimeError:
-            # No running loop, create one and start services
+            # No running loop, create one and initialize
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            loop.run_until_complete(processing_interface.start_services())
-            loop.close()
+            loop.run_until_complete(processing_interface.initialize())
+            # Don't close - we need it for later async operations
 
         with Progress(
             TextColumn("[progress.description]{task.description}"),
@@ -371,8 +381,12 @@ def search(
 
             try:
                 import asyncio
-                results_coroutine = processing_interface.search_claims(query, limit=limit)
+                # Note: limit parameter not supported by interface, apply post-filter
+                results_coroutine = processing_interface.search_claims(query)
                 results = asyncio.run(results_coroutine)
+                # Apply limit locally
+                if limit and len(results) > limit:
+                    results = results[:limit]
 
                 progress.update(task, description=f"Found {len(results)} results")
 
