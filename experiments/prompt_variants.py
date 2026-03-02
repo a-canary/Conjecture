@@ -6,6 +6,14 @@ Each variant rephrases the upstream prompt and context build differently.
 """
 
 VARIANTS = {
+    "v17_synthesized": {
+        "name": "Synthesized Optimal (Top 3 Combined)",
+        # Keep baseline format exactly, it works
+        "math": "Q: {q}\nAnswer (number only):",
+        "logic": "Q: {q}\nAnswer (Yes/No/Cannot determine):",
+        "gsm8k": "Solve this math problem. Show your work and end with #### followed by the answer.\n\nProblem: {question}\n\nSolution:",
+        "mmlu": "Question: {question}\n\n{choices}\n\nAnswer with just the letter (A, B, C, or D):",
+    },
     "v01_baseline": {
         "name": "Baseline",
         "math": "Q: {q}\nAnswer (number only):",
