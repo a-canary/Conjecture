@@ -3,15 +3,78 @@ LLM Client for ConjectureEndpoint
 
 Simple OpenAI-compatible client for calling LLMs.
 Supports Chutes.ai, OpenRouter, or any OpenAI-compatible endpoint.
+
+O-0005: Includes circuit breaker with exponential backoff for graceful degradation.
 """
 
 import os
+import time
+import asyncio
 import logging
 from typing import Optional, List, Dict, Any
+from dataclasses import dataclass, field
 
 from openai import AsyncOpenAI
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# O-0005: Circuit Breaker
+# ---------------------------------------------------------------------------
+
+@dataclass
+class CircuitBreaker:
+    """Simple circuit breaker for O-0005: Exponential Backoff with Circuit Breaker.
+
+    States:
+        CLOSED: Normal operation, requests go through
+        OPEN: Too many failures, requests are rejected immediately
+        HALF_OPEN: Testing if service recovered (allows one request)
+    """
+    failure_threshold: int = 5  # Open after this many consecutive failures
+    recovery_timeout: float = 60.0  # Seconds before trying half-open
+    _failures: int = field(default=0, init=False)
+    _last_failure_time: float = field(default=0.0, init=False)
+    _state: str = field(default="CLOSED", init=False)
+
+    def record_failure(self) -> None:
+        """Record a failure and potentially open the circuit."""
+        self._failures += 1
+        self._last_failure_time = time.time()
+        if self._failures >= self.failure_threshold:
+            self._state = "OPEN"
+            logger.warning(
+                "Circuit breaker OPEN after %d consecutive failures",
+                self._failures
+            )
+
+    def record_success(self) -> None:
+        """Record a success and reset the circuit."""
+        self._failures = 0
+        self._state = "CLOSED"
+
+    def can_execute(self) -> bool:
+        """Check if a request can be executed."""
+        if self._state == "CLOSED":
+            return True
+        elif self._state == "OPEN":
+            # Check if recovery timeout has passed
+            if time.time() - self._last_failure_time >= self.recovery_timeout:
+                self._state = "HALF_OPEN"
+                logger.info("Circuit breaker HALF_OPEN, allowing test request")
+                return True
+            return False
+        else:  # HALF_OPEN
+            return True
+
+    @property
+    def state(self) -> str:
+        return self._state
+
+
+# Default circuit breaker instance
+_default_circuit_breaker = CircuitBreaker()
 
 
 # Default models for different use cases
@@ -20,13 +83,17 @@ TOOL_CAPABLE_MODEL = "Qwen/Qwen3-32B"  # Supports function/tool calling
 
 
 class LLMClient:
-    """Async LLM client using OpenAI-compatible API."""
+    """Async LLM client using OpenAI-compatible API.
+
+    Per O-0005, includes circuit breaker for graceful degradation on failures.
+    """
 
     def __init__(
         self,
         api_key: Optional[str] = None,
         base_url: str = "https://llm.chutes.ai/v1",
-        model: str = DEFAULT_MODEL
+        model: str = DEFAULT_MODEL,
+        circuit_breaker: Optional[CircuitBreaker] = None
     ):
         """Initialize the LLM client.
 
@@ -34,11 +101,13 @@ class LLMClient:
             api_key: API key (defaults to CHUTES_API_KEY env var)
             base_url: API base URL (defaults to Chutes.ai)
             model: Model ID to use
+            circuit_breaker: Optional circuit breaker (uses default if None)
         """
         self.api_key = api_key or os.environ.get("CHUTES_API_KEY")
         self.base_url = base_url
         self.model = model
         self._client: Optional[AsyncOpenAI] = None
+        self._circuit_breaker = circuit_breaker or _default_circuit_breaker
 
     def _get_client(self) -> AsyncOpenAI:
         """Get or create the async client."""
@@ -70,7 +139,17 @@ class LLMClient:
 
         Returns:
             Dict with 'content', 'model', 'usage' keys
+
+        Raises:
+            RuntimeError: If circuit breaker is open (too many failures)
         """
+        # O-0005: Check circuit breaker before attempting
+        if not self._circuit_breaker.can_execute():
+            raise RuntimeError(
+                f"Circuit breaker OPEN - LLM service unavailable. "
+                f"Retry after {self._circuit_breaker.recovery_timeout}s"
+            )
+
         client = self._get_client()
 
         messages = []
@@ -86,6 +165,9 @@ class LLMClient:
                 max_tokens=max_tokens
             )
 
+            # Success - reset circuit breaker
+            self._circuit_breaker.record_success()
+
             return {
                 "content": response.choices[0].message.content,
                 "model": response.model,
@@ -97,6 +179,8 @@ class LLMClient:
             }
 
         except Exception as e:
+            # Record failure for circuit breaker
+            self._circuit_breaker.record_failure()
             logger.error(f"LLM generation failed: {e}")
             raise
 
@@ -122,7 +206,17 @@ class LLMClient:
         Returns:
             Dict with 'content', 'tool_calls', 'model', 'usage' keys.
             'tool_calls' is a list of dicts with 'name' and 'arguments' keys.
+
+        Raises:
+            RuntimeError: If circuit breaker is open (too many failures)
         """
+        # O-0005: Check circuit breaker before attempting
+        if not self._circuit_breaker.can_execute():
+            raise RuntimeError(
+                f"Circuit breaker OPEN - LLM service unavailable. "
+                f"Retry after {self._circuit_breaker.recovery_timeout}s"
+            )
+
         client = self._get_client()
 
         messages = []
@@ -157,6 +251,9 @@ class LLMClient:
                         "arguments": args
                     })
 
+            # Success - reset circuit breaker
+            self._circuit_breaker.record_success()
+
             return {
                 "content": message.content or "",
                 "tool_calls": tool_calls,
@@ -169,6 +266,8 @@ class LLMClient:
             }
 
         except Exception as e:
+            # Record failure for circuit breaker
+            self._circuit_breaker.record_failure()
             logger.error(f"LLM generation with tools failed: {e}")
             raise
 
