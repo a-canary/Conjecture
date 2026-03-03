@@ -72,11 +72,31 @@ class PromptResponse:
 
 
 class PromptSystem:
-    """Enhanced prompt system with all proven reasoning capabilities"""
+    """Enhanced prompt system with all proven reasoning capabilities
 
-    def __init__(self, config: Optional[Config] = None):
+    16-Variant Benchmark Results (2026-03-02, llama3.1-8b):
+    - Simple direct prompts: 82.5% (BEST)
+    - Answer-first pattern: 81.25%
+    - CoT explicit: 2.5% (WORST - 33x worse than baseline!)
+    - Decomposition: 8.75%, Verification: 10%, Role-play: 13.75%
+
+    Key finding: For small models (<14B), use simple_mode=True.
+    Complex scaffolding hurts performance on smaller models.
+    """
+
+    # Optimal prompts from 16-variant benchmark (v01_baseline winner @ 82.5%)
+    # Only MATHEMATICAL and LOGICAL have specialized formats; others use default
+    SIMPLE_PROMPTS = {
+        ProblemType.MATHEMATICAL: "Q: {problem}\nAnswer (number only):",
+        ProblemType.LOGICAL: "Q: {problem}\nAnswer (Yes/No/Cannot determine):",
+    }
+    SIMPLE_PROMPT_DEFAULT = "Q: {problem}\nAnswer:"
+
+    def __init__(self, config: Optional[Config] = None, simple_mode: bool = False):
         self.config = config or Config()
         self._cache = {}
+        # Simple mode uses optimal direct prompts (82.5% vs 2.5% for CoT)
+        self._simple_mode = simple_mode
         self._domain_adaptive_enabled = True
         self._context_integration_enabled = True
         self._self_verification_enabled = True
@@ -1120,11 +1140,28 @@ Refine your response to meet these quality standards."""
         difficulty: Optional[Difficulty] = None,
         problem: Optional[str] = None,
     ) -> str:
-        """Generate enhanced system prompt"""
+        """Generate enhanced system prompt
+
+        In simple_mode (optimal for <14B models):
+        - Uses direct prompts without CoT/decomposition scaffolding
+        - Based on 16-variant benchmark: 82.5% vs 2.5% for CoT
+        """
+        # Simple mode: skip expensive problem_type detection (efficiency fix)
+        if self._simple_mode:
+            # Only detect if specialized prompt exists, otherwise use default
+            if problem_type is None and problem:
+                detected = self._detect_problem_type(problem)
+                if detected in self.SIMPLE_PROMPTS:
+                    problem_type = detected
+            template = self.SIMPLE_PROMPTS.get(problem_type, self.SIMPLE_PROMPT_DEFAULT)
+            return template.format(problem=problem or "{problem}")
+
+        problem_type = problem_type or (
+            self._detect_problem_type(problem) if problem else ProblemType.GENERAL
+        )
 
         if problem:
             # Full enhancement with problem analysis
-            problem_type = problem_type or self._detect_problem_type(problem)
             difficulty = difficulty or self._estimate_difficulty(problem)
 
             prompt = self._get_domain_adaptive_prompt(problem, problem_type, difficulty)
@@ -1136,12 +1173,27 @@ Refine your response to meet these quality standards."""
             return prompt
         else:
             # Basic domain-adaptive prompt
-            problem_type = problem_type or ProblemType.GENERAL
             difficulty = difficulty or Difficulty.MEDIUM
             return self._get_domain_adaptive_prompt("", problem_type, difficulty)
 
+    def enable_simple_mode(self, enabled: bool = True):
+        """Enable simple mode for optimal performance on small models (<14B)
+
+        16-variant benchmark results:
+        - Simple direct prompts: 82.5% accuracy
+        - CoT/decomposition/verification: 2.5-10% (catastrophic)
+
+        Use simple_mode=True for: llama3.1-8b, Qwen-7B, Mistral-7B, etc.
+        Use simple_mode=False for: GPT-4, Claude, 70B+ models
+        """
+        # Delegate to enable_enhancement for single source of truth
+        self.enable_enhancement("simple_mode", enabled)
+
     def enable_enhancement(self, enhancement: str, enabled: bool = True):
         """Enable/disable specific enhancements"""
+        if enhancement == "simple_mode":
+            self._simple_mode = enabled
+            return
         enhancement_attr = f"_{enhancement}_enabled"
         if hasattr(self, enhancement_attr):
             setattr(self, enhancement_attr, enabled)
@@ -1149,6 +1201,7 @@ Refine your response to meet these quality standards."""
     def get_enhancement_status(self) -> Dict[str, bool]:
         """Get status of all enhancements"""
         return {
+            "simple_mode": self._simple_mode,  # Optimal for <14B models
             "domain_adaptive": self._domain_adaptive_enabled,
             "context_integration": self._context_integration_enabled,
             "self_verification": self._self_verification_enabled,

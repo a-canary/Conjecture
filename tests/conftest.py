@@ -455,6 +455,9 @@ def pytest_configure(config):
         "models: Marks tests for Pydantic model validation and behavior",
         "error_handling: Marks tests for error handling and edge cases",
         "test_marker_fix: Test marker to verify configuration is working",
+        # Benchmark markers
+        "benchmark: Marks benchmark tests requiring LLM API access",
+        "openrouter: Marks tests using OpenRouter API",
     ]
 
     for marker in markers_to_register:
@@ -1134,8 +1137,17 @@ def create_fast_response_mock():
 
 
 @pytest.fixture(autouse=True)
-def fast_localhost_mocks():
-    """Auto-applied fixture to mock all localhost connections"""
+def fast_localhost_mocks(request):
+    """Auto-applied fixture to mock all localhost connections.
+
+    Skipped for tests marked with 'benchmark' or 'network' to allow real API calls.
+    """
+    # Skip mocking for benchmark/network tests - early exit without building list
+    for mark in request.node.iter_markers():
+        if mark.name in ("benchmark", "network"):
+            yield
+            return
+
     with (
         patch("aiohttp.ClientSession.get") as mock_get,
         patch("aiohttp.ClientSession.post") as mock_post,
@@ -1158,3 +1170,20 @@ async def fast_sleep(duration):
 
 # Patch asyncio.sleep globally for faster tests
 asyncio.sleep = fast_sleep
+
+
+# --- OpenRouter Free Model Fixtures ---
+# Import benchmark fixtures for OpenRouter free models
+try:
+    from tests.fixtures.openrouter_free import (
+        openrouter_api_key,
+        openrouter_config,
+        openrouter_client,
+        free_models,
+        gpt_oss_20b,
+        nemotron_30b,
+        benchmark_prompt_factory,
+    )
+except ImportError:
+    # Fixtures not available - tests will skip gracefully
+    pass
