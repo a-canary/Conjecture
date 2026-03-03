@@ -14,6 +14,11 @@ from openai import AsyncOpenAI
 logger = logging.getLogger(__name__)
 
 
+# Default models for different use cases
+DEFAULT_MODEL = "openai/gpt-oss-20b"  # Fast, general purpose
+TOOL_CAPABLE_MODEL = "Qwen/Qwen3-32B"  # Supports function/tool calling
+
+
 class LLMClient:
     """Async LLM client using OpenAI-compatible API."""
 
@@ -21,7 +26,7 @@ class LLMClient:
         self,
         api_key: Optional[str] = None,
         base_url: str = "https://llm.chutes.ai/v1",
-        model: str = "openai/gpt-oss-20b"
+        model: str = DEFAULT_MODEL
     ):
         """Initialize the LLM client.
 

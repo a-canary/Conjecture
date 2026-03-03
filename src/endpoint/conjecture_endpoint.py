@@ -535,16 +535,16 @@ class ConjectureEndpoint:
         min_confidence: float = 0.5,
         include_reasoning: bool = True,
         use_decomposition: bool = True,
-        use_tools: bool = True,
+        use_tools: bool = False,
         max_tool_iterations: int = 5
     ) -> APIResponse:
         """Evaluate claims using LLM reasoning.
 
         Per A-0003, this is one of the three core endpoint methods.
         Per A-0009, input is decomposed into constituent claims before reasoning.
-        Per A-0010, LLM operates via structured claim tools (CLAIM_TOOLS) so all
-        reasoning is traceable through the claim graph.  Tool-calling is the
-        default mode; set use_tools=False to fall back to plain-text generation.
+        Per A-0010, when use_tools=True, LLM operates via structured claim tools
+        so all reasoning is traceable through the claim graph.
+        Set use_tools=False (default) to fall back to plain-text generation.
 
         The LLM may call any combination of:
           - create_claim: Record a reasoning step as a claim.
@@ -557,7 +557,7 @@ class ConjectureEndpoint:
             min_confidence: Minimum confidence for claim inclusion (default 0.5)
             include_reasoning: Whether to include reasoning steps (default True)
             use_decomposition: Whether to decompose input before evaluation (default True)
-            use_tools: Whether to use A-0010 tool-calling mode (default True)
+            use_tools: Whether to use A-0010 tool-calling mode (default False)
             max_tool_iterations: Max iterations for tool loop when use_tools=True (default 5)
 
         Returns:
@@ -572,9 +572,14 @@ class ConjectureEndpoint:
             return error_response
 
         try:
-            from src.endpoint.llm_client import LLMClient, build_claim_context, build_enhanced_prompt
+            from src.endpoint.llm_client import (
+                LLMClient, build_claim_context, build_enhanced_prompt,
+                DEFAULT_MODEL, TOOL_CAPABLE_MODEL
+            )
 
-            llm = LLMClient()
+            # Use tool-capable model when tools are enabled
+            model = TOOL_CAPABLE_MODEL if use_tools else DEFAULT_MODEL
+            llm = LLMClient(model=model)
 
             # Step 1: A-0009 Input Decomposition (optional, non-blocking)
             # Decompose the query into constituent claims (questions, assertions, etc.)
@@ -654,8 +659,12 @@ class ConjectureEndpoint:
                     )
 
                     for iteration in range(max_tool_iterations):
+                        logger.info(
+                            "Tool-calling loop: iteration %d/%d",
+                            iteration + 1, max_tool_iterations
+                        )
                         llm_response = await llm.generate_with_tools(
-                            prompt=enhanced_prompt if iteration == 0 else f"Continue reasoning. Previous tool results: {tool_calls_log[-1] if tool_calls_log else 'None'}",
+                            prompt=enhanced_prompt,
                             tools=CLAIM_TOOLS,
                             system_prompt=system_prompt,
                             temperature=0.7,
@@ -666,26 +675,38 @@ class ConjectureEndpoint:
 
                         if not tool_calls:
                             # No tool calls — LLM responded with plain text
+                            logger.info(
+                                "Tool-calling loop: no tool calls in iteration %d, "
+                                "treating content as final response",
+                                iteration + 1
+                            )
                             final_response = llm_response.get("content", "")
                             break
 
-                        # Execute each tool call (19.4 + 19.5)
+                        # Execute each tool call in order (steps 19.4 + 19.5)
                         halted = False
                         for tc in tool_calls:
-                            result = await executor.execute_tool(tc["name"], tc["arguments"])
+                            tool_name = tc.get("name", "")
+                            tool_args = tc.get("arguments", {})
+                            logger.info(
+                                "Executing tool '%s' (iteration %d)",
+                                tool_name, iteration + 1
+                            )
+                            result = await executor.execute_tool(tool_name, tool_args)
                             tool_calls_log.append({
-                                "tool": tc["name"],
-                                "arguments": tc["arguments"],
+                                "name": tool_name,
+                                "arguments": tool_args,
                                 "success": result.success,
                                 "claim_ids": result.claim_ids,
-                                "error": result.error
+                                "error": result.error,
+                                "iteration": iteration + 1,
                             })
 
                             if result.success:
                                 created_claim_ids.extend(result.claim_ids)
 
                             # respond_to_user halts the loop (A-0012 foundation)
-                            if tc["name"] == "respond_to_user" and result.success:
+                            if tool_name == "respond_to_user" and result.success:
                                 payload = result.result or {}
                                 if isinstance(payload, dict):
                                     final_response = payload.get("response", "")
