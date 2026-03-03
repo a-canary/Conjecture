@@ -535,16 +535,21 @@ class ConjectureEndpoint:
         min_confidence: float = 0.5,
         include_reasoning: bool = True,
         use_decomposition: bool = True,
-        use_tools: bool = False,
+        use_tools: bool = True,
         max_tool_iterations: int = 5
     ) -> APIResponse:
         """Evaluate claims using LLM reasoning.
 
         Per A-0003, this is one of the three core endpoint methods.
         Per A-0009, input is decomposed into constituent claims before reasoning.
-        Per A-0010, when use_tools=True, LLM operates via structured claim tools.
-        This method builds context from relevant claims and uses the
-        Process layer for LLM-based reasoning.
+        Per A-0010, LLM operates via structured claim tools (CLAIM_TOOLS) so all
+        reasoning is traceable through the claim graph.  Tool-calling is the
+        default mode; set use_tools=False to fall back to plain-text generation.
+
+        The LLM may call any combination of:
+          - create_claim: Record a reasoning step as a claim.
+          - update_confidence: Revise confidence on an existing claim.
+          - respond_to_user: Deliver the final answer (halts the loop).
 
         Args:
             query: Natural language query to evaluate
@@ -552,13 +557,15 @@ class ConjectureEndpoint:
             min_confidence: Minimum confidence for claim inclusion (default 0.5)
             include_reasoning: Whether to include reasoning steps (default True)
             use_decomposition: Whether to decompose input before evaluation (default True)
-            use_tools: Whether to use A-0010 tool-calling mode (default False)
+            use_tools: Whether to use A-0010 tool-calling mode (default True)
             max_tool_iterations: Max iterations for tool loop when use_tools=True (default 5)
 
         Returns:
             APIResponse with evaluation result and reasoning chain.
             Response data always includes 'decomposed_claims' key (count of decomposed
             claims, 0 if decomposition was skipped or failed).
+            In tool mode, data also includes 'tool_calls', 'created_claim_ids',
+            and 'supporting_claims'.
         """
         error_response = await self._ensure_initialized()
         if error_response:
@@ -624,12 +631,18 @@ class ConjectureEndpoint:
                 if use_tools:
                     # A-0010: Use tool-calling mode for traceable reasoning
                     from src.process.claim_tools import CLAIM_TOOLS, ClaimToolExecutor, ToolResult
+                    from src.data.repositories import ClaimRepository
 
-                    # Initialize tool executor with our repository
-                    executor = ClaimToolExecutor(self._repo)
+                    # Initialize tool executor with a session-scoped repository
+                    # This allows tool-created claims to be tracked for this evaluation
+                    repo = ClaimRepository()
+                    await repo.initialize()
+                    executor = ClaimToolExecutor(repo)
 
                     # Tool-calling loop: iterate until respond_to_user or max iterations
                     tool_calls_log = []
+                    created_claim_ids: List[str] = []
+                    supporting_claims: List[str] = []
                     final_response = None
                     llm_response = None
 
@@ -656,7 +669,8 @@ class ConjectureEndpoint:
                             final_response = llm_response.get("content", "")
                             break
 
-                        # Execute each tool call
+                        # Execute each tool call (19.4 + 19.5)
+                        halted = False
                         for tc in tool_calls:
                             result = await executor.execute_tool(tc["name"], tc["arguments"])
                             tool_calls_log.append({
@@ -667,25 +681,45 @@ class ConjectureEndpoint:
                                 "error": result.error
                             })
 
-                            # Check for respond_to_user — terminates the loop
+                            if result.success:
+                                created_claim_ids.extend(result.claim_ids)
+
+                            # respond_to_user halts the loop (A-0012 foundation)
                             if tc["name"] == "respond_to_user" and result.success:
-                                final_response = result.result.get("response", "")
+                                payload = result.result or {}
+                                if isinstance(payload, dict):
+                                    final_response = payload.get("response", "")
+                                    supporting_claims = list(payload.get("supporting_claims", []))
+                                else:
+                                    final_response = str(payload)
+                                logger.info(
+                                    "respond_to_user called — halting tool loop after %d iterations",
+                                    iteration + 1
+                                )
+                                halted = True
                                 break
 
-                        if final_response is not None:
+                        if halted or final_response is not None:
                             break
 
                     # Return tool-based response
+                    response_text = (
+                        final_response
+                        if final_response is not None
+                        else (llm_response.get("content", "") if llm_response else "")
+                    )
                     return APIResponse(
                         success=True,
                         message="Evaluation complete (tool mode)",
                         data={
                             "query": query,
-                            "response": final_response or llm_response.get("content", "") if llm_response else "",
+                            "response": response_text,
                             "claims_used": len(claims),
                             "decomposed_claims": len(decomposed_claims),
                             "tool_calls": tool_calls_log,
                             "tool_iterations": len(tool_calls_log),
+                            "created_claim_ids": created_claim_ids,
+                            "supporting_claims": supporting_claims,
                             "claim_context": claim_context if include_reasoning else None,
                             "model": llm_response.get("model", "unknown") if llm_response else "unknown",
                             "usage": llm_response.get("usage", {}) if llm_response else {}
