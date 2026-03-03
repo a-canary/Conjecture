@@ -534,12 +534,15 @@ class ConjectureEndpoint:
         max_claims: int = 10,
         min_confidence: float = 0.5,
         include_reasoning: bool = True,
-        use_decomposition: bool = True
+        use_decomposition: bool = True,
+        use_tools: bool = False,
+        max_tool_iterations: int = 5
     ) -> APIResponse:
         """Evaluate claims using LLM reasoning.
 
         Per A-0003, this is one of the three core endpoint methods.
         Per A-0009, input is decomposed into constituent claims before reasoning.
+        Per A-0010, when use_tools=True, LLM operates via structured claim tools.
         This method builds context from relevant claims and uses the
         Process layer for LLM-based reasoning.
 
@@ -549,6 +552,8 @@ class ConjectureEndpoint:
             min_confidence: Minimum confidence for claim inclusion (default 0.5)
             include_reasoning: Whether to include reasoning steps (default True)
             use_decomposition: Whether to decompose input before evaluation (default True)
+            use_tools: Whether to use A-0010 tool-calling mode (default False)
+            max_tool_iterations: Max iterations for tool loop when use_tools=True (default 5)
 
         Returns:
             APIResponse with evaluation result and reasoning chain.
@@ -614,17 +619,90 @@ class ConjectureEndpoint:
             claim_context = build_claim_context(all_context_claims)
             enhanced_prompt = build_enhanced_prompt(query, claim_context)
 
-            # Step 5: Call LLM
+            # Step 5: Call LLM (tool-calling mode or direct mode)
             try:
-                llm_response = await llm.generate(
-                    prompt=enhanced_prompt,
-                    temperature=0.7,
-                    max_tokens=1024
-                )
+                if use_tools:
+                    # A-0010: Use tool-calling mode for traceable reasoning
+                    from src.process.claim_tools import CLAIM_TOOLS, ClaimToolExecutor, ToolResult
+
+                    # Initialize tool executor with our repository
+                    executor = ClaimToolExecutor(self._repo)
+
+                    # Tool-calling loop: iterate until respond_to_user or max iterations
+                    tool_calls_log = []
+                    final_response = None
+                    llm_response = None
+
+                    system_prompt = (
+                        "You are a reasoning assistant that uses structured tools to build knowledge. "
+                        "Use create_claim to record facts and reasoning steps. "
+                        "Use update_confidence if evidence changes your certainty about a claim. "
+                        "Use respond_to_user to deliver your final answer, citing supporting claims."
+                    )
+
+                    for iteration in range(max_tool_iterations):
+                        llm_response = await llm.generate_with_tools(
+                            prompt=enhanced_prompt if iteration == 0 else f"Continue reasoning. Previous tool results: {tool_calls_log[-1] if tool_calls_log else 'None'}",
+                            tools=CLAIM_TOOLS,
+                            system_prompt=system_prompt,
+                            temperature=0.7,
+                            max_tokens=1024
+                        )
+
+                        tool_calls = llm_response.get("tool_calls", [])
+
+                        if not tool_calls:
+                            # No tool calls — LLM responded with plain text
+                            final_response = llm_response.get("content", "")
+                            break
+
+                        # Execute each tool call
+                        for tc in tool_calls:
+                            result = await executor.execute_tool(tc["name"], tc["arguments"])
+                            tool_calls_log.append({
+                                "tool": tc["name"],
+                                "arguments": tc["arguments"],
+                                "success": result.success,
+                                "claim_ids": result.claim_ids,
+                                "error": result.error
+                            })
+
+                            # Check for respond_to_user — terminates the loop
+                            if tc["name"] == "respond_to_user" and result.success:
+                                final_response = result.result.get("response", "")
+                                break
+
+                        if final_response is not None:
+                            break
+
+                    # Return tool-based response
+                    return APIResponse(
+                        success=True,
+                        message="Evaluation complete (tool mode)",
+                        data={
+                            "query": query,
+                            "response": final_response or llm_response.get("content", "") if llm_response else "",
+                            "claims_used": len(claims),
+                            "decomposed_claims": len(decomposed_claims),
+                            "tool_calls": tool_calls_log,
+                            "tool_iterations": len(tool_calls_log),
+                            "claim_context": claim_context if include_reasoning else None,
+                            "model": llm_response.get("model", "unknown") if llm_response else "unknown",
+                            "usage": llm_response.get("usage", {}) if llm_response else {}
+                        }
+                    )
+
+                else:
+                    # Direct mode (default): single LLM call without tools
+                    llm_response = await llm.generate(
+                        prompt=enhanced_prompt,
+                        temperature=0.7,
+                        max_tokens=1024
+                    )
             finally:
                 await llm.close()
 
-            # Step 6: Return response with decomposition metadata
+            # Step 6: Return response with decomposition metadata (direct mode)
             return APIResponse(
                 success=True,
                 message="Evaluation complete",
