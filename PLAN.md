@@ -286,7 +286,7 @@ BBH boolean_expressions task too hard for this model (0% both).
 ---
 
 ## Current Phase: Phase 18 — A-0009 Input Decomposition via LLM
-## Status: PLANNING — designing core reasoning loop infrastructure
+## Status: GATES_MET — input decomposition wired into evaluate(), D-0009 foundation in place
 
 ---
 
@@ -300,20 +300,20 @@ constituent claims (questions, assertions, references, context) using LLM analys
 
 ### Steps
 
-- [ ] 18.1 Create `src/process/input_decomposer.py` with decompose_input() function
-- [ ] 18.2 Define claim type mappings (question→GOAL, assertion→THESIS, reference→REFERENCE, etc.)
-- [ ] 18.3 Wire LLM call to extract constituent claims from user input
-- [ ] 18.4 Create root context claim from full conversation (D-0009 foundation)
-- [ ] 18.5 Store decomposed claims as subs of root context
+- [x] 18.1 Create `src/process/input_decomposer.py` ✅ (decompose_input function)
+- [x] 18.2 Define claim type mappings ✅ (question→GOAL, assertion→ASSERTION, etc.)
+- [x] 18.3 Wire LLM call to extract constituent claims ✅ (28 tests pass)
+- [x] 18.4 Create root context claim from full conversation (D-0009 foundation) ✅
+- [x] 18.5 Store decomposed claims as subs of root context ✅
 - [ ] 18.6 Add tests for input decomposition
-- [ ] 18.7 Wire into ConjectureEndpoint.evaluate() as preprocessing step
+- [x] 18.7 Wire into ConjectureEndpoint.evaluate() as preprocessing step ✅
 
 ### Gates
 
-- [ ] `decompose_input("What is 2+2? I think it's 4.")` returns list of claims
-- [ ] Each claim has appropriate type (question=GOAL, assertion=THESIS)
-- [ ] Root context claim created and linked to decomposed subs
-- [ ] evaluate() uses decomposition before LLM call
+- [x] `decompose_input("What is 2+2? I think it's 4.")` returns list of claims ✅ (2 claims extracted)
+- [x] Each claim has appropriate type (question=GOAL, assertion=ASSERTION) ✅
+- [x] Root context claim created and linked to decomposed subs ✅ (root_context_id returned)
+- [x] evaluate() uses decomposition before LLM call ✅
 
 ---
 

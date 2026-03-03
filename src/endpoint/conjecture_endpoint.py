@@ -21,6 +21,7 @@ from pydantic import BaseModel, Field
 from src.data.data_manager import DataManager
 from src.data.models import Claim, ClaimType, ClaimState
 from src.core.models import DirtyReason
+from src.process.input_decomposer import decompose_input
 
 logger = logging.getLogger(__name__)
 
@@ -532,11 +533,13 @@ class ConjectureEndpoint:
         query: str,
         max_claims: int = 10,
         min_confidence: float = 0.5,
-        include_reasoning: bool = True
+        include_reasoning: bool = True,
+        use_decomposition: bool = True
     ) -> APIResponse:
         """Evaluate claims using LLM reasoning.
 
         Per A-0003, this is one of the three core endpoint methods.
+        Per A-0009, input is decomposed into constituent claims before reasoning.
         This method builds context from relevant claims and uses the
         Process layer for LLM-based reasoning.
 
@@ -545,9 +548,12 @@ class ConjectureEndpoint:
             max_claims: Maximum claims to include in context (default 10)
             min_confidence: Minimum confidence for claim inclusion (default 0.5)
             include_reasoning: Whether to include reasoning steps (default True)
+            use_decomposition: Whether to decompose input before evaluation (default True)
 
         Returns:
-            APIResponse with evaluation result and reasoning chain
+            APIResponse with evaluation result and reasoning chain.
+            Response data always includes 'decomposed_claims' key (count of decomposed
+            claims, 0 if decomposition was skipped or failed).
         """
         error_response = await self._ensure_initialized()
         if error_response:
@@ -556,7 +562,23 @@ class ConjectureEndpoint:
         try:
             from src.endpoint.llm_client import LLMClient, build_claim_context, build_enhanced_prompt
 
-            # Step 1: Search for relevant claims
+            llm = LLMClient()
+
+            # Step 1: A-0009 Input Decomposition (optional, non-blocking)
+            # Decompose the query into constituent claims (questions, assertions, etc.)
+            # If decomposition fails for any reason, we continue with the existing flow.
+            decomposed_claims = []
+            if use_decomposition:
+                try:
+                    decomposed_claims = await decompose_input(query, llm_client=llm)
+                    logger.info(f"Decomposed input into {len(decomposed_claims)} claims")
+                except Exception as decomp_err:
+                    logger.warning(
+                        f"Input decomposition failed (continuing without it): {decomp_err}"
+                    )
+                    decomposed_claims = []
+
+            # Step 2: Search for relevant existing claims
             # First try query-based search, fall back to listing all claims
             claims_response = await self.search_claims(
                 query=query,
@@ -577,14 +599,22 @@ class ConjectureEndpoint:
                 if all_claims_response.success and all_claims_response.data:
                     claims = all_claims_response.data.get("claims", [])
 
-            # Step 2: Build claim context
-            claim_context = build_claim_context(claims)
+            # Step 3: Merge decomposed claims into context
+            # Decomposed claims represent the query's constituent parts and enrich
+            # the context passed to the LLM, alongside any retrieved stored claims.
+            all_context_claims = list(claims)
+            if decomposed_claims:
+                # Convert core Claim objects to dicts compatible with build_claim_context
+                for dc in decomposed_claims:
+                    all_context_claims.append(
+                        dc.model_dump() if hasattr(dc, "model_dump") else dc
+                    )
 
-            # Step 3: Build enhanced prompt
+            # Step 4: Build claim context and enhanced prompt
+            claim_context = build_claim_context(all_context_claims)
             enhanced_prompt = build_enhanced_prompt(query, claim_context)
 
-            # Step 4: Call LLM
-            llm = LLMClient()
+            # Step 5: Call LLM
             try:
                 llm_response = await llm.generate(
                     prompt=enhanced_prompt,
@@ -594,7 +624,7 @@ class ConjectureEndpoint:
             finally:
                 await llm.close()
 
-            # Step 5: Return response with context
+            # Step 6: Return response with decomposition metadata
             return APIResponse(
                 success=True,
                 message="Evaluation complete",
@@ -602,6 +632,7 @@ class ConjectureEndpoint:
                     "query": query,
                     "response": llm_response.get("content", ""),
                     "claims_used": len(claims),
+                    "decomposed_claims": len(decomposed_claims),
                     "claim_context": claim_context if include_reasoning else None,
                     "enhanced_prompt": enhanced_prompt if include_reasoning else None,
                     "model": llm_response.get("model", "unknown"),
