@@ -285,18 +285,41 @@ BBH boolean_expressions task too hard for this model (0% both).
 
 ---
 
-## Current Phase: Phase 18 — A-0009 Input Decomposition via LLM
-## Status: GATES_MET — input decomposition wired into evaluate(), D-0009 foundation in place
+## Current Phase: Phase 19 — A-0010 LLM Operates via Claim Tools
+## Status: IN PROGRESS — tool schema and executor complete, wiring evaluate()
 
 ---
 
-## Phase 18: A-0009 — Input Decomposition via LLM
+## Phase 19: A-0010 — LLM Operates via Claim Tools
+
+**Goal**: Make LLM operate through structured claim tools instead of raw text.
+Per A-0010: "The LLM is given tools to CRUD claims, respond to user, and invoke other skills.
+Responses aren't raw text — they're structured claim operations."
+
+**Why this matters**: Enables traceable reasoning through the claim graph, unlocks A-0012 (halt/explore).
+
+### Steps
+
+- [x] 19.1 Define tool schema for claim operations (create_claim, update_confidence, respond) ✅
+- [x] 19.2 Create tool executor in `src/process/claim_tools.py` ✅ (28 tests pass)
+- [ ] 19.3 Modify evaluate() to use tool-calling LLM mode
+- [ ] 19.4 Parse tool calls from LLM response
+- [ ] 19.5 Execute tool calls and update claim graph
+- [ ] 19.6 Add tests for tool-based reasoning
+
+### Gates
+
+- [ ] LLM can call `create_claim` tool to create new claims
+- [ ] LLM can call `respond_to_user` tool to return final answer
+- [ ] Tool calls are logged and traceable
+- [ ] evaluate() returns structured tool execution results
+
+---
+
+## Phase 18 ✅ COMPLETE — A-0009 Input Decomposition via LLM
 
 **Goal**: Implement input decomposition — the foundation for the core reasoning loop.
-Per A-0009: "The Process Layer treats all input as compound. Prompts are decomposed into
-constituent claims (questions, assertions, references, context) using LLM analysis."
-
-**Why this matters**: A-0009 blocks 7 downstream choices (A-0010, A-0012, D-0009, UX-0006, UX-0007, UX-0008, chat-first).
+**Result**: decompose_input(), create_root_context(), evaluate() wired with 52 tests.
 
 ### Steps
 
@@ -304,9 +327,9 @@ constituent claims (questions, assertions, references, context) using LLM analys
 - [x] 18.2 Define claim type mappings ✅ (question→GOAL, assertion→ASSERTION, etc.)
 - [x] 18.3 Wire LLM call to extract constituent claims ✅ (28 tests pass)
 - [x] 18.4 Create root context claim from full conversation (D-0009 foundation) ✅
-- [x] 18.5 Store decomposed claims as subs of root context ✅
-- [ ] 18.6 Add tests for input decomposition
-- [x] 18.7 Wire into ConjectureEndpoint.evaluate() as preprocessing step ✅
+- [x] 18.5 Store decomposed claims as subs of root context ✅ (19 tests)
+- [x] 18.6 Add tests for input decomposition ✅ (52 tests total)
+- [x] 18.7 Wire into ConjectureEndpoint.evaluate() ✅ (5 tests)
 
 ### Gates
 

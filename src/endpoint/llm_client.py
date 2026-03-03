@@ -95,6 +95,78 @@ class LLMClient:
             logger.error(f"LLM generation failed: {e}")
             raise
 
+    async def generate_with_tools(
+        self,
+        prompt: str,
+        tools: List[Dict[str, Any]],
+        system_prompt: Optional[str] = None,
+        temperature: float = 0.7,
+        max_tokens: int = 1024
+    ) -> Dict[str, Any]:
+        """Generate a response from the LLM with tool calling support.
+
+        Per A-0010: The LLM operates via claim tools, not raw text responses.
+
+        Args:
+            prompt: User prompt
+            tools: List of tool definitions in OpenAI function-calling format
+            system_prompt: Optional system prompt
+            temperature: Sampling temperature (0.0-2.0)
+            max_tokens: Maximum tokens to generate
+
+        Returns:
+            Dict with 'content', 'tool_calls', 'model', 'usage' keys.
+            'tool_calls' is a list of dicts with 'name' and 'arguments' keys.
+        """
+        client = self._get_client()
+
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": prompt})
+
+        try:
+            response = await client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                tools=tools,
+                tool_choice="auto",
+                temperature=temperature,
+                max_tokens=max_tokens
+            )
+
+            message = response.choices[0].message
+
+            # Parse tool calls if present
+            tool_calls = []
+            if message.tool_calls:
+                import json
+                for tc in message.tool_calls:
+                    try:
+                        args = json.loads(tc.function.arguments)
+                    except json.JSONDecodeError:
+                        args = {"raw": tc.function.arguments}
+                    tool_calls.append({
+                        "id": tc.id,
+                        "name": tc.function.name,
+                        "arguments": args
+                    })
+
+            return {
+                "content": message.content or "",
+                "tool_calls": tool_calls,
+                "model": response.model,
+                "usage": {
+                    "prompt_tokens": response.usage.prompt_tokens if response.usage else 0,
+                    "completion_tokens": response.usage.completion_tokens if response.usage else 0,
+                    "total_tokens": response.usage.total_tokens if response.usage else 0
+                }
+            }
+
+        except Exception as e:
+            logger.error(f"LLM generation with tools failed: {e}")
+            raise
+
     async def close(self):
         """Close the client."""
         if self._client:
