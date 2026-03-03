@@ -80,7 +80,7 @@ class TestCommonConfig:
         
         assert config.providers == []  # Default empty list
         assert config.debug is False  # Default value
-        assert config.confidence_threshold == 0.95  # Default value
+        assert config.confidence_threshold == 0.5  # Default value (R&D optimal)
         assert config.max_context_size == 10  # Default value
         assert config.database_path == "data/conjecture.db"  # Default value
         assert config.user == "user"  # Default value
@@ -162,7 +162,7 @@ class TestCommonConfig:
         assert len(config.providers) == 1
         assert config.providers[0].name == "minimal_provider"
         assert config.debug is True
-        assert config.confidence_threshold == 0.95  # Default value
+        assert config.confidence_threshold == 0.5  # Default value (R&D optimal)
         assert config.max_context_size == 10  # Default value
         assert config.database_path == "data/conjecture.db"  # Default value
         assert config.user == "user"  # Default value
@@ -176,7 +176,7 @@ class TestCommonConfig:
         
         assert config.providers == []
         assert config.debug is False
-        assert config.confidence_threshold == 0.95  # Default value
+        assert config.confidence_threshold == 0.5  # Default value (R&D optimal)
 
     def test_config_immutability(self):
         """Test that config objects maintain their values"""

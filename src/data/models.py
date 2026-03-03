@@ -401,11 +401,33 @@ class Claim(BaseModel):
         return f"Claim(id={self.id}, confidence={self.confidence:.2f}, state={self.state.value})"
 
 
-class Relationship(BaseModel):
-    """Simplified claim relationship model - only supports 'A supports B' connections"""
+class RelationshipType(str, Enum):
+    """Relationship type enumeration per D-0008"""
 
-    supporter_id: str = Field(..., description="ID of supporting claim (A)")
-    supported_id: str = Field(..., description="ID of supported claim (B)")
+    SUPPORTS = "supports"        # A provides evidence FOR B
+    CONTRADICTS = "contradicts"  # A contradicts B
+    REFINES = "refines"          # A refines/narrows B
+    EXTENDS = "extends"          # A extends/expands B
+    EXAMPLE_OF = "example_of"    # A is an example of B
+
+
+class Relationship(BaseModel):
+    """Claim relationship model per D-0008 — first-class object with rich semantics"""
+
+    supporter_id: str = Field(..., description="ID of source claim (A)")
+    supported_id: str = Field(..., description="ID of target claim (B)")
+    relationship_type: RelationshipType = Field(
+        default=RelationshipType.SUPPORTS,
+        description="Type of relationship between claims"
+    )
+    confidence: float = Field(
+        default=1.0, ge=0.0, le=1.0,
+        description="Confidence in this relationship (0.0-1.0)"
+    )
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict,
+        description="Additional metadata for relationship semantics"
+    )
     created: datetime = Field(
         default_factory=datetime.utcnow, description="Creation timestamp"
     )
@@ -415,8 +437,18 @@ class Relationship(BaseModel):
         """Backward compatibility property for created timestamp"""
         return self.created
 
+    @property
+    def source_id(self) -> str:
+        """Alias for supporter_id for cleaner API"""
+        return self.supporter_id
+
+    @property
+    def target_id(self) -> str:
+        """Alias for supported_id for cleaner API"""
+        return self.supported_id
+
     def __repr__(self) -> str:
-        return f"Relationship({self.supporter_id} supports {self.supported_id})"
+        return f"Relationship({self.supporter_id} {self.relationship_type.value} {self.supported_id}, conf={self.confidence})"
 
 
 class ClaimFilter(BaseModel):
