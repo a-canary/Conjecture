@@ -134,6 +134,34 @@ CLAIM_TOOLS: List[Dict[str, Any]] = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "explore_further",
+            "description": (
+                "Signal that you want to explore the problem further before responding. "
+                "Use this when you're not yet confident in an answer and need to create "
+                "more claims to investigate. This is the A-0012 'explore' choice. "
+                "The alternative is respond_to_user (halt)."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "focus": {
+                        "type": "string",
+                        "description": "What aspect of the problem to explore next",
+                    },
+                    "confidence_gap": {
+                        "type": "number",
+                        "minimum": 0.0,
+                        "maximum": 1.0,
+                        "description": "Current confidence in having a good answer (0.0-1.0)",
+                    },
+                },
+                "required": ["focus"],
+            },
+        },
+    },
 ]
 
 
@@ -223,6 +251,7 @@ class ClaimToolExecutor:
             "create_claim": self._create_claim,
             "update_confidence": self._update_confidence,
             "respond_to_user": self._respond_to_user,
+            "explore_further": self._explore_further,
         }
 
         handler = dispatch.get(tool_name)
@@ -401,4 +430,36 @@ class ClaimToolExecutor:
                 "supporting_claims": supporting_claims,
             },
             claim_ids=supporting_claims,
+        )
+
+    async def _explore_further(self, args: Dict[str, Any]) -> ToolResult:
+        """Handle explore_further tool call (A-0012).
+
+        This signals that the LLM wants to continue exploring rather than
+        responding. The tool loop should continue after this call.
+
+        Required args:
+            focus (str): What aspect of the problem to explore.
+
+        Optional args:
+            confidence_gap (float): Current confidence in having a good answer.
+        """
+        focus: str = args.get("focus", "")
+        confidence_gap: float = float(args.get("confidence_gap", 0.5))
+
+        logger.debug(
+            "explore_further: focus='%s' confidence_gap=%.2f",
+            focus,
+            confidence_gap,
+        )
+
+        return ToolResult(
+            success=True,
+            result={
+                "action": "explore",
+                "focus": focus,
+                "confidence_gap": confidence_gap,
+                "message": f"Exploring: {focus}",
+            },
+            claim_ids=[],
         )
