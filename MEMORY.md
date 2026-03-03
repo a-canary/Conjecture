@@ -2,11 +2,12 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-**Phase 19 IN PROGRESS.** A-0010 LLM Claim Tools: steps 19.1-19.3 complete (tool schema, executor, evaluate wired). D-0008 fixed (Relationship model with confidence/type/metadata). 688 tests pass, 35 fail (isolation issues). Next: 19.4-19.6 tests + A-0012 halt/explore loop.
+**Phase 19 COMPLETE.** A-0010 LLM Claim Tools: all gates passed. Live test successful - 3 create_claim tool calls executed via Qwen3-32B. Worktrees cleaned (33→0). Phase 18 (A-0009 decomposition) also complete. Next: A-0012 halt/explore loop or remaining gap work.
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-03-03: GATES_MET — Phase 19 COMPLETE: A-0010 tool-based reasoning. Live test: 3 create_claim calls executed. Tool-capable model (Qwen3-32B) auto-selected. All gates passed.
 - 2026-03-03: WORK_DISPATCHED — Phase 19: A-0010 tool infrastructure. Steps 19.1-19.3 done. D-0008 fixed (RelationshipType enum + fields). Config tests fixed (0.5 threshold). 688 pass.
 - 2026-03-03: GATES_MET — Phase 18: A-0009 decompose_input wired into evaluate(). Root context claims created. Worktrees cleaned (33→0). Gap analysis: 38/69 fulfilled.
 - 2026-03-03: WORK_DISPATCHED — Committed Phases 8-17 (33 files, 13K+ insertions). Core infrastructure, O-0008 benchmark compliance. GSM8K +86.7pp via task-adaptive prompts.
