@@ -68,7 +68,7 @@ def extract_numerical_answer(response: str) -> Optional[str]:
         return None
 
     # Pattern 1: GSM8K format "#### 42" or "#### 42.5"
-    match = re.search(r'#+\s*(\-?[\d,]+\.?\d*)', response)
+    match = re.search(r'#+\s*(\-?[\d,]+(?:\.\d+)?)', response)
     if match:
         return match.group(1).replace(",", "")
 
@@ -77,14 +77,14 @@ def extract_numerical_answer(response: str) -> Optional[str]:
     if match:
         answer = match.group(1).strip()
         # Extract number from boxed content if it contains non-numeric
-        num_match = re.search(r'(\-?[\d,]+\.?\d*)', answer)
+        num_match = re.search(r'(\-?[\d,]+(?:\.\d+)?)', answer)
         if num_match:
             return num_match.group(1).replace(",", "")
         return answer
 
     # Pattern 3: "Answer is X" / "Answer: X" with flexibility
     match = re.search(
-        r'answer\s*(?:is|:|\s)\s*\$?(\-?[\d,]+\.?\d*)',
+        r'answer\s*(?:is|:|\s)\s*\$?(\-?[\d,]+(?:\.\d+)?)',
         response,
         re.IGNORECASE
     )
@@ -93,7 +93,7 @@ def extract_numerical_answer(response: str) -> Optional[str]:
 
     # Pattern 4: "The answer is X"
     match = re.search(
-        r'the\s+answer\s+(?:is|:)\s*\$?(\-?[\d,]+\.?\d*)',
+        r'the\s+answer\s+(?:is|:)\s*\$?(\-?[\d,]+(?:\.\d+)?)',
         response,
         re.IGNORECASE
     )
@@ -102,7 +102,7 @@ def extract_numerical_answer(response: str) -> Optional[str]:
 
     # Pattern 5: "Final answer: X" or "Final answer is X"
     match = re.search(
-        r'final\s+answer\s*(?:is|:|\s)\s*\$?(\-?[\d,]+\.?\d*)',
+        r'final\s+answer\s*(?:is|:|\s)\s*\$?(\-?[\d,]+(?:\.\d+)?)',
         response,
         re.IGNORECASE
     )
@@ -111,7 +111,7 @@ def extract_numerical_answer(response: str) -> Optional[str]:
 
     # Pattern 6: "Result: X" / "Result is X"
     match = re.search(
-        r'result\s*(?:is|:|\s)\s*\$?(\-?[\d,]+\.?\d*)',
+        r'result\s*(?:is|:|\s)\s*\$?(\-?[\d,]+(?:\.\d+)?)',
         response,
         re.IGNORECASE
     )
@@ -120,7 +120,7 @@ def extract_numerical_answer(response: str) -> Optional[str]:
 
     # Pattern 7: "Therefore X" or "So X" at sentence end
     match = re.search(
-        r'(?:therefore|thus|so)\s*(?:the\s+answer\s+is\s+)?\$?(\-?[\d,]+\.?\d*)',
+        r'(?:therefore|thus|so)\s*(?:the\s+answer\s+is\s+)?\$?(\-?[\d,]+(?:\.\d+)?)',
         response,
         re.IGNORECASE
     )
@@ -128,13 +128,13 @@ def extract_numerical_answer(response: str) -> Optional[str]:
         return match.group(1).replace(",", "")
 
     # Pattern 8: Number after equals sign (equations)
-    match = re.search(r'=\s*\$?(\-?[\d,]+\.?\d*)', response)
+    match = re.search(r'=\s*\$?(\-?[\d,]+(?:\.\d+)?)', response)
     if match:
         return match.group(1).replace(",", "")
 
     # Fallback: Find all numbers and return the last one
     # But filter out numbers that appear to be part of larger context
-    numbers = re.findall(r'\-?[\d,]+\.?\d*', response)
+    numbers = re.findall(r'\-?[\d,]+(?:\.\d+)?', response)
     if numbers:
         # Return last number (most likely to be final answer)
         return numbers[-1].replace(",", "")
@@ -217,7 +217,7 @@ def extract_answer(response: str, expected: str = None, answer_type: AnswerType 
         # Type detection
         if expected_normalized in ['a', 'b', 'c', 'd']:
             answer_type = AnswerType.MULTIPLE_CHOICE
-        elif re.match(r'^\-?[\d,]+\.?\d*$', expected_normalized):
+        elif re.match(r'^\-?[\d,]+(?:\.\d+)?$', expected_normalized):
             answer_type = AnswerType.NUMERICAL
         else:
             answer_type = AnswerType.CATEGORICAL
@@ -267,7 +267,7 @@ def check_answer_match(predicted: str, expected: str, answer_type: AnswerType = 
     if answer_type is None:
         if exp_norm in ['a', 'b', 'c', 'd']:
             answer_type = AnswerType.MULTIPLE_CHOICE
-        elif re.match(r'^\-?[\d,]+\.?\d*$', exp_norm):
+        elif re.match(r'^\-?[\d,]+(?:\.\d+)?$', exp_norm):
             answer_type = AnswerType.NUMERICAL
         else:
             answer_type = AnswerType.CATEGORICAL
@@ -340,7 +340,7 @@ def extract_answer_deepeval_compatible(response: str, expected: str) -> str:
     answer_type = None
     if expected and expected.lower() in ['a', 'b', 'c', 'd']:
         answer_type = AnswerType.MULTIPLE_CHOICE
-    elif expected and re.match(r'^\-?[\d,]+\.?\d*$', normalize_answer(expected)):
+    elif expected and re.match(r'^\-?[\d,]+(?:\.\d+)?$', normalize_answer(expected)):
         answer_type = AnswerType.NUMERICAL
 
     return extract_answer(response, expected, answer_type)
