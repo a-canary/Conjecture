@@ -50,14 +50,17 @@ class ClaimState(str, Enum):
 
 
 class ClaimType(str, Enum):
-    """Claim type enumeration"""
+    """Claim type enumeration - Nine epistemological categories per F-0007"""
 
-    CONCEPT = "concept"
-    REFERENCE = "reference"
-    THESIS = "thesis"
-    SKILL = "skill"
-    EXAMPLE = "example"
-    GOAL = "goal"
+    IMPRESSION = "impression"    # Initial impression or intuition
+    ASSUMPTION = "assumption"    # Something taken as true without proof
+    OBSERVATION = "observation"  # Something noticed or perceived
+    CONJECTURE = "conjecture"    # Conclusion on incomplete evidence
+    CONCEPT = "concept"          # Abstract idea or general notion
+    EXAMPLE = "example"          # Specific instance or case
+    GOAL = "goal"                # Desired outcome or objective
+    REFERENCE = "reference"      # Pointer to external information
+    ASSERTION = "assertion"      # Strong statement made with confidence
 
 
 class ClaimDomain(str, Enum):

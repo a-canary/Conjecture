@@ -1,0 +1,34 @@
+{
+  "variant": "v7_answer_only",
+  "model": "openai/gpt-oss-20b",
+  "provider": "chutes.ai",
+  "n_samples": 15,
+  "timestamp": "2026-03-02T15:22:57.701914",
+  "benchmarks": {
+    "GSM8K": {
+      "baseline_pct": 6.666666666666667,
+      "v7_pct": 80.0,
+      "delta_pp": 73.33333333333333
+    },
+    "BBH-Logic": {
+      "baseline_pct": 26.666666666666668,
+      "v7_pct": 33.33333333333333,
+      "delta_pp": 6.666666666666661
+    },
+    "BBH-ObjectCounting": {
+      "baseline_pct": 0.0,
+      "v7_pct": 0.0,
+      "delta_pp": 0.0
+    },
+    "LogiQA": {
+      "baseline_pct": 0.0,
+      "v7_pct": 0.0,
+      "delta_pp": 0.0
+    },
+    "TruthfulQA": {
+      "baseline_pct": 0.0,
+      "v7_pct": 0.0,
+      "delta_pp": 0.0
+    }
+  }
+}

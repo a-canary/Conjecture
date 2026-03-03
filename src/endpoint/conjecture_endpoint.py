@@ -14,12 +14,13 @@ Sessions store claims in local DB; LLM can elevate claims to project/team scope.
 
 import logging
 import uuid
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional, Set, Union
 from pydantic import BaseModel, Field
 
 from src.data.data_manager import DataManager
 from src.data.models import Claim, ClaimType, ClaimState
+from src.core.models import DirtyReason
 
 logger = logging.getLogger(__name__)
 
@@ -253,6 +254,45 @@ class ConjectureEndpoint:
 
         return len(session.claim_ids) if session else 0
 
+    # ========== Dirty Flag Cascade ==========
+
+    async def _cascade_dirty_to_supers(
+        self, super_ids: List[str], reason: DirtyReason = DirtyReason.SUPPORTING_CLAIM_CHANGED
+    ) -> Set[str]:
+        """Mark each super claim dirty because a sub changed or was created.
+
+        Per A-0011: cascade is unidirectional toward root (only supers are marked,
+        never subs). Called after a claim is created or updated with supers.
+
+        Args:
+            super_ids: Claim IDs that this claim provides evidence FOR.
+            reason: The DirtyReason to record on each super.
+
+        Returns:
+            Set of claim IDs that were successfully marked dirty.
+        """
+        marked: Set[str] = set()
+        now = datetime.now(timezone.utc)
+        dirty_updates = {
+            "is_dirty": True,
+            "dirty_reason": reason.value,
+            "dirty_timestamp": now.isoformat(),
+            "dirty_priority": 8,  # medium-high priority for cascaded dirtying
+        }
+        for super_id in super_ids:
+            try:
+                success = await self._data_manager.update_claim(super_id, dirty_updates)
+                if success:
+                    marked.add(super_id)
+                    logger.debug(f"Cascaded dirty flag to super claim {super_id}")
+                else:
+                    logger.warning(
+                        f"Could not cascade dirty flag to {super_id}: claim not found"
+                    )
+            except Exception as e:
+                logger.warning(f"Failed to cascade dirty flag to {super_id}: {e}")
+        return marked
+
     # ========== Core Claim Operations ==========
 
     async def create_claim(
@@ -335,6 +375,15 @@ class ConjectureEndpoint:
             if self._current_session:
                 self._current_session.claim_ids.append(claim_id)
 
+            # A-0011: Cascade dirty flags to supers (unidirectional toward root).
+            # When a new sub-claim is created that provides evidence FOR existing
+            # super claims, those super claims must be re-evaluated.
+            marked_dirty_ids: Set[str] = set()
+            if supers:
+                marked_dirty_ids = await self._cascade_dirty_to_supers(
+                    supers, reason=DirtyReason.SUPPORTING_CLAIM_CHANGED
+                )
+
             # Retrieve the created claim for full response
             claim = await self._data_manager.get_claim(claim_id)
 
@@ -348,7 +397,8 @@ class ConjectureEndpoint:
                     "tags": tags or [],
                     "state": state.value if hasattr(state, 'value') else str(state),
                     "session_id": self._current_session.id if self._current_session else None,
-                    "claim": claim.model_dump() if claim else None
+                    "claim": claim.model_dump() if claim else None,
+                    "supers_marked_dirty": sorted(marked_dirty_ids),
                 }
             )
 
@@ -358,6 +408,84 @@ class ConjectureEndpoint:
                 success=False,
                 message="Failed to create claim",
                 errors=[str(e)]
+            )
+
+    async def update_claim(
+        self,
+        claim_id: str,
+        updates: Dict[str, Any],
+    ) -> APIResponse:
+        """Update an existing claim and cascade dirty flags to its supers.
+
+        Per A-0011, when a claim changes (content, confidence, or relationships),
+        all super claims are marked dirty so they can be re-evaluated.
+
+        Args:
+            claim_id: ID of the claim to update.
+            updates: Dictionary of fields to update.
+
+        Returns:
+            APIResponse indicating success, with supers_marked_dirty in data.
+        """
+        error_response = await self._ensure_initialized()
+        if error_response:
+            return error_response
+
+        try:
+            # Fetch the claim before update so we can read its current supers
+            original = await self._data_manager.get_claim(claim_id)
+            if original is None:
+                return APIResponse(
+                    success=False,
+                    message=f"Claim not found: {claim_id}",
+                    errors=["CLAIM_NOT_FOUND"],
+                )
+
+            success = await self._data_manager.update_claim(claim_id, updates)
+            if not success:
+                return APIResponse(
+                    success=False,
+                    message=f"Update failed for claim: {claim_id}",
+                    errors=["UPDATE_FAILED"],
+                )
+
+            # A-0011: Cascade dirty flags to supers when content or confidence changed.
+            # Also cascade when supers list itself is being changed.
+            content_changed = "content" in updates and updates["content"] != original.content
+            confidence_changed = (
+                "confidence" in updates
+                and abs(updates["confidence"] - original.confidence) >= 0.01
+            )
+            supers_in_update = updates.get("supers", None)
+
+            # Determine effective supers: use updated list if provided, else original
+            effective_supers: List[str] = (
+                supers_in_update if supers_in_update is not None else list(original.supers)
+            )
+
+            marked_dirty_ids: Set[str] = set()
+            if effective_supers and (content_changed or confidence_changed or supers_in_update is not None):
+                marked_dirty_ids = await self._cascade_dirty_to_supers(
+                    effective_supers, reason=DirtyReason.SUPPORTING_CLAIM_CHANGED
+                )
+
+            updated_claim = await self._data_manager.get_claim(claim_id)
+            return APIResponse(
+                success=True,
+                message=f"Claim updated: {claim_id}",
+                data={
+                    "id": claim_id,
+                    "claim": updated_claim.model_dump() if updated_claim else None,
+                    "supers_marked_dirty": sorted(marked_dirty_ids),
+                },
+            )
+
+        except Exception as e:
+            logger.error(f"Failed to update claim {claim_id}: {e}")
+            return APIResponse(
+                success=False,
+                message=f"Failed to update claim: {claim_id}",
+                errors=[str(e)],
             )
 
     async def get_claim(self, claim_id: str) -> APIResponse:

@@ -1,0 +1,22 @@
+{
+  "TEST:test-model:40": {
+    "score": 25.5,
+    "timestamp": "2026-03-01T22:42:50.481962",
+    "samples": 40
+  },
+  "GSM8K:openai/gpt-oss-20b:40": {
+    "score": 15.0,
+    "timestamp": "2026-03-01T22:42:58.665634",
+    "samples": 40
+  },
+  "BBH-Math:openai/gpt-oss-20b:40": {
+    "score": 42.5,
+    "timestamp": "2026-03-01T22:42:58.665828",
+    "samples": 40
+  },
+  "BBH-ObjectCount:openai/gpt-oss-20b:40": {
+    "score": 5.0,
+    "timestamp": "2026-03-01T22:42:58.673055",
+    "samples": 40
+  }
+}

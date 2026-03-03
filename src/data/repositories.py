@@ -12,6 +12,7 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime, timezone
 
 from src.core.models import Claim, ClaimState, ClaimType, DirtyReason
+from src.core.graph_validator import assert_no_cycle, CycleDetectedError
 
 logger = logging.getLogger(__name__)
 
@@ -204,6 +205,62 @@ class ClaimRepository:
                 subs.append(sub_claim)
 
         return {"supers": supers, "subs": subs}
+
+    async def add_relationship(self, supporter_id: str, supported_id: str) -> None:
+        """Add a support relationship: supporter_id -> supported_id.
+
+        supporter_id provides evidence FOR supported_id, meaning:
+          - supported_id is added to supporter_id.supers
+          - supporter_id is added to supported_id.subs
+
+        Enforces the DAG constraint (D-0007): raises CycleDetectedError if the
+        relationship would create a cycle.
+
+        Args:
+            supporter_id: ID of the supporting claim (source).
+            supported_id: ID of the supported claim (target).
+
+        Raises:
+            ValueError: If either claim does not exist.
+            CycleDetectedError: If adding the relationship would create a cycle.
+        """
+        supporter = await self.get_by_id(supporter_id)
+        if supporter is None:
+            raise ValueError(f"Claim not found: {supporter_id}")
+
+        supported = await self.get_by_id(supported_id)
+        if supported is None:
+            raise ValueError(f"Claim not found: {supported_id}")
+
+        # Self-loop guard (also caught by graph validator, but be explicit).
+        if supporter_id == supported_id:
+            raise CycleDetectedError(supporter_id, supported_id)
+
+        # Already exists — idempotent, nothing to do.
+        if supported_id in supporter.supers:
+            return
+
+        # DAG enforcement (D-0007): check that supporter -> supported would not
+        # create a cycle.  We traverse from supported upward through supers to
+        # see if supporter is already an ancestor.
+        def get_supers(claim_id: str) -> List[str]:
+            claim = self._claims.get(claim_id)
+            return claim.supers if claim else []
+
+        assert_no_cycle(supporter_id, supported_id, get_supers)
+
+        # Safe to add the relationship.
+        supporter.supers.append(supported_id)
+        supported.subs.append(supporter_id)
+
+        # Mark both claims dirty so downstream consumers know they changed.
+        supporter.mark_dirty(reason="relationship_change")
+        supported.mark_dirty(reason="relationship_change")
+
+        await self.update(supporter)
+        await self.update(supported)
+
+        logger.debug(f"Added relationship: {supporter_id} -> {supported_id}")
 
     async def mark_dirty(
         self,

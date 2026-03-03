@@ -1,0 +1,66 @@
+{
+  "variant": "v15_adaptive",
+  "model": "unknown",
+  "timestamp": "2026-03-02T20:02:56.016978",
+  "templates": {
+    "math": "{prompt}\n\n[Solve directly if straightforward, show steps if complex]",
+    "logic": "{prompt}\n\n[Answer directly if clear, analyze if ambiguous]",
+    "counting": "{prompt}\n\n[Count directly if obvious, enumerate if many]",
+    "truth": "{prompt}\n\n[State directly if factual, evaluate if uncertain]"
+  },
+  "results": {
+    "GSM8K": {
+      "name": "GSM8K",
+      "sample_count": 15,
+      "baseline_score": 0.0,
+      "variant_score": 0.0,
+      "delta": 0.0,
+      "timestamp": "2026-03-02T16:47:20.212068",
+      "error": null
+    },
+    "BBH-Logic": {
+      "name": "BBH-Logic",
+      "sample_count": 15,
+      "baseline_score": 0.0,
+      "variant_score": 0.0,
+      "delta": 0.0,
+      "timestamp": "2026-03-02T17:56:38.266034",
+      "error": null
+    },
+    "BBH-ObjectCounting": {
+      "name": "BBH-ObjectCounting",
+      "sample_count": 15,
+      "baseline_score": 0.0,
+      "variant_score": 0.0,
+      "delta": 0.0,
+      "timestamp": "2026-03-02T18:57:19.272456",
+      "error": null
+    },
+    "LogiQA": {
+      "name": "LogiQA",
+      "sample_count": 15,
+      "baseline_score": 0.0,
+      "variant_score": 0.0,
+      "delta": 0.0,
+      "timestamp": "2026-03-02T19:46:43.227097",
+      "error": null
+    },
+    "TruthfulQA": {
+      "name": "TruthfulQA",
+      "sample_count": 15,
+      "baseline_score": 0.0,
+      "variant_score": 0.0,
+      "delta": 0.0,
+      "timestamp": "2026-03-02T20:02:56.009115",
+      "error": null
+    }
+  },
+  "summary": {
+    "benchmarks_tested": 5,
+    "avg_baseline": 0.0,
+    "avg_variant": 0.0,
+    "avg_delta": 0.0,
+    "positive_deltas": 0,
+    "negative_deltas": 0
+  }
+}

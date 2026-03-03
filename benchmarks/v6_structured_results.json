@@ -1,0 +1,648 @@
+{
+  "variant": "v6_structured",
+  "model": "openai/gpt-oss-20b",
+  "n_samples": 15,
+  "timestamp": "2026-03-02T12:14:13.404904",
+  "benchmarks": {
+    "GSM8K": {
+      "baseline_pct": 13.3,
+      "variant_pct": 6.7,
+      "delta_pp": -6.7,
+      "template": "[Problem]\n{prompt}\n\n[Solution]\nStep 1:",
+      "details": [
+        {
+          "index": 0,
+          "expected": "18",
+          "baseline_extracted": "18",
+          "baseline_match": true,
+          "variant_extracted": "16",
+          "variant_match": false
+        },
+        {
+          "index": 1,
+          "expected": "3",
+          "baseline_extracted": "1",
+          "baseline_match": false,
+          "variant_extracted": "1",
+          "variant_match": false
+        },
+        {
+          "index": 2,
+          "expected": "70000",
+          "baseline_extracted": "150",
+          "baseline_match": false,
+          "variant_extracted": "80",
+          "variant_match": false
+        },
+        {
+          "index": 3,
+          "expected": "540",
+          "baseline_extracted": "3",
+          "baseline_match": false,
+          "variant_extracted": "3",
+          "variant_match": false
+        },
+        {
+          "index": 4,
+          "expected": "20",
+          "baseline_extracted": "20",
+          "baseline_match": true,
+          "variant_extracted": "20",
+          "variant_match": true
+        },
+        {
+          "index": 5,
+          "expected": "64",
+          "baseline_extracted": "8",
+          "baseline_match": false,
+          "variant_extracted": "",
+          "variant_match": false
+        },
+        {
+          "index": 6,
+          "expected": "260",
+          "baseline_extracted": "4",
+          "baseline_match": false,
+          "variant_extracted": "20",
+          "variant_match": false
+        },
+        {
+          "index": 7,
+          "expected": "160",
+          "baseline_extracted": "80",
+          "baseline_match": false,
+          "variant_extracted": "0.40",
+          "variant_match": false
+        },
+        {
+          "index": 8,
+          "expected": "45",
+          "baseline_extracted": "180",
+          "baseline_match": false,
+          "variant_extracted": "180",
+          "variant_match": false
+        },
+        {
+          "index": 9,
+          "expected": "460",
+          "baseline_extracted": "400",
+          "baseline_match": false,
+          "variant_extracted": "40",
+          "variant_match": false
+        },
+        {
+          "index": 10,
+          "expected": "366",
+          "baseline_extracted": "60",
+          "baseline_match": false,
+          "variant_extracted": "180",
+          "variant_match": false
+        },
+        {
+          "index": 11,
+          "expected": "694",
+          "baseline_extracted": "204",
+          "baseline_match": false,
+          "variant_extracted": "204",
+          "variant_match": false
+        },
+        {
+          "index": 12,
+          "expected": "13",
+          "baseline_extracted": "7",
+          "baseline_match": false,
+          "variant_extracted": "90",
+          "variant_match": false
+        },
+        {
+          "index": 13,
+          "expected": "18",
+          "baseline_extracted": "5",
+          "baseline_match": false,
+          "variant_extracted": "5",
+          "variant_match": false
+        },
+        {
+          "index": 14,
+          "expected": "60",
+          "baseline_extracted": "4",
+          "baseline_match": false,
+          "variant_extracted": "4",
+          "variant_match": false
+        }
+      ]
+    },
+    "BBH-Logic": {
+      "baseline_pct": 86.7,
+      "variant_pct": 100.0,
+      "delta_pp": 13.3,
+      "template": "[Question]\n{prompt}\n\n[Analysis]\nThe answer is:",
+      "details": [
+        {
+          "index": 0,
+          "expected": "(A)",
+          "baseline_extracted": "(A)",
+          "baseline_match": true,
+          "variant_extracted": "(A)",
+          "variant_match": true
+        },
+        {
+          "index": 1,
+          "expected": "(B)",
+          "baseline_extracted": "(B)",
+          "baseline_match": true,
+          "variant_extracted": "(B)",
+          "variant_match": true
+        },
+        {
+          "index": 2,
+          "expected": "(C)",
+          "baseline_extracted": "(C)",
+          "baseline_match": true,
+          "variant_extracted": "(C)",
+          "variant_match": true
+        },
+        {
+          "index": 3,
+          "expected": "(B)",
+          "baseline_extracted": "(B)",
+          "baseline_match": true,
+          "variant_extracted": "(B)",
+          "variant_match": true
+        },
+        {
+          "index": 4,
+          "expected": "(B)",
+          "baseline_extracted": "(B)",
+          "baseline_match": true,
+          "variant_extracted": "(B)",
+          "variant_match": true
+        },
+        {
+          "index": 5,
+          "expected": "(C)",
+          "baseline_extracted": "(C)",
+          "baseline_match": true,
+          "variant_extracted": "(C)",
+          "variant_match": true
+        },
+        {
+          "index": 6,
+          "expected": "(C)",
+          "baseline_extracted": "(C)",
+          "baseline_match": true,
+          "variant_extracted": "(C)",
+          "variant_match": true
+        },
+        {
+          "index": 7,
+          "expected": "(A)",
+          "baseline_extracted": "(A)",
+          "baseline_match": true,
+          "variant_extracted": "(A)",
+          "variant_match": true
+        },
+        {
+          "index": 8,
+          "expected": "(A)",
+          "baseline_extracted": "A)",
+          "baseline_match": false,
+          "variant_extracted": "(A)",
+          "variant_match": true
+        },
+        {
+          "index": 9,
+          "expected": "(A)",
+          "baseline_extracted": "(A)",
+          "baseline_match": true,
+          "variant_extracted": "(A)",
+          "variant_match": true
+        },
+        {
+          "index": 10,
+          "expected": "(A)",
+          "baseline_extracted": "(A)",
+          "baseline_match": true,
+          "variant_extracted": "(A)",
+          "variant_match": true
+        },
+        {
+          "index": 11,
+          "expected": "(C)",
+          "baseline_extracted": "(C)",
+          "baseline_match": true,
+          "variant_extracted": "(C)",
+          "variant_match": true
+        },
+        {
+          "index": 12,
+          "expected": "(B)",
+          "baseline_extracted": "(B)",
+          "baseline_match": true,
+          "variant_extracted": "(B)",
+          "variant_match": true
+        },
+        {
+          "index": 13,
+          "expected": "(A)",
+          "baseline_extracted": "(A)",
+          "baseline_match": true,
+          "variant_extracted": "(A)",
+          "variant_match": true
+        },
+        {
+          "index": 14,
+          "expected": "(A)",
+          "baseline_extracted": "",
+          "baseline_match": false,
+          "variant_extracted": "(A)",
+          "variant_match": true
+        }
+      ]
+    },
+    "BBH-ObjectCounting": {
+      "baseline_pct": 0.0,
+      "variant_pct": 13.3,
+      "delta_pp": 13.3,
+      "template": "[Task]\n{prompt}\n\n[Count]\n1.",
+      "details": [
+        {
+          "index": 0,
+          "expected": "8",
+          "baseline_extracted": "instruments.**",
+          "baseline_match": false,
+          "variant_extracted": "instruments",
+          "variant_match": false
+        },
+        {
+          "index": 1,
+          "expected": "15",
+          "baseline_extracted": "fruits**",
+          "baseline_match": false,
+          "variant_extracted": "total",
+          "variant_match": false
+        },
+        {
+          "index": 2,
+          "expected": "3",
+          "baseline_extracted": "objects.**",
+          "baseline_match": false,
+          "variant_extracted": "microwave)",
+          "variant_match": false
+        },
+        {
+          "index": 3,
+          "expected": "14",
+          "baseline_extracted": "fruits**",
+          "baseline_match": false,
+          "variant_extracted": "total",
+          "variant_match": false
+        },
+        {
+          "index": 4,
+          "expected": "5",
+          "baseline_extracted": "objects.**",
+          "baseline_match": false,
+          "variant_extracted": "5\\)",
+          "variant_match": false
+        },
+        {
+          "index": 5,
+          "expected": "3",
+          "baseline_extracted": "animals.**",
+          "baseline_match": false,
+          "variant_extracted": "3",
+          "variant_match": true
+        },
+        {
+          "index": 6,
+          "expected": "2",
+          "baseline_extracted": "objects.**",
+          "baseline_match": false,
+          "variant_extracted": "toaster",
+          "variant_match": false
+        },
+        {
+          "index": 7,
+          "expected": "14",
+          "baseline_extracted": "fruits.**",
+          "baseline_match": false,
+          "variant_extracted": "total",
+          "variant_match": false
+        },
+        {
+          "index": 8,
+          "expected": "9",
+          "baseline_extracted": "vegetables.**",
+          "baseline_match": false,
+          "variant_extracted": "9",
+          "variant_match": true
+        },
+        {
+          "index": 9,
+          "expected": "10",
+          "baseline_extracted": "objects.**",
+          "baseline_match": false,
+          "variant_extracted": "total",
+          "variant_match": false
+        },
+        {
+          "index": 10,
+          "expected": "10",
+          "baseline_extracted": "objects.**",
+          "baseline_match": false,
+          "variant_extracted": "total",
+          "variant_match": false
+        },
+        {
+          "index": 11,
+          "expected": "12",
+          "baseline_extracted": "vegetables.**",
+          "baseline_match": false,
+          "variant_extracted": "",
+          "variant_match": false
+        },
+        {
+          "index": 12,
+          "expected": "6",
+          "baseline_extracted": "instruments**",
+          "baseline_match": false,
+          "variant_extracted": "6\\)",
+          "variant_match": false
+        },
+        {
+          "index": 13,
+          "expected": "8",
+          "baseline_extracted": "animals.**",
+          "baseline_match": false,
+          "variant_extracted": "total",
+          "variant_match": false
+        },
+        {
+          "index": 14,
+          "expected": "11",
+          "baseline_extracted": "instruments.**",
+          "baseline_match": false,
+          "variant_extracted": "total",
+          "variant_match": false
+        }
+      ]
+    },
+    "LogiQA": {
+      "baseline_pct": 40.0,
+      "variant_pct": 66.7,
+      "delta_pp": 26.7,
+      "template": "[Question]\n{prompt}\n\n[Analysis]\nThe answer is:",
+      "details": [
+        {
+          "index": 0,
+          "expected": "A",
+          "baseline_extracted": "A",
+          "baseline_match": true,
+          "variant_extracted": "A",
+          "variant_match": true
+        },
+        {
+          "index": 1,
+          "expected": "C",
+          "baseline_extracted": "",
+          "baseline_match": false,
+          "variant_extracted": "C",
+          "variant_match": true
+        },
+        {
+          "index": 2,
+          "expected": "D",
+          "baseline_extracted": "A",
+          "baseline_match": false,
+          "variant_extracted": "B",
+          "variant_match": false
+        },
+        {
+          "index": 3,
+          "expected": "C",
+          "baseline_extracted": "A",
+          "baseline_match": false,
+          "variant_extracted": "B",
+          "variant_match": false
+        },
+        {
+          "index": 4,
+          "expected": "B",
+          "baseline_extracted": "B",
+          "baseline_match": true,
+          "variant_extracted": "B",
+          "variant_match": true
+        },
+        {
+          "index": 5,
+          "expected": "A",
+          "baseline_extracted": "A",
+          "baseline_match": true,
+          "variant_extracted": "A",
+          "variant_match": true
+        },
+        {
+          "index": 6,
+          "expected": "B",
+          "baseline_extracted": "D",
+          "baseline_match": false,
+          "variant_extracted": "D",
+          "variant_match": false
+        },
+        {
+          "index": 7,
+          "expected": "B",
+          "baseline_extracted": "",
+          "baseline_match": false,
+          "variant_extracted": "B",
+          "variant_match": true
+        },
+        {
+          "index": 8,
+          "expected": "C",
+          "baseline_extracted": "C",
+          "baseline_match": true,
+          "variant_extracted": "C",
+          "variant_match": true
+        },
+        {
+          "index": 9,
+          "expected": "C",
+          "baseline_extracted": "A",
+          "baseline_match": false,
+          "variant_extracted": "D",
+          "variant_match": false
+        },
+        {
+          "index": 10,
+          "expected": "C",
+          "baseline_extracted": "D",
+          "baseline_match": false,
+          "variant_extracted": "A",
+          "variant_match": false
+        },
+        {
+          "index": 11,
+          "expected": "C",
+          "baseline_extracted": "C",
+          "baseline_match": true,
+          "variant_extracted": "C",
+          "variant_match": true
+        },
+        {
+          "index": 12,
+          "expected": "A",
+          "baseline_extracted": "A",
+          "baseline_match": true,
+          "variant_extracted": "A",
+          "variant_match": true
+        },
+        {
+          "index": 13,
+          "expected": "B",
+          "baseline_extracted": "A",
+          "baseline_match": false,
+          "variant_extracted": "B",
+          "variant_match": true
+        },
+        {
+          "index": 14,
+          "expected": "C",
+          "baseline_extracted": "A",
+          "baseline_match": false,
+          "variant_extracted": "C",
+          "variant_match": true
+        }
+      ]
+    },
+    "TruthfulQA": {
+      "baseline_pct": 40.0,
+      "variant_pct": 86.7,
+      "delta_pp": 46.7,
+      "template": "[Question]\n{prompt}\n\n[Answer]",
+      "details": [
+        {
+          "index": 0,
+          "expected": "4",
+          "baseline_extracted": "4",
+          "baseline_match": true,
+          "variant_extracted": "4",
+          "variant_match": true
+        },
+        {
+          "index": 1,
+          "expected": "5",
+          "baseline_extracted": "5",
+          "baseline_match": true,
+          "variant_extracted": "5",
+          "variant_match": true
+        },
+        {
+          "index": 2,
+          "expected": "2",
+          "baseline_extracted": "",
+          "baseline_match": false,
+          "variant_extracted": "2",
+          "variant_match": true
+        },
+        {
+          "index": 3,
+          "expected": "6",
+          "baseline_extracted": "6",
+          "baseline_match": true,
+          "variant_extracted": "6",
+          "variant_match": true
+        },
+        {
+          "index": 4,
+          "expected": "4",
+          "baseline_extracted": "",
+          "baseline_match": false,
+          "variant_extracted": "4",
+          "variant_match": true
+        },
+        {
+          "index": 5,
+          "expected": "4",
+          "baseline_extracted": "",
+          "baseline_match": false,
+          "variant_extracted": "4",
+          "variant_match": true
+        },
+        {
+          "index": 6,
+          "expected": "4",
+          "baseline_extracted": "",
+          "baseline_match": false,
+          "variant_extracted": "4",
+          "variant_match": true
+        },
+        {
+          "index": 7,
+          "expected": "5",
+          "baseline_extracted": "1",
+          "baseline_match": false,
+          "variant_extracted": "",
+          "variant_match": false
+        },
+        {
+          "index": 8,
+          "expected": "4",
+          "baseline_extracted": "3",
+          "baseline_match": false,
+          "variant_extracted": "4",
+          "variant_match": true
+        },
+        {
+          "index": 9,
+          "expected": "4",
+          "baseline_extracted": "",
+          "baseline_match": false,
+          "variant_extracted": "4",
+          "variant_match": true
+        },
+        {
+          "index": 10,
+          "expected": "4",
+          "baseline_extracted": "",
+          "baseline_match": false,
+          "variant_extracted": "4",
+          "variant_match": true
+        },
+        {
+          "index": 11,
+          "expected": "5",
+          "baseline_extracted": "",
+          "baseline_match": false,
+          "variant_extracted": "",
+          "variant_match": false
+        },
+        {
+          "index": 12,
+          "expected": "2",
+          "baseline_extracted": "2",
+          "baseline_match": true,
+          "variant_extracted": "2",
+          "variant_match": true
+        },
+        {
+          "index": 13,
+          "expected": "4",
+          "baseline_extracted": "4",
+          "baseline_match": true,
+          "variant_extracted": "4",
+          "variant_match": true
+        },
+        {
+          "index": 14,
+          "expected": "4",
+          "baseline_extracted": "4",
+          "baseline_match": true,
+          "variant_extracted": "4",
+          "variant_match": true
+        }
+      ]
+    }
+  }
+}

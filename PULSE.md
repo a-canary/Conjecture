@@ -25,3 +25,8 @@ Edit via `/director:pulse` skill.
 - interval: 180
 - type: subagent
 - description: Review progress against PLAN.md, post status update
+
+### screen-check
+- interval: 10
+- type: inline
+- description: Check on running processes, detect stalls, manage server costs

@@ -1,0 +1,69 @@
+{
+  "variant": "v9_verify",
+  "model": "openai/gpt-oss-20b",
+  "provider": "chutes.ai",
+  "samples_per_benchmark": 15,
+  "timestamp": "2026-03-02T18:33:04.235921",
+  "templates": {
+    "math": "{prompt}\n\nSolve and verify your answer is correct.",
+    "logic": "{prompt}\n\nCheck your reasoning before answering.",
+    "counting": "{prompt}\n\nDouble-check your count.",
+    "truth": "{prompt}\n\nVerify against facts before answering."
+  },
+  "results": [
+    {
+      "benchmark": "GSM8K",
+      "samples": 15,
+      "baseline_correct": 9,
+      "variant_correct": 12,
+      "baseline_pct": 60.0,
+      "variant_pct": 80.0,
+      "delta_pp": 20.0
+    },
+    {
+      "benchmark": "BBH-Logic",
+      "samples": 15,
+      "baseline_correct": 12,
+      "variant_correct": 14,
+      "baseline_pct": 80.0,
+      "variant_pct": 93.3,
+      "delta_pp": 13.3
+    },
+    {
+      "benchmark": "BBH-ObjectCounting",
+      "samples": 15,
+      "baseline_correct": 3,
+      "variant_correct": 10,
+      "baseline_pct": 20.0,
+      "variant_pct": 66.7,
+      "delta_pp": 46.7
+    },
+    {
+      "benchmark": "LogiQA",
+      "samples": 15,
+      "baseline_correct": 0,
+      "variant_correct": 0,
+      "baseline_pct": 0.0,
+      "variant_pct": 0.0,
+      "delta_pp": 0.0
+    },
+    {
+      "benchmark": "TruthfulQA",
+      "samples": 15,
+      "baseline_correct": 0,
+      "variant_correct": 0,
+      "baseline_pct": 0.0,
+      "variant_pct": 0.0,
+      "delta_pp": 0.0
+    }
+  ],
+  "summary": {
+    "avg_baseline_pct": 32.0,
+    "avg_variant_pct": 48.0,
+    "avg_delta_pp": 16.0,
+    "improvements": 3,
+    "regressions": 0,
+    "no_change": 2
+  },
+  "status": "complete"
+}

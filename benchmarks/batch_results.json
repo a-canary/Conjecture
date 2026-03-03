@@ -1,0 +1,529 @@
+{
+  "timestamp": "2026-03-02T01:35:34.038671",
+  "samples_per_benchmark": 5,
+  "results": [
+    {
+      "variant": "v0_passthrough",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v0_passthrough",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 0.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v0_passthrough",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 100.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v0_passthrough",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 40.0,
+      "enhanced": 60.0,
+      "delta": 20.0
+    },
+    {
+      "variant": "v1_minimal",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v1_minimal",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 20.0,
+      "delta": 20.0
+    },
+    {
+      "variant": "v1_minimal",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 100.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v1_minimal",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 40.0,
+      "enhanced": 40.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v2_standard",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v2_standard",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 0.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v2_standard",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 80.0,
+      "enhanced": 40.0,
+      "delta": -40.0
+    },
+    {
+      "variant": "v2_standard",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 40.0,
+      "enhanced": 20.0,
+      "delta": -20.0
+    },
+    {
+      "variant": "v3_direct",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v3_direct",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 0.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v3_direct",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 100.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v3_direct",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 60.0,
+      "enhanced": 60.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v4_confidence",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v4_confidence",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 100.0,
+      "delta": 100.0
+    },
+    {
+      "variant": "v4_confidence",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 100.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v4_confidence",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 60.0,
+      "enhanced": 80.0,
+      "delta": 20.0
+    },
+    {
+      "variant": "v5_short_cot",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v5_short_cot",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 20.0,
+      "delta": 20.0
+    },
+    {
+      "variant": "v5_short_cot",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 100.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v5_short_cot",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 40.0,
+      "delta": -60.0
+    },
+    {
+      "variant": "v6_structured",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v6_structured",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 80.0,
+      "delta": 80.0
+    },
+    {
+      "variant": "v6_structured",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 40.0,
+      "delta": -60.0
+    },
+    {
+      "variant": "v6_structured",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 40.0,
+      "enhanced": 100.0,
+      "delta": 60.0
+    },
+    {
+      "variant": "v7_answer_only",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v7_answer_only",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 100.0,
+      "delta": 100.0
+    },
+    {
+      "variant": "v7_answer_only",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 0.0,
+      "delta": -100.0
+    },
+    {
+      "variant": "v7_answer_only",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 60.0,
+      "enhanced": 100.0,
+      "delta": 40.0
+    },
+    {
+      "variant": "v8_preamble",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v8_preamble",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 0.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v8_preamble",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 100.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v8_preamble",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 60.0,
+      "enhanced": 60.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v9_verify",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v9_verify",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 0.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v9_verify",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 80.0,
+      "delta": -20.0
+    },
+    {
+      "variant": "v9_verify",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 40.0,
+      "enhanced": 20.0,
+      "delta": -20.0
+    },
+    {
+      "variant": "v10_example_cue",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v10_example_cue",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 20.0,
+      "delta": 20.0
+    },
+    {
+      "variant": "v10_example_cue",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 100.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v10_example_cue",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 60.0,
+      "enhanced": 60.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v11_decompose",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v11_decompose",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 20.0,
+      "delta": 20.0
+    },
+    {
+      "variant": "v11_decompose",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 60.0,
+      "delta": -40.0
+    },
+    {
+      "variant": "v11_decompose",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 60.0,
+      "enhanced": 80.0,
+      "delta": 20.0
+    },
+    {
+      "variant": "v12_expert",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v12_expert",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 0.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v12_expert",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 100.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v12_expert",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 60.0,
+      "enhanced": 80.0,
+      "delta": 20.0
+    },
+    {
+      "variant": "v13_reframe",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v13_reframe",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 20.0,
+      "delta": 20.0
+    },
+    {
+      "variant": "v13_reframe",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 100.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v13_reframe",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 40.0,
+      "enhanced": 40.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v14_hybrid",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v14_hybrid",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 0.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v14_hybrid",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 100.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v14_hybrid",
+      "benchmark": "TruthfulQA",
+      "samples": 5,
+      "baseline": 40.0,
+      "enhanced": 40.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v15_adaptive",
+      "benchmark": "GSM8K",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    },
+    {
+      "variant": "v15_adaptive",
+      "benchmark": "BBH-ObjectCount",
+      "samples": 5,
+      "baseline": 0.0,
+      "enhanced": 20.0,
+      "delta": 20.0
+    },
+    {
+      "variant": "v15_adaptive",
+      "benchmark": "BBH-Logic",
+      "samples": 5,
+      "baseline": 100.0,
+      "enhanced": 100.0,
+      "delta": 0.0
+    },
+    {
+      "variant": "v15_adaptive",
+      "benchmark": "TruthfulQA",
+      "samples": 0,
+      "baseline": 0,
+      "enhanced": 0,
+      "delta": 0
+    }
+  ],
+  "top_3_variants": [
+    "v4_confidence",
+    "v6_structured",
+    "v0_passthrough"
+  ],
+  "synthesized_prompts": {
+    "math": "Solve this math problem.\n{prompt}\n\nWork through it step by step if needed.\nFinal answer (number): ",
+    "logic": "Consider this logic problem.\n{prompt}\n\nThink through the options briefly.\nAnswer: ",
+    "counting": "Count the items.\n{prompt}\n\nList items, then give total.\nCount: ",
+    "truth": "Select the most accurate answer.\n{prompt}\n\nSelection: "
+  }
+}
