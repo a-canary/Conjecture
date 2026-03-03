@@ -2,11 +2,12 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-**Phases 18-20 COMPLETE.** A-0009 decomposition, A-0010 tool-based reasoning, A-0012 halt/explore loop all implemented and tested. Live test: 3 create_claim tool calls via Qwen3-32B. 4 claim tools: create_claim, update_confidence, respond_to_user, explore_further. ReasoningLoop class available. Next: UX work (claim visualization) or O-0008 benchmark validation.
+**Core reasoning complete + incremental improvements.** Phases 18-20 done (A-0009/A-0010/A-0012). UX-0005: CLI get shows provenance (supers/subs). O-0005: Circuit breaker with 5-failure threshold. 730 tests pass. Next: O-0008 benchmark validation or more UX work.
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-03-03: WORK_DISPATCHED — UX-0005 (CLI provenance), O-0005 (circuit breaker). Core reasoning complete. 730 tests pass.
 - 2026-03-03: GATES_MET — Phase 20 COMPLETE: A-0012 halt/explore. ReasoningLoop class, explore_further tool added. Max iterations safeguard. All core reasoning architecture done.
 - 2026-03-03: GATES_MET — Phase 19 COMPLETE: A-0010 tool-based reasoning. Live test: 3 create_claim calls executed. Tool-capable model (Qwen3-32B) auto-selected. All gates passed.
 - 2026-03-03: WORK_DISPATCHED — Phase 19: A-0010 tool infrastructure. Steps 19.1-19.3 done. D-0008 fixed (RelationshipType enum + fields). Config tests fixed (0.5 threshold). 688 pass.
