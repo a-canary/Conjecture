@@ -197,12 +197,9 @@ class TestAssertNoCycle:
 # Tests for ClaimRepository.add_relationship()
 # ---------------------------------------------------------------------------
 
+@pytest.mark.asyncio
 class TestClaimRepositoryAddRelationship:
     """Integration tests for DAG enforcement at the repository level."""
-
-    def _run(self, coro):
-        """Run a coroutine synchronously (avoids asyncio fixture boilerplate)."""
-        return asyncio.get_event_loop().run_until_complete(coro)
 
     async def _make_repo_with_claims(self, *claim_ids: str) -> ClaimRepository:
         """Create a fresh repository populated with claims for each given ID."""
@@ -212,115 +209,85 @@ class TestClaimRepositoryAddRelationship:
             await repo.create(make_claim(cid))
         return repo
 
-    def test_valid_relationship_accepted(self):
+    async def test_valid_relationship_accepted(self):
         """A simple A -> B relationship in a fresh graph is accepted."""
-        async def _test():
-            repo = await self._make_repo_with_claims("A", "B")
-            await repo.add_relationship("A", "B")
-            a = await repo.get_by_id("A")
-            b = await repo.get_by_id("B")
-            assert "B" in a.supers
-            assert "A" in b.subs
+        repo = await self._make_repo_with_claims("A", "B")
+        await repo.add_relationship("A", "B")
+        a = await repo.get_by_id("A")
+        b = await repo.get_by_id("B")
+        assert "B" in a.supers
+        assert "A" in b.subs
 
-        self._run(_test())
-
-    def test_gate_a_to_b_then_b_to_a_raises(self):
+    async def test_gate_a_to_b_then_b_to_a_raises(self):
         """The gate test: adding A->B then B->A raises CycleDetectedError."""
-        async def _test():
-            repo = await self._make_repo_with_claims("A", "B")
-            # First relationship is fine.
-            await repo.add_relationship("A", "B")
-            # Second would create a cycle.
-            with pytest.raises(CycleDetectedError):
-                await repo.add_relationship("B", "A")
+        repo = await self._make_repo_with_claims("A", "B")
+        # First relationship is fine.
+        await repo.add_relationship("A", "B")
+        # Second would create a cycle.
+        with pytest.raises(CycleDetectedError):
+            await repo.add_relationship("B", "A")
 
-        self._run(_test())
-
-    def test_three_node_cycle_caught(self):
+    async def test_three_node_cycle_caught(self):
         """A->B, B->C, then C->A raises CycleDetectedError."""
-        async def _test():
-            repo = await self._make_repo_with_claims("A", "B", "C")
-            await repo.add_relationship("A", "B")
-            await repo.add_relationship("B", "C")
-            with pytest.raises(CycleDetectedError):
-                await repo.add_relationship("C", "A")
+        repo = await self._make_repo_with_claims("A", "B", "C")
+        await repo.add_relationship("A", "B")
+        await repo.add_relationship("B", "C")
+        with pytest.raises(CycleDetectedError):
+            await repo.add_relationship("C", "A")
 
-        self._run(_test())
-
-    def test_self_loop_raises(self):
+    async def test_self_loop_raises(self):
         """A -> A raises CycleDetectedError."""
-        async def _test():
-            repo = await self._make_repo_with_claims("A")
-            with pytest.raises(CycleDetectedError):
-                await repo.add_relationship("A", "A")
+        repo = await self._make_repo_with_claims("A")
+        with pytest.raises(CycleDetectedError):
+            await repo.add_relationship("A", "A")
 
-        self._run(_test())
-
-    def test_missing_supporter_raises_value_error(self):
+    async def test_missing_supporter_raises_value_error(self):
         """Attempting to add a relationship with an unknown supporter raises ValueError."""
-        async def _test():
-            repo = await self._make_repo_with_claims("B")
-            with pytest.raises(ValueError):
-                await repo.add_relationship("MISSING", "B")
+        repo = await self._make_repo_with_claims("B")
+        with pytest.raises(ValueError):
+            await repo.add_relationship("MISSING", "B")
 
-        self._run(_test())
-
-    def test_missing_supported_raises_value_error(self):
+    async def test_missing_supported_raises_value_error(self):
         """Attempting to add a relationship with an unknown supported claim raises ValueError."""
-        async def _test():
-            repo = await self._make_repo_with_claims("A")
-            with pytest.raises(ValueError):
-                await repo.add_relationship("A", "MISSING")
+        repo = await self._make_repo_with_claims("A")
+        with pytest.raises(ValueError):
+            await repo.add_relationship("A", "MISSING")
 
-        self._run(_test())
-
-    def test_duplicate_relationship_is_idempotent(self):
+    async def test_duplicate_relationship_is_idempotent(self):
         """Adding the same relationship twice does not raise and does not duplicate entries."""
-        async def _test():
-            repo = await self._make_repo_with_claims("A", "B")
-            await repo.add_relationship("A", "B")
-            await repo.add_relationship("A", "B")  # Should not raise.
-            a = await repo.get_by_id("A")
-            assert a.supers.count("B") == 1  # No duplicate.
+        repo = await self._make_repo_with_claims("A", "B")
+        await repo.add_relationship("A", "B")
+        await repo.add_relationship("A", "B")  # Should not raise.
+        a = await repo.get_by_id("A")
+        assert a.supers.count("B") == 1  # No duplicate.
 
-        self._run(_test())
-
-    def test_valid_dag_chain_accepted(self):
+    async def test_valid_dag_chain_accepted(self):
         """A -> B -> C is a valid chain and all relationships are accepted."""
-        async def _test():
-            repo = await self._make_repo_with_claims("A", "B", "C")
-            await repo.add_relationship("A", "B")
-            await repo.add_relationship("B", "C")
-            a = await repo.get_by_id("A")
-            b = await repo.get_by_id("B")
-            c = await repo.get_by_id("C")
-            assert "B" in a.supers
-            assert "A" in b.subs
-            assert "C" in b.supers
-            assert "B" in c.subs
+        repo = await self._make_repo_with_claims("A", "B", "C")
+        await repo.add_relationship("A", "B")
+        await repo.add_relationship("B", "C")
+        a = await repo.get_by_id("A")
+        b = await repo.get_by_id("B")
+        c = await repo.get_by_id("C")
+        assert "B" in a.supers
+        assert "A" in b.subs
+        assert "C" in b.supers
+        assert "B" in c.subs
 
-        self._run(_test())
-
-    def test_diamond_dag_accepted(self):
+    async def test_diamond_dag_accepted(self):
         """A->B, A->C, B->D, C->D is a valid diamond DAG."""
-        async def _test():
-            repo = await self._make_repo_with_claims("A", "B", "C", "D")
-            await repo.add_relationship("A", "B")
-            await repo.add_relationship("A", "C")
-            await repo.add_relationship("B", "D")
-            await repo.add_relationship("C", "D")
-            d = await repo.get_by_id("D")
-            assert "B" in d.subs
-            assert "C" in d.subs
+        repo = await self._make_repo_with_claims("A", "B", "C", "D")
+        await repo.add_relationship("A", "B")
+        await repo.add_relationship("A", "C")
+        await repo.add_relationship("B", "D")
+        await repo.add_relationship("C", "D")
+        d = await repo.get_by_id("D")
+        assert "B" in d.subs
+        assert "C" in d.subs
 
-        self._run(_test())
-
-    def test_cycle_error_is_also_value_error(self):
+    async def test_cycle_error_is_also_value_error(self):
         """CycleDetectedError can be caught as ValueError for broad compatibility."""
-        async def _test():
-            repo = await self._make_repo_with_claims("A", "B")
-            await repo.add_relationship("A", "B")
-            with pytest.raises(ValueError):
-                await repo.add_relationship("B", "A")
-
-        self._run(_test())
+        repo = await self._make_repo_with_claims("A", "B")
+        await repo.add_relationship("A", "B")
+        with pytest.raises(ValueError):
+            await repo.add_relationship("B", "A")

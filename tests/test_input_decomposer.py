@@ -309,109 +309,87 @@ class TestDecomposeInput:
 # create_root_context — async tests (D-0009)
 # ---------------------------------------------------------------------------
 
+@pytest.mark.asyncio
 class TestCreateRootContextBasic:
     """test_create_root_context_basic: verify root claim structure."""
 
-    def test_returns_tuple_of_claim_and_list(self):
-        root, subs = asyncio.get_event_loop().run_until_complete(
-            create_root_context("Hello")
-        )
+    async def test_returns_tuple_of_claim_and_list(self):
+        root, subs = await create_root_context("Hello")
         assert isinstance(root, Claim)
         assert isinstance(subs, list)
 
-    def test_root_claim_type_is_observation(self):
-        root, _ = asyncio.get_event_loop().run_until_complete(
-            create_root_context("Hello world, this is a test.")
-        )
+    async def test_root_claim_type_is_observation(self):
+        root, _ = await create_root_context("Hello world, this is a test.")
         assert ClaimType.OBSERVATION in root.type
 
-    def test_root_claim_state_is_explore(self):
-        root, _ = asyncio.get_event_loop().run_until_complete(
-            create_root_context("Hello world, this is a test.")
-        )
+    async def test_root_claim_state_is_explore(self):
+        root, _ = await create_root_context("Hello world, this is a test.")
         assert root.state == ClaimState.EXPLORE
 
-    def test_root_claim_scope_is_user_workspace(self):
-        root, _ = asyncio.get_event_loop().run_until_complete(
-            create_root_context("Hello world, this is a test.")
-        )
+    async def test_root_claim_scope_is_user_workspace(self):
+        root, _ = await create_root_context("Hello world, this is a test.")
         assert root.scope == ClaimScope.USER_WORKSPACE
 
-    def test_root_claim_tags_include_root_context_and_conversation(self):
-        root, _ = asyncio.get_event_loop().run_until_complete(
-            create_root_context("Hello world, this is a test.")
-        )
+    async def test_root_claim_tags_include_root_context_and_conversation(self):
+        root, _ = await create_root_context("Hello world, this is a test.")
         assert "root_context" in root.tags
         assert "conversation" in root.tags
 
-    def test_root_claim_confidence_is_1(self):
-        root, _ = asyncio.get_event_loop().run_until_complete(
-            create_root_context("Hello world, this is a test.")
-        )
+    async def test_root_claim_confidence_is_1(self):
+        root, _ = await create_root_context("Hello world, this is a test.")
         assert root.confidence == 1.0
 
-    def test_root_claim_content_contains_conversation(self):
+    async def test_root_claim_content_contains_conversation(self):
         conversation = "User: What is the capital of France?"
-        root, _ = asyncio.get_event_loop().run_until_complete(
-            create_root_context(conversation)
-        )
+        root, _ = await create_root_context(conversation)
         assert "France" in root.content
 
-    def test_long_conversation_truncated(self):
+    async def test_long_conversation_truncated(self):
         long_text = "x" * 2000
-        root, _ = asyncio.get_event_loop().run_until_complete(
-            create_root_context(long_text)
-        )
+        root, _ = await create_root_context(long_text)
         # Claim model max_length=1000; content must fit
         assert len(root.content) <= 1000
 
-    def test_short_conversation_padded(self):
-        root, _ = asyncio.get_event_loop().run_until_complete(
-            create_root_context("Hi")
-        )
+    async def test_short_conversation_padded(self):
+        root, _ = await create_root_context("Hi")
         # Content must meet model min_length=5
         assert len(root.content) >= 5
 
-    def test_root_claim_has_valid_id(self):
-        root, _ = asyncio.get_event_loop().run_until_complete(
-            create_root_context("Hello world, this is a test.")
-        )
+    async def test_root_claim_has_valid_id(self):
+        root, _ = await create_root_context("Hello world, this is a test.")
         assert root.id.startswith("c")
         assert len(root.id) > 1
 
 
+@pytest.mark.asyncio
 class TestRootContextLinksSubs:
     """test_root_context_links_subs: verify sub-claims contain root_claim.id in supers."""
 
-    def test_subs_contain_root_id_in_supers(self):
+    async def test_subs_contain_root_id_in_supers(self):
         """Gate: sub_claims[0].supers contains root_claim.id."""
         client = make_llm_client({
             "parts": [
                 {"type": "question", "content": "What is 2+2?", "confidence": 0.9},
             ]
         })
-        root, subs = asyncio.get_event_loop().run_until_complete(
-            create_root_context("What is 2+2?", llm_client=client)
-        )
+        root, subs = await create_root_context("What is 2+2?", llm_client=client)
         assert len(subs) >= 1
         assert root.id in subs[0].supers
 
-    def test_all_subs_linked_to_root(self):
+    async def test_all_subs_linked_to_root(self):
         client = make_llm_client({
             "parts": [
                 {"type": "question",  "content": "What is 2+2?",    "confidence": 0.9},
                 {"type": "assertion", "content": "I think it is 4.", "confidence": 0.8},
             ]
         })
-        root, subs = asyncio.get_event_loop().run_until_complete(
-            create_root_context("What is 2+2? I think it is 4.", llm_client=client)
-        )
+        root, subs = await create_root_context("What is 2+2? I think it is 4.", llm_client=client)
         for sub in subs:
             assert root.id in sub.supers, (
                 f"Expected root id {root.id} in sub.supers, got {sub.supers}"
             )
 
-    def test_no_duplicate_root_id_in_supers(self):
+    async def test_no_duplicate_root_id_in_supers(self):
         """Calling create_root_context twice on the same pre-decomposed claims should
         not duplicate the root id in supers when the second call uses a different root."""
         client = make_llm_client({
@@ -419,23 +397,20 @@ class TestRootContextLinksSubs:
                 {"type": "observation", "content": "The sky is blue today.", "confidence": 0.8},
             ]
         })
-        root, subs = asyncio.get_event_loop().run_until_complete(
-            create_root_context("The sky is blue today.", llm_client=client)
-        )
+        root, subs = await create_root_context("The sky is blue today.", llm_client=client)
         # root_claim.id should appear exactly once in each sub's supers
         for sub in subs:
             assert sub.supers.count(root.id) == 1
 
-    def test_fallback_sub_is_linked_when_no_llm(self):
+    async def test_fallback_sub_is_linked_when_no_llm(self):
         """Without an LLM client, decompose_input returns a fallback claim that
         should still be linked to the root."""
-        root, subs = asyncio.get_event_loop().run_until_complete(
-            create_root_context("Hello world, this is a test.")
-        )
+        root, subs = await create_root_context("Hello world, this is a test.")
         assert len(subs) >= 1
         assert root.id in subs[0].supers
 
 
+@pytest.mark.asyncio
 class TestRootContextWithPredecomposed:
     """test_root_context_with_predecomposed: pre-decomposed claims path."""
 
@@ -449,64 +424,54 @@ class TestRootContextWithPredecomposed:
             tags=["decomposed"],
         )
 
-    def test_predecomposed_claims_are_returned_unchanged_content(self):
+    async def test_predecomposed_claims_are_returned_unchanged_content(self):
         claim = self._make_observation_claim("Some pre-decomposed observation text.")
-        root, subs = asyncio.get_event_loop().run_until_complete(
-            create_root_context(
-                "Some conversation text here.",
-                decomposed_claims=[claim],
-            )
+        root, subs = await create_root_context(
+            "Some conversation text here.",
+            decomposed_claims=[claim],
         )
         assert len(subs) == 1
         assert subs[0].content == claim.content
 
-    def test_predecomposed_claims_are_linked_to_root(self):
+    async def test_predecomposed_claims_are_linked_to_root(self):
         claim = self._make_observation_claim("Some pre-decomposed observation text.")
-        root, subs = asyncio.get_event_loop().run_until_complete(
-            create_root_context(
-                "Some conversation text here.",
-                decomposed_claims=[claim],
-            )
+        root, subs = await create_root_context(
+            "Some conversation text here.",
+            decomposed_claims=[claim],
         )
         assert root.id in subs[0].supers
 
-    def test_predecomposed_skips_llm_call(self):
+    async def test_predecomposed_skips_llm_call(self):
         """When decomposed_claims is provided, the LLM client should not be called."""
         client = MagicMock()
         client.generate = AsyncMock(side_effect=AssertionError("LLM should not be called"))
         claim = self._make_observation_claim("Some pre-decomposed observation text.")
         # Should not raise even though the mock raises on call
-        root, subs = asyncio.get_event_loop().run_until_complete(
-            create_root_context(
-                "Some conversation text here.",
-                decomposed_claims=[claim],
-                llm_client=client,
-            )
+        root, subs = await create_root_context(
+            "Some conversation text here.",
+            decomposed_claims=[claim],
+            llm_client=client,
         )
         assert len(subs) == 1
 
-    def test_multiple_predecomposed_all_linked(self):
+    async def test_multiple_predecomposed_all_linked(self):
         claims = [
             self._make_observation_claim("First observation that was pre-decomposed."),
             self._make_observation_claim("Second observation that was pre-decomposed."),
             self._make_observation_claim("Third observation that was pre-decomposed."),
         ]
-        root, subs = asyncio.get_event_loop().run_until_complete(
-            create_root_context(
-                "A longer conversation with multiple parts included here.",
-                decomposed_claims=claims,
-            )
+        root, subs = await create_root_context(
+            "A longer conversation with multiple parts included here.",
+            decomposed_claims=claims,
         )
         assert len(subs) == 3
         for sub in subs:
             assert root.id in sub.supers
 
-    def test_gate_supers_contains_root_id(self):
+    async def test_gate_supers_contains_root_id(self):
         """Gate: create_root_context('Hello') returns (root, subs)
         where subs[0].supers contains root.id."""
-        root, subs = asyncio.get_event_loop().run_until_complete(
-            create_root_context("Hello")
-        )
+        root, subs = await create_root_context("Hello")
         assert isinstance(root, Claim)
         assert len(subs) >= 1
         assert root.id in subs[0].supers, (

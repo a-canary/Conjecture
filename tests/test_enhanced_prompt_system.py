@@ -289,9 +289,12 @@ class TestEnhancedPromptSystem:
         @pytest.mark.asyncio
         async def test_enhancement_disable_enable(self, prompt_system):
             """Test enabling/disabling enhancements"""
-            # All enhancements should be enabled by default
+            # All enhancements should be enabled by default (except simple_mode which should be False)
             status = prompt_system.get_enhancement_status()
-            assert all(status.values()), "Not all enhancements enabled by default"
+            # simple_mode=False means full enhancement is ON (correct default)
+            enhancement_flags = {k: v for k, v in status.items() if k != "simple_mode"}
+            assert all(enhancement_flags.values()), "Not all enhancements enabled by default"
+            assert status.get("simple_mode") is False, "simple_mode should be False by default"
 
             # Disable an enhancement
             prompt_system.enable_enhancement("mathematical_reasoning", False)
