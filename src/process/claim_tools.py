@@ -241,7 +241,8 @@ class ClaimToolExecutor:
         """Route a tool call to the appropriate handler.
 
         Args:
-            tool_name: One of 'create_claim', 'update_confidence', 'respond_to_user'.
+            tool_name: One of 'create_claim', 'update_confidence',
+                'respond_to_user', 'explore_further'.
             args: Tool arguments matching the schema defined in CLAIM_TOOLS.
 
         Returns:
