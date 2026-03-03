@@ -325,15 +325,34 @@ def get(
                     metadata = claim.metadata if hasattr(claim, 'metadata') else {}
                     tags = claim.tags if hasattr(claim, 'tags') else []
                     state = claim.state.value if hasattr(claim, 'state') else "unknown"
+                    types = [t.value for t in claim.type] if hasattr(claim, 'type') else ["unknown"]
                     
+                    # Get supers/subs for provenance chain (UX-0005)
+                    supers = claim.supers if hasattr(claim, 'supers') else []
+                    subs = claim.subs if hasattr(claim, 'subs') else []
+                    dirty = claim.is_dirty if hasattr(claim, 'is_dirty') else False
+
+                    # Build provenance info
+                    provenance_lines = []
+                    if supers:
+                        provenance_lines.append(f"[bold]Supports:[/bold] {', '.join(supers)}")
+                    if subs:
+                        provenance_lines.append(f"[bold]Supported by:[/bold] {', '.join(subs)}")
+                    if dirty:
+                        provenance_lines.append("[yellow]⚠ Marked for re-evaluation[/yellow]")
+
+                    provenance_str = "\n".join(provenance_lines) if provenance_lines else "[dim]No provenance links[/dim]"
+
                     panel = Panel(
                         f"[bold]ID:[/bold] {claim.id}\n"
                         f"[bold]Content:[/bold] {claim.content}\n"
+                        f"[bold]Type:[/bold] {', '.join(types)}\n"
                         f"[bold]Confidence:[/bold] {claim.confidence:.2f}\n"
                         f"[bold]State:[/bold] {state}\n"
                         f"[bold]User:[/bold] {user}\n"
                         f"[bold]Created:[/bold] {created}\n"
-                        f"[bold]Tags:[/bold] {tags}\n",
+                        f"[bold]Tags:[/bold] {tags}\n"
+                        f"\n[bold cyan]Provenance Chain[/bold cyan]\n{provenance_str}",
                         title=f"Claim Details: {claim_id}",
                         border_style="blue",
                     )
