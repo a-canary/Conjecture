@@ -1,0 +1,27 @@
+{
+  "benchmark": "BBH",
+  "task": "logical_deduction_three_objects",
+  "model": "deepseek/deepseek-chat-v3-0324",
+  "n_problems": 100,
+  "timestamp": "2026-03-06T20:08:14.794189+00:00",
+  "direct": {
+    "method": "DIRECT",
+    "correct": 84,
+    "total": 100,
+    "accuracy": 84.0,
+    "avg_time": 10.53,
+    "total_tokens": 29088,
+    "extraction_failures": 0
+  },
+  "decomposition": {
+    "method": "DECOMPOSITION",
+    "correct": 93,
+    "total": 100,
+    "accuracy": 93.0,
+    "avg_time": 22.66,
+    "total_tokens": 70983,
+    "extraction_failures": 0
+  },
+  "improvement_pp": 9.0,
+  "conclusion": "VALIDATED: Decomposition improves hard reasoning"
+}
