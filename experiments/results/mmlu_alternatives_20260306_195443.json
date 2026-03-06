@@ -1,0 +1,55 @@
+{
+  "benchmark": "MMLU_alternatives",
+  "model": "deepseek/deepseek-chat-v3-0324",
+  "n_problems": 100,
+  "timestamp": "2026-03-06T19:54:43.405337+00:00",
+  "methods": [
+    {
+      "method": "direct",
+      "correct": 65,
+      "total": 100,
+      "accuracy": 65.0,
+      "avg_time": 2.5,
+      "total_tokens": 11915,
+      "extraction_failures": 6
+    },
+    {
+      "method": "confidence_first",
+      "correct": 44,
+      "total": 100,
+      "accuracy": 44.0,
+      "avg_time": 4.82,
+      "total_tokens": 20105,
+      "extraction_failures": 21
+    },
+    {
+      "method": "minimal_scaffolding",
+      "correct": 38,
+      "total": 100,
+      "accuracy": 38.0,
+      "avg_time": 6.4,
+      "total_tokens": 20818,
+      "extraction_failures": 5
+    },
+    {
+      "method": "answer_first",
+      "correct": 57,
+      "total": 100,
+      "accuracy": 57.0,
+      "avg_time": 9.45,
+      "total_tokens": 30649,
+      "extraction_failures": 7
+    },
+    {
+      "method": "cot_lite",
+      "correct": 67,
+      "total": 100,
+      "accuracy": 67.0,
+      "avg_time": 5.44,
+      "total_tokens": 18718,
+      "extraction_failures": 5
+    }
+  ],
+  "direct_baseline": 65.0,
+  "best_method": "cot_lite"
+}

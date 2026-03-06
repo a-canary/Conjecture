@@ -26,3 +26,8 @@ MMLU,MMLU,deepseek/deepseek-chat-v3-0324,direct,100,62,62.0,2.36,12459,9,2026-03
 MMLU,MMLU,deepseek/deepseek-chat-v3-0324,decomposition,100,45,45.0,17.72,56010,2,2026-03-06T13:28:57.294353+00:00,MMLU test
 TruthfulQA,TruthfulQA,deepseek/deepseek-chat-v3-0324,direct,100,79,79.0,5.3,19533,0,2026-03-06T19:40:26.026214+00:00,TruthfulQA test
 TruthfulQA,TruthfulQA,deepseek/deepseek-chat-v3-0324,decomposition,100,66,66.0,11.27,42435,0,2026-03-06T19:40:26.026214+00:00,TruthfulQA test
+MMLU_alternatives,MMLU_alternatives,deepseek/deepseek-chat-v3-0324,direct,100,65,65.0,2.5,11915,6,2026-03-06T19:54:43.405337+00:00,Alternative method: direct
+MMLU_alternatives,MMLU_alternatives,deepseek/deepseek-chat-v3-0324,confidence_first,100,44,44.0,4.82,20105,21,2026-03-06T19:54:43.405337+00:00,Alternative method: confidence_first
+MMLU_alternatives,MMLU_alternatives,deepseek/deepseek-chat-v3-0324,minimal_scaffolding,100,38,38.0,6.4,20818,5,2026-03-06T19:54:43.405337+00:00,Alternative method: minimal_scaffolding
+MMLU_alternatives,MMLU_alternatives,deepseek/deepseek-chat-v3-0324,answer_first,100,57,57.0,9.45,30649,7,2026-03-06T19:54:43.405337+00:00,Alternative method: answer_first
+MMLU_alternatives,MMLU_alternatives,deepseek/deepseek-chat-v3-0324,cot_lite,100,67,67.0,5.44,18718,5,2026-03-06T19:54:43.405337+00:00,Alternative method: cot_lite
