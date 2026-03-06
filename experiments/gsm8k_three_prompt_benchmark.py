@@ -1,0 +1,606 @@
+#!/usr/bin/env python3
+"""
+GSM8K Three-Prompt Benchmark
+
+Tests three-prompt architecture (confidence-based exploration) vs Direct baseline
+on GSM8K math problems.
+
+Three-Prompt Architecture:
+1. Update claim confidence (evaluate evidence)
+2. Create claim or SKIP (explore or signal completion)
+3. Final response (when confidence > 0.7 and SKIP)
+
+Hypothesis: Self-regulating exploration without task-type routing.
+"""
+
+import asyncio
+import json
+import os
+import re
+import sys
+import time
+from dataclasses import dataclass, asdict
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+from datasets import load_dataset
+from openai import AsyncOpenAI
+
+
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
+
+MODEL = os.environ.get("BENCHMARK_MODEL", "deepseek/deepseek-chat-v3-0324")
+N_PROBLEMS = int(os.environ.get("BENCHMARK_N", "50"))
+OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY")
+
+MAX_ITERATIONS = 4
+CONFIDENCE_THRESHOLD = 0.7
+MAX_CLAIMS = 10
+
+
+# =============================================================================
+# PROMPTS
+# =============================================================================
+
+DIRECT_SYSTEM = """You are a math problem solver.
+Solve the problem step by step, then give your final numerical answer after ####.
+Format: #### [number]"""
+
+
+def build_claim_context(claims: List[Dict]) -> str:
+    """Format claims for prompt context."""
+    lines = []
+    for i, claim in enumerate(claims, 1):
+        conf = claim.get("confidence", 0.5)
+        content = claim.get("content", "")
+        lines.append(f"{i}. [{conf:.2f}] {content}")
+    return "\n".join(lines)
+
+
+PROMPT_1_UPDATE_CONFIDENCE = """QUERY: {query}
+
+CURRENT CLAIMS:
+{claims}
+
+TASK: Update claim confidence scores (0.0 to 1.0)
+
+Review the claims above. For each claim, assess:
+- Does it directly support answering the query?
+- How certain are you about this claim?
+- Does it conflict with other claims?
+
+Output JSON:
+{{
+  "updates": [
+    {{"id": "c001", "confidence": 0.85, "reason": "Directly relevant"}},
+    {{"id": "c003", "confidence": 0.45, "reason": "Partially related"}}
+  ]
+}}
+
+Only include claims that need confidence updates.
+Respond with JSON only:"""
+
+
+PROMPT_2_CREATE_OR_SKIP = """QUERY: {query}
+
+CURRENT CLAIMS:
+{claims}
+
+ITERATION: {iteration}/{max_iterations}
+
+TASK: Create ONE new claim to help answer the query, or say SKIP.
+
+New claims can be:
+- Question to explore
+- Assumption to verify
+- Intermediate calculation
+- Generalization from evidence
+- Next reasoning step
+
+If you have high confidence (>0.7) and no more claims would help:
+{{"action": "SKIP"}}
+
+Otherwise, create ONE claim:
+{{
+  "action": "CREATE",
+  "claim": {{
+    "content": "The specific claim text",
+    "confidence": 0.5,
+    "type": "question|assumption|calculation|generalization|step"
+  }}
+}}
+
+Respond with JSON only:"""
+
+
+PROMPT_3_FINAL_RESPONSE = """QUERY: {query}
+
+RELEVANT CLAIMS:
+{claims}
+
+TASK: Provide final answer to the query
+
+Based on the claims above, generate a complete answer.
+Include:
+- Direct answer to the query
+- Key supporting claims (by number)
+- Your reasoning
+
+End your response with #### followed by just the numerical answer.
+Format: #### [number]"""
+
+
+# =============================================================================
+# DATA LOADING
+# =============================================================================
+
+def load_gsm8k_problems(limit: int) -> List[Dict]:
+    """Load GSM8K test set."""
+    print(f"Loading GSM8K dataset (limit={limit})...")
+    ds = load_dataset("gsm8k", "main", split="test")
+
+    problems = []
+    for i, item in enumerate(ds):
+        if i >= limit:
+            break
+
+        # Extract answer from solution (format: text #### number)
+        solution = item["answer"]
+        match = re.search(r'####\s*(-?[\d,\.]+)', solution)
+        if match:
+            answer = match.group(1).replace(",", "")
+            problems.append({
+                "id": f"gsm8k_{i}",
+                "question": item["question"],
+                "answer": float(answer),
+                "solution": solution
+            })
+
+    print(f"Loaded {len(problems)} problems")
+    return problems
+
+
+# =============================================================================
+# LLM CLIENT
+# =============================================================================
+
+class BenchmarkClient:
+    def __init__(self, model: str):
+        self.model = model
+        self._client = AsyncOpenAI(
+            api_key=OPENROUTER_KEY,
+            base_url="https://openrouter.ai/api/v1"
+        )
+        self.total_tokens = 0
+
+    async def generate(
+        self,
+        prompt: str,
+        system: str = "",
+        max_tokens: int = 500
+    ) -> Tuple[str, int]:
+        try:
+            messages = []
+            if system:
+                messages.append({"role": "system", "content": system})
+            messages.append({"role": "user", "content": prompt})
+
+            response = await self._client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                temperature=0.3,
+                max_tokens=max_tokens
+            )
+            content = response.choices[0].message.content or ""
+            tokens = response.usage.total_tokens if response.usage else 0
+            self.total_tokens += tokens
+            return content, tokens
+        except Exception as e:
+            print(f"  API error: {e}")
+            return "", 0
+
+
+# =============================================================================
+# THREE-PROMPT SYSTEM
+# =============================================================================
+
+class ThreePromptSystem:
+    def __init__(self, client: BenchmarkClient):
+        self.client = client
+        self.claim_counter = 0
+
+    def _parse_json(self, text: str) -> Optional[Dict]:
+        """Extract JSON from response."""
+        # Try to find JSON object in response
+        try:
+            # Try parsing whole response
+            return json.loads(text)
+        except:
+            pass
+
+        # Try finding JSON in code blocks
+        match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', text, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group(1))
+            except:
+                pass
+
+        # Try finding first {...} block
+        match = re.search(r'\{.*\}', text, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group(0))
+            except:
+                pass
+
+        return None
+
+    async def process_query(self, query: str) -> Dict[str, Any]:
+        """Process query with three-prompt architecture."""
+        claims = []
+        iterations = []
+
+        for iteration in range(1, MAX_ITERATIONS + 1):
+            iter_start = time.time()
+
+            # Prompt 1: Update confidence
+            if claims:
+                claims_text = build_claim_context(claims)
+                prompt1 = PROMPT_1_UPDATE_CONFIDENCE.format(
+                    query=query,
+                    claims=claims_text
+                )
+
+                response1, tokens1 = await self.client.generate(prompt1)
+                updates_data = self._parse_json(response1)
+
+                if updates_data and "updates" in updates_data:
+                    for update in updates_data["updates"]:
+                        claim_id = update.get("id", "")
+                        new_conf = update.get("confidence", 0.5)
+                        # Update matching claim
+                        for claim in claims:
+                            if claim["id"] == claim_id:
+                                claim["confidence"] = new_conf
+                                break
+            else:
+                tokens1 = 0
+
+            # Prompt 2: Create claim or SKIP
+            claims_text = build_claim_context(claims) if claims else "No claims yet."
+            prompt2 = PROMPT_2_CREATE_OR_SKIP.format(
+                query=query,
+                claims=claims_text,
+                iteration=iteration,
+                max_iterations=MAX_ITERATIONS
+            )
+
+            response2, tokens2 = await self.client.generate(prompt2)
+            action_data = self._parse_json(response2)
+
+            action = "SKIP"
+            if action_data:
+                action = action_data.get("action", "SKIP")
+                if action == "CREATE" and "claim" in action_data:
+                    self.claim_counter += 1
+                    claim_data = action_data["claim"]
+                    new_claim = {
+                        "id": f"c{self.claim_counter:03d}",
+                        "content": claim_data.get("content", ""),
+                        "confidence": claim_data.get("confidence", 0.5),
+                        "type": claim_data.get("type", "step")
+                    }
+                    claims.append(new_claim)
+
+            # Calculate max confidence
+            max_confidence = max([c["confidence"] for c in claims], default=0.0)
+
+            iterations.append({
+                "iteration": iteration,
+                "action": action,
+                "max_confidence": max_confidence,
+                "claim_count": len(claims),
+                "tokens": tokens1 + tokens2,
+                "time": time.time() - iter_start
+            })
+
+            # Stop if confidence high and SKIP
+            if max_confidence >= CONFIDENCE_THRESHOLD and action == "SKIP":
+                break
+
+        # Prompt 3: Final response
+        claims_text = build_claim_context(claims) if claims else "No claims."
+        prompt3 = PROMPT_3_FINAL_RESPONSE.format(
+            query=query,
+            claims=claims_text
+        )
+
+        response3, tokens3 = await self.client.generate(prompt3, max_tokens=600)
+
+        return {
+            "query": query,
+            "iterations": iterations,
+            "final_claims": claims,
+            "final_response": response3,
+            "total_iterations": len(iterations),
+            "final_confidence": max([c["confidence"] for c in claims], default=0.0),
+            "total_tokens": sum(it["tokens"] for it in iterations) + tokens3
+        }
+
+
+# =============================================================================
+# ANSWER EXTRACTION
+# =============================================================================
+
+def extract_answer(text: str) -> Optional[float]:
+    """Extract numerical answer from response."""
+    if not text:
+        return None
+
+    # Look for #### marker (GSM8K format)
+    match = re.search(r'####\s*(-?[\d,\.]+)', text)
+    if match:
+        try:
+            return float(match.group(1).replace(",", ""))
+        except:
+            pass
+
+    # Fallback: look for "answer is X" patterns
+    patterns = [
+        r'answer\s*(?:is|=|:)\s*\$?(-?[\d,\.]+)',
+        r'final\s*(?:answer|result)\s*(?:is|=|:)\s*\$?(-?[\d,\.]+)',
+        r'=\s*\$?(-?[\d,\.]+)\s*$',
+        r'\$(-?[\d,\.]+)\s*$',
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
+        if match:
+            try:
+                return float(match.group(1).replace(",", ""))
+            except:
+                continue
+
+    # Last resort: last number in response
+    numbers = re.findall(r'-?[\d,]+\.?\d*', text)
+    if numbers:
+        try:
+            return float(numbers[-1].replace(",", ""))
+        except:
+            pass
+
+    return None
+
+
+def check_answer(predicted: Optional[float], expected: float, tolerance: float = 0.01) -> bool:
+    """Check if predicted matches expected within tolerance."""
+    if predicted is None:
+        return False
+    # Use relative tolerance for large numbers, absolute for small
+    if abs(expected) > 1:
+        return abs(predicted - expected) / abs(expected) < tolerance
+    else:
+        return abs(predicted - expected) < tolerance
+
+
+# =============================================================================
+# BENCHMARK RUNNER
+# =============================================================================
+
+@dataclass
+class MethodResult:
+    method: str
+    correct: int
+    total: int
+    accuracy: float
+    avg_time: float
+    total_tokens: int
+    extraction_failures: int
+    avg_iterations: float = 0.0
+
+
+async def run_direct_baseline(
+    client: BenchmarkClient,
+    problems: List[Dict]
+) -> MethodResult:
+    """Run direct baseline."""
+    print(f"\n{'='*60}")
+    print(f"METHOD: DIRECT BASELINE")
+    print(f"{'='*60}")
+
+    correct = 0
+    extraction_failures = 0
+    times = []
+
+    for i, prob in enumerate(problems):
+        start = time.time()
+
+        response, tokens = await client.generate(
+            prompt=f"Problem: {prob['question']}",
+            system=DIRECT_SYSTEM,
+            max_tokens=600
+        )
+
+        elapsed = time.time() - start
+        times.append(elapsed)
+
+        predicted = extract_answer(response)
+        expected = prob["answer"]
+
+        if predicted is None:
+            extraction_failures += 1
+            is_correct = False
+        else:
+            is_correct = check_answer(predicted, expected)
+
+        if is_correct:
+            correct += 1
+
+        # Progress every 10 or on errors
+        if (i + 1) % 10 == 0 or (predicted is None):
+            status = "EXTRACTION_FAIL" if predicted is None else ("✓" if is_correct else f"✗ expected={expected}, got={predicted}")
+            print(f"  [{i+1:3d}/{len(problems)}] acc={100*correct/(i+1):5.1f}%  {status}")
+
+        await asyncio.sleep(0.3)  # Rate limiting
+
+    return MethodResult(
+        method="DIRECT",
+        correct=correct,
+        total=len(problems),
+        accuracy=round(100 * correct / len(problems), 2),
+        avg_time=round(sum(times) / len(times), 2),
+        total_tokens=client.total_tokens,
+        extraction_failures=extraction_failures
+    )
+
+
+async def run_three_prompt(
+    client: BenchmarkClient,
+    problems: List[Dict]
+) -> MethodResult:
+    """Run three-prompt method."""
+    print(f"\n{'='*60}")
+    print(f"METHOD: THREE-PROMPT")
+    print(f"{'='*60}")
+
+    correct = 0
+    extraction_failures = 0
+    times = []
+    iteration_counts = []
+
+    system = ThreePromptSystem(client)
+
+    for i, prob in enumerate(problems):
+        start = time.time()
+
+        result = await system.process_query(prob["question"])
+
+        elapsed = time.time() - start
+        times.append(elapsed)
+        iteration_counts.append(result["total_iterations"])
+
+        predicted = extract_answer(result["final_response"])
+        expected = prob["answer"]
+
+        if predicted is None:
+            extraction_failures += 1
+            is_correct = False
+        else:
+            is_correct = check_answer(predicted, expected)
+
+        if is_correct:
+            correct += 1
+
+        # Progress every 10 or on errors
+        if (i + 1) % 10 == 0 or (predicted is None):
+            status = "EXTRACTION_FAIL" if predicted is None else ("✓" if is_correct else f"✗ expected={expected}, got={predicted}")
+            iters = result["total_iterations"]
+            conf = result["final_confidence"]
+            print(f"  [{i+1:3d}/{len(problems)}] acc={100*correct/(i+1):5.1f}%  iter={iters} conf={conf:.2f}  {status}")
+
+        await asyncio.sleep(0.3)  # Rate limiting
+
+    return MethodResult(
+        method="THREE-PROMPT",
+        correct=correct,
+        total=len(problems),
+        accuracy=round(100 * correct / len(problems), 2),
+        avg_time=round(sum(times) / len(times), 2),
+        total_tokens=client.total_tokens,
+        extraction_failures=extraction_failures,
+        avg_iterations=round(sum(iteration_counts) / len(iteration_counts), 2)
+    )
+
+
+async def run_benchmark():
+    """Run full GSM8K three-prompt benchmark."""
+    print("\n" + "="*70)
+    print("GSM8K THREE-PROMPT BENCHMARK")
+    print("="*70)
+    print(f"Model: {MODEL}")
+    print(f"Problems: {N_PROBLEMS}")
+    print(f"Max Iterations: {MAX_ITERATIONS}")
+    print(f"Confidence Threshold: {CONFIDENCE_THRESHOLD}")
+    print(f"Timestamp: {datetime.now().isoformat()}")
+    print()
+
+    # Load data
+    problems = load_gsm8k_problems(N_PROBLEMS)
+
+    # Run direct baseline
+    client_direct = BenchmarkClient(MODEL)
+    direct_result = await run_direct_baseline(client_direct, problems)
+
+    # Run three-prompt
+    client_three = BenchmarkClient(MODEL)
+    three_result = await run_three_prompt(client_three, problems)
+
+    # Results summary
+    improvement = three_result.accuracy - direct_result.accuracy
+
+    print("\n" + "="*70)
+    print("GSM8K THREE-PROMPT BENCHMARK RESULTS")
+    print("="*70)
+    print(f"\n{'Method':<20} {'Correct':>10} {'Accuracy':>10} {'Avg Time':>10} {'Tokens':>12} {'Iters':>6}")
+    print("-"*70)
+    print(f"{'Direct':<20} {direct_result.correct:>6}/{direct_result.total:<3} {direct_result.accuracy:>9.1f}% {direct_result.avg_time:>9.2f}s {direct_result.total_tokens:>12,} {'  -':>6}")
+    print(f"{'Three-Prompt':<20} {three_result.correct:>6}/{three_result.total:<3} {three_result.accuracy:>9.1f}% {three_result.avg_time:>9.2f}s {three_result.total_tokens:>12,} {three_result.avg_iterations:>6.1f}")
+    print("-"*70)
+    print(f"{'Improvement':<20} {three_result.correct - direct_result.correct:>+10} {improvement:>+9.1f}pp")
+    print()
+
+    if direct_result.extraction_failures > 0 or three_result.extraction_failures > 0:
+        print(f"Extraction failures: Direct={direct_result.extraction_failures}, Three-Prompt={three_result.extraction_failures}")
+
+    # Conclusion
+    if improvement > 5:
+        conclusion = "SUCCESS: Three-prompt significantly improves accuracy"
+    elif improvement > 2:
+        conclusion = "PROMISING: Three-prompt shows improvement"
+    elif improvement > -2:
+        conclusion = "NEUTRAL: No significant difference"
+    else:
+        conclusion = "CHALLENGE: Three-prompt hurts accuracy"
+
+    print(f"\nCONCLUSION: {conclusion}")
+    print("="*70)
+
+    # Save results
+    results = {
+        "benchmark": "GSM8K",
+        "architecture": "three-prompt",
+        "model": MODEL,
+        "n_problems": N_PROBLEMS,
+        "max_iterations": MAX_ITERATIONS,
+        "confidence_threshold": CONFIDENCE_THRESHOLD,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "direct": asdict(direct_result),
+        "three_prompt": asdict(three_result),
+        "improvement_pp": improvement,
+        "conclusion": conclusion
+    }
+
+    results_dir = Path("experiments/results")
+    results_dir.mkdir(exist_ok=True)
+    results_file = results_dir / f"gsm8k_three_prompt_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    results_file.write_text(json.dumps(results, indent=2))
+    print(f"\nResults saved: {results_file}")
+
+    return results
+
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-n", type=int, default=50, help="Number of problems")
+    parser.add_argument("--model", type=str, default=MODEL, help="Model to use")
+    args = parser.parse_args()
+
+    os.environ["BENCHMARK_N"] = str(args.n)
+    os.environ["BENCHMARK_MODEL"] = args.model
+
+    asyncio.run(run_benchmark())
