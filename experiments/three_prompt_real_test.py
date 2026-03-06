@@ -24,17 +24,16 @@ class RealLLMProvider:
     """Real LLM provider using Conjecture's backend"""
 
     def __init__(self):
-        self.config = UnifiedConfig()
-        # Import here to avoid circular dependencies
-        from src.agent.llm_providers import get_provider
+        # Use SimplifiedLLMManager
+        from src.processing.simplified_llm_manager import SimplifiedLLMManager
 
-        self.provider = get_provider(self.config)
+        self.manager = SimplifiedLLMManager()
 
     async def complete(self, prompt: str) -> str:
         """Call real LLM"""
         try:
             # Use the actual provider
-            response = await self.provider.complete(
+            response = await self.manager.query(
                 prompt=prompt,
                 max_tokens=1000,
                 temperature=0.3  # Lower temp for more consistent JSON
@@ -43,6 +42,8 @@ class RealLLMProvider:
             return response
         except Exception as e:
             print(f"LLM Error: {e}")
+            import traceback
+            traceback.print_exc()
             return "{}"
 
 
