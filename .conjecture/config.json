@@ -1,17 +1,43 @@
 {
   "providers": [
     {
-      "url": "https://api.z.ai/api/coding/paas/v4",
-      "api": "70e6e12e4d7c46e2a4d0b85503d51f38.LQHl8d98kDJChttb",
-      "model": "glm-4.5-air",
-      "name": "glm-4.5-air",
+      "url": "https://openrouter.ai/api/v1",
+      "api": "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",
+      "model": "deepseek/deepseek-chat",
+      "name": "openrouter",
       "priority": 1,
       "is_local": false,
-      "description": "Primary model for fast iteration and Conjecture testing",
-      "max_tokens": 200000,
+      "description": "Primary: DeepSeek via OpenRouter (WORKING)",
+      "max_tokens": 64000,
       "temperature": 0.2,
-      "timeout": 30,
+      "timeout": 60,
       "max_retries": 3
+    },
+    {
+      "url": "https://api.chutes.ai/v1",
+      "api": "cpk_e1ee41914c1f4a008909209eceebab4b.c6b0819f886b51e58b9c69b3c9e5184e.dwHw0QgFWcQm7fJ34z2xYvOvoadzYvUs",
+      "model": "deepseek-ai/DeepSeek-V3-0324",
+      "name": "chutes",
+      "priority": 2,
+      "is_local": false,
+      "description": "Fallback: DeepSeek via OpenRouter",
+      "max_tokens": 64000,
+      "temperature": 0.2,
+      "timeout": 60,
+      "max_retries": 3
+    },
+    {
+      "url": "http://localhost:1234/v1",
+      "api": "not-needed",
+      "model": "lfm-2.5",
+      "name": "lm_studio",
+      "priority": 3,
+      "is_local": true,
+      "description": "Local: LFM-2.5 via LM Studio",
+      "max_tokens": 8192,
+      "temperature": 0.2,
+      "timeout": 120,
+      "max_retries": 1
     }
   ],
   "confidence_threshold": 0.5,

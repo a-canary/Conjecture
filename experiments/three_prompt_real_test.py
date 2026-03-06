@@ -32,14 +32,15 @@ class RealLLMProvider:
     async def complete(self, prompt: str) -> str:
         """Call real LLM"""
         try:
-            # Use the actual provider
-            response = await self.manager.query(
-                prompt=prompt,
-                max_tokens=1000,
-                temperature=0.3  # Lower temp for more consistent JSON
-            )
+            # generate_response is NOT async - returns LLMProcessingResult directly
+            result = self.manager.generate_response(prompt)
 
-            return response
+            # Debug: check what we got
+            if result and hasattr(result, 'content') and result.content:
+                return result.content
+            else:
+                print(f"[WARN] Empty LLM response. Result: {result}")
+                return "{}"
         except Exception as e:
             print(f"LLM Error: {e}")
             import traceback

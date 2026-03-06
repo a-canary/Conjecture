@@ -1,0 +1,332 @@
+[
+  {
+    "query": "If Alice has 3 apples and Bob has twice as many, and they share equally with Carol, how many does each person get?",
+    "initial_claims": 5,
+    "context_size": 358,
+    "iterations": [
+      {
+        "iteration": 1,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "{}",
+            "tokens": 141,
+            "time_ms": 2,
+            "parsed_output": {}
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{}",
+            "tokens": 155,
+            "time_ms": 0,
+            "parsed_output": {}
+          }
+        ],
+        "max_confidence": 0.9,
+        "should_skip": false,
+        "claim_count": 5
+      },
+      {
+        "iteration": 2,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "{}",
+            "tokens": 141,
+            "time_ms": 0,
+            "parsed_output": {}
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{}",
+            "tokens": 155,
+            "time_ms": 0,
+            "parsed_output": {}
+          }
+        ],
+        "max_confidence": 0.9,
+        "should_skip": false,
+        "claim_count": 5
+      },
+      {
+        "iteration": 3,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "{}",
+            "tokens": 141,
+            "time_ms": 0,
+            "parsed_output": {}
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{}",
+            "tokens": 155,
+            "time_ms": 0,
+            "parsed_output": {}
+          }
+        ],
+        "max_confidence": 0.9,
+        "should_skip": false,
+        "claim_count": 5
+      },
+      {
+        "iteration": 4,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "{}",
+            "tokens": 141,
+            "time_ms": 0,
+            "parsed_output": {}
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{}",
+            "tokens": 155,
+            "time_ms": 0,
+            "parsed_output": {}
+          }
+        ],
+        "max_confidence": 0.9,
+        "should_skip": false,
+        "claim_count": 5
+      }
+    ],
+    "final_result": {
+      "prompt": {
+        "prompt_type": "final_response",
+        "response": "{}",
+        "tokens": 126,
+        "time_ms": 0,
+        "parsed_output": {}
+      },
+      "final_claim_count": 5,
+      "answer": null,
+      "confidence": null
+    },
+    "total_time_ms": 4,
+    "total_tokens": 1310,
+    "expected": "3"
+  },
+  {
+    "query": "What is 15% of 80?",
+    "initial_claims": 3,
+    "context_size": 172,
+    "iterations": [
+      {
+        "iteration": 1,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "{}",
+            "tokens": 107,
+            "time_ms": 0,
+            "parsed_output": {}
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{}",
+            "tokens": 121,
+            "time_ms": 0,
+            "parsed_output": {}
+          }
+        ],
+        "max_confidence": 0.9,
+        "should_skip": false,
+        "claim_count": 3
+      },
+      {
+        "iteration": 2,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "{}",
+            "tokens": 107,
+            "time_ms": 0,
+            "parsed_output": {}
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{}",
+            "tokens": 121,
+            "time_ms": 0,
+            "parsed_output": {}
+          }
+        ],
+        "max_confidence": 0.9,
+        "should_skip": false,
+        "claim_count": 3
+      },
+      {
+        "iteration": 3,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "{}",
+            "tokens": 107,
+            "time_ms": 0,
+            "parsed_output": {}
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{}",
+            "tokens": 121,
+            "time_ms": 0,
+            "parsed_output": {}
+          }
+        ],
+        "max_confidence": 0.9,
+        "should_skip": false,
+        "claim_count": 3
+      },
+      {
+        "iteration": 4,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "{}",
+            "tokens": 107,
+            "time_ms": 0,
+            "parsed_output": {}
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{}",
+            "tokens": 121,
+            "time_ms": 0,
+            "parsed_output": {}
+          }
+        ],
+        "max_confidence": 0.9,
+        "should_skip": false,
+        "claim_count": 3
+      }
+    ],
+    "final_result": {
+      "prompt": {
+        "prompt_type": "final_response",
+        "response": "{}",
+        "tokens": 92,
+        "time_ms": 0,
+        "parsed_output": {}
+      },
+      "final_claim_count": 3,
+      "answer": null,
+      "confidence": null
+    },
+    "total_time_ms": 2,
+    "total_tokens": 1004,
+    "expected": "12"
+  },
+  {
+    "query": "In a sequence 2, 4, 6, 8, what is the next number?",
+    "initial_claims": 3,
+    "context_size": 274,
+    "iterations": [
+      {
+        "iteration": 1,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "{}",
+            "tokens": 118,
+            "time_ms": 0,
+            "parsed_output": {}
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{}",
+            "tokens": 132,
+            "time_ms": 0,
+            "parsed_output": {}
+          }
+        ],
+        "max_confidence": 0.85,
+        "should_skip": false,
+        "claim_count": 3
+      },
+      {
+        "iteration": 2,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "{}",
+            "tokens": 118,
+            "time_ms": 0,
+            "parsed_output": {}
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{}",
+            "tokens": 132,
+            "time_ms": 0,
+            "parsed_output": {}
+          }
+        ],
+        "max_confidence": 0.85,
+        "should_skip": false,
+        "claim_count": 3
+      },
+      {
+        "iteration": 3,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "{}",
+            "tokens": 118,
+            "time_ms": 0,
+            "parsed_output": {}
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{}",
+            "tokens": 132,
+            "time_ms": 0,
+            "parsed_output": {}
+          }
+        ],
+        "max_confidence": 0.85,
+        "should_skip": false,
+        "claim_count": 3
+      },
+      {
+        "iteration": 4,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "{}",
+            "tokens": 118,
+            "time_ms": 0,
+            "parsed_output": {}
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{}",
+            "tokens": 132,
+            "time_ms": 0,
+            "parsed_output": {}
+          }
+        ],
+        "max_confidence": 0.85,
+        "should_skip": false,
+        "claim_count": 3
+      }
+    ],
+    "final_result": {
+      "prompt": {
+        "prompt_type": "final_response",
+        "response": "{}",
+        "tokens": 103,
+        "time_ms": 0,
+        "parsed_output": {}
+      },
+      "final_claim_count": 3,
+      "answer": null,
+      "confidence": null
+    },
+    "total_time_ms": 2,
+    "total_tokens": 1103,
+    "expected": "10"
+  }
+]
