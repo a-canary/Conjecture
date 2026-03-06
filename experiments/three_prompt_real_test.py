@@ -32,15 +32,13 @@ class RealLLMProvider:
     async def complete(self, prompt: str) -> str:
         """Call real LLM"""
         try:
-            # generate_response is NOT async - returns LLMProcessingResult directly
-            result = self.manager.generate_response(prompt)
-
-            # Debug: check what we got
-            if result and hasattr(result, 'content') and result.content:
-                return result.content
-            else:
-                print(f"[WARN] Empty LLM response. Result: {result}")
-                return "{}"
+            # Use generate_text() which returns raw string response
+            text = self.manager.generate_text(
+                prompt=prompt,
+                max_tokens=1000,
+                temperature=0.3
+            )
+            return text if text else "{}"
         except Exception as e:
             print(f"LLM Error: {e}")
             import traceback

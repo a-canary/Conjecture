@@ -365,6 +365,85 @@ class SimplifiedLLMManager:
                 else:
                     raise
 
+    def generate_text(
+        self,
+        prompt: str,
+        provider: Optional[str] = None,
+        max_tokens: int = 1000,
+        temperature: float = 0.3,
+        **kwargs,
+    ) -> str:
+        """
+        Generate raw text response (not claim processing)
+
+        This method is designed for direct text generation tasks where you need
+        the actual LLM response text, not processed claims. Use this for:
+        - Interactive conversations
+        - Text generation tasks
+        - Prompt testing
+        - Any scenario where you need the raw string response
+
+        Args:
+            prompt: The prompt to send to the LLM
+            provider: Optional specific provider to use
+            max_tokens: Maximum tokens in response (default: 1000)
+            temperature: Sampling temperature (default: 0.3)
+            **kwargs: Additional parameters to pass to the processor
+
+        Returns:
+            str: The raw text response from the LLM
+
+        Raises:
+            RuntimeError: If no LLM processor is available or all providers fail
+        """
+        attempted_providers = set()
+
+        while True:
+            processor = self.get_processor(provider)
+            if not processor:
+                raise RuntimeError("No LLM processor available")
+
+            provider_name = self._get_provider_name(processor)
+            if provider_name in attempted_providers:
+                raise RuntimeError("All available providers failed")
+
+            attempted_providers.add(provider_name)
+
+            try:
+                # Make API request directly to get the response
+                messages = [{"role": "user", "content": prompt}]
+
+                # Build config from parameters
+                from src.processing.llm.common import GenerationConfig
+                config = GenerationConfig(
+                    max_tokens=max_tokens,
+                    temperature=temperature,
+                    **kwargs
+                )
+
+                # Call internal API request method
+                response = processor._make_api_request(messages, config)
+
+                # Extract the actual text content
+                content = processor._extract_content(response)
+
+                return content
+
+            except Exception as e:
+                print(f"[LLM] Text generation failed with {provider_name}: {e}")
+                self.failed_providers.add(provider_name)
+
+                # If this was a specific provider request, try fallback
+                if provider:
+                    provider = None  # Allow fallback to primary or next best
+                    continue
+
+                # Try next available provider
+                if len(attempted_providers) < len(self.processors):
+                    continue
+                else:
+                    raise
+
     def _get_provider_name(self, processor: OpenAICompatibleProcessor) -> str:
         """Get provider name from processor instance"""
         for name, proc in self.processors.items():

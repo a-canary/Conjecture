@@ -1,0 +1,574 @@
+[
+  {
+    "query": "If Alice has 3 apples and Bob has twice as many, and they share equally with Carol, how many does each person get?",
+    "initial_claims": 5,
+    "context_size": 358,
+    "iterations": [
+      {
+        "iteration": 1,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "```json\n{\n  \"updates\": [\n    {\"id\": \"c001\", \"confidence\": 0.95, \"reason\": \"Directly relevant and certain\"},\n    {\"id\": \"c002\", \"confidence\": 0.95, \"reason\": \"Directly relevant and certain\"},\n    {\"id\": \"c003\", \"confidence\": 0.90, \"reason\": \"Directly relevant and certain\"},\n    {\"id\": \"c004\", \"confidence\": 0.85, \"reason\": \"Directly relevant but slightly less certain\"},\n    {\"id\": \"c005\", \"confidence\": 0.95, \"reason\": \"Directly relevant and certain\"}\n  ]\n}\n```",
+            "tokens": 194,
+            "time_ms": 5006,
+            "parsed_output": {
+              "updates": [
+                {
+                  "id": "c001",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and certain"
+                },
+                {
+                  "id": "c002",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and certain"
+                },
+                {
+                  "id": "c003",
+                  "confidence": 0.9,
+                  "reason": "Directly relevant and certain"
+                },
+                {
+                  "id": "c004",
+                  "confidence": 0.85,
+                  "reason": "Directly relevant but slightly less certain"
+                },
+                {
+                  "id": "c005",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and certain"
+                }
+              ]
+            }
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{\"action\": \"CREATE\", \"claim\": {\"content\": \"Calculate the total number of apples Alice and Bob have together\", \"confidence\": 0.95, \"type\": \"calculation\"}}",
+            "tokens": 173,
+            "time_ms": 1294,
+            "parsed_output": {
+              "action": "CREATE",
+              "claim": {
+                "content": "Calculate the total number of apples Alice and Bob have together",
+                "confidence": 0.95,
+                "type": "calculation"
+              }
+            }
+          }
+        ],
+        "max_confidence": 0.95,
+        "should_skip": false,
+        "claim_count": 6
+      },
+      {
+        "iteration": 2,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "```json\n{\n  \"updates\": [\n    {\"id\": \"c001\", \"confidence\": 0.95, \"reason\": \"Directly relevant and certain\"},\n    {\"id\": \"c002\", \"confidence\": 0.95, \"reason\": \"Directly relevant and certain\"},\n    {\"id\": \"c003\", \"confidence\": 0.90, \"reason\": \"Directly relevant but slightly less certain\"},\n    {\"id\": \"c004\", \"confidence\": 0.85, \"reason\": \"Directly relevant but less certain\"},\n    {\"id\": \"c005\", \"confidence\": 0.95, \"reason\": \"Directly relevant and certain\"},\n    {\"id\": \"c006\", \"confidence\": 0.95, \"reason\": \"Directly relevant and certain\"}\n  ]\n}\n```",
+            "tokens": 218,
+            "time_ms": 5557,
+            "parsed_output": {
+              "updates": [
+                {
+                  "id": "c001",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and certain"
+                },
+                {
+                  "id": "c002",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and certain"
+                },
+                {
+                  "id": "c003",
+                  "confidence": 0.9,
+                  "reason": "Directly relevant but slightly less certain"
+                },
+                {
+                  "id": "c004",
+                  "confidence": 0.85,
+                  "reason": "Directly relevant but less certain"
+                },
+                {
+                  "id": "c005",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and certain"
+                },
+                {
+                  "id": "c006",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and certain"
+                }
+              ]
+            }
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "```json\n{\n  \"action\": \"CREATE\",\n  \"claim\": {\n    \"content\": \"Total apples Alice and Bob have together is 3 (Alice) + 6 (Bob) = 9\",\n    \"confidence\": 0.95,\n    \"type\": \"calculation\"\n  }\n}\n```",
+            "tokens": 197,
+            "time_ms": 5797,
+            "parsed_output": {
+              "action": "CREATE",
+              "claim": {
+                "content": "Total apples Alice and Bob have together is 3 (Alice) + 6 (Bob) = 9",
+                "confidence": 0.95,
+                "type": "calculation"
+              }
+            }
+          }
+        ],
+        "max_confidence": 0.95,
+        "should_skip": false,
+        "claim_count": 7
+      },
+      {
+        "iteration": 3,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "```json\n{\n  \"updates\": [\n    {\"id\": \"c001\", \"confidence\": 0.95, \"reason\": \"Directly relevant and certain\"},\n    {\"id\": \"c002\", \"confidence\": 0.95, \"reason\": \"Directly relevant and certain\"},\n    {\"id\": \"c003\", \"confidence\": 0.90, \"reason\": \"Directly relevant but slightly less certain\"},\n    {\"id\": \"c004\", \"confidence\": 0.85, \"reason\": \"Directly relevant but less certain\"},\n    {\"id\": \"c005\", \"confidence\": 0.95, \"reason\": \"Directly relevant and certain\"},\n    {\"id\": \"c006\", \"confidence\": 0.95, \"reason\": \"Directly relevant and certain\"},\n    {\"id\": \"c007\", \"confidence\": 0.95, \"reason\": \"Directly relevant and certain\"}\n  ]\n}\n```",
+            "tokens": 245,
+            "time_ms": 6196,
+            "parsed_output": {
+              "updates": [
+                {
+                  "id": "c001",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and certain"
+                },
+                {
+                  "id": "c002",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and certain"
+                },
+                {
+                  "id": "c003",
+                  "confidence": 0.9,
+                  "reason": "Directly relevant but slightly less certain"
+                },
+                {
+                  "id": "c004",
+                  "confidence": 0.85,
+                  "reason": "Directly relevant but less certain"
+                },
+                {
+                  "id": "c005",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and certain"
+                },
+                {
+                  "id": "c006",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and certain"
+                },
+                {
+                  "id": "c007",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and certain"
+                }
+              ]
+            }
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "```json\n{\n  \"action\": \"CREATE\",\n  \"claim\": {\n    \"content\": \"Divide the total number of apples (9) by the number of people (Alice, Bob, and Carol) to find how many each person gets\",\n    \"confidence\": 0.9,\n    \"type\": \"step\"\n  }\n}\n```",
+            "tokens": 223,
+            "time_ms": 3944,
+            "parsed_output": {
+              "action": "CREATE",
+              "claim": {
+                "content": "Divide the total number of apples (9) by the number of people (Alice, Bob, and Carol) to find how many each person gets",
+                "confidence": 0.9,
+                "type": "step"
+              }
+            }
+          }
+        ],
+        "max_confidence": 0.95,
+        "should_skip": false,
+        "claim_count": 8
+      },
+      {
+        "iteration": 4,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "```json\n{\n  \"updates\": [\n    {\"id\": \"c004\", \"confidence\": 0.95, \"reason\": \"Directly relevant and supports the calculation of equal sharing\"},\n    {\"id\": \"c006\", \"confidence\": 0.90, \"reason\": \"Directly relevant to calculating the total number of apples Alice and Bob have together\"},\n    {\"id\": \"c007\", \"confidence\": 0.95, \"reason\": \"Directly relevant and correctly calculates the total number of apples Alice and Bob have together\"},\n    {\"id\": \"c008\", \"confidence\": 0.95, \"reason\": \"Directly relevant and correctly outlines the process for equal sharing among Alice, Bob, and Carol\"}\n  ]\n}\n```",
+            "tokens": 278,
+            "time_ms": 5114,
+            "parsed_output": {
+              "updates": [
+                {
+                  "id": "c004",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and supports the calculation of equal sharing"
+                },
+                {
+                  "id": "c006",
+                  "confidence": 0.9,
+                  "reason": "Directly relevant to calculating the total number of apples Alice and Bob have together"
+                },
+                {
+                  "id": "c007",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and correctly calculates the total number of apples Alice and Bob have together"
+                },
+                {
+                  "id": "c008",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and correctly outlines the process for equal sharing among Alice, Bob, and Carol"
+                }
+              ]
+            }
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "```json\n{\n  \"action\": \"SKIP\"\n}\n```",
+            "tokens": 218,
+            "time_ms": 1653,
+            "parsed_output": {
+              "action": "SKIP"
+            }
+          }
+        ],
+        "max_confidence": 0.95,
+        "should_skip": true,
+        "claim_count": 8
+      }
+    ],
+    "final_result": {
+      "prompt": {
+        "prompt_type": "final_response",
+        "response": "```json\n{\n  \"answer\": \"Each person gets 3 apples. Alice has 3 apples, and Bob has twice as many, which is 6 apples. Together, they have 9 apples. When they share equally with Carol, the total number of apples (9) is divided by the number of people (3), resulting in each person getting 3 apples.\",\n  \"supporting_claims\": [\"c001\", \"c002\", \"c005\", \"c007\", \"c008\"],\n  \"confidence\": 0.95\n}\n```",
+        "tokens": 247,
+        "time_ms": 3083,
+        "parsed_output": {
+          "answer": "Each person gets 3 apples. Alice has 3 apples, and Bob has twice as many, which is 6 apples. Together, they have 9 apples. When they share equally with Carol, the total number of apples (9) is divided by the number of people (3), resulting in each person getting 3 apples.",
+          "supporting_claims": [
+            "c001",
+            "c002",
+            "c005",
+            "c007",
+            "c008"
+          ],
+          "confidence": 0.95
+        }
+      },
+      "final_claim_count": 8,
+      "answer": "Each person gets 3 apples. Alice has 3 apples, and Bob has twice as many, which is 6 apples. Together, they have 9 apples. When they share equally with Carol, the total number of apples (9) is divided by the number of people (3), resulting in each person getting 3 apples.",
+      "confidence": 0.95
+    },
+    "total_time_ms": 37658,
+    "total_tokens": 1993,
+    "expected": "3"
+  },
+  {
+    "query": "What is 15% of 80?",
+    "initial_claims": 3,
+    "context_size": 172,
+    "iterations": [
+      {
+        "iteration": 1,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "```json\n{\n  \"updates\": [\n    {\"id\": \"c001\", \"confidence\": 0.95, \"reason\": \"Directly relevant and accurate\"},\n    {\"id\": \"c002\", \"confidence\": 0.95, \"reason\": \"Directly relevant and accurate\"},\n    {\"id\": \"c003\", \"confidence\": 0.90, \"reason\": \"Directly relevant and accurate\"}\n  ]\n}\n```",
+            "tokens": 140,
+            "time_ms": 2679,
+            "parsed_output": {
+              "updates": [
+                {
+                  "id": "c001",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and accurate"
+                },
+                {
+                  "id": "c002",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and accurate"
+                },
+                {
+                  "id": "c003",
+                  "confidence": 0.9,
+                  "reason": "Directly relevant and accurate"
+                }
+              ]
+            }
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{\"action\": \"CREATE\", \"claim\": {\"content\": \"Calculate 80 \u00d7 0.15\", \"confidence\": 0.9, \"type\": \"calculation\"}}",
+            "tokens": 132,
+            "time_ms": 2045,
+            "parsed_output": {
+              "action": "CREATE",
+              "claim": {
+                "content": "Calculate 80 \u00d7 0.15",
+                "confidence": 0.9,
+                "type": "calculation"
+              }
+            }
+          }
+        ],
+        "max_confidence": 0.95,
+        "should_skip": false,
+        "claim_count": 4
+      },
+      {
+        "iteration": 2,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "```json\n{\n  \"updates\": [\n    {\"id\": \"1\", \"confidence\": 0.95, \"reason\": \"Directly relevant and supports the calculation of percentage\"},\n    {\"id\": \"2\", \"confidence\": 0.95, \"reason\": \"Directly relevant as it converts the percentage to a decimal for calculation\"},\n    {\"id\": \"3\", \"confidence\": 0.90, \"reason\": \"Directly relevant as it provides the formula to calculate the percentage of a number\"},\n    {\"id\": \"4\", \"confidence\": 0.90, \"reason\": \"Directly relevant as it applies the formula to the specific numbers in question\"}\n  ]\n}\n```",
+            "tokens": 187,
+            "time_ms": 4741,
+            "parsed_output": {
+              "updates": [
+                {
+                  "id": "1",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and supports the calculation of percentage"
+                },
+                {
+                  "id": "2",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant as it converts the percentage to a decimal for calculation"
+                },
+                {
+                  "id": "3",
+                  "confidence": 0.9,
+                  "reason": "Directly relevant as it provides the formula to calculate the percentage of a number"
+                },
+                {
+                  "id": "4",
+                  "confidence": 0.9,
+                  "reason": "Directly relevant as it applies the formula to the specific numbers in question"
+                }
+              ]
+            }
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "```json\n{\n  \"action\": \"CREATE\",\n  \"claim\": {\n    \"content\": \"Calculate 80 \u00d7 0.15\",\n    \"confidence\": 0.95,\n    \"type\": \"calculation\"\n  }\n}\n```",
+            "tokens": 145,
+            "time_ms": 2446,
+            "parsed_output": {
+              "action": "CREATE",
+              "claim": {
+                "content": "Calculate 80 \u00d7 0.15",
+                "confidence": 0.95,
+                "type": "calculation"
+              }
+            }
+          }
+        ],
+        "max_confidence": 0.95,
+        "should_skip": false,
+        "claim_count": 5
+      },
+      {
+        "iteration": 3,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "```json\n{\n  \"updates\": [\n    {\"id\": \"1\", \"confidence\": 0.95, \"reason\": \"Directly relevant and supports the understanding of percentage\"},\n    {\"id\": \"2\", \"confidence\": 0.95, \"reason\": \"Directly relevant as it converts the percentage to a decimal\"},\n    {\"id\": \"3\", \"confidence\": 0.90, \"reason\": \"Directly relevant as it provides the method to calculate the percentage of a number\"},\n    {\"id\": \"4\", \"confidence\": 0.90, \"reason\": \"Directly relevant as it applies the method to the specific numbers in the query\"},\n    {\"id\": \"5\", \"confidence\": 0.95, \"reason\": \"Directly relevant and corrects a typo in claim 4, providing the same calculation\"}\n  ]\n}\n```",
+            "tokens": 211,
+            "time_ms": 5642,
+            "parsed_output": {
+              "updates": [
+                {
+                  "id": "1",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and supports the understanding of percentage"
+                },
+                {
+                  "id": "2",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant as it converts the percentage to a decimal"
+                },
+                {
+                  "id": "3",
+                  "confidence": 0.9,
+                  "reason": "Directly relevant as it provides the method to calculate the percentage of a number"
+                },
+                {
+                  "id": "4",
+                  "confidence": 0.9,
+                  "reason": "Directly relevant as it applies the method to the specific numbers in the query"
+                },
+                {
+                  "id": "5",
+                  "confidence": 0.95,
+                  "reason": "Directly relevant and corrects a typo in claim 4, providing the same calculation"
+                }
+              ]
+            }
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "{\"action\": \"SKIP\"}",
+            "tokens": 136,
+            "time_ms": 827,
+            "parsed_output": {
+              "action": "SKIP"
+            }
+          }
+        ],
+        "max_confidence": 0.95,
+        "should_skip": true,
+        "claim_count": 5
+      }
+    ],
+    "final_result": {
+      "prompt": {
+        "prompt_type": "final_response",
+        "response": "```json\n{\n  \"answer\": \"15% of 80 is 12\",\n  \"supporting_claims\": [\"1\", \"2\", \"3\", \"4\", \"5\"],\n  \"confidence\": 0.95\n}\n```",
+        "tokens": 123,
+        "time_ms": 2486,
+        "parsed_output": {
+          "answer": "15% of 80 is 12",
+          "supporting_claims": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "confidence": 0.95
+        }
+      },
+      "final_claim_count": 5,
+      "answer": "15% of 80 is 12",
+      "confidence": 0.95
+    },
+    "total_time_ms": 20874,
+    "total_tokens": 1074,
+    "expected": "12"
+  },
+  {
+    "query": "In a sequence 2, 4, 6, 8, what is the next number?",
+    "initial_claims": 3,
+    "context_size": 274,
+    "iterations": [
+      {
+        "iteration": 1,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "```json\n{\n  \"updates\": [\n    {\"id\": \"c001\", \"confidence\": 0.95, \"reason\": \"Directly supports identifying the sequence type\"},\n    {\"id\": \"c002\", \"confidence\": 0.90, \"reason\": \"Directly supports calculating the common difference\"},\n    {\"id\": \"c003\", \"confidence\": 0.85, \"reason\": \"Directly supports determining the next term\"}\n  ]\n}\n```",
+            "tokens": 157,
+            "time_ms": 4699,
+            "parsed_output": {
+              "updates": [
+                {
+                  "id": "c001",
+                  "confidence": 0.95,
+                  "reason": "Directly supports identifying the sequence type"
+                },
+                {
+                  "id": "c002",
+                  "confidence": 0.9,
+                  "reason": "Directly supports calculating the common difference"
+                },
+                {
+                  "id": "c003",
+                  "confidence": 0.85,
+                  "reason": "Directly supports determining the next term"
+                }
+              ]
+            }
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "```json\n{\n  \"action\": \"CREATE\",\n  \"claim\": {\n    \"content\": \"The common difference in the sequence is 2\",\n    \"confidence\": 0.95,\n    \"type\": \"generalization\"\n  }\n}\n```",
+            "tokens": 153,
+            "time_ms": 2315,
+            "parsed_output": {
+              "action": "CREATE",
+              "claim": {
+                "content": "The common difference in the sequence is 2",
+                "confidence": 0.95,
+                "type": "generalization"
+              }
+            }
+          }
+        ],
+        "max_confidence": 0.95,
+        "should_skip": false,
+        "claim_count": 4
+      },
+      {
+        "iteration": 2,
+        "prompts": [
+          {
+            "prompt_type": "update_confidence",
+            "response": "```json\n{\n  \"updates\": [\n    {\"id\": \"1\", \"confidence\": 0.95, \"reason\": \"Directly supports identifying the sequence type\"},\n    {\"id\": \"2\", \"confidence\": 0.90, \"reason\": \"Directly supports calculating the common difference\"},\n    {\"id\": \"3\", \"confidence\": 0.85, \"reason\": \"Directly supports determining the next number in the sequence\"},\n    {\"id\": \"4\", \"confidence\": 0.95, \"reason\": \"Directly supports confirming the common difference\"}\n  ]\n}\n```",
+            "tokens": 182,
+            "time_ms": 4065,
+            "parsed_output": {
+              "updates": [
+                {
+                  "id": "1",
+                  "confidence": 0.95,
+                  "reason": "Directly supports identifying the sequence type"
+                },
+                {
+                  "id": "2",
+                  "confidence": 0.9,
+                  "reason": "Directly supports calculating the common difference"
+                },
+                {
+                  "id": "3",
+                  "confidence": 0.85,
+                  "reason": "Directly supports determining the next number in the sequence"
+                },
+                {
+                  "id": "4",
+                  "confidence": 0.95,
+                  "reason": "Directly supports confirming the common difference"
+                }
+              ]
+            }
+          },
+          {
+            "prompt_type": "create_claim",
+            "response": "```json\n{\n  \"action\": \"SKIP\"\n}\n```",
+            "tokens": 148,
+            "time_ms": 1847,
+            "parsed_output": {
+              "action": "SKIP"
+            }
+          }
+        ],
+        "max_confidence": 0.95,
+        "should_skip": true,
+        "claim_count": 4
+      }
+    ],
+    "final_result": {
+      "prompt": {
+        "prompt_type": "final_response",
+        "response": "```json\n{\n  \"answer\": \"The next number in the sequence 2, 4, 6, 8 is 10. This is because the sequence is an arithmetic sequence with a common difference of 2, and to find the next term, you add the common difference to the last term.\",\n  \"supporting_claims\": [\"1\", \"2\", \"3\"],\n  \"confidence\": 0.95\n}\n```",
+        "tokens": 166,
+        "time_ms": 4308,
+        "parsed_output": {
+          "answer": "The next number in the sequence 2, 4, 6, 8 is 10. This is because the sequence is an arithmetic sequence with a common difference of 2, and to find the next term, you add the common difference to the last term.",
+          "supporting_claims": [
+            "1",
+            "2",
+            "3"
+          ],
+          "confidence": 0.95
+        }
+      },
+      "final_claim_count": 4,
+      "answer": "The next number in the sequence 2, 4, 6, 8 is 10. This is because the sequence is an arithmetic sequence with a common difference of 2, and to find the next term, you add the common difference to the last term.",
+      "confidence": 0.95
+    },
+    "total_time_ms": 17240,
+    "total_tokens": 806,
+    "expected": "10"
+  }
+]
