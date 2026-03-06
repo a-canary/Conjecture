@@ -263,6 +263,84 @@ The system has demonstrated that **core reasoning enhancements consistently work
 
 **See `experiments/O-0008_VALIDATION_REPORT.md` for comprehensive analysis**
 
+## Benchmark Execution Best Practices
+
+### Running Standard Benchmarks
+```bash
+# Standard benchmarks in experiments/ directory (100 samples each)
+.venv/bin/python experiments/gsm8k_standard_benchmark.py -n 100
+.venv/bin/python experiments/mmlu_standard_benchmark.py -n 100
+.venv/bin/python experiments/bbh_benchmark.py -n 100
+
+# Run in parallel (background) for efficiency
+PYTHONUNBUFFERED=1 .venv/bin/python experiments/arc_challenge_benchmark.py -n 100 &
+PYTHONUNBUFFERED=1 .venv/bin/python experiments/hellaswag_benchmark.py -n 100 &
+PYTHONUNBUFFERED=1 .venv/bin/python experiments/truthfulqa_benchmark.py -n 100 &
+
+# Monitor progress (check for new result files)
+ls -lt experiments/results/*.json | head -5
+
+# Update CSV with all results
+.venv/bin/python experiments/analyze_benchmark_results.py
+```
+
+### Benchmark Timing Expectations
+- **100 problems**: 30-40 minutes typical (API rate limiting)
+- **Parallel execution**: Run 5 benchmarks simultaneously for efficiency
+- **Background monitoring**: Check every 2-3 minutes, don't poll actively
+- **Results location**: `experiments/results/[benchmark]_[timestamp].json`
+- **CSV tracking**: `experiments/results/benchmark_results.csv`
+
+### Result Analysis
+- Run `analyze_benchmark_results.py` after benchmarks complete
+- Automatically updates CSV and generates pattern analysis
+- Task types: reasoning (+3pp avg), recall (-15pp avg), commonsense (-10pp avg)
+
+## Three-Prompt Architecture (Experimental - 2026-03-06)
+
+**Status:** Implemented, ready for real LLM testing
+**Goal:** Confidence-based exploration without hard-coded task routing
+
+### Design
+Split single prompt into 3 focused prompts with shared context:
+1. **Update claim confidence** (0-1.0) - Evaluate evidence quality
+2. **Create claim or SKIP** - Explore OR signal completion
+3. **Final response** (when confidence > 0.7 and SKIP) - Synthesize answer
+
+### Key Features
+- Same 50-claim context for all prompts (retrieved once)
+- Iterative loop until confidence > 0.7 AND action == SKIP
+- Each prompt outputs structured JSON
+- Self-regulating complexity (no task-type routing needed)
+
+### Testing
+```bash
+# Mock LLM test (architecture validation)
+.venv/bin/python experiments/three_prompt_test.py
+
+# Real LLM test (3 benchmark problems)
+.venv/bin/python experiments/three_prompt_real_test.py
+```
+
+**See `experiments/THREE_PROMPT_ARCHITECTURE.md` for full design**
+
+## Key File Locations
+
+### Prompt System
+- **Main**: `src/agent/prompt_system.py` (simple_mode vs full mode)
+- **Error correction**: `src/agent/error_correction_prompts.py`
+- **Mode selection**: simple_mode for <14B models, full mode for >14B
+
+### Claim Retrieval
+- **Endpoint**: `src/endpoint/conjecture_endpoint.py` (default max_claims=10)
+- **Context builder**: `src/process/context_builder.py` (hint limit=5)
+- **Test increasing to 50** when database populated
+
+### Database
+- **Location**: `data/conjecture.db` (may not exist in test environment)
+- **Note**: Benchmarks test prompts directly, not full endpoint with claims
+- Empty database is normal during prompt-only testing
+
 ## R&D Key Findings (2026-03-01)
 
 - **Direct prompting beats decomposition** on standard benchmarks (GSM8K: 96% vs 65%)
@@ -272,6 +350,13 @@ The system has demonstrated that **core reasoning enhancements consistently work
 - See `NEXT.md` for follow-up ideas, `docs/RND_COMPREHENSIVE_REPORT.md` for full report
 
 ## Troubleshooting
+
+### Common Environment Issues
+- **Always use `.venv/bin/python`** not just `python` (command not found)
+- **Database may be empty** in test environment (benchmarks test prompts directly)
+- **SSH not configured**: Git push blocked, commits accumulate locally (137+ unpushed common)
+- **API rate limiting**: Benchmarks take 2-3x expected time (30-40min for 100 problems)
+- **Long-running tasks**: Use `run_in_background=true`, monitor with 2-3min intervals
 
 ```bash
 python conjecture config      # Check configuration
