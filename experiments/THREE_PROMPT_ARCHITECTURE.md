@@ -238,11 +238,11 @@ Based on O-0008 validation findings:
 - [x] Analyze confidence trajectories (all reached 0.95)
 - [x] Track iteration counts (2-4 iterations, self-regulating)
 
-### Phase 3: Benchmark Validation (In Progress)
-- [~] GSM8K (50 problems) - RUNNING NOW
-- [ ] BBH (50 problems)
+### Phase 3: Benchmark Validation (Mixed Results)
+- [x] GSM8K (50 problems) - **REGRESSED -2pp** (94% → 92%)
+- [ ] BBH (50 problems) - Next test
 - [ ] MMLU (50 problems)
-- [ ] Compare to O-0008 baseline results
+- [~] Comparing to O-0008 baseline results
 
 ### Phase 4: Optimization
 - [ ] Tune confidence threshold (0.7?)
@@ -321,8 +321,39 @@ This architecture addresses key findings from O-0008:
 
 ---
 
-**Status:** Real LLM Testing ✓ / Benchmark Validation In Progress
-**Test Results:** 100% accuracy (3/3), 2-4 iterations (self-regulating), 0.95 confidence
-**Current:** GSM8K benchmark running (50 problems, ~20 min)
-**Risk:** Moderate (3-5x API cost)
-**Reward:** High (potential +5-10pp on hard reasoning without regressions)
+**Status:** Real LLM Testing ✓ / Benchmark Validation Mixed Results
+**Test Results:** 100% accuracy (3/3 toy problems), **-2pp regression (GSM8K)**
+**GSM8K Findings:** 94% → 92%, 3.96/4 iterations (no self-regulation), 8.7x token cost
+**Current:** Analyzing failure, preparing BBH test (harder reasoning)
+**Risk:** Moderate-High (architecture might not work as hypothesized)
+**Learning:** Task-type dependency confirmed, high-baseline problems don't benefit
+
+---
+
+## GSM8K Results (2026-03-06)
+
+### Unexpected Regression
+- **Direct:** 94.0% (47/50)
+- **Three-Prompt:** 92.0% (46/50)
+- **Improvement:** -2.0pp (regression)
+
+### Key Problems
+1. **No Self-Regulation:** 3.96/4 iterations (99% utilization)
+   - Confidence threshold (0.7) never reached naturally
+   - Model explores fully on every problem
+2. **Efficiency:** 8.7x more tokens for worse accuracy
+3. **High Baseline:** 94% leaves little improvement room
+
+### Root Causes
+- Confidence threshold too high (model can't reach 0.7)
+- GSM8K problems too simple (direct prompting better)
+- Extra exploration adds noise rather than insight
+- Architecture overhead hurts on straightforward problems
+
+### Scientific Value
+- ✅ Negative result confirms task-type dependency
+- ✅ High-baseline problems (>90%) don't benefit from decomposition
+- ⚠️ Self-regulation NOT working as designed
+- ⚠️ Need to test on harder benchmarks (BBH: 84% baseline)
+
+**Next Test:** BBH (hard reasoning, more improvement room)
