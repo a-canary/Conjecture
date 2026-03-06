@@ -44,6 +44,8 @@ Supports: M-0001
 
 Treat all knowledge as provisional claims with confidence scores — never as facts. Force models to cite sources, track uncertainty, and revise beliefs when evidence changes. Hallucinations become detectable confidence gaps.
 
+CHALLENGED by TruthfulQA (-13pp): Full decomposition increased false confidence rather than reducing hallucinations. Claim-based reasoning with extensive decomposition may amplify model's tendency to construct plausible-sounding but incorrect justifications. Lightweight verification (cot_lite) or direct prompting performs better on truthfulness tasks. Mission remains valid but implementation approach needs refinement — verification must be evidence-based, not just structured elaboration.
+
 ### M-0003: Handle Long Context and Complex Tasks
 Supports: M-0001
 
@@ -200,6 +202,13 @@ GC runs when claim count exceeds threshold. Removes claims that are both clean (
 Supports: M-0001, O-0006
 
 Run minimum 10 benchmarks with 40+ samples each. Conjecture must perform >= Direct on ALL benchmarks (no regressions). Must show +20pp improvement on at least 5 benchmarks. This validates the framework's value proposition — claim enhancement must never hurt performance, and must meaningfully improve reasoning on challenging tasks.
+
+VALIDATED with caveats (7/10 benchmarks complete, 100 samples each):
+- ✅ Hard reasoning (BBH +9pp, Synthetic +18pp)
+- ❌ Recall/commonsense (MMLU -17pp, TruthfulQA -13pp, HellaSwag -10pp)
+- ≈ High-baseline (GSM8K +1pp, ARC -1pp — saturated)
+
+**Task-type routing REQUIRED** — decomposition helps reasoning but hurts recall/commonsense. Production deployment must classify queries and route appropriately. Lightweight alternatives (cot_lite +2pp) viable for recall tasks. Original "no regressions" rule holds ONLY with routing. Complete validation requires 3 more benchmarks (DROP, MATH, HumanEval) plus multi-model testing.
 
 ---
 
