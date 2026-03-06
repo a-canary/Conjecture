@@ -1,0 +1,17 @@
+{
+  "variant_id": 16,
+  "variant_name": "v16_role_imperative_natural",
+  "system_key": "role",
+  "instruction_key": "imperative",
+  "output_key": "natural",
+  "modifier_key": "brevity",
+  "n_problems": 10,
+  "single_claim_rate": 1.0,
+  "relevance_rate": 0.9,
+  "atomicity_rate": 1.0,
+  "confidence_rate": 0.1,
+  "avg_word_count": 14.5,
+  "avg_response_time": 2.229314351081848,
+  "error_rate": 0.0,
+  "composite_score": 0.7949999999999999
+}

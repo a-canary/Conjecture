@@ -535,21 +535,26 @@ class ConjectureEndpoint:
         min_confidence: float = 0.5,
         include_reasoning: bool = True,
         use_decomposition: bool = True,
-        use_tools: bool = False,
-        max_tool_iterations: int = 5
+        use_tools: bool = True,
+        max_tool_iterations: int = 5,
+        use_reasoning_loop: bool = False,
     ) -> APIResponse:
         """Evaluate claims using LLM reasoning.
 
         Per A-0003, this is one of the three core endpoint methods.
         Per A-0009, input is decomposed into constituent claims before reasoning.
-        Per A-0010, when use_tools=True, LLM operates via structured claim tools
-        so all reasoning is traceable through the claim graph.
-        Set use_tools=False (default) to fall back to plain-text generation.
+        Per A-0010, the LLM operates via structured claim tools (CLAIM_TOOLS) so
+        all reasoning is traceable through the claim graph.  Tool-calling is the
+        default mode; set use_tools=False to fall back to plain-text generation.
 
         The LLM may call any combination of:
           - create_claim: Record a reasoning step as a claim.
           - update_confidence: Revise confidence on an existing claim.
           - respond_to_user: Deliver the final answer (halts the loop).
+
+        When use_reasoning_loop=True the A-0012 ReasoningLoop is used instead of
+        the tool-calling loop.  The LLM decides for itself when it has sufficient
+        confidence to halt; the result includes the full reasoning trace.
 
         Args:
             query: Natural language query to evaluate
@@ -557,8 +562,10 @@ class ConjectureEndpoint:
             min_confidence: Minimum confidence for claim inclusion (default 0.5)
             include_reasoning: Whether to include reasoning steps (default True)
             use_decomposition: Whether to decompose input before evaluation (default True)
-            use_tools: Whether to use A-0010 tool-calling mode (default False)
+            use_tools: Whether to use A-0010 tool-calling mode (default True)
             max_tool_iterations: Max iterations for tool loop when use_tools=True (default 5)
+            use_reasoning_loop: When True, use ReasoningLoop (A-0012) instead of the
+                built-in tool-calling loop.  Returns a ReasoningResult in data (default False)
 
         Returns:
             APIResponse with evaluation result and reasoning chain.
@@ -566,6 +573,8 @@ class ConjectureEndpoint:
             claims, 0 if decomposition was skipped or failed).
             In tool mode, data also includes 'tool_calls', 'created_claim_ids',
             and 'supporting_claims'.
+            When use_reasoning_loop=True, data includes 'reasoning_result' with the
+            full ReasoningResult object.
         """
         error_response = await self._ensure_initialized()
         if error_response:
@@ -626,6 +635,53 @@ class ConjectureEndpoint:
                     all_context_claims.append(
                         dc.model_dump() if hasattr(dc, "model_dump") else dc
                     )
+
+            # Step 3b: A-0012 ReasoningLoop path (optional)
+            # When use_reasoning_loop=True, delegate to the ReasoningLoop which
+            # implements the LLM-directed halt-or-explore decision loop.
+            if use_reasoning_loop:
+                try:
+                    from src.process.reasoning_loop import ReasoningLoop
+                    from src.data.repositories import ClaimRepository
+
+                    repo = ClaimRepository()
+                    await repo.initialize()
+
+                    reasoning_loop = ReasoningLoop(
+                        llm_client=llm,
+                        claim_repository=repo,
+                        max_iterations=max_tool_iterations,
+                    )
+
+                    # Pass context claims as dicts for ReasoningLoop compatibility
+                    context_for_loop = [
+                        c if isinstance(c, dict) else c
+                        for c in all_context_claims
+                    ]
+
+                    reasoning_result = await reasoning_loop.run(
+                        query=query,
+                        context_claims=context_for_loop,
+                    )
+                    return APIResponse(
+                        success=True,
+                        message="Evaluation complete (reasoning loop)",
+                        data={
+                            "query": query,
+                            "response": reasoning_result.response,
+                            "claims_used": len(claims),
+                            "decomposed_claims": len(decomposed_claims),
+                            "reasoning_result": {
+                                "claims_created": reasoning_result.claims_created,
+                                "supporting_claims": reasoning_result.supporting_claims,
+                                "iterations": reasoning_result.iterations,
+                                "halted_reason": reasoning_result.halted_reason,
+                                "tool_calls": reasoning_result.tool_calls,
+                            },
+                        }
+                    )
+                finally:
+                    await llm.close()
 
             # Step 4: Build claim context and enhanced prompt
             claim_context = build_claim_context(all_context_claims)

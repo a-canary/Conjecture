@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-03-06T04:44:53.231860+00:00",
+  "n_problems": 20,
+  "model": "deepseek-ai/DeepSeek-V3",
+  "direct_accuracy": 0.0,
+  "reasoning_accuracy": 0.0,
+  "improvement_pp": 0.0,
+  "direct_avg_time": 0.12130230665206909,
+  "reasoning_avg_time": 0.1003846287727356,
+  "conclusion": "THESIS INCONCLUSIVE: No significant difference"
+}

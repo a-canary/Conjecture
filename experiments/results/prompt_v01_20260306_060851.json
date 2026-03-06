@@ -1,0 +1,17 @@
+{
+  "variant_id": 1,
+  "variant_name": "v01_minimal_imperative_json",
+  "system_key": "minimal",
+  "instruction_key": "imperative",
+  "output_key": "json",
+  "modifier_key": "reasoning",
+  "n_problems": 10,
+  "single_claim_rate": 1.0,
+  "relevance_rate": 0.9,
+  "atomicity_rate": 0.4,
+  "confidence_rate": 1.0,
+  "avg_word_count": 62.1,
+  "avg_response_time": 2.9022836923599242,
+  "error_rate": 0.0,
+  "composite_score": 0.855
+}

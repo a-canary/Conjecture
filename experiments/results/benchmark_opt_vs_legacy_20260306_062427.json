@@ -1,0 +1,203 @@
+{
+  "timestamp": "2026-03-06T06:24:27.077562+00:00",
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "n_scenarios": 8,
+  "optimized_avg": 0.875,
+  "legacy_avg": 0.7125,
+  "improvement_pp": 16.249999999999996,
+  "optimized_metrics": {
+    "single_action": 1.0,
+    "correct_action": 0.5,
+    "has_confidence": 1.0,
+    "is_atomic": 1.0
+  },
+  "legacy_metrics": {
+    "single_action": 1.0,
+    "correct_action": 0.625,
+    "has_confidence": 0.5,
+    "is_atomic": 0.375
+  },
+  "verdict": "\u2705 OPTIMIZED PROMPT SIGNIFICANTLY BETTER",
+  "details": {
+    "optimized": [
+      {
+        "scenario": "Math gap",
+        "output": "UPDATE [c001]: conf 1.0 \u2192 0.9 (discount applies to regular price)\n\nReason: The regular price of an a",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 3.0441477298736572,
+        "score": 0.75
+      },
+      {
+        "scenario": "Logic gap",
+        "output": "UPDATE [c010]: conf 0.95 \u2192 1.0 (modus ponens, since we know whales are mammals and all mammals are w",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 1.6508102416992188,
+        "score": 0.75
+      },
+      {
+        "scenario": "Reasoning gap",
+        "output": "UPDATE [c020]: conf 0.9 \u2192 0.95 (because reduced commute time allows for more flexible work schedules",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 1.1609163284301758,
+        "score": 0.75
+      },
+      {
+        "scenario": "Disconfirm",
+        "output": "UPDATE [c031]: conf 1.0 \u2192 0.9 (reason: new evidence that penguins are flightless birds contradicts t",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 1.3133018016815186,
+        "score": 1.0
+      },
+      {
+        "scenario": "Confirm",
+        "output": "UPDATE [c040]: conf 0.7 \u2192 0.0 (reason: verified calculation 8+8+8+8+8+8+8=56)",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 1.3779993057250977,
+        "score": 1.0
+      },
+      {
+        "scenario": "Empty context",
+        "output": "CREATE: \"Paris is the capital of France.\" (type: FACT, conf: 0.8)",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 1.54298996925354,
+        "score": 1.0
+      },
+      {
+        "scenario": "Complex multi-step",
+        "output": "CREATE: [c053] The time difference between the two trains is 1 hour (type: observation, conf: 1.0)",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 0.8945157527923584,
+        "score": 1.0
+      },
+      {
+        "scenario": "Uncertain claim",
+        "output": "CREATE: The patient's fever is a common symptom of both cold and flu (observation, conf: 0.8)",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 0.8435211181640625,
+        "score": 0.75
+      }
+    ],
+    "legacy": [
+      {
+        "scenario": "Math gap",
+        "output": "create_claim(\n  id='c003',\n  text='The store offers a 10% discount on all apples.',\n  type='claim',\n",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 6.3294665813446045,
+        "score": 0.85
+      },
+      {
+        "scenario": "Logic gap",
+        "output": "CREATE CLAIM: If all mammals are warm-blooded, and whales are mammals, then whales are warm-blooded.",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": false,
+        "correct_action": true,
+        "time": 6.635211229324341,
+        "score": 0.8
+      },
+      {
+        "scenario": "Reasoning gap",
+        "output": "create_claim(\"c021\", \"Remote work may reduce distractions, as commutes are a common source of distra",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": false,
+        "correct_action": true,
+        "time": 0.8936302661895752,
+        "score": 0.8
+      },
+      {
+        "scenario": "Disconfirm",
+        "output": "I will create a new claim to explore the relationship between the new evidence and the existing clai",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 1.100567102432251,
+        "score": 0.75
+      },
+      {
+        "scenario": "Confirm",
+        "output": "create_claim(\n  claim_id='c041',\n  claim='The sum of 8 added to itself 7 times is equal to 8*7',\n  c",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 0.7068774700164795,
+        "score": 0.6
+      },
+      {
+        "scenario": "Empty context",
+        "output": "create_claim(\"I am uncertain about the capital of France.\") \n\nI will explore further to gather more ",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": false,
+        "correct_action": true,
+        "time": 0.9117953777313232,
+        "score": 0.65
+      },
+      {
+        "scenario": "Complex multi-step",
+        "output": "Let's explore further to determine the meeting time of the two trains.\n\ncreate_claim(\n  claim_id='c0",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": false,
+        "correct_action": true,
+        "time": 6.28592848777771,
+        "score": 0.65
+      },
+      {
+        "scenario": "Uncertain claim",
+        "output": "I'll create a claim to explore further.\n\ncreate_claim(\n  id='c062',\n  type='question',\n  text='What ",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 0.522026538848877,
+        "score": 0.6
+      }
+    ]
+  }
+}

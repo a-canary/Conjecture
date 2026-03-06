@@ -1,0 +1,203 @@
+{
+  "timestamp": "2026-03-06T06:25:35.276375+00:00",
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "n_scenarios": 8,
+  "optimized_avg": 0.90625,
+  "legacy_avg": 0.75625,
+  "improvement_pp": 15.000000000000002,
+  "optimized_metrics": {
+    "single_action": 1.0,
+    "correct_action": 0.625,
+    "has_confidence": 1.0,
+    "is_atomic": 1.0
+  },
+  "legacy_metrics": {
+    "single_action": 1.0,
+    "correct_action": 0.625,
+    "has_confidence": 0.625,
+    "is_atomic": 0.5
+  },
+  "verdict": "\u2705 OPTIMIZED PROMPT SIGNIFICANTLY BETTER",
+  "details": {
+    "optimized": [
+      {
+        "scenario": "Math gap",
+        "output": "CREATE: The store offers a 10% discount on the total cost (type: fact, conf: 0.8)",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 1.359973430633545,
+        "score": 1.0
+      },
+      {
+        "scenario": "Logic gap",
+        "output": "CREATE: Whales are mammals (assertion, conf: 1.0)",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 0.8638153076171875,
+        "score": 1.0
+      },
+      {
+        "scenario": "Reasoning gap",
+        "output": "CREATE: \"Reduced distractions allow for better focus (type: cause, conf: 0.8)\"",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 1.0715103149414062,
+        "score": 1.0
+      },
+      {
+        "scenario": "Disconfirm",
+        "output": "CREATE: \"Penguins cannot fly\" (assumption, conf: 0.9)",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 0.24692225456237793,
+        "score": 0.75
+      },
+      {
+        "scenario": "Confirm",
+        "output": "CREATE: 7 times 8 equals 56 (assertion, conf: 0.0)",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 0.9325439929962158,
+        "score": 0.75
+      },
+      {
+        "scenario": "Empty context",
+        "output": "CREATE: \"Paris is the capital of France.\" (type: fact, conf: 1.0)",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 1.2282195091247559,
+        "score": 1.0
+      },
+      {
+        "scenario": "Complex multi-step",
+        "output": "CREATE: \"Train A and Train B meet after 2 hours of Train A's departure\" (calculation, conf: 0.8)\n\nTh",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 8.380286693572998,
+        "score": 1.0
+      },
+      {
+        "scenario": "Uncertain claim",
+        "output": "CREATE: \"Patient has symptoms consistent with flu\" (conjecture, conf: 0.3)",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 2.1825404167175293,
+        "score": 0.75
+      }
+    ],
+    "legacy": [
+      {
+        "scenario": "Math gap",
+        "output": "create_claim(c003, \"The store offers a 10% discount on the total cost of 7 apples.\", conf: 0.8)\n\nI'm",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 1.181854248046875,
+        "score": 1.0
+      },
+      {
+        "scenario": "Logic gap",
+        "output": "Let's explore further to build our understanding.\n\ncreate_claim(c011, \"If all mammals are warm-blood",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": false,
+        "correct_action": true,
+        "time": 0.5244357585906982,
+        "score": 0.8
+      },
+      {
+        "scenario": "Reasoning gap",
+        "output": "create_claim(\n  claim_id='c021',\n  claim_type='hypothesis',\n  claim_text='Reduced commute time may l",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 6.132912635803223,
+        "score": 0.85
+      },
+      {
+        "scenario": "Disconfirm",
+        "output": "I'll create a claim to record the new evidence.\n\ncreate_claim(text=\"Penguins are flightless birds\", ",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 3.668268918991089,
+        "score": 0.75
+      },
+      {
+        "scenario": "Confirm",
+        "output": "CREATE CLAIM:\n[c041] The correct calculation of 7\u00d78 is 7 groups of 8.",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": false,
+        "correct_action": false,
+        "time": 1.1603822708129883,
+        "score": 0.5499999999999999
+      },
+      {
+        "scenario": "Empty context",
+        "output": "CREATE CLAIM: \nC1: I am uncertain about the capital of France.\n\nThis uncertainty warrants further ex",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": false,
+        "correct_action": true,
+        "time": 1.392744779586792,
+        "score": 0.65
+      },
+      {
+        "scenario": "Complex multi-step",
+        "output": "create_claim(c053, \"Train A's time of departure is 9am (given)\", conf=1.0)\ncreate_claim(c054, \"Train",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 0.5082011222839355,
+        "score": 0.85
+      },
+      {
+        "scenario": "Uncertain claim",
+        "output": "create_claim(\n  id='c062',\n  claim='Fever is a common symptom of both cold and flu',\n  type='conject",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 0.5197739601135254,
+        "score": 0.6
+      }
+    ]
+  }
+}

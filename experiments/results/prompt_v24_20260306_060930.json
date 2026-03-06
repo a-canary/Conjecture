@@ -1,0 +1,17 @@
+{
+  "variant_id": 24,
+  "variant_name": "v24_constraint_imperative_natural",
+  "system_key": "constraint",
+  "instruction_key": "imperative",
+  "output_key": "natural",
+  "modifier_key": "brevity",
+  "n_problems": 10,
+  "single_claim_rate": 0.7,
+  "relevance_rate": 0.5,
+  "atomicity_rate": 0.7,
+  "confidence_rate": 0.1,
+  "avg_word_count": 9.7,
+  "avg_response_time": 2.668513059616089,
+  "error_rate": 0.3,
+  "composite_score": 0.53
+}

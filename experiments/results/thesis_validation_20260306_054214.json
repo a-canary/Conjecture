@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-03-06T05:42:14.243889+00:00",
+  "n_problems": 30,
+  "model": "liquid/lfm-2.5-1.2b-instruct:free",
+  "direct_accuracy": 0.1,
+  "reasoning_accuracy": 0.26666666666666666,
+  "improvement_pp": 16.666666666666664,
+  "direct_avg_time": 0.8300278663635254,
+  "reasoning_avg_time": 1.8066848834355673,
+  "conclusion": "THESIS VALIDATED: Decomposition improves accuracy"
+}

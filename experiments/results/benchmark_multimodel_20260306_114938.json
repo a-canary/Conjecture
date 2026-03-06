@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-03-06T11:49:38.860808+00:00",
+  "n_scenarios": 8,
+  "results": [
+    {
+      "model_name": "lfm2.5-1.2b-local",
+      "model_id": "liquid/lfm2.5-1.2b",
+      "size": "1.2B",
+      "category": "tiny",
+      "n_scenarios": 8,
+      "composite_score": 0.0,
+      "single_action_rate": 0.0,
+      "correct_action_rate": 0.0,
+      "confidence_rate": 0.0,
+      "atomicity_rate": 0.0,
+      "avg_response_time": 1.3506520986557007,
+      "error_rate": 1.0,
+      "errors": [
+        "Math calculation: Connection error.",
+        "Logic deduction: Connection error.",
+        "Simple arithmetic: Connection error.",
+        "Disconfirm evidence: Connection error.",
+        "Confirm calculation: Connection error.",
+        "Capital city: Connection error.",
+        "Multi-step reasoning: Connection error.",
+        "Uncertain conjecture: Connection error."
+      ]
+    }
+  ],
+  "best_model": "lfm2.5-1.2b-local"
+}

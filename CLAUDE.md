@@ -234,6 +234,24 @@ async def run_cycle(self):
 
 The system has demonstrated that **core reasoning enhancements consistently work** while **infrastructure attempts consistently fail**. Focus on what works and maintain the scientific validation approach established through 13 systematic improvement cycles.
 
+## Standard Benchmark Validation (2026-03-06)
+
+**Task-type dependency discovered**: Decomposition helps math reasoning but hurts factual recall.
+
+| Benchmark | Type | Direct | Decomposition | Delta | Model |
+|-----------|------|--------|---------------|-------|-------|
+| **GSM8K** | Math | 92.0% | 93.0% | **+1.0pp** | DeepSeek-V3 |
+| **MMLU** | Knowledge | 62.0% | 45.0% | **-17.0pp** | DeepSeek-V3 |
+| **Synthetic** | Math | 79.0% | 97.0% | **+18.0pp** | DeepSeek-V3 |
+
+### When Decomposition Works
+- ✅ Multi-step math/reasoning with baseline <85%
+- ✅ Novel problems (not in training data)
+- ❌ Factual recall tasks (MMLU: -17pp)
+- ❌ High baseline (>90%, GSM8K: +1pp)
+
+**See `STANDARD_BENCHMARK_REPORT.md` for full analysis**
+
 ## R&D Key Findings (2026-03-01)
 
 - **Direct prompting beats decomposition** on standard benchmarks (GSM8K: 96% vs 65%)

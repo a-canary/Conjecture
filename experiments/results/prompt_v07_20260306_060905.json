@@ -1,0 +1,17 @@
+{
+  "variant_id": 7,
+  "variant_name": "v07_minimal_example_json",
+  "system_key": "minimal",
+  "instruction_key": "example",
+  "output_key": "json",
+  "modifier_key": "none",
+  "n_problems": 10,
+  "single_claim_rate": 0.9,
+  "relevance_rate": 0.5,
+  "atomicity_rate": 0.8,
+  "confidence_rate": 0.9,
+  "avg_word_count": 40.7,
+  "avg_response_time": 1.6158634901046753,
+  "error_rate": 0.0,
+  "composite_score": 0.78
+}

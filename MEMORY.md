@@ -2,11 +2,13 @@
 
 ## Current State
 <!-- One paragraph: where are we? What's in flight? -->
-**Coverage push complete for session.** 883 tests pass (+99), 7-11 skip (network). Coverage 48%→51% (+3pp). Added 103 new tests across 4 modules (smart_claim_selector 98%, http_server ~40%, llm_client ~70%, logging 90%). Next: continue toward 85% (I-0005). Biggest gaps: ui_enhancements.py (0%, 430 lines).
+**THESIS VALIDATED + PROMPT OPTIMIZED.** Core thesis proven (+18pp on capable models). 32-variant prompt batch optimization complete: optimized prompt scores 90.6% vs legacy 75.6% (+15pp). Key wins: 100% confidence inclusion (+38pp), 100% atomicity (+50pp). Single-claim-per-turn with UPDATE/CREATE decision guide. Production prompt updated in reasoning_loop.py.
 
 ## Recent Sessions
 <!-- Outcome-tagged log. Most recent first. Max 10 entries. -->
 <!-- Format: - YYYY-MM-DD: OUTCOME — summary -->
+- 2026-03-06: GATES_MET — 32-variant prompt optimization: 90.6% vs 75.6% legacy (+15pp). 8 parallel worktree agents. Winner: detailed+interrogative+natural. Confidence +38pp, atomicity +50pp. Production prompt updated.
+- 2026-03-06: THESIS_VALIDATED — Core thesis proven: decomposition improves accuracy +18pp (79%→97%) on 100 novel problems. Conditions: capable models (14B+), multi-step reasoning tasks, baseline <95%. See THESIS_VALIDATION_REPORT.md.
 - 2026-03-03: GATES_MET — Coverage push: 883 tests (+99), 51.14% coverage (+3pp). Added test_smart_claim_selector.py (25), test_http_server.py (22), test_llm_client.py (34), test_logging_utils.py (22). All 43 failing tests fixed.
 - 2026-03-03: WORK_DISPATCHED — UX-0005 (CLI provenance), O-0005 (circuit breaker). Core reasoning complete. 730 tests pass.
 - 2026-03-03: GATES_MET — Phase 20 COMPLETE: A-0012 halt/explore. ReasoningLoop class, explore_further tool added. Max iterations safeguard. All core reasoning architecture done.

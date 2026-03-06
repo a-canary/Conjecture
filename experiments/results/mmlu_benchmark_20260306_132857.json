@@ -1,0 +1,26 @@
+{
+  "benchmark": "MMLU",
+  "model": "deepseek/deepseek-chat-v3-0324",
+  "n_problems": 100,
+  "timestamp": "2026-03-06T13:28:57.294353+00:00",
+  "direct": {
+    "method": "DIRECT",
+    "correct": 62,
+    "total": 100,
+    "accuracy": 62.0,
+    "avg_time": 2.36,
+    "total_tokens": 12459,
+    "extraction_failures": 9
+  },
+  "decomposition": {
+    "method": "DECOMPOSITION",
+    "correct": 45,
+    "total": 100,
+    "accuracy": 45.0,
+    "avg_time": 17.72,
+    "total_tokens": 56010,
+    "extraction_failures": 2
+  },
+  "improvement_pp": -17.0,
+  "conclusion": "THESIS CHALLENGED: Decomposition hurts accuracy"
+}

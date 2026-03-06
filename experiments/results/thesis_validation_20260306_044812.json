@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-03-06T04:48:12.623290+00:00",
+  "n_problems": 10,
+  "model": "deepseek/deepseek-chat-v3-0324",
+  "direct_accuracy": 0.7,
+  "reasoning_accuracy": 0.0,
+  "improvement_pp": -70.0,
+  "direct_avg_time": 2.20769202709198,
+  "reasoning_avg_time": 11.279629182815551,
+  "conclusion": "THESIS CHALLENGED: Decomposition decreases accuracy"
+}

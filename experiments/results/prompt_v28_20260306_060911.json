@@ -1,0 +1,17 @@
+{
+  "variant_id": 28,
+  "variant_name": "v28_constraint_templated_natural",
+  "system_key": "constraint",
+  "instruction_key": "templated",
+  "output_key": "natural",
+  "modifier_key": "brevity",
+  "n_problems": 10,
+  "single_claim_rate": 1.0,
+  "relevance_rate": 0.7,
+  "atomicity_rate": 1.0,
+  "confidence_rate": 1.0,
+  "avg_word_count": 15.4,
+  "avg_response_time": 1.896281909942627,
+  "error_rate": 0.0,
+  "composite_score": 0.9249999999999998
+}

@@ -36,10 +36,23 @@ async def _make_endpoint(tmp_path: str) -> ConjectureEndpoint:
 
 
 def _make_llm_instance(response_content: str = "4") -> MagicMock:
-    """Build a mock LLMClient instance whose generate() returns a simple response."""
+    """Build a mock LLMClient instance with both generate() and generate_with_tools().
+
+    generate_with_tools() returns no tool_calls so evaluate() falls through to
+    the plain-text path (same behaviour as the original generate() mock).
+    """
     client = MagicMock()
+    # Plain-text mode (use_tools=False)
     client.generate = AsyncMock(return_value={
         "content": response_content,
+        "model": "mock-model",
+        "usage": {"prompt_tokens": 10, "completion_tokens": 5}
+    })
+    # Tool-calling mode (use_tools=True, default) — return no tool_calls so the
+    # evaluate() loop exits via the plain-text fallback branch.
+    client.generate_with_tools = AsyncMock(return_value={
+        "content": response_content,
+        "tool_calls": [],
         "model": "mock-model",
         "usage": {"prompt_tokens": 10, "completion_tokens": 5}
     })

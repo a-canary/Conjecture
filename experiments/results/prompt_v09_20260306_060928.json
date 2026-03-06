@@ -1,0 +1,17 @@
+{
+  "variant_id": 9,
+  "variant_name": "v09_detailed_imperative_json",
+  "system_key": "detailed",
+  "instruction_key": "imperative",
+  "output_key": "json",
+  "modifier_key": "reasoning",
+  "n_problems": 10,
+  "single_claim_rate": 1.0,
+  "relevance_rate": 1.0,
+  "atomicity_rate": 0.3,
+  "confidence_rate": 1.0,
+  "avg_word_count": 59.5,
+  "avg_response_time": 4.240114903450012,
+  "error_rate": 0.0,
+  "composite_score": 0.8600000000000001
+}

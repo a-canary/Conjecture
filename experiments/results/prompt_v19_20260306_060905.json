@@ -1,0 +1,17 @@
+{
+  "variant_id": 19,
+  "variant_name": "v19_role_interrogative_json",
+  "system_key": "role",
+  "instruction_key": "interrogative",
+  "output_key": "json",
+  "modifier_key": "none",
+  "n_problems": 10,
+  "single_claim_rate": 1.0,
+  "relevance_rate": 0.9,
+  "atomicity_rate": 1.0,
+  "confidence_rate": 0.9,
+  "avg_word_count": 21.8,
+  "avg_response_time": 2.842160773277283,
+  "error_rate": 0.0,
+  "composite_score": 0.9549999999999998
+}

@@ -57,12 +57,18 @@ class TestClaimToolsSchema:
     def test_claim_tools_is_list(self):
         assert isinstance(CLAIM_TOOLS, list)
 
-    def test_claim_tools_has_three_entries(self):
-        assert len(CLAIM_TOOLS) == 3
+    def test_claim_tools_has_four_entries(self):
+        # explore_further was added in Phase 20 (A-0012 reasoning loop)
+        assert len(CLAIM_TOOLS) == 4
 
     def test_tool_names(self):
         names = {t["function"]["name"] for t in CLAIM_TOOLS}
-        assert names == {"create_claim", "update_confidence", "respond_to_user"}
+        assert names == {
+            "create_claim",
+            "update_confidence",
+            "respond_to_user",
+            "explore_further",
+        }
 
     def test_all_tools_have_function_key(self):
         for tool in CLAIM_TOOLS:

@@ -1,0 +1,32 @@
+[
+  {
+    "scenario": "Math with partial claims",
+    "is_update": false,
+    "is_create": true,
+    "is_single_action": true,
+    "has_confidence": true,
+    "is_atomic": true,
+    "output_length": 194,
+    "success": true
+  },
+  {
+    "scenario": "Logic with uncertain claim",
+    "is_update": false,
+    "is_create": true,
+    "is_single_action": true,
+    "has_confidence": true,
+    "is_atomic": true,
+    "output_length": 167,
+    "success": true
+  },
+  {
+    "scenario": "Reasoning gap",
+    "is_update": false,
+    "is_create": true,
+    "is_single_action": true,
+    "has_confidence": true,
+    "is_atomic": true,
+    "output_length": 88,
+    "success": true
+  }
+]

@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-03-06T11:50:58.893348+00:00",
+  "n_scenarios": 8,
+  "results": [
+    {
+      "model_name": "llama3.1-8b",
+      "model_id": "meta-llama/llama-3.1-8b-instruct",
+      "size": "8B",
+      "category": "small",
+      "n_scenarios": 8,
+      "composite_score": 0.88125,
+      "single_action_rate": 1.0,
+      "correct_action_rate": 0.625,
+      "confidence_rate": 0.875,
+      "atomicity_rate": 1.0,
+      "avg_response_time": 1.5572559237480164,
+      "error_rate": 0.0,
+      "errors": []
+    },
+    {
+      "model_name": "lfm2.5-1.2b-or",
+      "model_id": "liquid/lfm-2.5-1.2b-instruct:free",
+      "size": "1.2B",
+      "category": "tiny",
+      "n_scenarios": 8,
+      "composite_score": 0.84375,
+      "single_action_rate": 0.875,
+      "correct_action_rate": 0.625,
+      "confidence_rate": 0.875,
+      "atomicity_rate": 1.0,
+      "avg_response_time": 0.38261520862579346,
+      "error_rate": 0.0,
+      "errors": []
+    },
+    {
+      "model_name": "lfm2.5-1.2b-local",
+      "model_id": "liquid/lfm2.5-1.2b",
+      "size": "1.2B",
+      "category": "tiny",
+      "n_scenarios": 8,
+      "composite_score": 0.8125,
+      "single_action_rate": 0.875,
+      "correct_action_rate": 0.5,
+      "confidence_rate": 0.875,
+      "atomicity_rate": 1.0,
+      "avg_response_time": 1.1580311357975006,
+      "error_rate": 0.0,
+      "errors": []
+    }
+  ],
+  "best_model": "llama3.1-8b"
+}

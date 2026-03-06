@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-03-06T05:56:14.240541+00:00",
+  "n_problems": 50,
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "direct_accuracy": 0.36,
+  "reasoning_accuracy": 0.4,
+  "improvement_pp": 4.0000000000000036,
+  "direct_avg_time": 1.0290494680404663,
+  "reasoning_avg_time": 8.113332805633545,
+  "conclusion": "THESIS PARTIALLY SUPPORTED: Modest improvement"
+}

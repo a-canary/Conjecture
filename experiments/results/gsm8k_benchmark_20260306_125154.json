@@ -1,0 +1,26 @@
+{
+  "benchmark": "GSM8K",
+  "model": "deepseek/deepseek-chat-v3-0324",
+  "n_problems": 100,
+  "timestamp": "2026-03-06T12:51:54.301107+00:00",
+  "direct": {
+    "method": "DIRECT",
+    "correct": 92,
+    "total": 100,
+    "accuracy": 92.0,
+    "avg_time": 10.53,
+    "total_tokens": 32006,
+    "extraction_failures": 0
+  },
+  "decomposition": {
+    "method": "DECOMPOSITION",
+    "correct": 93,
+    "total": 100,
+    "accuracy": 93.0,
+    "avg_time": 11.27,
+    "total_tokens": 46445,
+    "extraction_failures": 1
+  },
+  "improvement_pp": 1.0,
+  "conclusion": "THESIS PARTIALLY SUPPORTED: Modest improvement"
+}

@@ -1,0 +1,17 @@
+{
+  "variant_id": 6,
+  "variant_name": "v06_minimal_example_natural",
+  "system_key": "minimal",
+  "instruction_key": "example",
+  "output_key": "natural",
+  "modifier_key": "confidence_first",
+  "n_problems": 10,
+  "single_claim_rate": 1.0,
+  "relevance_rate": 0.9,
+  "atomicity_rate": 0.8,
+  "confidence_rate": 1.0,
+  "avg_word_count": 30.2,
+  "avg_response_time": 1.909339427947998,
+  "error_rate": 0.0,
+  "composite_score": 0.935
+}

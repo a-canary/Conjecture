@@ -1,0 +1,203 @@
+{
+  "timestamp": "2026-03-06T06:23:19.257312+00:00",
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "n_scenarios": 8,
+  "optimized_avg": 0.75,
+  "legacy_avg": 0.75625,
+  "improvement_pp": -0.6249999999999978,
+  "optimized_metrics": {
+    "single_action": 0.875,
+    "correct_action": 0.75,
+    "has_confidence": 1.0,
+    "is_atomic": 0.0
+  },
+  "legacy_metrics": {
+    "single_action": 1.0,
+    "correct_action": 0.625,
+    "has_confidence": 0.625,
+    "is_atomic": 0.5
+  },
+  "verdict": "\u2696\ufe0f NO SIGNIFICANT DIFFERENCE",
+  "details": {
+    "optimized": [
+      {
+        "scenario": "Math gap",
+        "output": "CREATE a new claim to calculate the total cost with the 10% discount.\n\nNew claim: [c003] The total c",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 2.9107751846313477,
+        "score": 0.85
+      },
+      {
+        "scenario": "Logic gap",
+        "output": "CREATE a new claim that fills a gap in reasoning.\n\nNEW CLAIM: [c011] Whales are mammals (assertion, ",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 1.7192819118499756,
+        "score": 0.85
+      },
+      {
+        "scenario": "Reasoning gap",
+        "output": "Based on the existing claims and the problem, I will CREATE a new claim that fills a gap in reasonin",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 3.5534276962280273,
+        "score": 0.85
+      },
+      {
+        "scenario": "Disconfirm",
+        "output": "CREATE a new claim that fills a gap in reasoning.\n\nNew claim: [c032] Penguins are flightless birds (",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 2.4536471366882324,
+        "score": 0.6
+      },
+      {
+        "scenario": "Confirm",
+        "output": "CREATE a new claim that fills a gap in reasoning.\n\nCLAIM: 8+8+8+8+8+8+8 equals 56 (assertion, conf: ",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 0.546567440032959,
+        "score": 0.6
+      },
+      {
+        "scenario": "Empty context",
+        "output": "CREATE a new claim that fills a gap in reasoning.\n\nCLAIM: The capital of France is a city in France.",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 3.30959153175354,
+        "score": 0.85
+      },
+      {
+        "scenario": "Complex multi-step",
+        "output": "CREATE a new claim that fills a gap in reasoning.\n\nNEW CLAIM: \n[c053] The time it takes for Train A ",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 3.6311309337615967,
+        "score": 0.85
+      },
+      {
+        "scenario": "Uncertain claim",
+        "output": "Based on the existing claims, I will UPDATE the confidence of claim [c061] \"This is probably a cold\"",
+        "is_single_action": false,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 2.487053394317627,
+        "score": 0.55
+      }
+    ],
+    "legacy": [
+      {
+        "scenario": "Math gap",
+        "output": "create_claim(c003, \"The store offers a 10% discount on the total cost of buying 7 apples.\", \"uncerta",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 2.3621106147766113,
+        "score": 1.0
+      },
+      {
+        "scenario": "Logic gap",
+        "output": "Let's explore further to determine the answer. \n\ncreate_claim(\n  id='c020',\n  text='If all mammals a",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": true,
+        "time": 3.105181932449341,
+        "score": 0.85
+      },
+      {
+        "scenario": "Reasoning gap",
+        "output": "I'd like to explore further to understand the relationship between remote work and productivity. Her",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": false,
+        "correct_action": true,
+        "time": 3.4532034397125244,
+        "score": 0.65
+      },
+      {
+        "scenario": "Disconfirm",
+        "output": "I'd like to explore further to understand the implications of the new evidence. \n\ncreate_claim(\n  id",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 5.340493679046631,
+        "score": 0.6
+      },
+      {
+        "scenario": "Confirm",
+        "output": "create_claim(c041, \"The multiplication operation is commutative.\", conf: 0.8) \ncreate_claim(c042, \"7",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 1.2568035125732422,
+        "score": 0.75
+      },
+      {
+        "scenario": "Empty context",
+        "output": "create_claim(\"I am uncertain about the capital of France.\")\ncreate_claim(\"I will try to find the inf",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": false,
+        "correct_action": true,
+        "time": 1.641136884689331,
+        "score": 0.8
+      },
+      {
+        "scenario": "Complex multi-step",
+        "output": "Let's break down the problem step by step.\n\nTo determine when the two trains meet, we need to consid",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": false,
+        "has_confidence": false,
+        "correct_action": true,
+        "time": 3.47306752204895,
+        "score": 0.65
+      },
+      {
+        "scenario": "Uncertain claim",
+        "output": "I'll create a claim to explore further.\n\ncreate_claim(c062, \"Fever is a common symptom of both cold ",
+        "is_single_action": true,
+        "is_relevant": true,
+        "is_atomic": true,
+        "has_confidence": true,
+        "correct_action": false,
+        "time": 1.0089282989501953,
+        "score": 0.75
+      }
+    ]
+  }
+}

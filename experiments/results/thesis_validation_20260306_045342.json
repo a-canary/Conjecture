@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-03-06T04:53:42.157951+00:00",
+  "n_problems": 20,
+  "model": "deepseek/deepseek-chat-v3-0324",
+  "direct_accuracy": 0.75,
+  "reasoning_accuracy": 1.0,
+  "improvement_pp": 25.0,
+  "direct_avg_time": 1.9905064344406127,
+  "reasoning_avg_time": 12.20130933523178,
+  "conclusion": "THESIS VALIDATED: Decomposition improves accuracy"
+}

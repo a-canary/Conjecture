@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-03-06T05:47:27.046633+00:00",
+  "n_problems": 30,
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "direct_accuracy": 0.3333333333333333,
+  "reasoning_accuracy": 0.43333333333333335,
+  "improvement_pp": 10.000000000000004,
+  "direct_avg_time": 0.9590515693028768,
+  "reasoning_avg_time": 8.154979046185812,
+  "conclusion": "THESIS VALIDATED: Decomposition improves accuracy"
+}
