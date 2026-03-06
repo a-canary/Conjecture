@@ -1,6 +1,6 @@
 {
   "state": "WAITING",
-  "updated": "2026-03-06T19:16:29.785790+00:00",
+  "updated": "2026-03-06T19:21:17.814101+00:00",
   "context": {
     "iteration": 3,
     "last_init": "2026-03-06T04:15:00Z",
@@ -29,11 +29,12 @@
     "pending_tasks": [
       "mmlu_alternatives",
       "arc_challenge",
-      "hellaswag",
       "truthfulqa",
       "bbh"
     ],
-    "completed_tasks": [],
+    "completed_tasks": [
+      "hellaswag"
+    ],
     "waiting_for": "batch_completion",
     "session_summary": {
       "benchmarks_prepared": 5,
