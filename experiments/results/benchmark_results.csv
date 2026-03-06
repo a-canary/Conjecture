@@ -14,3 +14,5 @@ single_claim_protocol,Custom Scenarios,liquid/lfm2.5-1.2b,optimized_prompt,8,6,8
 single_claim_protocol,Custom Scenarios,liquid/lfm-2.5-1.2b-instruct:free,optimized_prompt,8,6,80.6,0.42173123359680176,0,0.0,2026-03-06T12:00:19.364869+00:00,lfm2.5-1.2b-or (1.2B) - Protocol adherence test
 single_claim_protocol,Custom Scenarios,qwen/qwen3-30b-a3b,optimized_prompt,8,4,50.0,6.7340041399002075,0,0.0,2026-03-06T12:00:19.364869+00:00,qwen3-30b (30B) - Protocol adherence test
 single_claim_protocol,Custom Scenarios,qwen/qwen3-14b,optimized_prompt,8,1,22.5,18.701409578323364,0,0.0,2026-03-06T12:00:19.364869+00:00,qwen3-14b (14B) - Protocol adherence test
+hellaswag,HellaSwag,deepseek/deepseek-chat-v3-0324,direct,100,83,83.0,2.31,17280,0,2026-03-06T19:20:27Z,Commonsense NLI
+hellaswag,HellaSwag,deepseek/deepseek-chat-v3-0324,decomposition,100,73,73.0,2.38,22609,0,2026-03-06T19:20:27Z,Commonsense NLI

@@ -1,0 +1,26 @@
+{
+  "benchmark": "HellaSwag",
+  "model": "deepseek/deepseek-chat-v3-0324",
+  "n_problems": 100,
+  "timestamp": "2026-03-06T19:20:27.697212+00:00",
+  "direct": {
+    "method": "DIRECT",
+    "correct": 83,
+    "total": 100,
+    "accuracy": 83.0,
+    "avg_time": 2.31,
+    "total_tokens": 17280,
+    "extraction_failures": 0
+  },
+  "decomposition": {
+    "method": "DECOMPOSITION",
+    "correct": 73,
+    "total": 100,
+    "accuracy": 73.0,
+    "avg_time": 2.38,
+    "total_tokens": 22609,
+    "extraction_failures": 0
+  },
+  "improvement_pp": -10.0,
+  "conclusion": "REGRESSION: Decomposition hurts accuracy"
+}
