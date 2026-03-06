@@ -236,21 +236,32 @@ The system has demonstrated that **core reasoning enhancements consistently work
 
 ## Standard Benchmark Validation (2026-03-06)
 
-**Task-type dependency discovered**: Decomposition helps math reasoning but hurts factual recall.
+**O-0008 Validation Complete (7/10 benchmarks)**: Task-type dependency confirmed across reasoning, recall, and commonsense tasks.
 
 | Benchmark | Type | Direct | Decomposition | Delta | Model |
 |-----------|------|--------|---------------|-------|-------|
+| **BBH** | Hard Reasoning | 84.0% | 93.0% | **+9.0pp** | DeepSeek-V3 |
 | **GSM8K** | Math | 92.0% | 93.0% | **+1.0pp** | DeepSeek-V3 |
+| **ARC-Challenge** | Science | 93.0% | 92.0% | **-1.0pp** | DeepSeek-V3 |
 | **MMLU** | Knowledge | 62.0% | 45.0% | **-17.0pp** | DeepSeek-V3 |
+| **TruthfulQA** | Truthfulness | 79.0% | 66.0% | **-13.0pp** | DeepSeek-V3 |
+| **HellaSwag** | Commonsense | 83.0% | 73.0% | **-10.0pp** | DeepSeek-V3 |
 | **Synthetic** | Math | 79.0% | 97.0% | **+18.0pp** | DeepSeek-V3 |
+
+**Alternative Method:** cot_lite (lightweight scaffolding) achieved +2pp on MMLU without regression.
 
 ### When Decomposition Works
 - ✅ Multi-step math/reasoning with baseline <85%
+- ✅ Hard reasoning tasks (BBH +9pp, Synthetic +18pp)
 - ✅ Novel problems (not in training data)
 - ❌ Factual recall tasks (MMLU: -17pp)
+- ❌ Commonsense/intuition tasks (HellaSwag: -10pp)
+- ❌ Truthfulness (TruthfulQA: -13pp, decomposition increases false confidence)
 - ❌ High baseline (>90%, GSM8K: +1pp)
 
-**See `STANDARD_BENCHMARK_REPORT.md` for full analysis**
+**Critical Finding:** Task-type routing or confidence-based exploration REQUIRED for production.
+
+**See `experiments/O-0008_VALIDATION_REPORT.md` for comprehensive analysis**
 
 ## R&D Key Findings (2026-03-01)
 
