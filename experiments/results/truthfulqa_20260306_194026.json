@@ -1,0 +1,27 @@
+{
+  "benchmark": "TruthfulQA",
+  "model": "deepseek/deepseek-chat-v3-0324",
+  "n_problems": 100,
+  "timestamp": "2026-03-06T19:40:26.026214+00:00",
+  "direct": {
+    "method": "DIRECT",
+    "correct": 79,
+    "total": 100,
+    "accuracy": 79.0,
+    "avg_time": 5.3,
+    "total_tokens": 19533,
+    "extraction_failures": 0
+  },
+  "decomposition": {
+    "method": "DECOMPOSITION",
+    "correct": 66,
+    "total": 100,
+    "accuracy": 66.0,
+    "avg_time": 11.27,
+    "total_tokens": 42435,
+    "extraction_failures": 0
+  },
+  "improvement_pp": -13.0,
+  "conclusion": "M-0002 CHALLENGED: Decomposition increases false beliefs",
+  "validates": null
+}

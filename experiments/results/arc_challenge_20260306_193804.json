@@ -1,0 +1,26 @@
+{
+  "benchmark": "ARC-Challenge",
+  "model": "deepseek/deepseek-chat-v3-0324",
+  "n_problems": 100,
+  "timestamp": "2026-03-06T19:38:04.652210+00:00",
+  "direct": {
+    "method": "DIRECT",
+    "correct": 93,
+    "total": 100,
+    "accuracy": 93.0,
+    "avg_time": 2.24,
+    "total_tokens": 10981,
+    "extraction_failures": 2
+  },
+  "decomposition": {
+    "method": "DECOMPOSITION",
+    "correct": 92,
+    "total": 100,
+    "accuracy": 92.0,
+    "avg_time": 12.49,
+    "total_tokens": 41131,
+    "extraction_failures": 0
+  },
+  "improvement_pp": -1.0,
+  "conclusion": "INCONCLUSIVE: No significant difference"
+}

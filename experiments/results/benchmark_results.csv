@@ -16,3 +16,13 @@ single_claim_protocol,Custom Scenarios,qwen/qwen3-30b-a3b,optimized_prompt,8,4,5
 single_claim_protocol,Custom Scenarios,qwen/qwen3-14b,optimized_prompt,8,1,22.5,18.701409578323364,0,0.0,2026-03-06T12:00:19.364869+00:00,qwen3-14b (14B) - Protocol adherence test
 hellaswag,HellaSwag,deepseek/deepseek-chat-v3-0324,direct,100,83,83.0,2.31,17280,0,2026-03-06T19:20:27Z,Commonsense NLI
 hellaswag,HellaSwag,deepseek/deepseek-chat-v3-0324,decomposition,100,73,73.0,2.38,22609,0,2026-03-06T19:20:27Z,Commonsense NLI
+GSM8K,GSM8K,deepseek/deepseek-chat-v3-0324,direct,100,92,92.0,10.53,32006,0,2026-03-06T12:51:54.301107+00:00,GSM8K test
+GSM8K,GSM8K,deepseek/deepseek-chat-v3-0324,decomposition,100,93,93.0,11.27,46445,1,2026-03-06T12:51:54.301107+00:00,GSM8K test
+ARC-Challenge,ARC-Challenge,deepseek/deepseek-chat-v3-0324,direct,100,93,93.0,2.24,10981,2,2026-03-06T19:38:04.652210+00:00,ARC-Challenge test
+ARC-Challenge,ARC-Challenge,deepseek/deepseek-chat-v3-0324,decomposition,100,92,92.0,12.49,41131,0,2026-03-06T19:38:04.652210+00:00,ARC-Challenge test
+HellaSwag,HellaSwag,deepseek/deepseek-chat-v3-0324,direct,100,83,83.0,2.31,17280,0,2026-03-06T19:20:27.697212+00:00,HellaSwag test
+HellaSwag,HellaSwag,deepseek/deepseek-chat-v3-0324,decomposition,100,73,73.0,2.38,22609,0,2026-03-06T19:20:27.697212+00:00,HellaSwag test
+MMLU,MMLU,deepseek/deepseek-chat-v3-0324,direct,100,62,62.0,2.36,12459,9,2026-03-06T13:28:57.294353+00:00,MMLU test
+MMLU,MMLU,deepseek/deepseek-chat-v3-0324,decomposition,100,45,45.0,17.72,56010,2,2026-03-06T13:28:57.294353+00:00,MMLU test
+TruthfulQA,TruthfulQA,deepseek/deepseek-chat-v3-0324,direct,100,79,79.0,5.3,19533,0,2026-03-06T19:40:26.026214+00:00,TruthfulQA test
+TruthfulQA,TruthfulQA,deepseek/deepseek-chat-v3-0324,decomposition,100,66,66.0,11.27,42435,0,2026-03-06T19:40:26.026214+00:00,TruthfulQA test
