@@ -31,22 +31,22 @@ evidence. This unblocks the 8B small-model hypothesis: the -32pp BBH regression
 ## Phase 1: Retrieval Tool Schema
 
 ### Steps
-- [ ] 1.1 Add `RETRIEVAL_TOOLS` list to `src/process/claim_tools.py` with a
+- [x] 1.1 Add `RETRIEVAL_TOOLS` list to `src/process/claim_tools.py` with a
       single generic `retrieve_knowledge` tool definition in OpenAI
       function-calling format (name, description, parameters: query string,
       tool_hint optional string)
-- [ ] 1.2 Add a `RetrievalRequest` Pydantic model (query, tool_hint, claim_ids
+- [x] 1.2 Add a `RetrievalRequest` Pydantic model (query, tool_hint, claim_ids
       that triggered the request) to `src/process/claim_tools.py`
-- [ ] 1.3 Add a `PausedReasoningState` Pydantic model to
+- [x] 1.3 Add a `PausedReasoningState` Pydantic model to
       `src/process/claim_tools.py` capturing: session_id, iteration, messages
       list, pending_retrieval as `RetrievalRequest`, created_claim_ids so far
-- [ ] 1.4 Extend `ClaimToolExecutor.execute_tool` dispatch to recognise
+- [x] 1.4 Extend `ClaimToolExecutor.execute_tool` dispatch to recognise
       `retrieve_knowledge` and return a `ToolResult` with
       `paused=True` and the `RetrievalRequest` in `result`
 
 ### Gates
-- [ ] `python -c "from src.process.claim_tools import RETRIEVAL_TOOLS, RetrievalRequest, PausedReasoningState; print('schema OK')"` exits 0
-- [ ] `python -m pytest tests/ -k "claim_tools" -v` passes with no new failures
+- [x] `python -c "from src.process.claim_tools import RETRIEVAL_TOOLS, RetrievalRequest, PausedReasoningState; print('schema OK')"` exits 0
+- [x] `python -m pytest tests/ -k "claim_tools" -v` passes with no new failures
 
 ---
 
