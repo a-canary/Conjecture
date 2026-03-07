@@ -210,6 +210,8 @@ VALIDATED with caveats (7/10 benchmarks complete, 100 samples each):
 
 **Task-type routing REQUIRED** — decomposition helps reasoning but hurts recall/commonsense. Production deployment must classify queries and route appropriately. Lightweight alternatives (cot_lite +2pp) viable for recall tasks. Original "no regressions" rule holds ONLY with routing. Complete validation requires 3 more benchmarks (DROP, MATH, HumanEval) plus multi-model testing.
 
+Multi-model validation (2026-03-07) revealed model-size dependency: three-prompt architecture fails catastrophically on small models (8B: -32pp BBH, p<0.001) but succeeds on large models (670B: +10pp BBH, p=0.018). Critical gap: benchmarks tested reasoning WITHOUT tool-calling knowledge retrieval (see A-0015). Small model failure may reflect missing retrieval, not architecture flaw. Re-validation with delegated tool calling required before conclusive model-size guidance.
+
 ---
 
 ## Data
@@ -337,6 +339,11 @@ Expose Conjecture as an MCP server with tools: `build_context(query) → context
 Supports: A-0004, UX-0006
 
 Evaluation state is observable in real-time. Current claims being evaluated, their confidence, and reasoning steps are exposed via streaming API or polling endpoint. Enables live reasoning breakdown for active prompts.
+
+### A-0015: Delegated Tool Calling for Knowledge Retrieval
+Supports: M-0007, A-0010, M-0001
+
+Small models can reason but lack embedded knowledge. The LLM endpoint delegates knowledge retrieval tool calls to the calling system rather than executing them directly. When the model needs external evidence (web search, business DB, simulation), it emits structured tool-call requests. The caller performs the tool call and appends results to the next prompt's context as evidence claims. The core loop is: retrieve → decompose to claims → reason with evidence. This is essential for small models (<32B) which showed -32pp regression when forced to reason without retrieved evidence (multi-model validation, 2026-03-07). The endpoint does not perform tool calls — it requests them and continues reasoning when results are appended.
 
 ---
 
