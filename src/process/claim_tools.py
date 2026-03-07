@@ -18,6 +18,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
+from pydantic import BaseModel, Field
+
 from src.core.models import Claim, ClaimType, ClaimState, ClaimScope
 from src.data.repositories import ClaimRepository
 
@@ -166,6 +168,110 @@ CLAIM_TOOLS: List[Dict[str, Any]] = [
 
 
 # ---------------------------------------------------------------------------
+# Retrieval Tool Definitions — A-0015 Delegated Tool Calling
+# ---------------------------------------------------------------------------
+
+RETRIEVAL_TOOLS: List[Dict[str, Any]] = [
+    {
+        "type": "function",
+        "function": {
+            "name": "retrieve_knowledge",
+            "description": (
+                "Request external knowledge retrieval from the calling system. "
+                "When the LLM needs evidence it cannot derive from the current claim "
+                "context, it calls this tool to pause reasoning and ask the caller to "
+                "perform retrieval (e.g. database search, web search, file read). "
+                "The endpoint suspends its reasoning loop and returns a "
+                "PausedReasoningState to the caller, who resumes by providing results."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": (
+                            "Natural-language description of what information is needed. "
+                            "Should be specific enough for the caller to locate relevant evidence."
+                        ),
+                    },
+                    "tool_hint": {
+                        "type": "string",
+                        "description": (
+                            "Optional hint naming the preferred retrieval tool "
+                            "(e.g. 'claim_search', 'web_search', 'file_read'). "
+                            "The caller may ignore this if the tool is unavailable."
+                        ),
+                    },
+                },
+                "required": ["query"],
+            },
+        },
+    },
+]
+
+
+# ---------------------------------------------------------------------------
+# Pydantic models for delegated retrieval (A-0015)
+# ---------------------------------------------------------------------------
+
+
+class RetrievalRequest(BaseModel):
+    """Describes a retrieval request emitted by the endpoint when it calls
+    ``retrieve_knowledge``.
+
+    The caller receives this inside a ``ToolResult`` with ``paused=True``
+    and is responsible for executing the retrieval, then resuming the
+    reasoning session with the results.
+
+    Attributes:
+        query: Natural-language description of the information needed.
+        tool_hint: Optional preferred retrieval tool name.
+        claim_ids: IDs of claims created during the reasoning session so far,
+            so the caller can pass them back when resuming.
+    """
+
+    query: str = Field(..., description="What information is needed")
+    tool_hint: Optional[str] = Field(
+        default=None,
+        description="Preferred retrieval tool name (may be ignored by caller)",
+    )
+    claim_ids: List[str] = Field(
+        default_factory=list,
+        description="Claim IDs created so far in this reasoning session",
+    )
+
+
+class PausedReasoningState(BaseModel):
+    """Captures the full state of a paused reasoning session so the caller
+    can resume it after performing the requested retrieval.
+
+    Attributes:
+        session_id: Unique identifier for this reasoning session.
+        iteration: Which tool-call iteration the session paused at (0-based).
+        messages: The full message history up to the pause point.
+        pending_retrieval: The ``RetrievalRequest`` the endpoint is waiting on.
+        created_claim_ids: All claim IDs created during this session so far.
+    """
+
+    session_id: str = Field(..., description="Unique session identifier")
+    iteration: int = Field(
+        default=0,
+        description="Tool-call iteration index when the session paused (0-based)",
+    )
+    messages: List[Dict[str, Any]] = Field(
+        default_factory=list,
+        description="Full message history at the pause point",
+    )
+    pending_retrieval: RetrievalRequest = Field(
+        ..., description="The retrieval request the caller must fulfil"
+    )
+    created_claim_ids: List[str] = Field(
+        default_factory=list,
+        description="All claim IDs created during this session so far",
+    )
+
+
+# ---------------------------------------------------------------------------
 # ToolResult dataclass
 # ---------------------------------------------------------------------------
 
@@ -177,15 +283,19 @@ class ToolResult:
     Attributes:
         success: Whether the tool executed without error.
         result: The payload returned by the tool (e.g. a Claim, a message str,
-                or a dict depending on the tool).
+                a dict, or a RetrievalRequest depending on the tool).
         claim_ids: IDs of claims created or modified during this execution.
         error: Error message if success is False.
+        paused: True when the endpoint has suspended its reasoning loop and is
+            waiting for the caller to perform retrieval (A-0015).  When True,
+            ``result`` contains a ``RetrievalRequest``.
     """
 
     success: bool
     result: Any
     claim_ids: List[str] = field(default_factory=list)
     error: Optional[str] = None
+    paused: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -242,8 +352,9 @@ class ClaimToolExecutor:
 
         Args:
             tool_name: One of 'create_claim', 'update_confidence',
-                'respond_to_user', 'explore_further'.
-            args: Tool arguments matching the schema defined in CLAIM_TOOLS.
+                'respond_to_user', 'explore_further', 'retrieve_knowledge'.
+            args: Tool arguments matching the schema defined in CLAIM_TOOLS
+                or RETRIEVAL_TOOLS.
 
         Returns:
             ToolResult with success flag, result payload, and affected claim IDs.
@@ -253,6 +364,7 @@ class ClaimToolExecutor:
             "update_confidence": self._update_confidence,
             "respond_to_user": self._respond_to_user,
             "explore_further": self._explore_further,
+            "retrieve_knowledge": self._retrieve_knowledge,
         }
 
         handler = dispatch.get(tool_name)
@@ -463,4 +575,40 @@ class ClaimToolExecutor:
                 "message": f"Exploring: {focus}",
             },
             claim_ids=[],
+        )
+
+    async def _retrieve_knowledge(self, args: Dict[str, Any]) -> ToolResult:
+        """Handle retrieve_knowledge tool call (A-0015).
+
+        This signals that the endpoint needs external evidence it cannot
+        derive from the current claim context.  Execution is suspended and
+        the caller receives a ``RetrievalRequest`` so it can perform the
+        retrieval and resume the session.
+
+        Required args:
+            query (str): Natural-language description of what is needed.
+
+        Optional args:
+            tool_hint (str): Preferred retrieval tool name.
+        """
+        query: str = args.get("query", "")
+        tool_hint: Optional[str] = args.get("tool_hint")
+
+        retrieval_request = RetrievalRequest(
+            query=query,
+            tool_hint=tool_hint,
+            claim_ids=[],  # caller can populate from session state
+        )
+
+        logger.debug(
+            "retrieve_knowledge: query='%s' tool_hint=%s — pausing session",
+            query,
+            tool_hint,
+        )
+
+        return ToolResult(
+            success=True,
+            result=retrieval_request,
+            claim_ids=[],
+            paused=True,
         )
