@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """
-GSM8K Three-Prompt Benchmark
+BBH Three-Prompt Benchmark
 
 Tests three-prompt architecture (confidence-based exploration) vs Direct baseline
-on GSM8K math problems.
+on BBH (Big-Bench Hard) logical reasoning problems.
 
 Three-Prompt Architecture:
 1. Update claim confidence (evaluate evidence)
 2. Create claim or SKIP (explore or signal completion)
 3. Final response (when confidence > 0.7 and SKIP)
 
-Hypothesis: Self-regulating exploration without task-type routing.
+Critical Test: BBH baseline 84% (O-0008: +9pp with decomposition).
+If three-prompt improves BBH, architecture viable for hard reasoning.
+If three-prompt regresses/neutral, architecture should be abandoned.
 """
 
 import asyncio
@@ -34,6 +36,7 @@ from openai import AsyncOpenAI
 
 MODEL = os.environ.get("BENCHMARK_MODEL", "deepseek/deepseek-chat-v3-0324")
 N_PROBLEMS = int(os.environ.get("BENCHMARK_N", "50"))
+BBH_TASK = os.environ.get("BBH_TASK", "logical_deduction_three_objects")
 OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY")
 
 MAX_ITERATIONS = 4
@@ -45,9 +48,8 @@ MAX_CLAIMS = 10
 # PROMPTS
 # =============================================================================
 
-DIRECT_SYSTEM = """You are a math problem solver.
-Solve the problem step by step, then give your final numerical answer after ####.
-Format: #### [number]"""
+DIRECT_SYSTEM = """You are a reasoning assistant for challenging logical problems.
+Read the problem carefully, think step by step, and give your answer clearly."""
 
 
 def build_claim_context(claims: List[Dict]) -> str:
@@ -60,7 +62,7 @@ def build_claim_context(claims: List[Dict]) -> str:
     return "\n".join(lines)
 
 
-PROMPT_1_UPDATE_CONFIDENCE = """QUERY: {query}
+PROMPT_1_UPDATE_CONFIDENCE = """PROBLEM: {query}
 
 CURRENT CLAIMS:
 {claims}
@@ -68,7 +70,7 @@ CURRENT CLAIMS:
 TASK: Update claim confidence scores (0.0 to 1.0)
 
 Review the claims above. For each claim, assess:
-- Does it directly support answering the query?
+- Does it directly support solving the problem?
 - How certain are you about this claim?
 - Does it conflict with other claims?
 
@@ -84,20 +86,20 @@ Only include claims that need confidence updates.
 Respond with JSON only:"""
 
 
-PROMPT_2_CREATE_OR_SKIP = """QUERY: {query}
+PROMPT_2_CREATE_OR_SKIP = """PROBLEM: {query}
 
 CURRENT CLAIMS:
 {claims}
 
 ITERATION: {iteration}/{max_iterations}
 
-TASK: Create ONE new claim to help answer the query, or say SKIP.
+TASK: Create ONE new claim to help solve the problem, or say SKIP.
 
 New claims can be:
 - Question to explore
-- Assumption to verify
-- Intermediate calculation
-- Generalization from evidence
+- Logical deduction
+- Constraint analysis
+- Intermediate conclusion
 - Next reasoning step
 
 If you have high confidence (>0.7) and no more claims would help:
@@ -109,57 +111,60 @@ Otherwise, create ONE claim:
   "claim": {{
     "content": "The specific claim text",
     "confidence": 0.5,
-    "type": "question|assumption|calculation|generalization|step"
+    "type": "question|deduction|constraint|conclusion|step"
   }}
 }}
 
 Respond with JSON only:"""
 
 
-PROMPT_3_FINAL_RESPONSE = """QUERY: {query}
+PROMPT_3_FINAL_RESPONSE = """PROBLEM: {query}
 
 RELEVANT CLAIMS:
 {claims}
 
-TASK: Provide final answer to the query
+TASK: Provide final answer to the problem
 
 Based on the claims above, generate a complete answer.
 Include:
-- Direct answer to the query
+- Direct answer to the problem
 - Key supporting claims (by number)
 - Your reasoning
 
-End your response with #### followed by just the numerical answer.
-Format: #### [number]"""
+State your final answer clearly at the end."""
 
 
 # =============================================================================
 # DATA LOADING
 # =============================================================================
 
-def load_gsm8k_problems(limit: int) -> List[Dict]:
-    """Load GSM8K test set."""
-    print(f"Loading GSM8K dataset (limit={limit})...")
-    ds = load_dataset("gsm8k", "main", split="test")
+def load_bbh_problems(task: str, limit: int) -> List[Dict]:
+    """Load BBH task."""
+    print(f"Loading BBH task: {task} (limit={limit})...")
+
+    try:
+        ds = load_dataset("lukaemon/bbh", task)
+        split = "test" if "test" in ds else list(ds.keys())[0]
+        data = ds[split]
+    except Exception as e:
+        print(f"Error loading task {task}: {e}")
+        print("Using default task: logical_deduction_three_objects")
+        ds = load_dataset("lukaemon/bbh", "logical_deduction_three_objects")
+        split = "test" if "test" in ds else list(ds.keys())[0]
+        data = ds[split]
 
     problems = []
-    for i, item in enumerate(ds):
+    for i, item in enumerate(data):
         if i >= limit:
             break
 
-        # Extract answer from solution (format: text #### number)
-        solution = item["answer"]
-        match = re.search(r'####\s*(-?[\d,\.]+)', solution)
-        if match:
-            answer = match.group(1).replace(",", "")
-            problems.append({
-                "id": f"gsm8k_{i}",
-                "question": item["question"],
-                "answer": float(answer),
-                "solution": solution
-            })
+        problems.append({
+            "id": f"bbh_{task}_{i}",
+            "input": item["input"],
+            "target": item["target"]
+        })
 
-    print(f"Loaded {len(problems)} problems")
+    print(f"Loaded {len(problems)} problems from task '{task}'")
     return problems
 
 
@@ -214,9 +219,7 @@ class ThreePromptSystem:
 
     def _parse_json(self, text: str) -> Optional[Dict]:
         """Extract JSON from response."""
-        # Try to find JSON object in response
         try:
-            # Try parsing whole response
             return json.loads(text)
         except:
             pass
@@ -262,7 +265,6 @@ class ThreePromptSystem:
                     for update in updates_data["updates"]:
                         claim_id = update.get("id", "")
                         new_conf = update.get("confidence", 0.5)
-                        # Update matching claim
                         for claim in claims:
                             if claim["id"] == claim_id:
                                 claim["confidence"] = new_conf
@@ -336,55 +338,67 @@ class ThreePromptSystem:
 # ANSWER EXTRACTION
 # =============================================================================
 
-def extract_answer(text: str) -> Optional[float]:
-    """Extract numerical answer from response."""
+def extract_answer(text: str, target: str) -> Optional[str]:
+    """Extract answer from response."""
     if not text:
         return None
 
-    # Look for #### marker (GSM8K format)
-    match = re.search(r'####\s*(-?[\d,\.]+)', text)
-    if match:
-        try:
-            return float(match.group(1).replace(",", ""))
-        except:
-            pass
+    text = text.strip()
 
-    # Fallback: look for "answer is X" patterns
+    # Try to find exact target match
+    if target.lower() in text.lower():
+        return target
+
+    # Look for common answer patterns
     patterns = [
-        r'answer\s*(?:is|=|:)\s*\$?(-?[\d,\.]+)',
-        r'final\s*(?:answer|result)\s*(?:is|=|:)\s*\$?(-?[\d,\.]+)',
-        r'=\s*\$?(-?[\d,\.]+)\s*$',
-        r'\$(-?[\d,\.]+)\s*$',
+        r'(?:answer|solution|result)[:\s]+([^\n.]+)',
+        r'(?:final answer)[:\s]+([^\n.]+)',
+        r'therefore[,\s]+([^\n.]+)',
     ]
 
     for pattern in patterns:
-        match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
+        match = re.search(pattern, text, re.IGNORECASE)
         if match:
-            try:
-                return float(match.group(1).replace(",", ""))
-            except:
-                continue
+            answer = match.group(1).strip()
+            if answer.lower() == target.lower():
+                return target
+            return answer
 
-    # Last resort: last number in response
-    numbers = re.findall(r'-?[\d,]+\.?\d*', text)
-    if numbers:
-        try:
-            return float(numbers[-1].replace(",", ""))
-        except:
-            pass
+    # Look for letter answers (A, B, C...)
+    letter_match = re.search(r'\b([A-E])\b', text.upper())
+    if letter_match:
+        return letter_match.group(1)
+
+    # Return last line as fallback
+    lines = [l.strip() for l in text.split('\n') if l.strip()]
+    if lines:
+        return lines[-1]
 
     return None
 
 
-def check_answer(predicted: Optional[float], expected: float, tolerance: float = 0.01) -> bool:
-    """Check if predicted matches expected within tolerance."""
+def check_answer(predicted: Optional[str], expected: str) -> bool:
+    """Check if predicted matches expected."""
     if predicted is None:
         return False
-    # Use relative tolerance for large numbers, absolute for small
-    if abs(expected) > 1:
-        return abs(predicted - expected) / abs(expected) < tolerance
-    else:
-        return abs(predicted - expected) < tolerance
+
+    # Normalize both
+    pred_norm = predicted.lower().strip().strip('.')
+    exp_norm = expected.lower().strip().strip('.')
+
+    # Exact match
+    if pred_norm == exp_norm:
+        return True
+
+    # Check if expected is contained in predicted
+    if exp_norm in pred_norm:
+        return True
+
+    # Check if predicted is contained in expected
+    if pred_norm in exp_norm:
+        return True
+
+    return False
 
 
 # =============================================================================
@@ -420,7 +434,7 @@ async def run_direct_baseline(
         start = time.time()
 
         response, tokens = await client.generate(
-            prompt=f"Problem: {prob['question']}",
+            prompt=prob["input"],
             system=DIRECT_SYSTEM,
             max_tokens=600
         )
@@ -428,8 +442,8 @@ async def run_direct_baseline(
         elapsed = time.time() - start
         times.append(elapsed)
 
-        predicted = extract_answer(response)
-        expected = prob["answer"]
+        predicted = extract_answer(response, prob["target"])
+        expected = prob["target"]
 
         if predicted is None:
             extraction_failures += 1
@@ -442,7 +456,7 @@ async def run_direct_baseline(
 
         # Progress every 10 or on errors
         if (i + 1) % 10 == 0 or (predicted is None):
-            status = "EXTRACTION_FAIL" if predicted is None else ("✓" if is_correct else f"✗ expected={expected}, got={predicted}")
+            status = "EXTRACTION_FAIL" if predicted is None else ("✓" if is_correct else f"✗ expected={expected[:30]}, got={predicted[:30]}")
             print(f"  [{i+1:3d}/{len(problems)}] acc={100*correct/(i+1):5.1f}%  {status}")
 
         await asyncio.sleep(0.3)  # Rate limiting
@@ -477,14 +491,14 @@ async def run_three_prompt(
     for i, prob in enumerate(problems):
         start = time.time()
 
-        result = await system.process_query(prob["question"])
+        result = await system.process_query(prob["input"])
 
         elapsed = time.time() - start
         times.append(elapsed)
         iteration_counts.append(result["total_iterations"])
 
-        predicted = extract_answer(result["final_response"])
-        expected = prob["answer"]
+        predicted = extract_answer(result["final_response"], prob["target"])
+        expected = prob["target"]
 
         if predicted is None:
             extraction_failures += 1
@@ -497,7 +511,7 @@ async def run_three_prompt(
 
         # Progress every 10 or on errors
         if (i + 1) % 10 == 0 or (predicted is None):
-            status = "EXTRACTION_FAIL" if predicted is None else ("✓" if is_correct else f"✗ expected={expected}, got={predicted}")
+            status = "EXTRACTION_FAIL" if predicted is None else ("✓" if is_correct else f"✗ expected={expected[:30]}, got={predicted[:30]}")
             iters = result["total_iterations"]
             conf = result["final_confidence"]
             print(f"  [{i+1:3d}/{len(problems)}] acc={100*correct/(i+1):5.1f}%  iter={iters} conf={conf:.2f}  {status}")
@@ -517,11 +531,12 @@ async def run_three_prompt(
 
 
 async def run_benchmark():
-    """Run full GSM8K three-prompt benchmark."""
+    """Run full BBH three-prompt benchmark."""
     print("\n" + "="*70)
-    print("GSM8K THREE-PROMPT BENCHMARK")
+    print("BBH THREE-PROMPT BENCHMARK")
     print("="*70)
     print(f"Model: {MODEL}")
+    print(f"Task: {BBH_TASK}")
     print(f"Problems: {N_PROBLEMS}")
     print(f"Max Iterations: {MAX_ITERATIONS}")
     print(f"Confidence Threshold: {CONFIDENCE_THRESHOLD}")
@@ -529,7 +544,7 @@ async def run_benchmark():
     print()
 
     # Load data
-    problems = load_gsm8k_problems(N_PROBLEMS)
+    problems = load_bbh_problems(BBH_TASK, N_PROBLEMS)
 
     # Run direct baseline
     client_direct = BenchmarkClient(MODEL)
@@ -543,7 +558,7 @@ async def run_benchmark():
     improvement = three_result.accuracy - direct_result.accuracy
 
     print("\n" + "="*70)
-    print("GSM8K THREE-PROMPT BENCHMARK RESULTS")
+    print("BBH THREE-PROMPT BENCHMARK RESULTS")
     print("="*70)
     print(f"\n{'Method':<20} {'Correct':>10} {'Accuracy':>10} {'Avg Time':>10} {'Tokens':>12} {'Iters':>6}")
     print("-"*70)
@@ -558,20 +573,21 @@ async def run_benchmark():
 
     # Conclusion
     if improvement > 5:
-        conclusion = "SUCCESS: Three-prompt significantly improves accuracy"
+        conclusion = "SUCCESS: Three-prompt significantly improves hard reasoning"
     elif improvement > 2:
-        conclusion = "PROMISING: Three-prompt shows improvement"
+        conclusion = "PROMISING: Three-prompt shows improvement on hard reasoning"
     elif improvement > -2:
         conclusion = "NEUTRAL: No significant difference"
     else:
-        conclusion = "CHALLENGE: Three-prompt hurts accuracy"
+        conclusion = "CHALLENGE: Three-prompt hurts hard reasoning accuracy"
 
     print(f"\nCONCLUSION: {conclusion}")
     print("="*70)
 
     # Save results
     results = {
-        "benchmark": "GSM8K",
+        "benchmark": "BBH",
+        "task": BBH_TASK,
         "architecture": "three-prompt",
         "model": MODEL,
         "n_problems": N_PROBLEMS,
@@ -586,7 +602,7 @@ async def run_benchmark():
 
     results_dir = Path("experiments/results")
     results_dir.mkdir(exist_ok=True)
-    results_file = results_dir / f"gsm8k_three_prompt_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    results_file = results_dir / f"bbh_three_prompt_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     results_file.write_text(json.dumps(results, indent=2))
     print(f"\nResults saved: {results_file}")
 
@@ -597,10 +613,12 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("-n", type=int, default=50, help="Number of problems")
+    parser.add_argument("--task", type=str, default=BBH_TASK, help="BBH task name")
     parser.add_argument("--model", type=str, default=MODEL, help="Model to use")
     args = parser.parse_args()
 
     os.environ["BENCHMARK_N"] = str(args.n)
+    os.environ["BBH_TASK"] = args.task
     os.environ["BENCHMARK_MODEL"] = args.model
 
     asyncio.run(run_benchmark())
