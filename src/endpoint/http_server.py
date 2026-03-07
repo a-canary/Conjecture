@@ -11,6 +11,7 @@ Usage:
 """
 
 import asyncio
+import json
 import logging
 import os
 import uuid
@@ -71,6 +72,17 @@ class ChatCompletionResponse(BaseModel):
     model: str = "conjecture"
     choices: List[ChatCompletionChoice]
     usage: ChatCompletionUsage = Field(default_factory=ChatCompletionUsage)
+
+
+# ========== Phase 3: Resume Request Model ==========
+
+class ResumeRequest(BaseModel):
+    """Request body for POST /v1/chat/completions/resume."""
+    pause_id: str = Field(..., description="The pause_id returned by a paused completion")
+    results: List[str] = Field(
+        ...,
+        description="List of retrieval result strings to incorporate as evidence claims",
+    )
 
 
 # ========== Server Implementation ==========
@@ -134,7 +146,14 @@ class ConjectureServer:
             request: ChatCompletionRequest,
             x_session_id: Optional[str] = Header(None, alias="X-Session-ID")
         ):
-            """OpenAI-compatible chat completions with claim enhancement."""
+            """OpenAI-compatible chat completions with claim enhancement.
+
+            When the underlying evaluation is paused (awaiting retrieval),
+            the response includes the custom header ``X-Conjecture-Pause-ID``
+            and the assistant message content carries a JSON-encoded description
+            of the retrieval request so that OpenAI-compatible clients receive a
+            well-formed response body.
+            """
             try:
                 # Extract user message (last user message in conversation)
                 user_messages = [m for m in request.messages if m.role == "user"]
@@ -158,21 +177,69 @@ class ConjectureServer:
                 if not result.success:
                     raise HTTPException(status_code=500, detail=result.message)
 
-                # Build response
-                response_content = result.data.get("response", "")
-                claims_used = result.data.get("claims_used", 0)
+                data = result.data or {}
+                status = data.get("status", "complete")
+
+                # ------------------------------------------------------------------
+                # Phase 3 Step 3.2: Handle paused status
+                # ------------------------------------------------------------------
+                if status == "paused":
+                    pause_id = data.get("pause_id", "")
+                    retrieval_request = data.get("retrieval_request", {})
+
+                    # Build a well-formed assistant message content with retrieval info
+                    paused_content = json.dumps({
+                        "status": "paused",
+                        "pause_id": pause_id,
+                        "retrieval_request": retrieval_request,
+                    })
+
+                    response = ChatCompletionResponse(
+                        model="conjecture",
+                        choices=[
+                            ChatCompletionChoice(
+                                message=ChatMessage(
+                                    role="assistant",
+                                    content=paused_content,
+                                ),
+                                finish_reason="stop",
+                            )
+                        ],
+                        usage=ChatCompletionUsage(
+                            prompt_tokens=0,
+                            completion_tokens=0,
+                            total_tokens=0,
+                        ),
+                    )
+
+                    headers = {
+                        "X-Conjecture-Claims-Used": str(data.get("claims_used", 0)),
+                        "X-Conjecture-Session": self._endpoint.get_current_session().id,
+                        "X-Conjecture-Pause-ID": pause_id,
+                    }
+
+                    return JSONResponse(
+                        content=response.model_dump(),
+                        headers=headers,
+                    )
+
+                # ------------------------------------------------------------------
+                # Normal (complete) path
+                # ------------------------------------------------------------------
+                response_content = data.get("response", "")
+                claims_used = data.get("claims_used", 0)
 
                 response = ChatCompletionResponse(
-                    model=result.data.get("model", "conjecture"),
+                    model=data.get("model", "conjecture"),
                     choices=[
                         ChatCompletionChoice(
                             message=ChatMessage(role="assistant", content=response_content)
                         )
                     ],
                     usage=ChatCompletionUsage(
-                        prompt_tokens=result.data.get("usage", {}).get("prompt_tokens", 0),
-                        completion_tokens=result.data.get("usage", {}).get("completion_tokens", 0),
-                        total_tokens=result.data.get("usage", {}).get("total_tokens", 0)
+                        prompt_tokens=data.get("usage", {}).get("prompt_tokens", 0),
+                        completion_tokens=data.get("usage", {}).get("completion_tokens", 0),
+                        total_tokens=data.get("usage", {}).get("total_tokens", 0)
                     )
                 )
 
@@ -192,6 +259,120 @@ class ConjectureServer:
             except Exception as e:
                 logger.error(f"Chat completion error: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
+
+        # ------------------------------------------------------------------
+        # Phase 3 Step 3.1: POST /v1/chat/completions/resume
+        # ------------------------------------------------------------------
+
+        @app.post("/v1/chat/completions/resume")
+        async def resume_completions(request: ResumeRequest):
+            """Resume a paused chat completion after the caller has performed retrieval.
+
+            Accepts a JSON body with:
+            - pause_id: The ID returned by a paused /v1/chat/completions response
+            - results: List of retrieval result strings to inject as evidence
+
+            Returns an OpenAI-compatible response identical in shape to
+            /v1/chat/completions.
+            """
+            try:
+                result = await self._endpoint.resume_evaluation(
+                    pause_id=request.pause_id,
+                    retrieval_results=request.results,
+                )
+
+                if not result.success:
+                    raise HTTPException(status_code=404, detail=result.message)
+
+                data = result.data or {}
+                status = data.get("status", "complete")
+
+                # Handle another pause (chained retrieval)
+                if status == "paused":
+                    pause_id = data.get("pause_id", "")
+                    retrieval_request = data.get("retrieval_request", {})
+
+                    paused_content = json.dumps({
+                        "status": "paused",
+                        "pause_id": pause_id,
+                        "retrieval_request": retrieval_request,
+                    })
+
+                    response = ChatCompletionResponse(
+                        model="conjecture",
+                        choices=[
+                            ChatCompletionChoice(
+                                message=ChatMessage(
+                                    role="assistant",
+                                    content=paused_content,
+                                ),
+                                finish_reason="stop",
+                            )
+                        ],
+                        usage=ChatCompletionUsage(),
+                    )
+
+                    headers = {
+                        "X-Conjecture-Pause-ID": pause_id,
+                        "X-Conjecture-Session": self._endpoint.get_current_session().id,
+                    }
+
+                    return JSONResponse(
+                        content=response.model_dump(),
+                        headers=headers,
+                    )
+
+                # Complete path
+                response_content = data.get("response", "")
+
+                response = ChatCompletionResponse(
+                    model=data.get("model", "conjecture"),
+                    choices=[
+                        ChatCompletionChoice(
+                            message=ChatMessage(role="assistant", content=response_content)
+                        )
+                    ],
+                    usage=ChatCompletionUsage(
+                        prompt_tokens=data.get("usage", {}).get("prompt_tokens", 0),
+                        completion_tokens=data.get("usage", {}).get("completion_tokens", 0),
+                        total_tokens=data.get("usage", {}).get("total_tokens", 0),
+                    ),
+                )
+
+                headers = {
+                    "X-Conjecture-Session": self._endpoint.get_current_session().id,
+                }
+
+                return JSONResponse(
+                    content=response.model_dump(),
+                    headers=headers,
+                )
+
+            except HTTPException:
+                raise
+            except Exception as e:
+                logger.error(f"Resume completion error: {e}")
+                raise HTTPException(status_code=500, detail=str(e))
+
+        # ------------------------------------------------------------------
+        # Phase 3 Step 3.3: GET /v1/pause/{pause_id}
+        # ------------------------------------------------------------------
+
+        @app.get("/v1/pause/{pause_id}")
+        async def get_paused_state(pause_id: str):
+            """Return the PausedReasoningState for the given pause_id.
+
+            Enables callers to inspect a pending paused session before deciding
+            how to fulfil the retrieval request. Returns 404 if the pause_id is
+            not found (already resumed, expired, or never existed).
+            """
+            paused_state = self._endpoint._paused_states.get(pause_id)
+            if paused_state is None:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"No paused session found for pause_id: {pause_id}",
+                )
+            return JSONResponse(content=paused_state.model_dump())
 
         @app.get("/health")
         async def health():

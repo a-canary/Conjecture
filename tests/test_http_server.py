@@ -5,8 +5,12 @@ Tests OpenAI-compatible API implementation:
 - Request/Response models
 - ConjectureServer initialization
 - Route handlers (mocked)
+- Phase 3: resume route, pause header, pause state inspection route
+- Phase 3: end-to-end integration smoke test (in-process FastAPI test client)
 """
 
+import json
+import os
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from datetime import datetime
@@ -18,6 +22,7 @@ from src.endpoint.http_server import (
     ChatCompletionUsage,
     ChatCompletionResponse,
     ConjectureServer,
+    ResumeRequest,
     FASTAPI_AVAILABLE,
 )
 
@@ -285,3 +290,443 @@ class TestFastAPIAvailable:
         """Test FastAPI can be imported when available."""
         from fastapi import FastAPI
         assert FastAPI is not None
+
+
+# ---------------------------------------------------------------------------
+# Phase 3: ResumeRequest model tests
+# ---------------------------------------------------------------------------
+
+class TestResumeRequest:
+    """Test the ResumeRequest Pydantic model introduced in Phase 3."""
+
+    def test_basic_construction(self):
+        """ResumeRequest can be built with pause_id and results."""
+        req = ResumeRequest(pause_id="abc-123", results=["Paris is the capital."])
+        assert req.pause_id == "abc-123"
+        assert req.results == ["Paris is the capital."]
+
+    def test_empty_results_list(self):
+        """ResumeRequest accepts an empty results list."""
+        req = ResumeRequest(pause_id="xyz", results=[])
+        assert req.results == []
+
+    def test_multiple_results(self):
+        """ResumeRequest stores all result strings."""
+        req = ResumeRequest(
+            pause_id="p1",
+            results=["Result one.", "Result two.", "Result three."],
+        )
+        assert len(req.results) == 3
+
+
+# ---------------------------------------------------------------------------
+# Phase 3: Route registration tests
+# ---------------------------------------------------------------------------
+
+@pytest.mark.skipif(not FASTAPI_AVAILABLE, reason="FastAPI not installed")
+class TestPhase3RouteRegistration:
+    """Phase 3 routes are registered by _setup_routes."""
+
+    def test_new_routes_registered(self):
+        """POST /resume and GET /pause/{pause_id} routes are registered."""
+        from fastapi import FastAPI
+
+        server = ConjectureServer()
+        mock_endpoint = MagicMock()
+        mock_endpoint.get_current_session.return_value = MagicMock(id="test")
+        mock_endpoint.claim_count.return_value = 0
+
+        server._endpoint = mock_endpoint
+        server._app = FastAPI()
+        server._setup_routes()
+
+        paths = [r.path for r in server._app.routes]
+        assert "/v1/chat/completions/resume" in paths, (
+            f"Expected /v1/chat/completions/resume in routes, got: {paths}"
+        )
+        assert "/v1/pause/{pause_id}" in paths, (
+            f"Expected /v1/pause/{{pause_id}} in routes, got: {paths}"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Phase 3: Integration smoke test (in-process, using FastAPI TestClient)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.skipif(not FASTAPI_AVAILABLE, reason="FastAPI not installed")
+class TestPhase3Integration:
+    """End-to-end smoke test using FastAPI's TestClient.
+
+    The ConjectureEndpoint is replaced by a mock so no real LLM or database
+    is required.  This validates the full HTTP layer:
+      1. POST /v1/chat/completions → 200 with X-Conjecture-Pause-ID header
+      2. GET  /v1/pause/{pause_id} → 200 with PausedReasoningState JSON
+      3. POST /v1/chat/completions/resume → 200 with final response
+    """
+
+    def _build_server_with_mock_endpoint(self, mock_endpoint) -> "ConjectureServer":
+        """Create a ConjectureServer with a pre-wired mock endpoint and FastAPI app."""
+        from fastapi import FastAPI
+
+        server = ConjectureServer()
+        server._endpoint = mock_endpoint
+        server._app = FastAPI()
+        server._setup_routes()
+        return server
+
+    def _make_paused_evaluate_result(self, pause_id: str):
+        """Build an APIResponse-like MagicMock that returns status='paused'."""
+        from src.endpoint.conjecture_endpoint import APIResponse
+
+        return APIResponse(
+            success=True,
+            message="Evaluation paused — awaiting retrieval results",
+            data={
+                "status": "paused",
+                "pause_id": pause_id,
+                "retrieval_request": {
+                    "query": "What is the capital of France?",
+                    "tool_hint": None,
+                    "claim_ids": [],
+                },
+                "query": "What is the capital of France?",
+                "tool_calls_so_far": [],
+                "created_claim_ids": [],
+                "claims_used": 0,
+            },
+        )
+
+    def _make_complete_resume_result(self, response_text: str):
+        """Build an APIResponse-like MagicMock that returns status='complete'."""
+        from src.endpoint.conjecture_endpoint import APIResponse
+
+        return APIResponse(
+            success=True,
+            message="Evaluation complete (resumed)",
+            data={
+                "status": "complete",
+                "response": response_text,
+                "tool_calls": [],
+                "created_claim_ids": [],
+                "supporting_claims": [],
+                "evidence_claims_count": 1,
+                "model": "mock-model",
+                "usage": {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
+            },
+        )
+
+    def _make_paused_state(self, pause_id: str):
+        """Build a PausedReasoningState to store in the endpoint's _paused_states."""
+        from src.process.claim_tools import PausedReasoningState, RetrievalRequest
+
+        return PausedReasoningState(
+            session_id="session-smoke-test",
+            iteration=0,
+            messages=[],
+            pending_retrieval=RetrievalRequest(
+                query="What is the capital of France?",
+                tool_hint=None,
+                claim_ids=[],
+            ),
+            created_claim_ids=[],
+        )
+
+    def test_pause_header_present_when_paused(self):
+        """POST /v1/chat/completions returns 200 with X-Conjecture-Pause-ID when paused."""
+        from fastapi.testclient import TestClient
+
+        pause_id = "smoke-pause-001"
+        paused_response = self._make_paused_evaluate_result(pause_id)
+
+        mock_endpoint = MagicMock()
+        mock_endpoint.get_current_session.return_value = MagicMock(id="test-session")
+        mock_endpoint.evaluate = AsyncMock(return_value=paused_response)
+
+        server = self._build_server_with_mock_endpoint(mock_endpoint)
+        client = TestClient(server._app)
+
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "messages": [{"role": "user", "content": "What is the capital of France?"}]
+            },
+        )
+
+        assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
+        assert "X-Conjecture-Pause-ID" in resp.headers, (
+            f"Expected X-Conjecture-Pause-ID header, got: {dict(resp.headers)}"
+        )
+        assert resp.headers["X-Conjecture-Pause-ID"] == pause_id, (
+            f"Header value mismatch: {resp.headers['X-Conjecture-Pause-ID']!r} != {pause_id!r}"
+        )
+
+    def test_pause_response_body_is_well_formed(self):
+        """Paused /v1/chat/completions body is OpenAI-compatible with JSON content."""
+        from fastapi.testclient import TestClient
+
+        pause_id = "smoke-pause-002"
+        paused_response = self._make_paused_evaluate_result(pause_id)
+
+        mock_endpoint = MagicMock()
+        mock_endpoint.get_current_session.return_value = MagicMock(id="test-session")
+        mock_endpoint.evaluate = AsyncMock(return_value=paused_response)
+
+        server = self._build_server_with_mock_endpoint(mock_endpoint)
+        client = TestClient(server._app)
+
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "messages": [{"role": "user", "content": "Capital question"}]
+            },
+        )
+
+        assert resp.status_code == 200
+        body = resp.json()
+        assert "choices" in body, f"Expected 'choices' in body: {body}"
+        assert len(body["choices"]) == 1
+
+        # Content should be parseable JSON describing the paused state
+        content_str = body["choices"][0]["message"]["content"]
+        content = json.loads(content_str)
+        assert content["status"] == "paused"
+        assert content["pause_id"] == pause_id
+        assert "retrieval_request" in content
+
+    def test_get_pause_state_returns_json(self):
+        """GET /v1/pause/{pause_id} returns the PausedReasoningState as JSON."""
+        from fastapi.testclient import TestClient
+
+        pause_id = "smoke-pause-003"
+        paused_state = self._make_paused_state(pause_id)
+
+        mock_endpoint = MagicMock()
+        mock_endpoint.get_current_session.return_value = MagicMock(id="test-session")
+        mock_endpoint._paused_states = {pause_id: paused_state}
+
+        server = self._build_server_with_mock_endpoint(mock_endpoint)
+        client = TestClient(server._app)
+
+        resp = client.get(f"/v1/pause/{pause_id}")
+
+        assert resp.status_code == 200, (
+            f"Expected 200, got {resp.status_code}: {resp.text}"
+        )
+        body = resp.json()
+        assert body["session_id"] == "session-smoke-test"
+        assert "pending_retrieval" in body
+        assert body["pending_retrieval"]["query"] == "What is the capital of France?"
+
+    def test_get_pause_state_404_for_unknown(self):
+        """GET /v1/pause/{pause_id} returns 404 for unknown pause_id."""
+        from fastapi.testclient import TestClient
+
+        mock_endpoint = MagicMock()
+        mock_endpoint.get_current_session.return_value = MagicMock(id="test-session")
+        mock_endpoint._paused_states = {}
+
+        server = self._build_server_with_mock_endpoint(mock_endpoint)
+        client = TestClient(server._app)
+
+        resp = client.get("/v1/pause/does-not-exist")
+        assert resp.status_code == 404
+
+    def test_resume_route_returns_final_response(self):
+        """POST /v1/chat/completions/resume returns 200 with final response text."""
+        from fastapi.testclient import TestClient
+
+        pause_id = "smoke-pause-004"
+        final_response_text = "Paris is the capital of France."
+        complete_result = self._make_complete_resume_result(final_response_text)
+
+        mock_endpoint = MagicMock()
+        mock_endpoint.get_current_session.return_value = MagicMock(id="test-session")
+        mock_endpoint.resume_evaluation = AsyncMock(return_value=complete_result)
+
+        server = self._build_server_with_mock_endpoint(mock_endpoint)
+        client = TestClient(server._app)
+
+        resp = client.post(
+            "/v1/chat/completions/resume",
+            json={
+                "pause_id": pause_id,
+                "results": ["The capital of France is Paris."],
+            },
+        )
+
+        assert resp.status_code == 200, (
+            f"Expected 200, got {resp.status_code}: {resp.text}"
+        )
+        body = resp.json()
+        assert "choices" in body
+        content = body["choices"][0]["message"]["content"]
+        assert content == final_response_text, (
+            f"Expected final response text, got: {content!r}"
+        )
+
+    def test_resume_route_404_for_unknown_pause_id(self):
+        """POST /v1/chat/completions/resume returns 404 for unknown pause_id."""
+        from src.endpoint.conjecture_endpoint import APIResponse
+        from fastapi.testclient import TestClient
+
+        error_result = APIResponse(
+            success=False,
+            message="No paused session found for pause_id: bad-id",
+            errors=["PAUSE_ID_NOT_FOUND"],
+        )
+
+        mock_endpoint = MagicMock()
+        mock_endpoint.get_current_session.return_value = MagicMock(id="test-session")
+        mock_endpoint.resume_evaluation = AsyncMock(return_value=error_result)
+
+        server = self._build_server_with_mock_endpoint(mock_endpoint)
+        client = TestClient(server._app)
+
+        resp = client.post(
+            "/v1/chat/completions/resume",
+            json={"pause_id": "bad-id", "results": []},
+        )
+
+        assert resp.status_code == 404, (
+            f"Expected 404, got {resp.status_code}: {resp.text}"
+        )
+
+    def test_end_to_end_pause_then_resume(self, tmp_path):
+        """Integration smoke test: POST → pause → GET state → POST resume → complete.
+
+        This is the Phase 3 gate test. Uses real ConjectureEndpoint (not mocked)
+        with mocked LLM so no external services are needed.
+        """
+        from fastapi.testclient import TestClient
+        from fastapi import FastAPI
+        from src.endpoint.conjecture_endpoint import ConjectureEndpoint
+
+        # ------------------------------------------------------------------
+        # Build a real endpoint backed by a temp SQLite DB
+        # ------------------------------------------------------------------
+        db_path = str(tmp_path / "smoke_test.db")
+
+        async def _init_endpoint():
+            ep = ConjectureEndpoint(db_path=db_path, vector_path=":memory:")
+            ep._vector_store = None
+            await ep._data_manager.initialize()
+            ep._initialized = True
+            ep.start_session(metadata={"type": "smoke_test"})
+            return ep
+
+        import asyncio
+        loop = asyncio.new_event_loop()
+        real_endpoint = loop.run_until_complete(_init_endpoint())
+
+        # ------------------------------------------------------------------
+        # Build the server with real endpoint
+        # ------------------------------------------------------------------
+        server = ConjectureServer()
+        server._endpoint = real_endpoint
+        server._app = FastAPI()
+        server._setup_routes()
+        client = TestClient(server._app)
+
+        # ------------------------------------------------------------------
+        # Step 1: POST /v1/chat/completions with an LLM stub that pauses
+        # ------------------------------------------------------------------
+        pause_id = "e2e-smoke-pause"
+
+        rk_response = {
+            "content": "",
+            "tool_calls": [
+                {
+                    "id": "call_rk",
+                    "name": "retrieve_knowledge",
+                    "arguments": {"query": "capital of France"},
+                }
+            ],
+            "model": "mock-model",
+            "usage": {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
+        }
+
+        mock_pause_llm = MagicMock()
+        mock_pause_llm.generate_with_tools = AsyncMock(return_value=rk_response)
+        mock_pause_llm.generate = AsyncMock(return_value={"content": "", "model": "mock", "usage": {}})
+        mock_pause_llm.close = AsyncMock()
+
+        with patch("src.endpoint.conjecture_endpoint.decompose_input",
+                   new=AsyncMock(return_value=[])), \
+             patch("src.endpoint.llm_client.LLMClient", return_value=mock_pause_llm):
+            resp1 = client.post(
+                "/v1/chat/completions",
+                json={"messages": [{"role": "user", "content": "Capital of France?"}]},
+            )
+
+        assert resp1.status_code == 200, f"Step 1 failed: {resp1.text}"
+        assert "X-Conjecture-Pause-ID" in resp1.headers, (
+            "Step 1: X-Conjecture-Pause-ID header missing"
+        )
+
+        returned_pause_id = resp1.headers["X-Conjecture-Pause-ID"]
+        assert returned_pause_id, "Step 1: pause_id in header must be non-empty"
+
+        # ------------------------------------------------------------------
+        # Step 2: GET /v1/pause/{pause_id} to inspect the paused state
+        # ------------------------------------------------------------------
+        resp2 = client.get(f"/v1/pause/{returned_pause_id}")
+        assert resp2.status_code == 200, f"Step 2 failed: {resp2.text}"
+        state_body = resp2.json()
+        assert "pending_retrieval" in state_body, (
+            f"Step 2: pending_retrieval missing from state: {state_body}"
+        )
+        assert state_body["pending_retrieval"]["query"] == "capital of France", (
+            f"Step 2: unexpected query in state: {state_body['pending_retrieval']['query']!r}"
+        )
+
+        # ------------------------------------------------------------------
+        # Step 3: POST /v1/chat/completions/resume with retrieval results
+        # ------------------------------------------------------------------
+        final_answer = "Paris is the capital of France."
+
+        resume_response = {
+            "content": "",
+            "tool_calls": [
+                {
+                    "id": "call_resp",
+                    "name": "respond_to_user",
+                    "arguments": {
+                        "response": final_answer,
+                        "supporting_claims": [],
+                    },
+                }
+            ],
+            "model": "mock-model",
+            "usage": {"prompt_tokens": 20, "completion_tokens": 10, "total_tokens": 30},
+        }
+
+        mock_resume_llm = MagicMock()
+        mock_resume_llm.generate_with_tools = AsyncMock(return_value=resume_response)
+        mock_resume_llm.generate = AsyncMock(return_value={"content": "", "model": "mock", "usage": {}})
+        mock_resume_llm.close = AsyncMock()
+
+        with patch("src.endpoint.conjecture_endpoint.decompose_input",
+                   new=AsyncMock(return_value=[])), \
+             patch("src.endpoint.llm_client.LLMClient", return_value=mock_resume_llm):
+            resp3 = client.post(
+                "/v1/chat/completions/resume",
+                json={
+                    "pause_id": returned_pause_id,
+                    "results": ["The capital of France is Paris."],
+                },
+            )
+
+        assert resp3.status_code == 200, f"Step 3 failed: {resp3.text}"
+        body3 = resp3.json()
+        assert "choices" in body3, f"Step 3: no choices in response: {body3}"
+        assert body3["choices"][0]["message"]["content"] == final_answer, (
+            f"Step 3: unexpected content: {body3['choices'][0]['message']['content']!r}"
+        )
+
+        # Paused state should be consumed
+        resp4 = client.get(f"/v1/pause/{returned_pause_id}")
+        assert resp4.status_code == 404, (
+            "Step 4: paused state should be removed after resume, got {resp4.status_code}"
+        )
+
+        loop.close()

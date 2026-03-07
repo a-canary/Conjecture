@@ -82,22 +82,22 @@ evidence. This unblocks the 8B small-model hypothesis: the -32pp BBH regression
 ## Phase 3: HTTP Request/Resume Routes
 
 ### Steps
-- [ ] 3.1 Add `POST /v1/chat/completions/resume` route to
+- [x] 3.1 Add `POST /v1/chat/completions/resume` route to
       `src/endpoint/http_server.py` accepting JSON body:
       `{pause_id: str, results: List[str]}`; delegates to
       `endpoint.resume_evaluation()` and returns OpenAI-compatible response
-- [ ] 3.2 Modify `POST /v1/chat/completions` response to include custom header
+- [x] 3.2 Modify `POST /v1/chat/completions` response to include custom header
       `X-Conjecture-Pause-ID` when `data.status="paused"`, and populate the
       assistant message content with a structured JSON payload describing the
       retrieval request (so OpenAI-compatible clients see a well-formed response)
-- [ ] 3.3 Add `GET /v1/pause/{pause_id}` route that returns the current
+- [x] 3.3 Add `GET /v1/pause/{pause_id}` route that returns the current
       `PausedReasoningState` as JSON (enables callers to inspect pending state)
-- [ ] 3.4 Add integration smoke test: start server in-process, POST a request
+- [x] 3.4 Add integration smoke test: start server in-process, POST a request
       that triggers a pause, POST to `/resume`, assert final response
 
 ### Gates
-- [ ] `python -m pytest tests/ -k "http" -v` passes with no regressions
-- [ ] Manual curl: `POST /v1/chat/completions` with a prompt that triggers
+- [x] `python -m pytest tests/ -k "http" -v` passes with no regressions
+- [x] Manual curl: `POST /v1/chat/completions` with a prompt that triggers
       retrieval returns HTTP 200 with `X-Conjecture-Pause-ID` header set
 
 ---
@@ -129,7 +129,7 @@ evidence. This unblocks the 8B small-model hypothesis: the -32pp BBH regression
 
 ---
 
-## Current Phase: 3
+## Current Phase: 4
 ## Status: in-progress
 
 ---
@@ -139,7 +139,7 @@ evidence. This unblocks the 8B small-model hypothesis: the -32pp BBH regression
 - [x] `from src.process.claim_tools import RETRIEVAL_TOOLS, PausedReasoningState` imports cleanly
 - [x] `evaluate()` returns `status="paused"` when LLM requests retrieval
 - [x] `resume_evaluation()` completes the loop and returns a final response
-- [ ] HTTP `/resume` route works end-to-end with no existing route regressions
+- [x] HTTP `/resume` route works end-to-end with no existing route regressions
 - [ ] 8B BBH re-validation produces a statistically interpretable result (either
       confirms or disproves the missing-retrieval hypothesis with p-value)
 - [x] Existing direct-claims mode (`use_tools=True`, no retrieval) is unchanged
