@@ -17,7 +17,7 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from src.endpoint.conjecture_endpoint import ConjectureEndpoint
-from src.process.claim_tools import CLAIM_TOOLS
+from src.process.claim_tools import CLAIM_TOOLS, RETRIEVAL_TOOLS
 
 
 # ---------------------------------------------------------------------------
@@ -102,12 +102,14 @@ class TestEvaluateCallsGenerateWithTools:
         instance.generate_with_tools.assert_awaited_once()
         instance.generate.assert_not_awaited()
 
-        # Verify CLAIM_TOOLS were passed to generate_with_tools
+        # Verify CLAIM_TOOLS + RETRIEVAL_TOOLS were passed to generate_with_tools
+        # (A-0015 adds RETRIEVAL_TOOLS so the LLM can request knowledge retrieval)
         call_kwargs = instance.generate_with_tools.call_args
         tools_arg = call_kwargs[1].get("tools")
         assert tools_arg is not None, "tools argument must be passed to generate_with_tools"
-        assert tools_arg == CLAIM_TOOLS, (
-            "generate_with_tools must be called with CLAIM_TOOLS"
+        expected_tools = CLAIM_TOOLS + RETRIEVAL_TOOLS
+        assert tools_arg == expected_tools, (
+            "generate_with_tools must be called with CLAIM_TOOLS + RETRIEVAL_TOOLS"
         )
 
     @pytest.mark.asyncio

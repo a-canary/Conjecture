@@ -53,29 +53,29 @@ evidence. This unblocks the 8B small-model hypothesis: the -32pp BBH regression
 ## Phase 2: Suspend/Resume in ConjectureEndpoint
 
 ### Steps
-- [ ] 2.1 Add `_paused_states: Dict[str, PausedReasoningState]` store to
+- [x] 2.1 Add `_paused_states: Dict[str, PausedReasoningState]` store to
       `ConjectureEndpoint.__init__`
-- [ ] 2.2 Modify the tool-calling loop in `evaluate()` to detect when
+- [x] 2.2 Modify the tool-calling loop in `evaluate()` to detect when
       `retrieve_knowledge` is called: capture `PausedReasoningState`, store it
       keyed by `session_id + ":" + pause_id`, and return an `APIResponse` with
       `success=True`, `data.status="paused"`, `data.retrieval_request=...`,
       and `data.pause_id=...`
-- [ ] 2.3 Add `resume_evaluation(pause_id, retrieval_results: List[str])` method
+- [x] 2.3 Add `resume_evaluation(pause_id, retrieval_results: List[str])` method
       to `ConjectureEndpoint`: look up paused state, decompose each result
       string into claims via `decompose_input`, append claims to context,
       continue the tool-calling loop from the saved iteration, return final
       `APIResponse`
-- [ ] 2.4 Ensure the existing `evaluate()` path with no retrieval tool calls is
+- [x] 2.4 Ensure the existing `evaluate()` path with no retrieval tool calls is
       completely unaffected (add guard: only pause if `retrieve_knowledge` in
       tool names from this iteration)
 
 ### Gates
-- [ ] Mock test: call `evaluate()` with a stub LLM that emits
+- [x] Mock test: call `evaluate()` with a stub LLM that emits
       `retrieve_knowledge`; assert response has `status="paused"` and a
       `pause_id`
-- [ ] Mock test: call `resume_evaluation(pause_id, ["The capital is Paris"])`;
+- [x] Mock test: call `resume_evaluation(pause_id, ["The capital is Paris"])`;
       assert response has `status="complete"` and non-empty `response`
-- [ ] `python -m pytest tests/ -m "unit" -v` passes with no regressions
+- [x] `python -m pytest tests/ -m "unit" -v` passes with no regressions
 
 ---
 
@@ -129,17 +129,17 @@ evidence. This unblocks the 8B small-model hypothesis: the -32pp BBH regression
 
 ---
 
-## Current Phase: 1
+## Current Phase: 3
 ## Status: in-progress
 
 ---
 
 ## Success Criteria
 
-- [ ] `from src.process.claim_tools import RETRIEVAL_TOOLS, PausedReasoningState` imports cleanly
-- [ ] `evaluate()` returns `status="paused"` when LLM requests retrieval
-- [ ] `resume_evaluation()` completes the loop and returns a final response
+- [x] `from src.process.claim_tools import RETRIEVAL_TOOLS, PausedReasoningState` imports cleanly
+- [x] `evaluate()` returns `status="paused"` when LLM requests retrieval
+- [x] `resume_evaluation()` completes the loop and returns a final response
 - [ ] HTTP `/resume` route works end-to-end with no existing route regressions
 - [ ] 8B BBH re-validation produces a statistically interpretable result (either
       confirms or disproves the missing-retrieval hypothesis with p-value)
-- [ ] Existing direct-claims mode (`use_tools=True`, no retrieval) is unchanged
+- [x] Existing direct-claims mode (`use_tools=True`, no retrieval) is unchanged
