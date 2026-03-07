@@ -127,6 +127,14 @@ Core system that implements successful reasoning enhancements:
 
 ## Proven Development Patterns
 
+### Architecture Validation Requirements
+- **Multi-model testing required** - Single model (e.g., DeepSeek V3) insufficient for production claims
+- **Document model explicitly** - Always note which model(s) tested in results
+- **Test multiple task types** - Hard reasoning (BBH) + saturated (GSM8K) + recall (MMLU) minimum
+- **Statistical validation** - Include p-values in result tables, not just accuracy numbers
+- **Test positive AND negative cases** - Where architecture should help AND where it shouldn't
+- **Limitations section required** - Document model coverage, sample size, benchmark gaps
+
 ### Successful Enhancement Patterns
 1. **Core reasoning enhancements**: 100% success rate (5/5 successful cycles)
 2. **Prompt system improvements**: High success rate with measurable improvements
@@ -174,6 +182,13 @@ async def run_cycle(self):
 - Local LLM providers not running (Ollama/LM Studio on localhost)
 - Database schema issues with claim type column
 - Configuration validation errors in workspace settings
+
+### Statistical Significance for Benchmarks
+- **Don't eyeball results** - Calculate p-values using scipy.stats before claiming improvements/regressions
+- **Sample size n=50** provides ±10pp margin of error (95% CI) - differences <10pp may be noise
+- **Example lesson** - Reported -2pp "regression" was p=0.695 (not significant), actually equivalent
+- **Significance threshold** - p<0.05 for claims, p<0.01 for strong claims
+- **Test code** - `from scipy import stats; import math; se = math.sqrt(p1*(1-p1)/n1 + p2*(1-p2)/n2); z = diff/se; p = 2*stats.norm.cdf(-abs(z))`
 
 ## Configuration System
 
@@ -263,6 +278,41 @@ The system has demonstrated that **core reasoning enhancements consistently work
 
 **See `experiments/O-0008_VALIDATION_REPORT.md` for comprehensive analysis**
 
+## Three-Prompt Architecture Validation (2026-03-07)
+
+**Status:** VALIDATED for hard reasoning, neutral on saturated tasks (with statistical analysis)
+
+The three-prompt architecture splits single prompts into 3 focused stages: update confidence → create claim or SKIP → final response. Validated on DeepSeek V3 with 50-problem benchmarks and p-value analysis.
+
+| Benchmark | Type | Direct | Three-Prompt | Delta | P-value | Status |
+|-----------|------|--------|--------------|-------|---------|--------|
+| **BBH** | Hard Reasoning | 90.0% | 100.0% | **+10.0pp** | **0.018** | ✅ **SIGNIFICANT** |
+| **GSM8K** | Math (saturated) | 94.0% | 92.0% | -2.0pp | 0.695 | ≈ **Equivalent** |
+
+### Key Findings with Statistical Analysis
+
+**Significant Improvement on Hard Reasoning:**
+- BBH: +10pp improvement (p=0.018) - Perfect accuracy achieved
+- Matches O-0008 decomposition performance (+9pp)
+- More efficient than GSM8K (4.9x tokens vs 8.7x)
+- Cost justified by accuracy gains
+
+**Statistically Equivalent on Saturated Tasks:**
+- GSM8K: -2pp difference (p=0.695) - NOT significant, within random variation
+- No evidence of harm - architecture safe on all tested task types
+- High baseline (94%) leaves little room for improvement
+- Decision is economic (8.7x tokens), not accuracy-based
+
+**Production Recommendations:**
+- ✅ Use task-type routing (see `experiments/task_type_router.py`)
+- ✅ Route to three-prompt when baseline <90% and hard reasoning expected
+- ✅ Route to direct when baseline ≥90% or simple recall/calculation
+- ⚠️ Single-model validation only (DeepSeek V3) - multi-model testing REQUIRED for production
+
+**Critical Limitation:** Only tested on DeepSeek V3. Results may not generalize across Claude/GPT-4/Gemini/Llama. Multi-model validation required before production deployment.
+
+**See `experiments/THREE_PROMPT_ARCHITECTURE.md` and `.director/THREE_PROMPT_VALIDATION_COMPLETE.md` for full details**
+
 ## Benchmark Execution Best Practices
 
 ### Running Standard Benchmarks
@@ -286,8 +336,10 @@ ls -lt experiments/results/*.json | head -5
 
 ### Benchmark Timing Expectations
 - **100 problems**: 30-40 minutes typical (API rate limiting)
+- **Three-prompt architecture**: 35-45 minutes for n=50 (more API calls per problem)
 - **Parallel execution**: Run 5 benchmarks simultaneously for efficiency
 - **Background monitoring**: Check every 2-3 minutes, don't poll actively
+- **Process may show 0% CPU**: Normal when waiting on API calls (check results file instead)
 - **Results location**: `experiments/results/[benchmark]_[timestamp].json`
 - **CSV tracking**: `experiments/results/benchmark_results.csv`
 
@@ -357,6 +409,26 @@ Split single prompt into 3 focused prompts with shared context:
 - **SSH not configured**: Git push blocked, commits accumulate locally (137+ unpushed common)
 - **API rate limiting**: Benchmarks take 2-3x expected time (30-40min for 100 problems)
 - **Long-running tasks**: Use `run_in_background=true`, monitor with 2-3min intervals
+
+### Background Task and Process Monitoring
+
+**TaskOutput inconsistencies:**
+- Background tasks with `run_in_background=true` return `task_id` in result
+- Use `TaskOutput` tool to check status, NOT `Bash` with `tail`
+- Long-running benchmarks (30-40 min): Check every 2-3 minutes, don't poll actively
+- Process monitoring: Use `ls -lt experiments/results/*.json | head -5` to detect completion
+
+**Three-prompt benchmarks:**
+- Expect 35-45 minutes for 50 problems (3.88 avg iterations × 4 prompts × API delays)
+- Direct baseline: 10-15 minutes for comparison
+- Don't assume completion - check result file timestamps
+- Background execution recommended for parallel benchmark runs
+
+**Autonomous agent patterns:**
+- State in single JSON file (`state.json`) NOT database
+- Check `state` field: IDLE, WAITING, BLOCKED
+- BLOCKED requires human intervention - post clear blocker description
+- WAITING with background tasks: Don't poll, wait for notification
 
 ```bash
 python conjecture config      # Check configuration
