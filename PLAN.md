@@ -105,32 +105,32 @@ evidence. This unblocks the 8B small-model hypothesis: the -32pp BBH regression
 ## Phase 4: 8B BBH Re-Validation
 
 ### Steps
-- [ ] 4.1 Create `experiments/bbh_delegated_retrieval_8b.py` benchmark script
+- [x] 4.1 Create `experiments/bbh_delegated_retrieval_8b.py` benchmark script
       that acts as the caller: sends BBH problems to the HTTP server, detects
       pause responses, supplies a mock retrieval result (the problem statement
       re-stated as evidence), and resumes
-- [ ] 4.2 Run the benchmark against Llama-3.1-8B via OpenRouter with n=50 BBH
+- [x] 4.2 Run the benchmark against Llama-3.1-8B via OpenRouter with n=50 BBH
       problems; record direct baseline, three-prompt without retrieval, and
       three-prompt with delegated retrieval
-- [ ] 4.3 Compute p-values (two-proportion z-test) comparing delegated-retrieval
+- [x] 4.3 Compute p-values (two-proportion z-test) comparing delegated-retrieval
       vs baseline and vs three-prompt-no-retrieval
-- [ ] 4.4 Record results in `experiments/results/bbh_delegated_8b_<timestamp>.json`
+- [x] 4.4 Record results in `experiments/results/bbh_delegated_8b_<timestamp>.json`
       and append row to `experiments/results/benchmark_results.csv`
-- [ ] 4.5 Update `CHOICES.md` O-0008 note with finding: if p<0.05 improvement,
+- [x] 4.5 Update `CHOICES.md` O-0008 note with finding: if p<0.05 improvement,
       note retrieval restored performance; if still regressed, document that
       architecture (not missing retrieval) is the cause
 
 ### Gates
-- [ ] Benchmark script completes for n=50 without crash
-- [ ] Result JSON contains `direct_accuracy`, `three_prompt_accuracy`,
+- [x] Benchmark script completes for n=50 without crash
+- [x] Result JSON contains `direct_accuracy`, `three_prompt_accuracy`,
       `delegated_accuracy`, `p_value_delegated_vs_direct`
-- [ ] If `delegated_accuracy > direct_accuracy` with `p < 0.05`: note confirms
+- [x] If `delegated_accuracy > direct_accuracy` with `p < 0.05`: note confirms
       hypothesis; if not: note disproves it — either outcome satisfies the gate
 
 ---
 
 ## Current Phase: 4
-## Status: in-progress
+## Status: complete
 
 ---
 
@@ -140,6 +140,6 @@ evidence. This unblocks the 8B small-model hypothesis: the -32pp BBH regression
 - [x] `evaluate()` returns `status="paused"` when LLM requests retrieval
 - [x] `resume_evaluation()` completes the loop and returns a final response
 - [x] HTTP `/resume` route works end-to-end with no existing route regressions
-- [ ] 8B BBH re-validation produces a statistically interpretable result (either
+- [x] 8B BBH re-validation produces a statistically interpretable result (either
       confirms or disproves the missing-retrieval hypothesis with p-value)
 - [x] Existing direct-claims mode (`use_tools=True`, no retrieval) is unchanged

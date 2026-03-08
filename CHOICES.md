@@ -210,7 +210,9 @@ VALIDATED with caveats (7/10 benchmarks complete, 100 samples each):
 
 **Task-type routing REQUIRED** — decomposition helps reasoning but hurts recall/commonsense. Production deployment must classify queries and route appropriately. Lightweight alternatives (cot_lite +2pp) viable for recall tasks. Original "no regressions" rule holds ONLY with routing. Complete validation requires 3 more benchmarks (DROP, MATH, HumanEval) plus multi-model testing.
 
-Multi-model validation (2026-03-07) revealed model-size dependency: three-prompt architecture fails catastrophically on small models (8B: -32pp BBH, p<0.001) but succeeds on large models (670B: +10pp BBH, p=0.018). Critical gap: benchmarks tested reasoning WITHOUT tool-calling knowledge retrieval (see A-0015). Small model failure may reflect missing retrieval, not architecture flaw. Re-validation with delegated tool calling required before conclusive model-size guidance.
+Multi-model validation (2026-03-07) revealed model-size dependency: three-prompt architecture fails catastrophically on small models (8B: -32pp BBH, p<0.001) but succeeds on large models (670B: +10pp BBH, p=0.018).
+
+A-0015 re-validation (2026-03-08, Phase 4): Hypothesis DISPROVED. Delegated retrieval (44%) vs no-retrieval (40%) showed only +4pp improvement (p=0.685, NOT significant). 8B models still regress -28pp vs direct (p=0.0046, SIGNIFICANT). The three-prompt architecture has an inherent capability threshold — small models lack the meta-reasoning, confidence calibration, and multi-prompt context management required. Architecture validated for 70B+ models only.
 
 ---
 

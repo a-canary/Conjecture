@@ -1,0 +1,63 @@
+{
+  "benchmark": "BBH_DELEGATED_RETRIEVAL_8B",
+  "task": "logical_deduction_three_objects",
+  "architecture": "three-prompt-delegated-retrieval",
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "n_problems": 50,
+  "max_iterations": 4,
+  "confidence_threshold": 0.7,
+  "timestamp": "2026-03-08T01:23:32.027584+00:00",
+  "phase": "Phase 4 / A-0015 Re-Validation",
+  "hypothesis": "8B three-prompt regression caused by missing retrieval evidence",
+  "prior_context": {
+    "prior_8b_direct": 72.0,
+    "prior_8b_three_prompt_no_retrieval": 40.0,
+    "prior_regression_pp": -32.0,
+    "prior_p_value": 0.0007,
+    "source": "bbh_three_prompt_20260307_031018.json"
+  },
+  "used_prior_data": true,
+  "direct_accuracy": 72.0,
+  "three_prompt_accuracy": 40.0,
+  "delegated_accuracy": 44.0,
+  "p_value_delegated_vs_direct": 0.0046,
+  "p_value_delegated_vs_no_retrieval": 0.6853,
+  "z_delegated_vs_direct": -2.8365,
+  "z_delegated_vs_no_retrieval": 0.4052,
+  "delta_delegated_vs_direct_pp": -28.0,
+  "delta_delegated_vs_no_retrieval_pp": 4.0,
+  "hypothesis_outcome": "DISPROVED",
+  "hypothesis_detail": "Delegated retrieval did not significantly improve over no-retrieval (delegated=44.0% vs direct=72.0%). The 8B regression reflects architectural incompatibility, not just missing retrieval. Three-prompt unsuitable for 8B models.",
+  "direct": {
+    "method": "DIRECT",
+    "correct": 36,
+    "total": 50,
+    "accuracy": 72.0,
+    "avg_time": 3.6,
+    "total_tokens": 14422,
+    "extraction_failures": 0,
+    "avg_iterations": 0.0
+  },
+  "three_prompt_no_retrieval": {
+    "method": "THREE-PROMPT-NO-RETRIEVAL",
+    "correct": 20,
+    "total": 50,
+    "accuracy": 40.0,
+    "avg_time": 14.91,
+    "total_tokens": 146705,
+    "extraction_failures": 0,
+    "avg_iterations": 4.0
+  },
+  "delegated": {
+    "method": "THREE-PROMPT-DELEGATED-RETRIEVAL",
+    "correct": 22,
+    "total": 50,
+    "accuracy": 44.0,
+    "avg_time": 15.05,
+    "total_tokens": 185774,
+    "extraction_failures": 0,
+    "avg_iterations": 4.0
+  },
+  "mock_retrieval_strategy": "Problem restatement as structured evidence + task-specific pattern hint. Evidence prepended as high-confidence (0.75) claim before reasoning loop.",
+  "statistical_note": "n=50 gives ~14pp margin of error (95% CI). Differences <14pp may be noise. Use p<0.05 threshold."
+}
