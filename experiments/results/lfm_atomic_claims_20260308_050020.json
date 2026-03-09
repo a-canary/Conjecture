@@ -1,0 +1,54 @@
+{
+  "strategy": "#41 Atomic claims",
+  "model": "liquid/lfm2.5-1.2b",
+  "task": "BBH logical deduction",
+  "n_problems": 10,
+  "results": [
+    {
+      "atomicity_level": "compound",
+      "claim_examples": [
+        "Use transitivity: if A>B and B>C then A>C to determine orderings",
+        "Arrange items in sequential order before making comparisons between them"
+      ],
+      "correct": 3,
+      "accuracy": 30.0
+    },
+    {
+      "atomicity_level": "atomic",
+      "claim_examples": [
+        "If A>B and B>C then A>C",
+        "Arrange items in order before comparing"
+      ],
+      "correct": 3,
+      "accuracy": 30.0
+    },
+    {
+      "atomicity_level": "ultra_atomic",
+      "claim_examples": [
+        "Apply transitivity",
+        "Order then compare"
+      ],
+      "correct": 3,
+      "accuracy": 30.0
+    },
+    {
+      "atomicity_level": "single_word",
+      "claim_examples": [
+        "Transitivity",
+        "Ordering"
+      ],
+      "correct": 3,
+      "accuracy": 30.0
+    }
+  ],
+  "optimal": {
+    "atomicity_level": "compound",
+    "claim_examples": [
+      "Use transitivity: if A>B and B>C then A>C to determine orderings",
+      "Arrange items in sequential order before making comparisons between them"
+    ],
+    "correct": 3,
+    "accuracy": 30.0
+  },
+  "timestamp": "2026-03-08T05:00:20.296607+00:00"
+}

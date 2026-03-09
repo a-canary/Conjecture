@@ -1,0 +1,40 @@
+{
+  "benchmark": "BBH_CONTEXT_LIMIT",
+  "task": "logical_deduction_three_objects",
+  "architecture": "three-prompt-5claim-limit",
+  "variation": "Variation #2: Hard 5-claim context limit for 8B models",
+  "hypothesis": "8B regression caused by context overload, not architectural mismatch",
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "n_problems": 50,
+  "max_iterations": 4,
+  "confidence_threshold": 0.7,
+  "max_claims": 5,
+  "timestamp": "2026-03-08T02:11:30.601283+00:00",
+  "baseline_context": {
+    "prior_8b_unlimited": 40.0,
+    "prior_8b_direct": 72.0,
+    "source": "bbh_delegated_8b_20260308_012332.json"
+  },
+  "direct": {
+    "method": "DIRECT",
+    "correct": 39,
+    "total": 50,
+    "accuracy": 78.0,
+    "avg_time": 3.54,
+    "total_tokens": 14646,
+    "extraction_failures": 0,
+    "avg_iterations": 0.0
+  },
+  "three_prompt_5claim": {
+    "method": "THREE-PROMPT",
+    "correct": 24,
+    "total": 50,
+    "accuracy": 48.0,
+    "avg_time": 15.43,
+    "total_tokens": 148264,
+    "extraction_failures": 0,
+    "avg_iterations": 4.0
+  },
+  "improvement_pp": -30.0,
+  "conclusion": "CHALLENGE: Three-prompt hurts hard reasoning accuracy"
+}

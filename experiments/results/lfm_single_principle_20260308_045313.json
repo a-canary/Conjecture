@@ -1,0 +1,34 @@
+{
+  "strategy": "#38 Numeric constraints",
+  "model": "liquid/lfm2.5-1.2b",
+  "task": "BBH logical deduction",
+  "n_problems": 10,
+  "results": [
+    {
+      "num_claims": 0,
+      "correct": 2,
+      "accuracy": 20.0
+    },
+    {
+      "num_claims": 1,
+      "correct": 4,
+      "accuracy": 40.0
+    },
+    {
+      "num_claims": 2,
+      "correct": 2,
+      "accuracy": 20.0
+    },
+    {
+      "num_claims": 3,
+      "correct": 3,
+      "accuracy": 30.0
+    }
+  ],
+  "optimal": {
+    "num_claims": 1,
+    "correct": 4,
+    "accuracy": 40.0
+  },
+  "timestamp": "2026-03-08T04:53:13.461823+00:00"
+}

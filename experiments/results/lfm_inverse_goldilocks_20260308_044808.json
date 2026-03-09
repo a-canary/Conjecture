@@ -1,0 +1,35 @@
+{
+  "hypothesis": "Inverse Goldilocks - weak baselines need more claims",
+  "model": "liquid/lfm2.5-1.2b",
+  "task": "MMLU (weak baseline)",
+  "n_problems": 20,
+  "results": [
+    {
+      "num_claims": 0,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    {
+      "num_claims": 2,
+      "correct": 3,
+      "accuracy": 15.0
+    },
+    {
+      "num_claims": 5,
+      "correct": 3,
+      "accuracy": 15.0
+    },
+    {
+      "num_claims": 10,
+      "correct": 1,
+      "accuracy": 5.0
+    }
+  ],
+  "optimal": {
+    "num_claims": 2,
+    "correct": 3,
+    "accuracy": 15.0
+  },
+  "conclusion": "Goldilocks holds",
+  "timestamp": "2026-03-08T04:48:08.252070+00:00"
+}

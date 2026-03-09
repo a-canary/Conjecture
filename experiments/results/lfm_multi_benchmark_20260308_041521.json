@@ -1,0 +1,45 @@
+{
+  "strategy": "Multi-benchmark validation of Goldilocks principle",
+  "model": "liquid/lfm2.5-1.2b",
+  "claim_count": 2,
+  "results": [
+    {
+      "benchmark": "gsm8k",
+      "direct": {
+        "correct": 5,
+        "accuracy": 50.0
+      },
+      "with_claims": {
+        "correct": 5,
+        "accuracy": 50.0
+      },
+      "improvement_pp": 0.0
+    },
+    {
+      "benchmark": "mmlu",
+      "direct": {
+        "correct": 1,
+        "accuracy": 10.0
+      },
+      "with_claims": {
+        "correct": 2,
+        "accuracy": 20.0
+      },
+      "improvement_pp": 10.0
+    },
+    {
+      "benchmark": "arc",
+      "direct": {
+        "correct": 1,
+        "accuracy": 10.0
+      },
+      "with_claims": {
+        "correct": 1,
+        "accuracy": 10.0
+      },
+      "improvement_pp": 0.0
+    }
+  ],
+  "success_count": 1,
+  "timestamp": "2026-03-08T04:15:21.317592+00:00"
+}

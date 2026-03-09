@@ -1,0 +1,24 @@
+{
+  "model": "liquid/lfm2.5-1.2b",
+  "endpoint": "http://100.73.201.58:1234/v1/chat/completions",
+  "task": "logical_deduction_three_objects",
+  "n_problems": 10,
+  "timestamp": "2026-03-08T03:39:22.696435+00:00",
+  "direct": {
+    "method": "DIRECT",
+    "correct": 0,
+    "total": 10,
+    "accuracy": 0.0,
+    "avg_time": 0.0,
+    "total_tokens": 0
+  },
+  "three_prompt": {
+    "method": "THREE-PROMPT",
+    "correct": 0,
+    "total": 10,
+    "accuracy": 0.0,
+    "avg_time": 0.01,
+    "total_tokens": 0
+  },
+  "improvement_pp": 0.0
+}

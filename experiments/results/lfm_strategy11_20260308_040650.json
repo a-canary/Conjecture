@@ -1,0 +1,44 @@
+{
+  "strategy": "Strategy #11: Dynamic claim count",
+  "model": "liquid/lfm2.5-1.2b",
+  "task": "BBH logical_deduction_three_objects",
+  "results": [
+    {
+      "num_claims": 0,
+      "correct": 9,
+      "accuracy": 90.0,
+      "total_tokens": 4821
+    },
+    {
+      "num_claims": 1,
+      "correct": 10,
+      "accuracy": 100.0,
+      "total_tokens": 4875
+    },
+    {
+      "num_claims": 2,
+      "correct": 10,
+      "accuracy": 100.0,
+      "total_tokens": 4620
+    },
+    {
+      "num_claims": 3,
+      "correct": 10,
+      "accuracy": 100.0,
+      "total_tokens": 5156
+    },
+    {
+      "num_claims": 5,
+      "correct": 9,
+      "accuracy": 90.0,
+      "total_tokens": 5506
+    }
+  ],
+  "optimal": {
+    "num_claims": 1,
+    "correct": 10,
+    "accuracy": 100.0,
+    "total_tokens": 4875
+  },
+  "timestamp": "2026-03-08T04:06:50.020301+00:00"
+}

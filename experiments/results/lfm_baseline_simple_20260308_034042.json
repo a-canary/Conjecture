@@ -1,0 +1,10 @@
+{
+  "model": "liquid/lfm2.5-1.2b",
+  "endpoint": "http://100.73.201.58:1234/v1/chat/completions",
+  "n_problems": 10,
+  "method": "DIRECT",
+  "correct": 0,
+  "accuracy": 0.0,
+  "total_tokens": 0,
+  "timestamp": "2026-03-08T03:40:42.761696+00:00"
+}

@@ -1,0 +1,26 @@
+{
+  "strategy": "Strategy #1: Multi-stage retrieval with claims",
+  "model": "liquid/lfm2.5-1.2b",
+  "task": "BBH logical_deduction_three_objects",
+  "n_problems": 10,
+  "baseline": {
+    "model": "liquid/lfm2.5-1.2b",
+    "endpoint": "http://100.73.201.58:1234/v1/chat/completions",
+    "n_problems": 10,
+    "method": "DIRECT",
+    "correct": 0,
+    "accuracy": 0.0,
+    "total_tokens": 0,
+    "timestamp": "2026-03-08T03:40:42.761696+00:00"
+  },
+  "claim_enhanced": {
+    "method": "CLAIM_ENHANCED",
+    "correct": 7,
+    "accuracy": 70.0,
+    "avg_time": 12.316225719451904,
+    "total_tokens": 6958,
+    "num_claims": 5
+  },
+  "improvement_pp": 70.0,
+  "timestamp": "2026-03-08T03:53:40.143106+00:00"
+}

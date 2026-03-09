@@ -1,0 +1,54 @@
+{
+  "experiment": "Multi-benchmark validation v2",
+  "model": "liquid/lfm2.5-1.2b",
+  "optimization": "5-word claims (ultra-concise)",
+  "n_per_benchmark": 20,
+  "results": [
+    {
+      "benchmark": "HellaSwag",
+      "with_claims": false,
+      "correct": 11,
+      "accuracy": 55.0
+    },
+    {
+      "benchmark": "HellaSwag",
+      "with_claims": true,
+      "correct": 3,
+      "accuracy": 15.0
+    },
+    {
+      "benchmark": "TruthfulQA",
+      "with_claims": false,
+      "correct": 11,
+      "accuracy": 55.0
+    },
+    {
+      "benchmark": "TruthfulQA",
+      "with_claims": true,
+      "correct": 13,
+      "accuracy": 65.0
+    },
+    {
+      "benchmark": "BBH-causal_judgement",
+      "with_claims": false,
+      "correct": 9,
+      "accuracy": 45.0
+    },
+    {
+      "benchmark": "BBH-causal_judgement",
+      "with_claims": true,
+      "correct": 5,
+      "accuracy": 25.0
+    }
+  ],
+  "statistics": {
+    "avg_improvement": -16.666666666666668,
+    "success_rate": "1/3",
+    "improvements": [
+      -40.0,
+      10.0,
+      -20.0
+    ]
+  },
+  "timestamp": "2026-03-08T23:16:58.792152+00:00"
+}

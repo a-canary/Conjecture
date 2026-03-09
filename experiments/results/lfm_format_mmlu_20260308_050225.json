@@ -1,0 +1,34 @@
+{
+  "strategy": "Format-optimized MMLU (claims + format)",
+  "model": "liquid/lfm2.5-1.2b",
+  "task": "MMLU",
+  "n_problems": 20,
+  "results": [
+    {
+      "condition": "1. Direct (baseline)",
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    {
+      "condition": "2. Claims only",
+      "correct": 3,
+      "accuracy": 15.0
+    },
+    {
+      "condition": "3. Format guidance only",
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    {
+      "condition": "4. Claims + Format (combined)",
+      "correct": 2,
+      "accuracy": 10.0
+    }
+  ],
+  "best": {
+    "condition": "2. Claims only",
+    "correct": 3,
+    "accuracy": 15.0
+  },
+  "timestamp": "2026-03-08T05:02:25.693883+00:00"
+}

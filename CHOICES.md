@@ -212,7 +212,14 @@ VALIDATED with caveats (7/10 benchmarks complete, 100 samples each):
 
 Multi-model validation (2026-03-07) revealed model-size dependency: three-prompt architecture fails catastrophically on small models (8B: -32pp BBH, p<0.001) but succeeds on large models (670B: +10pp BBH, p=0.018).
 
-A-0015 re-validation (2026-03-08, Phase 4): Hypothesis DISPROVED. Delegated retrieval (44%) vs no-retrieval (40%) showed only +4pp improvement (p=0.685, NOT significant). 8B models still regress -28pp vs direct (p=0.0046, SIGNIFICANT). The three-prompt architecture has an inherent capability threshold — small models lack the meta-reasoning, confidence calibration, and multi-prompt context management required. Architecture validated for 70B+ models only.
+A-0015 re-validation (2026-03-08, Phase 4): Hypothesis DISPROVED. Delegated retrieval (44%) vs no-retrieval (40%) showed only +4pp improvement (p=0.685, NOT significant). 8B models still regress -28pp vs direct (p=0.0046, SIGNIFICANT). The three-prompt architecture has an inherent capability threshold — small models lack the meta-reasoning, confidence calibration, and multi-prompt context management required.
+
+Tier 1 8B optimization attempts (2026-03-08, n=50 BBH):
+- Context limit (5 claims): 48% vs 40% baseline (+8pp, p=0.42 NOT significant) — context size NOT the issue
+- Single-step forcing (max_iterations=1): 58% vs 40% baseline (+18pp, p=0.072 marginal) — iteration overhead contributes but insufficient
+- Three-model ensemble: BLOCKED by model availability (infrastructure limitation)
+
+**Architectural constraint validated:** Three-prompt requires 70B+ models. 8B optimization via context reduction, iteration limiting, or ensemble voting does not restore viability. Direct prompting recommended for <32B models (72-90% accuracy vs 40-58% three-prompt).
 
 ---
 
@@ -346,6 +353,13 @@ Evaluation state is observable in real-time. Current claims being evaluated, the
 Supports: M-0007, A-0010, M-0001
 
 Small models can reason but lack embedded knowledge. The LLM endpoint delegates knowledge retrieval tool calls to the calling system rather than executing them directly. When the model needs external evidence (web search, business DB, simulation), it emits structured tool-call requests. The caller performs the tool call and appends results to the next prompt's context as evidence claims. The core loop is: retrieve → decompose to claims → reason with evidence. This is essential for small models (<32B) which showed -32pp regression when forced to reason without retrieved evidence (multi-model validation, 2026-03-07). The endpoint does not perform tool calls — it requests them and continues reasoning when results are appended.
+
+### A-0016: Goldilocks Principle for Tiny Models (1-2B Parameters) [HYPOTHESIS]
+Supports: A-0015, A-0004, M-0001
+
+STATISTICAL CAVEAT: Exploratory findings from small samples (n=10-20). Only 1/7 key results achieved statistical significance (p<0.05). All claimed positive improvements (word count, claim count, task effects) have p>0.10 and wide confidence intervals. The ONE validated finding is NEGATIVE: ultra-concise claims harm commonsense reasoning (HellaSwag -40pp, p=0.004). Requires n≥100 validation before production claims. See STATISTICAL_REALITY_CHECK.md for full analysis. Treat as testable hypothesis, not validated architecture.
+
+EXPLORATORY FINDINGS (not statistically validated): Tiny models (1-2B parameters) may have fixed cognitive capacity limiting claim processing. Tentative optimal claim count is 1-3 claims maximum (p=0.299, n=10, NOT significant). Small samples suggest >3 claims may cause overload but this needs validation. Claim content should be task-specific: reasoning tasks may benefit from abstract principles ("use transitivity"), calculation tasks may benefit from format guidance ("show work, answer as ####"). Ultra-concise claims (~5 words) showed +25pp effect vs 15-word claims but NOT statistically significant (p=0.102, 95% CI: [-5pp, +55pp]). VALIDATED NEGATIVE: Commonsense tasks (HellaSwag) showed -40pp regression with ultra-concise claims (p=0.004, highly significant). Single direct prompt pattern suggested across small samples but needs validation. Exploratory results on LFM-2.5-1.2B: BBH 90%→100% (p=0.299), MMLU 10%→20% (observed but not tested), GSM8K 60%→70% (observed but not tested). All require n≥100 replication before deployment (2026-03-08 statistical analysis).
 
 ---
 

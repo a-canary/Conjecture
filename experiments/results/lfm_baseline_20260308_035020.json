@@ -1,0 +1,12 @@
+{
+  "model": "liquid/lfm2.5-1.2b",
+  "endpoint": "http://100.73.201.58:1234/v1/chat/completions",
+  "method": "DIRECT",
+  "n_problems": 10,
+  "task": "BBH logical_deduction_three_objects",
+  "correct": 9,
+  "accuracy": 90.0,
+  "avg_time": 7.8947163105010985,
+  "total_tokens": 3939,
+  "timestamp": "2026-03-08T03:50:20.850762+00:00"
+}

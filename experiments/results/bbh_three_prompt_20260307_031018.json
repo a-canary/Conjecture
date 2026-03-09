@@ -1,0 +1,32 @@
+{
+  "benchmark": "BBH",
+  "task": "logical_deduction_three_objects",
+  "architecture": "three-prompt",
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "n_problems": 50,
+  "max_iterations": 4,
+  "confidence_threshold": 0.7,
+  "timestamp": "2026-03-07T03:10:18.280249+00:00",
+  "direct": {
+    "method": "DIRECT",
+    "correct": 36,
+    "total": 50,
+    "accuracy": 72.0,
+    "avg_time": 3.6,
+    "total_tokens": 14422,
+    "extraction_failures": 0,
+    "avg_iterations": 0.0
+  },
+  "three_prompt": {
+    "method": "THREE-PROMPT",
+    "correct": 20,
+    "total": 50,
+    "accuracy": 40.0,
+    "avg_time": 14.91,
+    "total_tokens": 146705,
+    "extraction_failures": 0,
+    "avg_iterations": 4.0
+  },
+  "improvement_pp": -32.0,
+  "conclusion": "CHALLENGE: Three-prompt hurts hard reasoning accuracy"
+}

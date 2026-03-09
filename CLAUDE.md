@@ -185,9 +185,14 @@ async def run_cycle(self):
 
 ### Statistical Significance for Benchmarks
 - **Don't eyeball results** - Calculate p-values using scipy.stats before claiming improvements/regressions
+- **Sample size requirements** - n=10-20 for EXPLORATION ONLY, n≥100 required for VALIDATION and production claims
 - **Sample size n=50** provides ±10pp margin of error (95% CI) - differences <10pp may be noise
+- **Sample size n=20** provides ±20-30pp margin of error - unreliable for production claims
 - **Example lesson** - Reported -2pp "regression" was p=0.695 (not significant), actually equivalent
 - **Significance threshold** - p<0.05 for claims, p<0.01 for strong claims
+- **Multiple testing** - Apply Bonferroni correction when testing multiple hypotheses (divide α by number of tests)
+- **Report confidence intervals** - Always report 95% CI, not just point estimates (e.g., "+25pp [95% CI: -5pp, +55pp]")
+- **Exploratory vs validation** - n=10-20 generates hypotheses, n≥100 validates for production. Never conflate.
 - **Test code** - `from scipy import stats; import math; se = math.sqrt(p1*(1-p1)/n1 + p2*(1-p2)/n2); z = diff/se; p = 2*stats.norm.cdf(-abs(z))`
 
 ## Configuration System
@@ -343,6 +348,12 @@ ls -lt experiments/results/*.json | head -5
 - **Results location**: `experiments/results/[benchmark]_[timestamp].json`
 - **CSV tracking**: `experiments/results/benchmark_results.csv`
 
+### Benchmark-Specific Variance and Limitations
+- **BBH logical_deduction**: High problem-to-problem variance (20-90% baseline on n=10) - use n≥50 minimum for reliable baselines
+- **Small sample unreliability**: Different 10-problem samples can show wildly different baselines on same benchmark
+- **Directional trends only**: n=10-20 shows directional patterns but not absolute performance levels
+- **Production validation**: Always require n≥100 with statistical significance testing before deployment claims
+
 ### Result Analysis
 - Run `analyze_benchmark_results.py` after benchmarks complete
 - Automatically updates CSV and generates pattern analysis
@@ -429,6 +440,64 @@ Split single prompt into 3 focused prompts with shared context:
 - Check `state` field: IDLE, WAITING, BLOCKED
 - BLOCKED requires human intervention - post clear blocker description
 - WAITING with background tasks: Don't poll, wait for notification
+
+### LM Studio Endpoint Connection Issues
+
+**Problem:** Python HTTP libraries (`requests`, `httpx`) fail with "Connection reset by peer" when connecting to LM Studio endpoint
+
+**Workaround:** Use curl subprocess wrapper instead of Python HTTP clients
+
+```python
+import subprocess, json
+
+def call_lm_studio(prompt, endpoint="http://localhost:1234/v1/chat/completions", model="model-name"):
+    cmd = ["curl", "-s", "-X", "POST", endpoint,
+           "-H", "Content-Type: application/json",
+           "-d", json.dumps({
+               "model": model,
+               "messages": [{"role": "user", "content": prompt}],
+               "temperature": 0.3,
+               "max_tokens": 400
+           })]
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+    if result.returncode == 0 and result.stdout:
+        data = json.loads(result.stdout)
+        return data["choices"][0]["message"]["content"]
+    return None
+```
+
+### Dataset Loading Issues with HuggingFace
+
+**Problem:** Some HuggingFace datasets have deprecated legacy scripts
+
+**Error:** `RuntimeError: Dataset scripts are no longer supported, but found X.py`
+
+**Affected datasets:** piqa, social_i_qa, winogrande (legacy script format)
+
+**Workarounds:**
+- Use alternative datasets that load properly
+- Use older `datasets` library version
+- **Known working datasets:** hellaswag, truthful_qa (multiple_choice), BBH subtasks, gsm8k (main), mmlu (all), arc (ARC-Challenge)
+
+### Worktree Parallelization for Experiments
+
+**Use git worktrees for isolated parallel explorations:**
+
+```bash
+# Create worktree for parallel experiment
+git worktree add -b experiment/feature .worktrees/feature
+
+# Run experiment in worktree (isolated environment)
+cd .worktrees/feature && .venv/bin/python run_experiment.py &
+
+# List active worktrees
+git worktree list
+
+# Remove worktree when done
+git worktree remove .worktrees/feature
+```
+
+**Benefits:** Run multiple experiments simultaneously without conflicts, each in isolated workspace
 
 ```bash
 python conjecture config      # Check configuration

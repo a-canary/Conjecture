@@ -1,0 +1,38 @@
+{
+  "experiment": "GSM8K strategy exploration",
+  "model": "liquid/lfm2.5-1.2b",
+  "n_problems": 10,
+  "results": [
+    {
+      "strategy": "1. Direct (baseline)",
+      "correct": 6,
+      "accuracy": 60.0
+    },
+    {
+      "strategy": "2. Step-by-step scaffold",
+      "correct": 5,
+      "accuracy": 50.0
+    },
+    {
+      "strategy": "3. Worked example",
+      "correct": 5,
+      "accuracy": 50.0
+    },
+    {
+      "strategy": "4. Format guidance",
+      "correct": 7,
+      "accuracy": 70.0
+    },
+    {
+      "strategy": "5. Chain-of-thought",
+      "correct": 4,
+      "accuracy": 40.0
+    }
+  ],
+  "best": {
+    "strategy": "4. Format guidance",
+    "correct": 7,
+    "accuracy": 70.0
+  },
+  "timestamp": "2026-03-08T04:44:28.997346+00:00"
+}
