@@ -193,7 +193,15 @@ Supports: M-0001, M-0007, O-0002
 
 Three DeepEval benchmarks for OSS models people can run locally: GSM8K (grade school math), MathQA (math reasoning), HellaSwag (commonsense). Target model: openai/gpt-oss-20b. Proven: GSM8K +40pp (16.7% → 56.7%) demonstrates Conjecture's value for math reasoning. In benchmark suite runs, use 1 persistent session for claim accumulation across test cases.
 
-### O-0007: Threshold-Based Garbage Collection
+### O-0009: Task-type routing is REQUIRED for production
+Supports: M-0002, A-0015
+
+Decomposition helps reasoning (BBH +9pp, Synthetic +18pp) but HURTS recall/commonsense (MMLU -17pp, TruthfulQA -13pp). Production deployment MUST classify queries and route: three-prompt for hard reasoning tasks, cot_lite for recall/commonsense. See O-0002 validation notes for evidence.
+
+### O-0010: Model capability threshold for three-prompt
+Supports: M-0001, A-0015
+
+Three-prompt architecture requires 70B+ models. 8B models show -32pp regression vs direct prompting. Optimization via context reduction or iteration limiting is insufficient. Direct prompting recommended for <32B models. Validate new models before deploying three-prompt.
 Supports: D-0010, D-0001
 
 GC runs when claim count exceeds threshold. Removes claims that are both clean (not dirty) and low-confidence. Prevents unbounded growth while preserving valuable knowledge. GC does not run during active reasoning.
