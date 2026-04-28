@@ -1,4 +1,15 @@
-# NEXT.md - Ideas to Follow Up
+# NEXT.md — Status: 2026-04-28
+
+## ✅ Completed This Session
+- Fixed 7 failing tests in `test_isolated_db.py` (hardcoded `/workspace/.test_dbs` path)
+- Made `IsolatedDBFactory.DB_DIR` configurable via constructor/env/fallback
+
+## 🔧 Known Issues
+- IsolatedDBFactory still has `os.popen()` calls — consider replacing with `subprocess.run()`
+
+---
+
+# Legacy: Ideas to Follow Up (2026-03-01)
 
 Notable research findings and implementation ideas from R&D (2026-03-01).
 

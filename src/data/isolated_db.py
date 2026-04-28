@@ -24,9 +24,16 @@ class IsolatedDBFactory:
     - False positive learning effects
     """
 
-    DB_DIR = Path("/workspace/.test_dbs")
-
-    def __init__(self):
+    def __init__(self, db_dir: Optional[Path] = None):
+        # Allow override via constructor or ISOLATED_DB_DIR env var
+        if db_dir:
+            self.DB_DIR = db_dir
+        elif os.environ.get("ISOLATED_DB_DIR"):
+            self.DB_DIR = Path(os.environ["ISOLATED_DB_DIR"])
+        else:
+            # Fallback to project test directory or temp
+            project_test_dir = Path(__file__).parent.parent.parent / ".test_dbs"
+            self.DB_DIR = project_test_dir
         self.DB_DIR.mkdir(parents=True, exist_ok=True)
 
     def get_branch_name(self) -> str:
