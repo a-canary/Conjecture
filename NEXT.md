@@ -3,9 +3,17 @@
 ## ✅ Completed This Session
 - Fixed 7 failing tests in `test_isolated_db.py` (hardcoded `/workspace/.test_dbs` path)
 - Made `IsolatedDBFactory.DB_DIR` configurable via constructor/env/fallback
+- Added MCP server tests: 24 tests covering all 4 A-0013 tools + error handling (939 total tests pass)
 
 ## 🔧 Known Issues
 - IsolatedDBFactory still has `os.popen()` calls — consider replacing with `subprocess.run()`
+- Pydantic v2 deprecation: 3x `class Config: json_encoders` in `conjecture_endpoint.py` — migrate to `model_config = ConfigDict(...)` before Pydantic v3
+
+## 📋 Pending / Next Steps
+- Migrate Pydantic `class Config` → `model_config = ConfigDict(...)` in `src/endpoint/conjecture_endpoint.py`
+- Write integration test for MCP server running as subprocess (smoke test)
+- UX-0007: Claim visualization UI (Web/TUI) — not started
+- O-0008: 3 more benchmarks needed (DROP, MATH, HumanEval) for full validation
 
 ---
 
