@@ -26,6 +26,49 @@ from src.process.input_decomposer import decompose_input
 logger = logging.getLogger(__name__)
 
 
+class EvaluationState(BaseModel):
+    """A-0014: Streaming Evaluation State.
+
+    Tracks the real-time state of an in-progress evaluation.
+    Exposed via polling endpoint so callers (CLI, TUI, MCP) can display
+    live reasoning breakdown for active prompts (UX-0006).
+    """
+    session_id: str
+    query: str
+    status: str = Field(
+        default="in_progress",
+        description="One of: in_progress | paused | complete | error"
+    )
+    iteration: int = Field(default=0, description="Current iteration number (1-indexed)")
+    max_iterations: int = Field(default=5, description="Maximum iterations allowed")
+    claims_being_evaluated: List[str] = Field(
+        default_factory=list,
+        description="Claim IDs currently relevant to evaluation"
+    )
+    tool_calls_so_far: List[Dict[str, Any]] = Field(
+        default_factory=list,
+        description="Tool calls executed so far with name, args, success"
+    )
+    created_claim_ids: List[str] = Field(
+        default_factory=list,
+        description="Claim IDs created during this evaluation"
+    )
+    current_tool: Optional[str] = Field(
+        default=None,
+        description="Tool name currently executing (None if between tools)"
+    )
+    llm_content: Optional[str] = Field(
+        default=None,
+        description="LLM text content from current iteration"
+    )
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }
+
+
 class Session(BaseModel):
     """Session for scoped claim storage per M-0007.
 
@@ -112,6 +155,8 @@ class ConjectureEndpoint:
         # A-0015: stores suspended reasoning sessions keyed by pause_id
         from src.process.claim_tools import PausedReasoningState
         self._paused_states: Dict[str, "PausedReasoningState"] = {}
+        # A-0014: stores live evaluation state keyed by session_id
+        self._evaluation_states: Dict[str, "EvaluationState"] = {}
 
     async def initialize(self) -> APIResponse:
         """Initialize the endpoint and underlying data layer.
@@ -257,6 +302,65 @@ class ConjectureEndpoint:
             session = self._current_session
 
         return len(session.claim_ids) if session else 0
+
+    # ========== A-0014: Streaming Evaluation State ==========
+
+    def publish_evaluation_state(
+        self,
+        session_id: str,
+        query: str,
+        iteration: int,
+        max_iterations: int,
+        claims_being_evaluated: List[str],
+        tool_calls_so_far: List[Dict[str, Any]],
+        created_claim_ids: List[str],
+        status: str = "in_progress",
+        current_tool: Optional[str] = None,
+        llm_content: Optional[str] = None,
+    ) -> None:
+        """A-0014: Publish current evaluation state for polling.
+
+        Called inside the tool-calling loop after each iteration so callers
+        (CLI, TUI, MCP) can poll GET /v1/evaluation/{session_id}/state and
+        display live reasoning breakdown (UX-0006).
+
+        State is ephemeral — cleared when evaluation completes or errors.
+        """
+        self._evaluation_states[session_id] = EvaluationState(
+            session_id=session_id,
+            query=query,
+            status=status,
+            iteration=iteration,
+            max_iterations=max_iterations,
+            claims_being_evaluated=claims_being_evaluated,
+            tool_calls_so_far=tool_calls_so_far,
+            created_claim_ids=created_claim_ids,
+            current_tool=current_tool,
+            llm_content=llm_content,
+            updated_at=datetime.utcnow(),
+        )
+        logger.debug(
+            f"A-0014: Published eval state for {session_id}: "
+            f"iter {iteration}/{max_iterations}, status={status}"
+        )
+
+    def get_evaluation_state(self, session_id: str) -> Optional[EvaluationState]:
+        """A-0014: Retrieve current evaluation state for a session.
+
+        Args:
+            session_id: The session to get evaluation state for.
+
+        Returns:
+            EvaluationState if evaluation is in progress, else None.
+        """
+        return self._evaluation_states.get(session_id)
+
+    def clear_evaluation_state(self, session_id: str) -> None:
+        """A-0014: Clear evaluation state when evaluation ends (complete or error).
+
+        Called by the evaluate() method when it returns.
+        """
+        self._evaluation_states.pop(session_id, None)
 
     # ========== Dirty Flag Cascade ==========
 
@@ -690,6 +794,11 @@ class ConjectureEndpoint:
             claim_context = build_claim_context(all_context_claims)
             enhanced_prompt = build_enhanced_prompt(query, claim_context)
 
+            # A-0014: session ID for evaluation state tracking (used in finally/except)
+            eval_session_id: Optional[str] = (
+                self._current_session.id if self._current_session else None
+            )
+
             # Step 5: Call LLM (tool-calling mode or direct mode)
             try:
                 if use_tools:
@@ -722,6 +831,15 @@ class ConjectureEndpoint:
                     from src.process.claim_tools import RETRIEVAL_TOOLS, PausedReasoningState, RetrievalRequest
                     all_tools = CLAIM_TOOLS + RETRIEVAL_TOOLS
 
+                    # A-0014: session ID for evaluation state tracking
+                    eval_session_id = (
+                        self._current_session.id
+                        if self._current_session
+                        else f"s{uuid.uuid4().hex[:8]}"
+                    )
+                    # Claim IDs relevant to this evaluation (from context + created so far)
+                    eval_claim_ids: List[str] = list(claims) if claims else []
+
                     for iteration in range(max_tool_iterations):
                         logger.info(
                             "Tool-calling loop: iteration %d/%d",
@@ -736,6 +854,20 @@ class ConjectureEndpoint:
                         )
 
                         tool_calls = llm_response.get("tool_calls", [])
+                        llm_content = llm_response.get("content")
+
+                        # A-0014: publish evaluation state after LLM call
+                        self.publish_evaluation_state(
+                            session_id=eval_session_id,
+                            query=query,
+                            iteration=iteration + 1,
+                            max_iterations=max_tool_iterations,
+                            claims_being_evaluated=eval_claim_ids,
+                            tool_calls_so_far=tool_calls_log,
+                            created_claim_ids=created_claim_ids,
+                            status="in_progress",
+                            llm_content=llm_content,
+                        )
 
                         if not tool_calls:
                             # No tool calls — LLM responded with plain text
@@ -763,13 +895,20 @@ class ConjectureEndpoint:
                                 claim_ids=list(created_claim_ids),
                             )
                             pause_id = str(uuid.uuid4())
-                            session_id = (
-                                self._current_session.id
-                                if self._current_session
-                                else f"s{uuid.uuid4().hex[:8]}"
+                            # A-0014: publish paused state before returning
+                            self.publish_evaluation_state(
+                                session_id=eval_session_id,
+                                query=query,
+                                iteration=iteration + 1,
+                                max_iterations=max_tool_iterations,
+                                claims_being_evaluated=eval_claim_ids,
+                                tool_calls_so_far=tool_calls_log,
+                                created_claim_ids=created_claim_ids,
+                                status="paused",
+                                llm_content=llm_content,
                             )
                             paused_state = PausedReasoningState(
-                                session_id=session_id,
+                                session_id=eval_session_id,
                                 iteration=iteration,
                                 messages=[],  # LLM message history not available at this layer
                                 pending_retrieval=retrieval_request,
@@ -780,7 +919,7 @@ class ConjectureEndpoint:
                             logger.info(
                                 "retrieve_knowledge called at iteration %d — "
                                 "pausing session %s with pause_id %s",
-                                iteration + 1, session_id, pause_id,
+                                iteration + 1, eval_session_id, pause_id,
                             )
                             return APIResponse(
                                 success=True,
@@ -788,6 +927,7 @@ class ConjectureEndpoint:
                                 data={
                                     "status": "paused",
                                     "pause_id": pause_id,
+                                    "session_id": eval_session_id,
                                     "retrieval_request": {
                                         "query": retrieval_request.query,
                                         "tool_hint": retrieval_request.tool_hint,
@@ -807,6 +947,19 @@ class ConjectureEndpoint:
                             logger.info(
                                 "Executing tool '%s' (iteration %d)",
                                 tool_name, iteration + 1
+                            )
+                            # A-0014: publish state with current_tool during execution
+                            self.publish_evaluation_state(
+                                session_id=eval_session_id,
+                                query=query,
+                                iteration=iteration + 1,
+                                max_iterations=max_tool_iterations,
+                                claims_being_evaluated=eval_claim_ids,
+                                tool_calls_so_far=tool_calls_log,
+                                created_claim_ids=created_claim_ids,
+                                status="in_progress",
+                                current_tool=tool_name,
+                                llm_content=llm_content,
                             )
                             result = await executor.execute_tool(tool_name, tool_args)
                             tool_calls_log.append({
@@ -845,6 +998,8 @@ class ConjectureEndpoint:
                         if final_response is not None
                         else (llm_response.get("content", "") if llm_response else "")
                     )
+                    # A-0014: clear ephemeral evaluation state on completion
+                    self.clear_evaluation_state(eval_session_id)
                     return APIResponse(
                         success=True,
                         message="Evaluation complete (tool mode)",
@@ -875,6 +1030,8 @@ class ConjectureEndpoint:
                 await llm.close()
 
             # Step 6: Return response with decomposition metadata (direct mode)
+            # A-0014: clear ephemeral evaluation state on completion
+            self.clear_evaluation_state(eval_session_id)
             return APIResponse(
                 success=True,
                 message="Evaluation complete",
@@ -891,7 +1048,8 @@ class ConjectureEndpoint:
             )
 
         except ValueError as e:
-            # API key not configured
+            # A-0014: clear ephemeral evaluation state on error
+            self.clear_evaluation_state(eval_session_id)
             return APIResponse(
                 success=False,
                 message="LLM not configured",
@@ -899,6 +1057,8 @@ class ConjectureEndpoint:
             )
         except Exception as e:
             logger.error(f"Failed to evaluate query: {e}")
+            # A-0014: clear ephemeral evaluation state on error
+            self.clear_evaluation_state(eval_session_id)
             return APIResponse(
                 success=False,
                 message="Failed to evaluate query",
@@ -1024,6 +1184,20 @@ class ConjectureEndpoint:
                     )
 
                     tool_calls = llm_response.get("tool_calls", [])
+                    llm_content = llm_response.get("content")
+
+                    # A-0014: publish evaluation state after LLM call
+                    self.publish_evaluation_state(
+                        session_id=paused_state.session_id,
+                        query=original_query,
+                        iteration=iteration + 1,
+                        max_iterations=max_tool_iterations,
+                        claims_being_evaluated=[c.get("id") for c in evidence_dicts],
+                        tool_calls_so_far=tool_calls_log,
+                        created_claim_ids=created_claim_ids,
+                        status="in_progress",
+                        llm_content=llm_content,
+                    )
 
                     if not tool_calls:
                         logger.info(
@@ -1086,6 +1260,19 @@ class ConjectureEndpoint:
                             "resume_evaluation: executing tool '%s' (iteration %d)",
                             tool_name, iteration + 1
                         )
+                        # A-0014: publish state with current_tool during execution
+                        self.publish_evaluation_state(
+                            session_id=paused_state.session_id,
+                            query=original_query,
+                            iteration=iteration + 1,
+                            max_iterations=max_tool_iterations,
+                            claims_being_evaluated=[c.get("id") for c in evidence_dicts],
+                            tool_calls_so_far=tool_calls_log,
+                            created_claim_ids=created_claim_ids,
+                            status="in_progress",
+                            current_tool=tool_name,
+                            llm_content=llm_content,
+                        )
                         result = await executor.execute_tool(tool_name, tool_args)
                         tool_calls_log.append({
                             "name": tool_name,
@@ -1122,6 +1309,8 @@ class ConjectureEndpoint:
                     if final_response is not None
                     else (llm_response.get("content", "") if llm_response else "")
                 )
+                # A-0014: clear ephemeral evaluation state on completion
+                self.clear_evaluation_state(paused_state.session_id)
                 return APIResponse(
                     success=True,
                     message="Evaluation complete (resumed)",
@@ -1142,6 +1331,7 @@ class ConjectureEndpoint:
                 await llm.close()
 
         except ValueError as e:
+            self.clear_evaluation_state(paused_state.session_id)
             return APIResponse(
                 success=False,
                 message="LLM not configured",
@@ -1149,6 +1339,7 @@ class ConjectureEndpoint:
             )
         except Exception as e:
             logger.error(f"resume_evaluation failed: {e}")
+            self.clear_evaluation_state(paused_state.session_id)
             return APIResponse(
                 success=False,
                 message="Failed to resume evaluation",

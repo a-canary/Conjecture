@@ -374,6 +374,37 @@ class ConjectureServer:
                 )
             return JSONResponse(content=paused_state.model_dump())
 
+        # ------------------------------------------------------------------
+        # A-0014: GET /v1/evaluation/{session_id}/state — live reasoning polling
+        # ------------------------------------------------------------------
+
+        @app.get("/v1/evaluation/{session_id}/state")
+        async def get_evaluation_state(session_id: str):
+            """Return the current EvaluationState for a session (A-0014).
+
+            Enables callers (CLI, TUI, MCP) to poll for live reasoning breakdown
+            during an in-progress evaluation. Returns 404 if no evaluation is
+            active for the given session.
+
+            Response fields:
+            - status: in_progress | paused | complete | error
+            - iteration: current iteration (1-indexed)
+            - max_iterations: limit
+            - claims_being_evaluated: claim IDs relevant to this evaluation
+            - tool_calls_so_far: tools executed with name, success, claim_ids
+            - created_claim_ids: claims created during this evaluation
+            - current_tool: tool name currently executing (None if between tools)
+            - llm_content: LLM text content from current iteration
+            - updated_at: ISO timestamp of last state update
+            """
+            eval_state = self._endpoint.get_evaluation_state(session_id)
+            if eval_state is None:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"No active evaluation for session: {session_id}",
+                )
+            return JSONResponse(content=eval_state.model_dump())
+
         @app.get("/health")
         async def health():
             """Health check endpoint."""
