@@ -1,4 +1,4 @@
-# NEXT.md — Status: 2026-04-29
+# NEXT.md — Status: 2026-04-30
 
 ## ✅ Completed This Session
 - **UX-0007 Phase 1-2**: Claim tree visualization (CLI + Web API)
@@ -7,14 +7,13 @@
   - Added Web API endpoints: `/v1/claims/{id}/tree`, `/trace`, `/graph`
   - Created `src/utils/visualization.py` with tree/trace/graph builders
   - 22 new tests in `test_claim_visualization.py` — all pass
-  - 963 total tests pass (+22 new)
+- **UX-0007 Phase 3**: TUI Interactive Browser — `src/cli/claim_browser.py` with keyboard nav (j/k/Enter/q), real-time search, Rich Table/Tree widgets. 25 tests pass. All UX-0007 success criteria met.
 
 ## 🔧 Known Issues
 - (none)
 
 ## 📋 Pending / Next Steps
-- UX-0007 Phase 3: TUI Interactive Browser (optional enhancement)
-- O-0008: 3 more benchmarks needed (DROP, MATH, HumanEval) for full validation
+- O-0008: 3 more benchmarks (DROP, MATH, HumanEval) — evaluation runs, not code. Outside sprint scope.
 
 ---
 
