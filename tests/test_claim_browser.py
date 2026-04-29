@@ -312,9 +312,14 @@ class TestBrowseCLICommand:
         """Verify `browse` is a registered Typer command on the CLI app — check --help works."""
         from src.cli.modular_cli import app
         from typer.testing import CliRunner
+        from unittest.mock import MagicMock
 
-        runner = CliRunner()
-        result = runner.invoke(app, ["browse", "--help"])
+        # Patch get_processing_interface to avoid event-loop initialization issues
+        # when a prior test left a stale loop. We only care that --help registers correctly.
+        mock_interface = MagicMock()
+        with patch("src.cli.modular_cli.get_processing_interface", return_value=mock_interface):
+            runner = CliRunner()
+            result = runner.invoke(app, ["browse", "--help"])
         assert result.exit_code == 0, (
             f"`browse --help` failed with exit code {result.exit_code}. "
             f"stderr: {result.stderr[:200] if result.stderr else 'none'}"
