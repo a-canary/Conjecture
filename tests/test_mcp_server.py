@@ -19,6 +19,9 @@ Covers:
   - TestGetEndpoint: get_endpoint initializes endpoint once and reuses
 """
 
+import os
+from pathlib import Path
+
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -535,3 +538,60 @@ def test_main_parses_cli_arguments():
     args = parser_arg.parse_args(["--host", "0.0.0.0", "--port", "8080"])
     assert args.host == "0.0.0.0"
     assert args.port == 8080
+
+
+# ---------------------------------------------------------------------------
+# Integration Test: MCP Server as Subprocess (Smoke Test)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.integration
+@pytest.mark.slow
+class TestMCPServerSubprocess:
+    """Integration smoke test: run MCP server as subprocess and verify it starts."""
+
+    def test_server_starts_without_error(self, tmp_path):
+        """MCP server starts and responds to --help within timeout."""
+        import subprocess
+        import sys
+
+        # Get project root (parent of tests/)
+        project_root = Path(__file__).parent.parent
+
+        # Run with --help to verify module loads without errors
+        result = subprocess.run(
+            [sys.executable, "-m", "src.endpoint.mcp_server", "--help"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            cwd=str(project_root),
+            env={**os.environ, "PYTHONPATH": str(project_root)},
+        )
+
+        # Should exit cleanly (0 or 2 for argparse help)
+        assert result.returncode in (0, 2), (
+            f"MCP server failed to start:\n"
+            f"stdout: {result.stdout}\n"
+            f"stderr: {result.stderr}"
+        )
+
+        # Should contain expected help text
+        assert "Conjecture MCP Server" in result.stdout or "--host" in result.stdout
+
+    def test_server_imports_without_error(self):
+        """MCP server module imports without errors."""
+        import importlib
+        import sys
+
+        # Remove from cache if already imported
+        if "src.endpoint.mcp_server" in sys.modules:
+            del sys.modules["src.endpoint.mcp_server"]
+
+        # Import should not raise
+        import src.endpoint.mcp_server
+        importlib.reload(src.endpoint.mcp_server)
+
+        # Server object should exist
+        assert hasattr(src.endpoint.mcp_server, "mcp")
+        assert hasattr(src.endpoint.mcp_server, "run_server")
+        assert hasattr(src.endpoint.mcp_server, "main")
