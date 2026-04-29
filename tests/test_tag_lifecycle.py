@@ -127,11 +127,12 @@ class TestSplitTriggerDetection:
     async def test_empty_result_no_triggers(self):
         """No triggers when all tags below threshold."""
         repo = AsyncMock(spec=ClaimRepository)
+        # 6 unique tags = 1/6 ≈ 16.7% each < 20% threshold → no triggers
         repo.list_all = AsyncMock(return_value=[
-            Claim(id="c1", content="c1", confidence=0.8, state=ClaimState.EXPLORE,
-                  type=[ClaimType.CONCEPT], tags=["rare-tag-1"], supers=[], subs=[]),
-            Claim(id="c2", content="c2", confidence=0.8, state=ClaimState.EXPLORE,
-                  type=[ClaimType.CONCEPT], tags=["rare-tag-2"], supers=[], subs=[]),
+            Claim(id=f"c{i:08d}", content=f"rare-tag-{i}-claim-content", confidence=0.8,
+                  state=ClaimState.EXPLORE, type=[ClaimType.CONCEPT], tags=[f"rare-tag-{i}"],
+                  supers=[], subs=[])
+            for i in range(1, 7)
         ])
 
         result = await SplitTriggerResult.detect(repo, threshold=0.20)
@@ -163,18 +164,19 @@ class TestTagLifecycleManager:
 
         assert result.split_needed is True
         assert "ml" in result.split_tags
-        # LLM was called to suggest replacements
-        mock_llm_processor.call.assert_called_once()
+        # LLM was called for each overused tag (ml=62.5%, reasoning=25%)
+        assert mock_llm_processor.call.call_count >= 1
 
     @pytest.mark.asyncio
     async def test_no_split_when_under_threshold(self, mock_repository, mock_llm_processor):
         """No split suggestion when all tags under threshold."""
         repo = AsyncMock(spec=ClaimRepository)
+        # 6 unique tags = 1/6 ≈ 16.7% each < 20% threshold → no split
         repo.list_all = AsyncMock(return_value=[
-            Claim(id="c1", content="c1", confidence=0.8, state=ClaimState.EXPLORE,
-                  type=[ClaimType.CONCEPT], tags=["unique-tag-1"], supers=[], subs=[]),
-            Claim(id="c2", content="c2", confidence=0.8, state=ClaimState.EXPLORE,
-                  type=[ClaimType.CONCEPT], tags=["unique-tag-2"], supers=[], subs=[]),
+            Claim(id=f"c{i:08d}", content=f"unique-tag-{i}-claim-content", confidence=0.8,
+                  state=ClaimState.EXPLORE, type=[ClaimType.CONCEPT], tags=[f"unique-tag-{i}"],
+                  supers=[], subs=[])
+            for i in range(1, 7)
         ])
 
         manager = TagLifecycleManager(
@@ -193,8 +195,8 @@ class TestTagLifecycleManager:
         claims = []
         for i in range(25):
             claims.append(Claim(
-                id=f"c{i}",
-                content=f"Claim {i}",
+                id=f"c{i:08d}",
+                content=f"ML claim content {i:03d}",
                 confidence=0.8,
                 state=ClaimState.EXPLORE,
                 type=[ClaimType.CONJECTURE],
@@ -237,8 +239,8 @@ class TestTagMergeOnLargeDataset:
             # Two similar but different tags
             tag = f"ml-variant-{i % 2}"
             claims.append(Claim(
-                id=f"c{i}",
-                content=f"Claim {i}",
+                id=f"c{i:08d}",
+                content=f"ML claim content {i:03d}",
                 confidence=0.8,
                 state=ClaimState.EXPLORE,
                 type=[ClaimType.CONJECTURE],

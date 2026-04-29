@@ -85,7 +85,7 @@ class TestDuckDuckGoSearch:
         with patch("aiohttp.ClientSession.get") as mock_get:
             mock_response = MagicMock()
             mock_response.status = 200
-            mock_response.json.return_value = {
+            mock_response.json = AsyncMock(return_value={
                 "results": [
                     {
                         "title": "Python Homepage",
@@ -93,7 +93,7 @@ class TestDuckDuckGoSearch:
                         "body": "The Python Programming Language.",
                     }
                 ]
-            }
+            })
             mock_get.return_value.__aenter__.return_value = mock_response
 
             results = await search_client.search("python programming")
@@ -139,7 +139,7 @@ class TestDuckDuckGoSearch:
         with patch("aiohttp.ClientSession.get") as mock_get:
             mock_response = MagicMock()
             mock_response.status = 200
-            mock_response.json.return_value = {
+            mock_response.json = AsyncMock(return_value={
                 "results": [
                     {
                         "title": "Result 1",
@@ -157,7 +157,7 @@ class TestDuckDuckGoSearch:
                         "body": "Body of result 3",
                     },
                 ]
-            }
+            })
             mock_get.return_value.__aenter__.return_value = mock_response
 
             results = await search_client.search("example query")
@@ -189,12 +189,12 @@ class TestDuckDuckGoSearch:
         with patch("aiohttp.ClientSession.get") as mock_get:
             mock_response = MagicMock()
             mock_response.status = 200
-            mock_response.json.return_value = {
+            mock_response.json = AsyncMock(return_value={
                 "results": [
                     {"title": f"R{i}", "url": f"https://e.com/{i}", "body": f"B{i}"}
                     for i in range(10)
                 ]
-            }
+            })
             mock_get.return_value.__aenter__.return_value = mock_response
 
             results = await search_client.search("test", max_results=3)
@@ -233,7 +233,7 @@ class TestWebSearchEvidenceIntegration:
         with patch("aiohttp.ClientSession.get") as mock_get:
             mock_response = MagicMock()
             mock_response.status = 200
-            mock_response.json.return_value = {
+            mock_response.json = AsyncMock(return_value={
                 "results": [
                     {
                         "title": "Climate Change Evidence",
@@ -246,7 +246,7 @@ class TestWebSearchEvidenceIntegration:
                         "body": "NASA's official climate change resources.",
                     },
                 ]
-            }
+            })
             mock_get.return_value.__aenter__.return_value = mock_response
 
             results = await search_client.search("climate change evidence")
@@ -283,7 +283,7 @@ class TestWebSearchEvidenceIntegration:
         with patch("aiohttp.ClientSession.get") as mock_get:
             mock_response = MagicMock()
             mock_response.status = 200
-            mock_response.json.return_value = {
+            mock_response.json = AsyncMock(return_value={
                 "results": [
                     {
                         "title": "Source Article",
@@ -291,7 +291,7 @@ class TestWebSearchEvidenceIntegration:
                         "body": "Article content here.",
                     }
                 ]
-            }
+            })
             mock_get.return_value.__aenter__.return_value = mock_response
 
             results = await search_client.search("source example")
