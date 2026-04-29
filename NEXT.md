@@ -6,8 +6,7 @@
 - Added MCP server tests: 24 tests covering all 4 A-0013 tools + error handling (939 total tests pass)
 
 ## 🔧 Known Issues
-- IsolatedDBFactory still has `os.popen()` calls — consider replacing with `subprocess.run()`
-- Pydantic v2 deprecation: 3x `class Config: json_encoders` in `conjecture_endpoint.py` — migrate to `model_config = ConfigDict(...)` before Pydantic v3
+- IsolatedDBFactory still has `os.popen()` calls — consider replacing with `subprocess.run()` (2026-04-29)
 
 ## 📋 Pending / Next Steps
 - ✅ Migrate Pydantic `class Config` → `model_config = ConfigDict(...)` in `src/endpoint/conjecture_endpoint.py` (2026-04-29)
