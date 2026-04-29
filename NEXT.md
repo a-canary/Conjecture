@@ -1,16 +1,13 @@
-# NEXT.md — Status: 2026-04-28
+# NEXT.md — Status: 2026-04-29
 
 ## ✅ Completed This Session
-- Fixed 7 failing tests in `test_isolated_db.py` (hardcoded `/workspace/.test_dbs` path)
-- Made `IsolatedDBFactory.DB_DIR` configurable via constructor/env/fallback
-- Added MCP server tests: 24 tests covering all 4 A-0013 tools + error handling (939 total tests pass)
+- Fixed `os.popen()` → `subprocess.run()` in `src/data/isolated_db.py` (2 calls replaced)
+- Added MCP subprocess smoke test: 2 tests (server starts, module imports) — 941 total tests pass
 
 ## 🔧 Known Issues
-- IsolatedDBFactory still has `os.popen()` calls — consider replacing with `subprocess.run()` (2026-04-29)
+- (none)
 
 ## 📋 Pending / Next Steps
-- ✅ Migrate Pydantic `class Config` → `model_config = ConfigDict(...)` in `src/endpoint/conjecture_endpoint.py` (2026-04-29)
-- Write integration test for MCP server running as subprocess (smoke test)
 - UX-0007: Claim visualization UI (Web/TUI) — not started
 - O-0008: 3 more benchmarks needed (DROP, MATH, HumanEval) for full validation
 
