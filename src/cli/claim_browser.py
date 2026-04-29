@@ -191,19 +191,15 @@ class ClaimBrowser:
             return
         import asyncio
         try:
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                import concurrent.futures
-                with concurrent.futures.ThreadPoolExecutor() as pool:
-                    fut = pool.submit(
-                        asyncio.run,
-                        self.interface.search_claims(self.search_query),
-                    )
-                    self.search_results = fut.result(timeout=10) or []
-            else:
-                self.search_results = loop.run_until_complete(
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            self.search_results = (
+                loop.run_until_complete(
                     self.interface.search_claims(self.search_query)
-                ) or []
+                )
+                or []
+            )
+            loop.close()
         except Exception:
             self.search_results = []
 
@@ -248,6 +244,102 @@ class ClaimBrowser:
             f"[{color}]{conf_marker}[/{color}] "
             f"{content}"
         )
+
+    def _get_key(self) -> str:
+        """Read a single keypress from the terminal. Cross-platform."""
+        import sys
+        try:
+            # Unix
+            import tty
+            import termios
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setraw(fd)
+                ch = sys.stdin.read(1)
+                if ch == "\x1b":
+                    seq = sys.stdin.read(2)
+                    return ch + seq
+                return ch
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        except Exception:
+            # Windows fallback
+            try:
+                import msvcrt
+                ch = msvcrt.getch()
+                if ch in (b"\x00", b"\xe0"):
+                    return ch + msvcrt.getch()
+                return ch.decode("utf-8", errors="replace")
+            except Exception:
+                return "q"
+
+    def run_interactive(self) -> None:
+        """Run the interactive browser loop.
+
+        Reads single keystrokes and updates browser state.
+        Handles: j/k (navigate), l/Enter (expand), h (collapse),
+        / (search), q (quit), Escape (cancel), g/G (top/bottom).
+        """
+        import sys
+        CLEAR_SCREEN = "\033[2J\033[H"
+        HIDE_CURSOR = "\033[?25l"
+        SHOW_CURSOR = "\033[?25h"
+
+        try:
+            sys.stdout.write(HIDE_CURSOR)
+            sys.stdout.flush()
+            while self.state != BrowserState.QUIT:
+                lines = self.render()
+                output = CLEAR_SCREEN + "\n".join(lines) + "\n"
+                sys.stdout.write(output)
+                sys.stdout.flush()
+                key = self._get_key()
+                if self.state == BrowserState.SEARCHING:
+                    self._handle_search_key(key)
+                else:
+                    self._handle_tree_key(key)
+        finally:
+            sys.stdout.write(SHOW_CURSOR + CLEAR_SCREEN)
+            sys.stdout.flush()
+
+    def _handle_tree_key(self, key: str) -> None:
+        """Handle a keypress in tree/running state."""
+        if key in ("j", "\x1b[B") or key == b"\x00\x50":
+            self._move_down()
+        elif key in ("k", "\x1b[A") or key == b"\x00\x48":
+            self._move_up()
+        elif key in ("l", "\x1b[C", " ", "\r", "\n"):
+            if key in ("\r", "\n"):
+                node = self._all_nodes[self.current_index]
+                self._toggle_expand(node)
+            else:
+                node = self._all_nodes[self.current_index]
+                self._toggle_expand(node)
+        elif key == "h" or key == "\x1b[D":
+            node = self._all_nodes[self.current_index]
+            if node.expanded:
+                node.expanded = False
+                self._refresh_flat()
+        elif key == "/":
+            self._on_search()
+        elif key in ("q", "Q"):
+            self._on_quit()
+        elif key == "g":
+            self.current_index = 0
+        elif key == "G":
+            self.current_index = max(0, len(self._all_nodes) - 1)
+
+    def _handle_search_key(self, key: str) -> None:
+        """Handle a keypress in search mode."""
+        if key == "\x1b":
+            self._on_search_exit()
+        elif key == "\r" or key == "\n":
+            self._update_search_results()
+        elif key == "\x7f":
+            self.search_query = self.search_query[:-1]
+        elif len(key) == 1 and key.isprintable():
+            self.search_query += key
 
     def render(self) -> List[str]:
         """Render all visible lines for the current browser state."""

@@ -730,3 +730,126 @@ class TestPhase3Integration:
         )
 
         loop.close()
+
+
+# ---------------------------------------------------------------------------
+# Async/sync wrapper pattern tests (DeprecationWarning fix)
+# ----------------------------------------------------------------------------
+
+@pytest.mark.skipif(not FASTAPI_AVAILABLE, reason="FastAPI not installed")
+class TestAsyncSyncWrapperNoDeprecationWarning:
+    """Verify tree/trace/graph endpoints don't call asyncio.get_event_loop() (deprecated in Python 3.10+).
+
+    The tree, trace, and graph endpoints use a sync wrapper pattern:
+      async def get_claim_by_id(cid): ...
+      def get_claim_sync(cid): asyncio.get_event_loop().run_until_complete(...)
+
+    In Python 3.10+ asyncio.get_event_loop() raises DeprecationWarning when there
+    is no current event loop, and RuntimeError in Python 3.12+.
+    The fix is to use asyncio.new_event_loop() in a with-statement instead.
+    """
+
+    def _server_with_mock(self):
+        """Return a server with routes set up and a mock endpoint."""
+        from fastapi import FastAPI
+
+        server = ConjectureServer()
+        # Mock endpoint returning a minimal claim with one sub
+        mock_claim = MagicMock()
+        mock_claim.id = "claim-1"
+        mock_claim.content = "Root claim"
+        mock_claim.confidence = 0.9
+        mock_claim.state = MagicMock(value="confirmed")
+        mock_claim.type = []
+        mock_claim.subs = []
+        mock_claim.supers = []
+
+        mock_endpoint = MagicMock()
+        mock_endpoint.get_claim = AsyncMock(return_value=MagicMock(
+            success=True,
+            data={
+                "id": "c00000001",
+                "content": "Root claim",
+                "confidence": 0.9,
+                "state": "Validated",
+                "type": [],
+                "tags": [],
+                "subs": [],
+                "supers": [],
+            }
+        ))
+        mock_endpoint.get_current_session.return_value = MagicMock(id="test")
+        mock_endpoint.claim_count.return_value = 1
+
+        server._endpoint = mock_endpoint
+        server._app = FastAPI()
+        server._setup_routes()
+        return server
+
+    def test_tree_endpoint_no_get_event_loop_call(self):
+        """GET /v1/claims/{id}/tree must not call asyncio.get_event_loop()."""
+        from fastapi.testclient import TestClient
+        import warnings
+
+        server = self._server_with_mock()
+        client = TestClient(server._app, raise_server_exceptions=True)
+
+        with patch("asyncio.get_event_loop") as mock_get_loop:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+                response = client.get("/v1/claims/claim-1/tree")
+
+            # Verify the endpoint worked (200)
+            assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
+
+            # Verify asyncio.get_event_loop was NOT called (the fix)
+            assert mock_get_loop.call_count == 0, (
+                f"asyncio.get_event_loop() was called {mock_get_loop.call_count} time(s) — "
+                f"should use new_event_loop() pattern instead"
+            )
+
+            # Verify no DeprecationWarning about get_event_loop in our code
+            for warning in w:
+                assert "get_event_loop" not in str(warning.message), (
+                    f"DeprecationWarning about get_event_loop: {warning.message}"
+                )
+
+    def test_trace_endpoint_no_get_event_loop_call(self):
+        """GET /v1/claims/{id}/trace must not call asyncio.get_event_loop()."""
+        from fastapi.testclient import TestClient
+        import warnings
+
+        server = self._server_with_mock()
+        client = TestClient(server._app, raise_server_exceptions=True)
+
+        with patch("asyncio.get_event_loop") as mock_get_loop:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+                response = client.get("/v1/claims/claim-1/trace")
+
+            assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
+            assert mock_get_loop.call_count == 0, (
+                f"asyncio.get_event_loop() was called {mock_get_loop.call_count} time(s)"
+            )
+            for warning in w:
+                assert "get_event_loop" not in str(warning.message)
+
+    def test_graph_endpoint_no_get_event_loop_call(self):
+        """GET /v1/claims/{id}/graph must not call asyncio.get_event_loop()."""
+        from fastapi.testclient import TestClient
+        import warnings
+
+        server = self._server_with_mock()
+        client = TestClient(server._app, raise_server_exceptions=True)
+
+        with patch("asyncio.get_event_loop") as mock_get_loop:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+                response = client.get("/v1/claims/claim-1/graph")
+
+            assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
+            assert mock_get_loop.call_count == 0, (
+                f"asyncio.get_event_loop() was called {mock_get_loop.call_count} time(s)"
+            )
+            for warning in w:
+                assert "get_event_loop" not in str(warning.message)

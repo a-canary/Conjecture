@@ -293,3 +293,81 @@ class TestBrowseClaimsFunction:
             browser = browse_claims(mock_interface, "c0000001")
         assert isinstance(browser, ClaimBrowser)
         assert browser.root_id == "c0000001"
+
+
+class TestBrowseCLICommand:
+    """Tests for the `conjecture browse` CLI command integration (UX-0007 Phase 3)."""
+
+    def _make_mock_interface(self, sample_claims):
+        interface = MagicMock()
+        interface.get_claim = MagicMock(
+            side_effect=lambda cid: sample_claims.get(cid)
+        )
+        interface.search_claims = AsyncMock(
+            return_value=[sample_claims["c0000001"], sample_claims["c0000002"]]
+        )
+        return interface
+
+    def test_browse_command_registered_in_app(self):
+        """Verify `browse` is a registered Typer command on the CLI app — check --help works."""
+        from src.cli.modular_cli import app
+        from typer.testing import CliRunner
+
+        runner = CliRunner()
+        result = runner.invoke(app, ["browse", "--help"])
+        assert result.exit_code == 0, (
+            f"`browse --help` failed with exit code {result.exit_code}. "
+            f"stderr: {result.stderr[:200] if result.stderr else 'none'}"
+        )
+        assert "interactive" in result.output.lower() or "browse" in result.output.lower()
+
+    def test_browse_command_instantiates_browser(self, sample_claims):
+        """`browse` command creates a ClaimBrowser and calls run_interactive."""
+        mock_interface = self._make_mock_interface(sample_claims)
+
+        def fetch(self, cid):
+            return sample_claims.get(cid)
+
+        with patch.object(ClaimBrowser, "_fetch_claim", fetch):
+            # Patch run_interactive at the source so TTY never runs
+            with patch("src.cli.claim_browser.ClaimBrowser.run_interactive", return_value=None):
+                with patch("src.cli.modular_cli.current_processing_interface", mock_interface):
+                    with patch(
+                        "src.cli.modular_cli.get_processing_interface",
+                        return_value=mock_interface,
+                    ):
+                        from src.cli.modular_cli import app
+                        from typer.testing import CliRunner
+
+                        runner = CliRunner()
+                        result = runner.invoke(app, ["browse", "c0000001", "--max-depth", "3"])
+                        # Should exit cleanly (run_interactive is patched to no-op)
+                        assert result.exit_code == 0, (
+                            f"Unexpected exit code {result.exit_code}. "
+                            f"stdout: {result.output[:200]}"
+                        )
+
+    def test_browse_command_renders_initial_tree(self, sample_claims):
+        """`browse` command renders the initial tree state without crashing."""
+        mock_interface = self._make_mock_interface(sample_claims)
+
+        def fetch(self, cid):
+            return sample_claims.get(cid)
+
+        with patch.object(ClaimBrowser, "_fetch_claim", fetch):
+            with patch("src.cli.claim_browser.ClaimBrowser.run_interactive", return_value=None):
+                with patch("src.cli.modular_cli.current_processing_interface", mock_interface):
+                    with patch(
+                        "src.cli.modular_cli.get_processing_interface",
+                        return_value=mock_interface,
+                    ):
+                        from src.cli.modular_cli import app
+                        from typer.testing import CliRunner
+
+                        runner = CliRunner()
+                        result = runner.invoke(app, ["browse", "c0000001"])
+                        # Should exit cleanly after run_interactive returns
+                        assert result.exit_code == 0, (
+                            f"browse exited with {result.exit_code}. "
+                            f"output: {result.output[:300]}"
+                        )

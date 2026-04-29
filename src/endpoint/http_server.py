@@ -460,8 +460,12 @@ class ConjectureServer:
             
             # Sync wrapper for tree building
             def get_claim_sync(cid):
-                loop = asyncio.get_event_loop()
-                return loop.run_until_complete(get_claim_by_id(cid))
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                try:
+                    return loop.run_until_complete(get_claim_by_id(cid))
+                finally:
+                    loop.close()
             
             # Convert dict to Claim-like object
             from src.data.models import Claim
@@ -497,8 +501,12 @@ class ConjectureServer:
                 return None
             
             def get_claim_sync(cid):
-                loop = asyncio.get_event_loop()
-                return loop.run_until_complete(get_claim_by_id(cid))
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                try:
+                    return loop.run_until_complete(get_claim_by_id(cid))
+                finally:
+                    loop.close()
             
             # Convert dict to Claim-like object
             from src.data.models import Claim
@@ -535,8 +543,12 @@ class ConjectureServer:
                 return None
             
             def get_claim_sync(cid):
-                loop = asyncio.get_event_loop()
-                return loop.run_until_complete(get_claim_by_id(cid))
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                try:
+                    return loop.run_until_complete(get_claim_by_id(cid))
+                finally:
+                    loop.close()
             
             # Convert dict to Claim-like object
             from src.data.models import Claim

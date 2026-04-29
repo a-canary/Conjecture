@@ -193,6 +193,11 @@ def main(
     """Conjecture CLI - Unified interface with processing interface."""
     global current_processing_interface
 
+    # Skip initialization for help/version flags to allow `command --help` to work
+    import sys
+    if any(arg in ("--help", "-h", "--version") for arg in sys.argv):
+        return
+
     # Initialize processing interface
     try:
         current_processing_interface = get_processing_interface(backend)
@@ -1142,6 +1147,70 @@ def trace(
                 progress.update(task, description="Error")
                 error_console.print(f"[red]Error building trace: {e}[/red]")
                 raise typer.Exit(1)
+
+    except typer.Exit:
+        raise
+
+
+@app.command()
+def browse(
+    root_id: str = typer.Argument(..., help="ID of the root claim to browse"),
+    max_depth: int = typer.Option(5, "--max-depth", "-d", help="Maximum tree depth (default: 5, max: 10)"),
+    backend: Optional[str] = typer.Option(None, "--backend", "-b", help="Override backend selection"),
+):
+    """Launch interactive TUI claim tree browser (UX-0007 Phase 3).
+
+    Keyboard controls:
+        j / ↓ : Move cursor down
+        k / ↑ : Move cursor up
+        l / → / Space : Expand current node
+        h / ←      : Collapse current node
+        Enter     : Toggle expand/collapse of current node
+        /         : Enter search mode
+        Escape    : Exit search / cancel
+        q         : Quit browser
+        g         : Jump to top
+        G         : Jump to bottom
+
+    Example:
+        conjecture browse c00000001
+        conjecture browse c00000001 --max-depth 3
+    """
+    try:
+        if backend:
+            processing_interface = get_processing_interface(backend)
+        else:
+            processing_interface = current_processing_interface
+
+        if not processing_interface:
+            error_console.print("[red]No processing interface initialized[/red]")
+            raise typer.Exit(1)
+
+        max_depth = min(max_depth, 10)
+
+        try:
+            from src.cli.claim_browser import browse_claims
+        except ImportError as e:
+            error_console.print(f"[red]Failed to import claim browser: {e}[/red]")
+            raise typer.Exit(1)
+
+        console.print(f"[cyan]Launching claim browser for [bold]{root_id}[/bold]...[/cyan]")
+
+        try:
+            browser = browse_claims(
+                processing_interface=processing_interface,
+                root_id=root_id,
+                max_depth=max_depth,
+            )
+        except Exception as e:
+            error_console.print(f"[red]Failed to build claim tree: {e}[/red]")
+            raise typer.Exit(1)
+
+        if browser.root_node is None:
+            error_console.print(f"[red]Claim not found: {root_id}[/red]")
+            raise typer.Exit(1)
+
+        browser.run_interactive()
 
     except typer.Exit:
         raise
