@@ -205,7 +205,7 @@ async def run_direct(llm: LLMClient, problems: List[Dict], task: str) -> Benchma
         response, _ = await llm.generate(prompt, max_tokens=400 if task == "gsm8k" else 50)
         answer = extract_answer(response, p['answer'])
 
-        if check_answer(answer, p['answer']):
+        if check_answer_match(answer, p['answer'], AnswerType.NUMERICAL):
             correct += 1
 
         if (i + 1) % 10 == 0:
@@ -261,7 +261,7 @@ async def run_conjecture(llm: LLMClient, problems: List[Dict], task: str, accumu
             response, _ = await llm.generate(solve_prompt, max_tokens=50)
 
         answer = extract_answer(response, p['answer'])
-        is_correct = check_answer(answer, p['answer'])
+        is_correct = check_answer_match(answer, p['answer'], AnswerType.NUMERICAL)
 
         if is_correct:
             correct += 1
