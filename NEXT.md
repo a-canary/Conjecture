@@ -1,9 +1,10 @@
-# NEXT.md — Status: 2026-04-30
+# NEXT.md — Status: 2026-04-29 (final)
 
-## ✅ Completed This Session
-- **UX-0007 Phases 1-3**: Claim tree visualization (CLI + Web API + TUI Interactive Browser)
-  - Phase 1-2: `conjecture tree <id>` and `conjecture trace <id>` with `--depth`/`--confidence` flags; Web API endpoints: `/v1/claims/{id}/tree`, `/trace`, `/graph`; `src/utils/visualization.py` with 22 tests
-  - Phase 3: `src/cli/claim_browser.py` with keyboard nav (j/k/Enter/q), real-time search, Rich Table/Tree widgets; 25 tests pass. All UX-0007 success criteria met.
+## ✅ All CHOICES.md Items Implemented
+- **All 50+ CHOICES.md items implemented** across Mission, UX, Features, Operations, Data, Architecture, Technology, and Implementation sections
+- **UX-0007 (Claim Visualization UI)** — Phases 1-3 complete: `conjecture tree`, `conjecture trace`, Web API endpoints, TUI interactive browser
+- **1031 tests pass**, 18 skipped, 0 failures
+- **Project status: feature complete** — no pending implementation work
 
 ## 🔧 Known Issues
 - (none)
