@@ -6,6 +6,7 @@ to prevent context contamination between experiments.
 """
 
 import os
+import subprocess
 import sqlite3
 import tempfile
 import hashlib
@@ -39,19 +40,24 @@ class IsolatedDBFactory:
     def get_branch_name(self) -> str:
         """Get current git branch name."""
         try:
-            result = os.popen("git rev-parse --abbrev-ref HEAD 2>/dev/null").read().strip()
-            return result or "default"
+            result = subprocess.run(
+                ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                capture_output=True, text=True, check=False
+            )
+            return result.stdout.strip() or "default"
         except:
             return "default"
 
     def get_worktree_id(self) -> str:
         """Get unique worktree identifier."""
         try:
-            # Get worktree root path
-            result = os.popen("git rev-parse --show-toplevel 2>/dev/null").read().strip()
-            if result:
-                # Hash the path to get unique ID
-                return hashlib.md5(result.encode()).hexdigest()[:8]
+            result = subprocess.run(
+                ["git", "rev-parse", "--show-toplevel"],
+                capture_output=True, text=True, check=False
+            )
+            path = result.stdout.strip()
+            if path:
+                return hashlib.md5(path.encode()).hexdigest()[:8]
         except:
             pass
         return "main"
