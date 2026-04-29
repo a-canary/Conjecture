@@ -1,145 +1,80 @@
-# Plan: A-0015 Delegated Tool Calling for Knowledge Retrieval
+# Plan: UX-0007 Claim Visualization UI
 
 ## Objective
 
-Implement the request/resume protocol where the Conjecture LLM endpoint emits
-structured retrieval tool-call requests to the calling system rather than
-executing them directly. The endpoint suspends its reasoning loop, the caller
-performs the retrieval, and the caller resumes the loop by appending results as
-evidence claims. The core loop is: retrieve → decompose to claims → reason with
-evidence. This unblocks the 8B small-model hypothesis: the -32pp BBH regression
-(p=0.0007) may reflect missing retrieved evidence, not an architecture flaw.
+Implement visualization of claim support trees and reasoning chains. Users can see how conclusions connect to evidence through an interactive TUI/Web interface.
 
 ## Scope
 
 **In Scope:**
-- `RETRIEVAL_TOOLS` schema definitions in `src/process/claim_tools.py`
-- `PausedReasoningState` Pydantic model for serializing a suspended loop
-- Suspend/resume protocol added to `src/endpoint/conjecture_endpoint.py`
-- HTTP request/resume route pair in `src/endpoint/http_server.py`
-- Backward compatibility: existing direct-claims mode unchanged
-- BBH re-validation on 8B model after protocol is operative
+- Claim tree visualization with ASCII art (simple TUI)
+- Claim relationship graph display (CLI enhancement)
+- Web API endpoints for claim graph traversal
+- Basic claim visualization endpoints for future WebUI integration
 
 **Out of Scope:**
-- Implementing any specific retrieval tool (web search, database query, etc.)
-- Changing the existing `CLAIM_TOOLS` schema or `ClaimToolExecutor`
-- Streaming SSE responses
-- Authentication or multi-tenant isolation
+- Full WebUI (complex, deferred)
+- Real-time collaborative editing
+- Complex graph layout algorithms
 
 ---
 
-## Phase 1: Retrieval Tool Schema
+## Phase 1: CLI Claim Tree Visualization
 
 ### Steps
-- [x] 1.1 Add `RETRIEVAL_TOOLS` list to `src/process/claim_tools.py` with a
-      single generic `retrieve_knowledge` tool definition in OpenAI
-      function-calling format (name, description, parameters: query string,
-      tool_hint optional string)
-- [x] 1.2 Add a `RetrievalRequest` Pydantic model (query, tool_hint, claim_ids
-      that triggered the request) to `src/process/claim_tools.py`
-- [x] 1.3 Add a `PausedReasoningState` Pydantic model to
-      `src/process/claim_tools.py` capturing: session_id, iteration, messages
-      list, pending_retrieval as `RetrievalRequest`, created_claim_ids so far
-- [x] 1.4 Extend `ClaimToolExecutor.execute_tool` dispatch to recognise
-      `retrieve_knowledge` and return a `ToolResult` with
-      `paused=True` and the `RetrievalRequest` in `result`
+- [x] 1.1 Add `claim tree <claim_id>` command to CLI showing claim and sub-claims recursively (ASCII tree)
+- [x] 1.2 Add `claim trace <claim_id>` command showing chain from root to claim (reverse traversal via supers)
+- [x] 1.3 Add `--depth` flag to both commands (default: 3, max: 10)
+- [x] 1.4 Add `--confidence` flag to filter claims by confidence threshold
+- [x] 1.5 Format output with Rich tree rendering (colored by confidence)
 
 ### Gates
-- [x] `python -c "from src.process.claim_tools import RETRIEVAL_TOOLS, RetrievalRequest, PausedReasoningState; print('schema OK')"` exits 0
-- [x] `python -m pytest tests/ -k "claim_tools" -v` passes with no new failures
+- [x] `conjecture tree <id> --depth 2` renders a tree with colored nodes
+- [x] `conjecture trace <id>` shows path from root to claim
+- [x] Tests: `test_claim_visualization.py` with 22 test cases
 
 ---
 
-## Phase 2: Suspend/Resume in ConjectureEndpoint
+## Phase 2: Web API for Claim Graph
 
 ### Steps
-- [x] 2.1 Add `_paused_states: Dict[str, PausedReasoningState]` store to
-      `ConjectureEndpoint.__init__`
-- [x] 2.2 Modify the tool-calling loop in `evaluate()` to detect when
-      `retrieve_knowledge` is called: capture `PausedReasoningState`, store it
-      keyed by `session_id + ":" + pause_id`, and return an `APIResponse` with
-      `success=True`, `data.status="paused"`, `data.retrieval_request=...`,
-      and `data.pause_id=...`
-- [x] 2.3 Add `resume_evaluation(pause_id, retrieval_results: List[str])` method
-      to `ConjectureEndpoint`: look up paused state, decompose each result
-      string into claims via `decompose_input`, append claims to context,
-      continue the tool-calling loop from the saved iteration, return final
-      `APIResponse`
-- [x] 2.4 Ensure the existing `evaluate()` path with no retrieval tool calls is
-      completely unaffected (add guard: only pause if `retrieve_knowledge` in
-      tool names from this iteration)
+- [x] 2.1 Add `GET /claims/{id}/tree` endpoint returning nested claim structure with sub-claims
+- [x] 2.2 Add `GET /claims/{id}/trace` endpoint returning chain from root to claim
+- [x] 2.3 Add `GET /claims/{id}/graph` endpoint returning adjacency list (for D3.js/vis.js)
+- [x] 2.4 Add `depth` and `min_confidence` query params to all endpoints
 
 ### Gates
-- [x] Mock test: call `evaluate()` with a stub LLM that emits
-      `retrieve_knowledge`; assert response has `status="paused"` and a
-      `pause_id`
-- [x] Mock test: call `resume_evaluation(pause_id, ["The capital is Paris"])`;
-      assert response has `status="complete"` and non-empty `response`
-- [x] `python -m pytest tests/ -m "unit" -v` passes with no regressions
+- [x] HTTP endpoints added to `http_server.py`
+- [x] Endpoints use visualization utilities for tree/trace/graph generation
+- [x] 963 tests pass (22 new visualization tests)
 
 ---
 
-## Phase 3: HTTP Request/Resume Routes
+## Phase 3: TUI Interactive Browser (Optional Enhancement)
 
 ### Steps
-- [x] 3.1 Add `POST /v1/chat/completions/resume` route to
-      `src/endpoint/http_server.py` accepting JSON body:
-      `{pause_id: str, results: List[str]}`; delegates to
-      `endpoint.resume_evaluation()` and returns OpenAI-compatible response
-- [x] 3.2 Modify `POST /v1/chat/completions` response to include custom header
-      `X-Conjecture-Pause-ID` when `data.status="paused"`, and populate the
-      assistant message content with a structured JSON payload describing the
-      retrieval request (so OpenAI-compatible clients see a well-formed response)
-- [x] 3.3 Add `GET /v1/pause/{pause_id}` route that returns the current
-      `PausedReasoningState` as JSON (enables callers to inspect pending state)
-- [x] 3.4 Add integration smoke test: start server in-process, POST a request
-      that triggers a pause, POST to `/resume`, assert final response
+- [ ] 3.1 Create `src/cli/claim_browser.py` with Rich Table/Tree widgets
+- [ ] 3.2 Add `conjecture browse` command launching interactive TUI
+- [ ] 3.3 Support keyboard navigation: j/k up/down, Enter expand, q quit
+- [ ] 3.4 Add search/filter panel with real-time results
 
 ### Gates
-- [x] `python -m pytest tests/ -k "http" -v` passes with no regressions
-- [x] Manual curl: `POST /v1/chat/completions` with a prompt that triggers
-      retrieval returns HTTP 200 with `X-Conjecture-Pause-ID` header set
+- `conjecture browse --help` shows keyboard navigation help
+- Interactive browser starts without errors on valid workspace
+- Tests: `test_claim_browser.py` (if implemented)
 
 ---
 
-## Phase 4: 8B BBH Re-Validation
+## Current Phase: 3
 
-### Steps
-- [x] 4.1 Create `experiments/bbh_delegated_retrieval_8b.py` benchmark script
-      that acts as the caller: sends BBH problems to the HTTP server, detects
-      pause responses, supplies a mock retrieval result (the problem statement
-      re-stated as evidence), and resumes
-- [x] 4.2 Run the benchmark against Llama-3.1-8B via OpenRouter with n=50 BBH
-      problems; record direct baseline, three-prompt without retrieval, and
-      three-prompt with delegated retrieval
-- [x] 4.3 Compute p-values (two-proportion z-test) comparing delegated-retrieval
-      vs baseline and vs three-prompt-no-retrieval
-- [x] 4.4 Record results in `experiments/results/bbh_delegated_8b_<timestamp>.json`
-      and append row to `experiments/results/benchmark_results.csv`
-- [x] 4.5 Update `CHOICES.md` O-0008 note with finding: if p<0.05 improvement,
-      note retrieval restored performance; if still regressed, document that
-      architecture (not missing retrieval) is the cause
-
-### Gates
-- [x] Benchmark script completes for n=50 without crash
-- [x] Result JSON contains `direct_accuracy`, `three_prompt_accuracy`,
-      `delegated_accuracy`, `p_value_delegated_vs_direct`
-- [x] If `delegated_accuracy > direct_accuracy` with `p < 0.05`: note confirms
-      hypothesis; if not: note disproves it — either outcome satisfies the gate
-
----
-
-## Current Phase: 4
-## Status: complete
+## Status: in_progress (Phase 1-2 complete)
 
 ---
 
 ## Success Criteria
 
-- [x] `from src.process.claim_tools import RETRIEVAL_TOOLS, PausedReasoningState` imports cleanly
-- [x] `evaluate()` returns `status="paused"` when LLM requests retrieval
-- [x] `resume_evaluation()` completes the loop and returns a final response
-- [x] HTTP `/resume` route works end-to-end with no existing route regressions
-- [x] 8B BBH re-validation produces a statistically interpretable result (either
-      confirms or disproves the missing-retrieval hypothesis with p-value)
-- [x] Existing direct-claims mode (`use_tools=True`, no retrieval) is unchanged
+- [x] `conjecture tree <id>` shows claim support tree
+- [x] `conjecture trace <id>` shows chain to root
+- [x] Web API endpoints return claim graph data
+- [x] Tests pass for new visualization features
+- [ ] UX-0007 "not started" → "implemented" in NEXT.md

@@ -1,14 +1,19 @@
 # NEXT.md — Status: 2026-04-29
 
 ## ✅ Completed This Session
-- Fixed `os.popen()` → `subprocess.run()` in `src/data/isolated_db.py` (2 calls replaced)
-- Added MCP subprocess smoke test: 2 tests (server starts, module imports) — 941 total tests pass
+- **UX-0007 Phase 1-2**: Claim tree visualization (CLI + Web API)
+  - Added `conjecture tree <id>` command with `--depth` and `--confidence` flags
+  - Added `conjecture trace <id>` command showing chain to root
+  - Added Web API endpoints: `/v1/claims/{id}/tree`, `/trace`, `/graph`
+  - Created `src/utils/visualization.py` with tree/trace/graph builders
+  - 22 new tests in `test_claim_visualization.py` — all pass
+  - 963 total tests pass (+22 new)
 
 ## 🔧 Known Issues
 - (none)
 
 ## 📋 Pending / Next Steps
-- UX-0007: Claim visualization UI (Web/TUI) — not started
+- UX-0007 Phase 3: TUI Interactive Browser (optional enhancement)
 - O-0008: 3 more benchmarks needed (DROP, MATH, HumanEval) for full validation
 
 ---

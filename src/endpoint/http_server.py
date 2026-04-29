@@ -427,6 +427,128 @@ class ConjectureServer:
                 raise HTTPException(status_code=400, detail=result.message)
             return result.data
 
+        @app.get("/v1/claims/{claim_id}/tree")
+        async def get_claim_tree(
+            claim_id: str,
+            depth: int = 3,
+            min_confidence: float = 0.0
+        ):
+            """Get claim support tree (UX-0007).
+            
+            Returns a nested tree of claims showing the support structure.
+            Query params:
+                depth: max depth to traverse (default: 3, max: 10)
+                min_confidence: minimum confidence threshold (0.0-1.0)
+            """
+            from src.utils.visualization import build_claim_tree
+            
+            # Cap depth at 10
+            depth = min(depth, 10)
+            
+            # Get the root claim
+            claim_result = await self._endpoint.get_claim(claim_id)
+            if not claim_result.success:
+                raise HTTPException(status_code=404, detail=claim_result.message)
+            claim_data = claim_result.data
+            
+            # Build tree recursively
+            async def get_claim_by_id(cid):
+                result = await self._endpoint.get_claim(cid)
+                if result.success:
+                    return result.data
+                return None
+            
+            # Sync wrapper for tree building
+            def get_claim_sync(cid):
+                loop = asyncio.get_event_loop()
+                return loop.run_until_complete(get_claim_by_id(cid))
+            
+            # Convert dict to Claim-like object
+            from src.data.models import Claim
+            claim = Claim(**claim_data) if isinstance(claim_data, dict) else claim_data
+            
+            tree = build_claim_tree(
+                claim, get_claim_sync,
+                max_depth=depth,
+                min_confidence=min_confidence
+            )
+            
+            return tree.to_dict()
+
+        @app.get("/v1/claims/{claim_id}/trace")
+        async def get_claim_trace(claim_id: str):
+            """Get claim trace from root (UX-0007).
+            
+            Returns the chain of claims from root to the specified claim.
+            """
+            from src.utils.visualization import build_claim_trace
+            
+            # Get the target claim
+            claim_result = await self._endpoint.get_claim(claim_id)
+            if not claim_result.success:
+                raise HTTPException(status_code=404, detail=claim_result.message)
+            claim_data = claim_result.data
+            
+            # Sync wrapper for trace building
+            async def get_claim_by_id(cid):
+                result = await self._endpoint.get_claim(cid)
+                if result.success:
+                    return result.data
+                return None
+            
+            def get_claim_sync(cid):
+                loop = asyncio.get_event_loop()
+                return loop.run_until_complete(get_claim_by_id(cid))
+            
+            # Convert dict to Claim-like object
+            from src.data.models import Claim
+            claim = Claim(**claim_data) if isinstance(claim_data, dict) else claim_data
+            
+            trace = build_claim_trace(claim, get_claim_sync)
+            
+            return trace.to_dict()
+
+        @app.get("/v1/claims/{claim_id}/graph")
+        async def get_claim_graph(
+            claim_id: str,
+            depth: int = 2
+        ):
+            """Get claim graph as adjacency list (UX-0007).
+            
+            Returns D3.js/vis.js compatible graph format.
+            Query params:
+                depth: max depth to traverse (default: 2)
+            """
+            from src.utils.visualization import build_claim_graph
+            
+            # Get the root claim
+            claim_result = await self._endpoint.get_claim(claim_id)
+            if not claim_result.success:
+                raise HTTPException(status_code=404, detail=claim_result.message)
+            claim_data = claim_result.data
+            
+            # Sync wrapper for graph building
+            async def get_claim_by_id(cid):
+                result = await self._endpoint.get_claim(cid)
+                if result.success:
+                    return result.data
+                return None
+            
+            def get_claim_sync(cid):
+                loop = asyncio.get_event_loop()
+                return loop.run_until_complete(get_claim_by_id(cid))
+            
+            # Convert dict to Claim-like object
+            from src.data.models import Claim
+            claim = Claim(**claim_data) if isinstance(claim_data, dict) else claim_data
+            
+            graph = build_claim_graph(
+                [claim.id], get_claim_sync,
+                max_depth=depth
+            )
+            
+            return graph.to_dict()
+
     async def run(self):
         """Start the server."""
         if not self._app:

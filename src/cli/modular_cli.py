@@ -937,6 +937,217 @@ def quickstart():
 
 
 @app.command()
+def tree(
+    claim_id: str = typer.Argument(..., help="ID of the claim to visualize"),
+    depth: int = typer.Option(3, "--depth", "-d", help="Maximum depth to traverse (default: 3, max: 10)"),
+    min_confidence: float = typer.Option(0.0, "--confidence", "-c", help="Minimum confidence threshold (0.0-1.0)"),
+    format: str = typer.Option("rich", "--format", "-f", help="Output format: rich, json, ascii"),
+    backend: Optional[str] = typer.Option(None, "--backend", "-b", help="Override backend selection"),
+):
+    """Visualize claim support tree (UX-0007).
+
+    Shows the claim and all its supporting claims (sub-claims) in a tree structure.
+    This helps users understand the evidence chain supporting a conclusion.
+
+    Example:
+        conjecture tree c00000001 --depth 3
+        conjecture tree c00000001 --confidence 0.5 --format json
+    """
+    try:
+        if backend:
+            processing_interface = get_processing_interface(backend)
+        else:
+            processing_interface = current_processing_interface
+
+        if not processing_interface:
+            error_console.print("[red]No processing interface initialized[/red]")
+            raise typer.Exit(1)
+
+        depth = min(depth, 10)  # Cap at 10
+
+        with Progress(
+            TextColumn("[progress.description]{task.description}"),
+            console=console,
+        ) as progress:
+            task = progress.add_task("[cyan]Building claim tree...", total=None)
+
+            try:
+                import asyncio
+
+                # Get the root claim
+                claim = asyncio.run(processing_interface.get_claim(claim_id))
+                if not claim:
+                    progress.update(task, description="Claim not found")
+                    error_console.print(f"[red]Claim not found: {claim_id}[/red]")
+                    raise typer.Exit(1)
+
+                # Build tree recursively
+                async def get_claim_by_id(cid):
+                    return await processing_interface.get_claim(cid)
+
+                from src.utils.visualization import build_claim_tree, ClaimNode
+
+                def get_claim_sync(cid):
+                    return asyncio.run(get_claim_by_id(cid))
+
+                tree_root = build_claim_tree(
+                    claim, get_claim_sync, 
+                    max_depth=depth, 
+                    min_confidence=min_confidence
+                )
+
+                progress.update(task, description="Rendering tree...")
+
+                if format == "json":
+                    import json
+                    result = tree_root.to_dict()
+                    console.print(json.dumps(result, indent=2))
+                elif format == "ascii":
+                    from src.utils.visualization import render_tree_ascii
+                    ascii_tree = render_tree_ascii(tree_root)
+                    console.print(ascii_tree)
+                else:  # rich
+                    from rich.tree import Tree
+                    from rich.console import Group
+                    from src.utils.visualization import confidence_color
+
+                    def build_rich_tree(node: ClaimNode, tree: Tree):
+                        """Recursively build Rich Tree."""
+                        conf = node.claim.confidence
+                        color = confidence_color(conf)
+                        conf_marker = "●" if conf >= 0.8 else "○"
+                        content = node.claim.content[:60]
+                        if len(node.claim.content) > 60:
+                            content += "..."
+                        
+                        label = f"[{color}]{node.claim.id}[/{color}] {conf_marker} {content}"
+                        
+                        if node.children:
+                            branch = tree.add(f"[bold]{label}[/bold]", guide_style=color)
+                            for child in node.children:
+                                build_rich_tree(child, branch)
+                        else:
+                            tree.add(f"{label}")
+
+                    rich_tree = Tree(
+                        f"[bold blue]Claim Tree: {claim_id}[/bold blue] (depth={depth})",
+                        guide_style="dim"
+                    )
+                    for child in tree_root.children:
+                        build_rich_tree(child, rich_tree)
+
+                    console.print(rich_tree)
+
+                progress.update(task, description="Done!")
+
+            except Exception as e:
+                progress.update(task, description="Error")
+                error_console.print(f"[red]Error building tree: {e}[/red]")
+                raise typer.Exit(1)
+
+    except typer.Exit:
+        raise
+
+
+@app.command()
+def trace(
+    claim_id: str = typer.Argument(..., help="ID of the claim to trace"),
+    format: str = typer.Option("rich", "--format", "-f", help="Output format: rich, json"),
+    backend: Optional[str] = typer.Option(None, "--backend", "-b", help="Override backend selection"),
+):
+    """Show chain from root to claim (UX-0007).
+
+    Traces the path from the root claim (no supers) down to the specified claim.
+    This helps users understand how a claim relates back to the original context.
+
+    Example:
+        conjecture trace c00000005
+        conjecture trace c00000005 --format json
+    """
+    try:
+        if backend:
+            processing_interface = get_processing_interface(backend)
+        else:
+            processing_interface = current_processing_interface
+
+        if not processing_interface:
+            error_console.print("[red]No processing interface initialized[/red]")
+            raise typer.Exit(1)
+
+        with Progress(
+            TextColumn("[progress.description]{task.description}"),
+            console=console,
+        ) as progress:
+            task = progress.add_task("[cyan]Building claim trace...", total=None)
+
+            try:
+                import asyncio
+
+                # Get the target claim
+                claim = asyncio.run(processing_interface.get_claim(claim_id))
+                if not claim:
+                    progress.update(task, description="Claim not found")
+                    error_console.print(f"[red]Claim not found: {claim_id}[/red]")
+                    raise typer.Exit(1)
+
+                # Build trace recursively
+                async def get_claim_by_id(cid):
+                    return await processing_interface.get_claim(cid)
+
+                from src.utils.visualization import build_claim_trace
+
+                def get_claim_sync(cid):
+                    return asyncio.run(get_claim_by_id(cid))
+
+                trace_result = build_claim_trace(claim, get_claim_sync)
+
+                progress.update(task, description="Rendering trace...")
+
+                if format == "json":
+                    import json
+                    result = trace_result.to_dict()
+                    console.print(json.dumps(result, indent=2))
+                else:  # rich
+                    from rich.table import Table
+                    from src.utils.visualization import confidence_color
+
+                    table = Table(title=f"[bold blue]Claim Trace: {claim_id}[/bold blue] ({len(trace_result.nodes)} hops)")
+                    table.add_column("Hop", style="cyan", width=4)
+                    table.add_column("Claim ID", style="bold")
+                    table.add_column("Content", width=50)
+                    table.add_column("Confidence", justify="right")
+
+                    for i, node in enumerate(trace_result.nodes):
+                        conf = node.claim.confidence
+                        color = confidence_color(conf)
+                        content = node.claim.content[:47]
+                        if len(node.claim.content) > 47:
+                            content += "..."
+                        
+                        is_target = node.claim.id == claim_id
+                        marker = "[bold yellow]▶[/bold yellow] " if is_target else "   "
+                        
+                        table.add_row(
+                            str(i),
+                            f"[{color}]{node.claim.id}[/{color}]",
+                            f"{marker}{content}",
+                            f"[{color}]{conf:.2f}[/{color}]"
+                        )
+
+                    console.print(table)
+
+                progress.update(task, description="Done!")
+
+            except Exception as e:
+                progress.update(task, description="Error")
+                error_console.print(f"[red]Error building trace: {e}[/red]")
+                raise typer.Exit(1)
+
+    except typer.Exit:
+        raise
+
+
+@app.command()
 def serve(
     host: str = typer.Option("0.0.0.0", help="Host to bind"),
     port: int = typer.Option(8000, help="Port to listen on"),
