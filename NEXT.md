@@ -10,7 +10,7 @@
 - Pydantic v2 deprecation: 3x `class Config: json_encoders` in `conjecture_endpoint.py` — migrate to `model_config = ConfigDict(...)` before Pydantic v3
 
 ## 📋 Pending / Next Steps
-- Migrate Pydantic `class Config` → `model_config = ConfigDict(...)` in `src/endpoint/conjecture_endpoint.py`
+- ✅ Migrate Pydantic `class Config` → `model_config = ConfigDict(...)` in `src/endpoint/conjecture_endpoint.py` (2026-04-29)
 - Write integration test for MCP server running as subprocess (smoke test)
 - UX-0007: Claim visualization UI (Web/TUI) — not started
 - O-0008: 3 more benchmarks needed (DROP, MATH, HumanEval) for full validation

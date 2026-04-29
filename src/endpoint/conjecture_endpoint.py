@@ -16,7 +16,7 @@ import logging
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Set, Union
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.data.data_manager import DataManager
 from src.data.models import Claim, ClaimType, ClaimState
@@ -63,10 +63,7 @@ class EvaluationState(BaseModel):
     )
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    model_config = ConfigDict(ser_json_tz='aware')
 
 
 class Session(BaseModel):
@@ -80,10 +77,7 @@ class Session(BaseModel):
     claim_ids: List[str] = Field(default_factory=list)
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    model_config = ConfigDict(ser_json_tz='aware')
 
 
 class APIResponse(BaseModel):
@@ -102,10 +96,7 @@ class APIResponse(BaseModel):
     errors: List[str] = Field(default_factory=list, description="Error details")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Response timestamp")
 
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    model_config = ConfigDict(ser_json_tz='aware')
 
 
 class ConjectureEndpoint:
