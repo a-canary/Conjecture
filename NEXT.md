@@ -1,13 +1,9 @@
 # NEXT.md — Status: 2026-04-30
 
 ## ✅ Completed This Session
-- **UX-0007 Phase 1-2**: Claim tree visualization (CLI + Web API)
-  - Added `conjecture tree <id>` command with `--depth` and `--confidence` flags
-  - Added `conjecture trace <id>` command showing chain to root
-  - Added Web API endpoints: `/v1/claims/{id}/tree`, `/trace`, `/graph`
-  - Created `src/utils/visualization.py` with tree/trace/graph builders
-  - 22 new tests in `test_claim_visualization.py` — all pass
-- **UX-0007 Phase 3**: TUI Interactive Browser — `src/cli/claim_browser.py` with keyboard nav (j/k/Enter/q), real-time search, Rich Table/Tree widgets. 25 tests pass. All UX-0007 success criteria met.
+- **UX-0007 Phases 1-3**: Claim tree visualization (CLI + Web API + TUI Interactive Browser)
+  - Phase 1-2: `conjecture tree <id>` and `conjecture trace <id>` with `--depth`/`--confidence` flags; Web API endpoints: `/v1/claims/{id}/tree`, `/trace`, `/graph`; `src/utils/visualization.py` with 22 tests
+  - Phase 3: `src/cli/claim_browser.py` with keyboard nav (j/k/Enter/q), real-time search, Rich Table/Tree widgets; 25 tests pass. All UX-0007 success criteria met.
 
 ## 🔧 Known Issues
 - (none)
