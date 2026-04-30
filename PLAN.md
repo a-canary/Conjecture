@@ -77,4 +77,4 @@ Implement visualization of claim support trees and reasoning chains. Users can s
 - [x] `conjecture trace <id>` shows chain to root
 - [x] Web API endpoints return claim graph data
 - [x] Tests pass for new visualization features
-- [ ] UX-0007 "not started" → "implemented" in NEXT.md
+- [x] UX-0007 "not started" → "implemented" in NEXT.md
