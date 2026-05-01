@@ -10,6 +10,10 @@ Source: CHOICES.md O-0008
 Reason: Evaluation runs, not code. Outside sprint scope per Director.
 Unblock: Director or user direction to run benchmarks
 
+## Out of Scope — needs Director review
+
+*(none — all CHOICES items implemented)*
+
 ---
 
 *Historical completions (pre-2026-04-29):*
