@@ -15,7 +15,7 @@ import json
 import logging
 import os
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
@@ -68,7 +68,7 @@ class ChatCompletionResponse(BaseModel):
     """OpenAI-compatible chat completion response."""
     id: str = Field(default_factory=lambda: f"chatcmpl-{uuid.uuid4().hex[:8]}")
     object: str = "chat.completion"
-    created: int = Field(default_factory=lambda: int(datetime.utcnow().timestamp()))
+    created: int = Field(default_factory=lambda: int(datetime.now(timezone.utc).timestamp()))
     model: str = "conjecture"
     choices: List[ChatCompletionChoice]
     usage: ChatCompletionUsage = Field(default_factory=ChatCompletionUsage)
@@ -135,7 +135,7 @@ class ConjectureServer:
                     {
                         "id": "conjecture",
                         "object": "model",
-                        "created": int(datetime.utcnow().timestamp()),
+                        "created": int(datetime.now(timezone.utc).timestamp()),
                         "owned_by": "conjecture"
                     }
                 ]
