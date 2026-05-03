@@ -1,6 +1,10 @@
 # NEXT.md — conjecture
 
-Project is **feature-complete**. All 50+ CHOICES.md items implemented. 1024 tests pass, 18 skipped (OpenRouter API integration tests, appropriately skipped).
+Project is **feature-complete**. All 50+ CHOICES.md items implemented. 1042 tests pass, 18 skipped (OpenRouter API integration tests, appropriately skipped).
+
+## Resolved
+
+- **A-0016 STATISTICAL_REALITY_CHECK.md** — **✅ COMPLETE** — committed 461f227. Restored from archive, resolving broken CHOICES.md reference.
 
 ## Deferred
 
