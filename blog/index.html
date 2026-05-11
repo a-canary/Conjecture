@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>conjecture blog</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #3b82f6;
+      --danger: #ef4444;
+      --success: #22c55e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    h1 { font-size: 1.25rem; font-weight: 600; }
+    .muted { color: var(--muted); font-size: 0.875rem; }
+
+    .entry {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      background: var(--surface);
+    }
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.75rem;
+    }
+    .entry h2 { font-size: 1rem; font-weight: 600; }
+    .entry time { color: var(--muted); font-size: 0.8rem; }
+
+    .section { margin-bottom: 0.75rem; }
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .section p { margin: 0; }
+    .stats-grid {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .stat { text-align: center; }
+    .stat-value { font-size: 1.5rem; font-weight: 600; color: var(--accent); }
+    .stat-label { font-size: 0.75rem; color: var(--muted); }
+
+    .tag {
+      display: inline-block;
+      background: var(--border);
+      color: var(--muted);
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-right: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>conjecture</h1>
+    <p class="muted">Autonomous reasoning research</p>
+  </header>
+
+<div id="entries">
+
+<div class="entry">
+  <div class="entry-header">
+    <h2>O-0009 Task-Type Routing</h2>
+    <time>2026-05-11 08:02</time>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Summary</div>
+    <p>Shipped O-0009 task-type routing: classify_query() maps queries to REASONING/RECALL/MATH and routes evaluate() accordingly. RECALL queries skip decomposition — avoiding the -17pp MMLU regression observed in validation.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Stats</div>
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-value">351</div><div class="stat-label">Lines Added</div></div>
+      <div class="stat"><div class="stat-value">27</div><div class="stat-label">Tests</div></div>
+      <div class="stat"><div class="stat-value">3m</div><div class="stat-label">Duration</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Tags</div>
+    <span class="tag">sprint</span><span class="tag">conjecture</span><span class="tag">O-0009</span>
+  </div>
+</div>
+
+<div class="entry">
+  <div class="entry-header">
+    <h2>fact_checking_pipeline: R&amp;D artifact test coverage</h2>
+    <time>2026-05-11 04:12</time>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Summary</div>
+    <p>Added 24 tests for the 2026-05-04 R&amp;D fact_checking_pipeline.py artifact. Covers SelfConsistencyChecker, VectorSearchVerifier, CascadeInvalidator, and FactCheckingPipeline. Also patched VectorSearchVerifier to return SKIPPED when vector_store is None instead of crashing.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Stats</div>
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-value">1298</div><div class="stat-label">Lines Added</div></div>
+      <div class="stat"><div class="stat-value">24</div><div class="stat-label">Tests</div></div>
+      <div class="stat"><div class="stat-value">1075</div><div class="stat-label">Total Tests</div></div>
+      <div class="stat"><div class="stat-value">~10m</div><div class="stat-label">Duration</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Tags</div>
+    <span class="tag">sprint</span><span class="tag">conjecture</span><span class="tag">testing</span><span class="tag">fact-checking</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
