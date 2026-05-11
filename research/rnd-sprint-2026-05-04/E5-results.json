@@ -1,0 +1,12 @@
+{
+  "word_count": 1803,
+  "coherence_score": 4,
+  "claim_traceability_score": 4,
+  "E5_pass": true,
+  "claims_extracted": 126,
+  "sections_composed": 12,
+  "qa_passed": false,
+  "qa_issues": [
+    "Low evidence enrichment: 29%"
+  ]
+}

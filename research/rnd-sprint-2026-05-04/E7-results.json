@@ -1,0 +1,13 @@
+{
+  "num_claims": 1000,
+  "dirty_count": 100,
+  "cascade_correctness": 1.0,
+  "cascade_time_ms": 57.44,
+  "false_positive_rate": 0.0,
+  "E7_pass": true,
+  "expected_total_dirty": 979,
+  "actual_total_dirty": 979,
+  "correct_marks": 979,
+  "false_negatives": 0,
+  "false_positives": 0
+}

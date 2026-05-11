@@ -1,0 +1,18 @@
+{
+  "current_brier_score": 0.013331,
+  "optimal_brier_score": 0.006003,
+  "improvement_pct": 54.97,
+  "current_weights": {
+    "local": 0.3,
+    "direct": 0.4,
+    "transitive": 0.2,
+    "prior": 0.1
+  },
+  "optimal_weights": {
+    "local": 0.19,
+    "direct": 0.28,
+    "transitive": 0.3,
+    "prior": 0.23
+  },
+  "E11_pass": true
+}

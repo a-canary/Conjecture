@@ -1,0 +1,326 @@
+{
+  "short_direct_acc": 0.0,
+  "short_decomp_acc": 0.0,
+  "medium_direct_acc": 0.0,
+  "medium_decomp_acc": 0.0,
+  "long_direct_acc": 0.0,
+  "long_decomp_acc": 0.0,
+  "degradation_per_hop_direct": 0.0,
+  "degradation_per_hop_decomp": 0.0,
+  "E15_pass": true,
+  "n_problems": 10,
+  "details": {
+    "short_direct": [
+      {
+        "expected": 54,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 63,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 119,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 55,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 133,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 26,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 160,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 68,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 140,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 140,
+        "got": null,
+        "correct": false
+      }
+    ],
+    "short_decomp": [
+      {
+        "expected": 54,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 63,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 119,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 55,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 133,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 26,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 160,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 68,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 140,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 140,
+        "got": null,
+        "correct": false
+      }
+    ],
+    "medium_direct": [
+      {
+        "expected": 49.39,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 55.68,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 101.64,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 48.04,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 124.06,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 22.69,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 142.66,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 58.72,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 132.41,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 131.8,
+        "got": null,
+        "correct": false
+      }
+    ],
+    "medium_decomp": [
+      {
+        "expected": 49.39,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 55.68,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 101.64,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 48.04,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 124.06,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 22.69,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 142.66,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 58.72,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 132.41,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 131.8,
+        "got": null,
+        "correct": false
+      }
+    ],
+    "long_direct": [
+      {
+        "expected": 18,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 7,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 17,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 11,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 19,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 13,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 20,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 17,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 20,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 20,
+        "got": null,
+        "correct": false
+      }
+    ],
+    "long_decomp": [
+      {
+        "expected": 18,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 7,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 17,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 11,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 19,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 13,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 20,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 17,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 20,
+        "got": null,
+        "correct": false
+      },
+      {
+        "expected": 20,
+        "got": null,
+        "correct": false
+      }
+    ]
+  }
+}

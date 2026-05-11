@@ -1,0 +1,3 @@
+{"stage":"claim-extraction","timestamp":"2026-05-05T02:09:09.116Z","result":"Extracted 126 claims from R&D report","details":"37 high confidence"}
+{"stage":"qa-gate","timestamp":"2026-05-05T02:09:09.116Z","result":"PASSED_WITH_ISSUES","details":"Low evidence enrichment: 29%"}
+{"stage":"blog-composition","timestamp":"2026-05-05T02:09:09.116Z","result":"Composed 12 sections","details":"Word count: 1803"}

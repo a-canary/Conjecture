@@ -1,0 +1,16 @@
+{
+  "current_encode_time_s": 5.375,
+  "current_p50_ms": 0.043,
+  "current_p95_ms": 0.067,
+  "current_p99_ms": 0.082,
+  "current_mrr": 1.0,
+  "current_texts_per_sec": 186.0,
+  "fastembed_encode_time_s": 73.984,
+  "fastembed_p50_ms": 0.1,
+  "fastembed_p95_ms": 0.136,
+  "fastembed_p99_ms": 0.174,
+  "fastembed_mrr": 1.0,
+  "fastembed_texts_per_sec": 13.5,
+  "E6_pass": false,
+  "E6_pass_reason": "encode=73.984s (<60s), mrr=1.0 (>0.75)"
+}

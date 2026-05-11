@@ -1,0 +1,412 @@
+{
+  "mean_quality_ke": 4.415,
+  "mean_quality_fresh": 3.785,
+  "cost_ke": 0.004,
+  "cost_fresh": 0.2,
+  "cost_ratio": 0.02,
+  "E3_pass": true,
+  "total_ke_calls": 40,
+  "total_web_calls": 20,
+  "per_gap_results": [
+    {
+      "gap_id": "gap_01",
+      "topic": "Idempotency in financial systems handling duplicate payment charges",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[58.7%] Evidence: Real-world case studies of idempotency in payment systems (e\n  KE-gathered evidence for: Real-world case studies of idempotency in payment systems (e.g., Stripe, PayPal)\n  \u2192 research/evidence-cache/real-world-case-studies-of-idempotency-i-1776649339597.md\n  #research #evidence-cache #ke-generated\n\n[57.7%] Evidence: Real-world case studies of duplicate event impacts in e-comm\n  KE-gathered evidence for: Real-world case studies of duplicate event impacts in e-commerce or fintech"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_02",
+      "topic": "exactly-once delivery patterns distributed systems",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[53.2%] idempotency-patterns-20260424\n  # Event-Driven Microservices: At-Least-Once Delivery and Idempotency Patterns  Event-driven microservices architecture relies on message brokers like RabbitMQ or Apache Kafka to enable asynchronous co\n  \u2192 research/evidence-cache/idempotency-patterns-20260424.md\n\n[53.1%] Evidence: Event-driven microservices: at-least-once delivery and idemp\n  KE-gathered evidence for: Event-driven microservices: at-least-once delivery and idempotency patterns\n  \u2192 research/"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_03",
+      "topic": "Real-world case studies idempotency payment systems Stripe PayPal",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[53.4%] Evidence: Idempotency key generation standards and collision avoidance\n  KE-gathered evidence for: Idempotency key generation standards and collision avoidance in distributed systems\n  \u2192 research/evidence-cache/idempotency-key-generation-standards-and-1776652456475.md\n  #research #evidence-cache #ke-generated\n\n[51.8%] Evidence: Real-world case studies of idempotency in payment systems (e\n  KE-gathered evidence for: Real-world case studies of idempotency in payment systems (e.g., Stripe,"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 3,
+        "recency": 4,
+        "score": 4.0,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_04",
+      "topic": "Kubernetes CNI plugins architecture data-plane trade-offs",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 5,
+        "score": 4.67,
+        "api_calls": 2,
+        "result_preview": "\n[70.7%] Evidence: Kubernetes CNI plugins: architecture and data-plane trade-of\n  KE-gathered evidence for: Kubernetes CNI plugins: architecture and data-plane trade-offs\n  \u2192 research/evidence-cache/kubernetes-cni-plugins-architecture-and--1776496949033.md\n  #research #evidence-cache #ke-generated\n\n[57.1%] Evidence: cni\n  Distilled technical facts for cni topic from bulk-research pipeline.\n  \u2192 research/evidence-cache/cni-evidence.md\n  #research #evidence-cache #cni\n\n[52.2%] Evidence: Kubernetes "
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 3,
+        "recency": 4,
+        "score": 4.0,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_05",
+      "topic": "Event-driven microservices at-least-once delivery idempotency patterns",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[63.8%] Evidence: Event-driven microservices: at-least-once delivery and idemp\n  KE-gathered evidence for: Event-driven microservices: at-least-once delivery and idempotency patterns\n  \u2192 research/evidence-cache/event-driven-microservices-at-least-once-1776657566979.md\n  #research #evidence-cache #ke-generated\n\n[58.0%] Evidence: Event-driven microservices: at-least-once delivery and idemp\n  KE-gathered evidence for: Event-driven microservices: at-least-once delivery and idempotency patterns\n  \u2192 "
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_06",
+      "topic": "Real-world case studies duplicate event impacts e-commerce fintech",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[54.0%] Evidence: Real-world case studies of duplicate event impacts in e-comm\n  KE-gathered evidence for: Real-world case studies of duplicate event impacts in e-commerce or fintech systems\n  \u2192 research/evidence-cache/real-world-case-studies-of-duplicate-eve-1776649804154.md\n  #research #evidence-cache #ke-generated\n\n[51.5%] Evidence: Real-world case studies of duplicate event impacts in e-comm\n  KE-gathered evidence for: Real-world case studies of duplicate event impacts in e-commerce or fint"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_07",
+      "topic": "Real-world examples idempotency payment systems inventory management",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[43.1%] Evidence: Idempotency in financial systems: payment charge deduplicati\n  KE-gathered evidence for: Idempotency in financial systems: payment charge deduplication with order ID + attempt number\n  \u2192 research/evidence-cache/idempotency-in-financial-systems-payment-1776645069162.md\n  #research #evidence-cache #ke-generated\n\n[42.0%] Evidence: Real-world case studies of duplicate event impacts in e-comm\n  KE-gathered evidence for: Real-world case studies of duplicate event impacts in e-commer"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_08",
+      "topic": "ROS Robot Operating System cargo freight UAV control rust",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 5,
+        "score": 4.67,
+        "api_calls": 2,
+        "result_preview": "\n[55.7%] Evidence: ROS (Robot Operating System) for Cargo-Freight UAV Control w\n  KE-gathered evidence for: ROS (Robot Operating System) for Cargo-Freight UAV Control with Rust Porting\n  \u2192 research/evidence-cache/ros-robot-operating-system-for-cargo-fre-1776304426454.md\n  #research #evidence-cache #ke-generated\n\n[55.4%] Evidence: ROS (Robot Operating System) for Cargo-Freight UAV Control w\n  KE-gathered evidence for: ROS (Robot Operating System) for Cargo-Freight UAV Control with Rust Porting\n  "
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 3,
+        "recency": 4,
+        "score": 4.0,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_09",
+      "topic": "Rust async runtime internals Tokio scheduler task",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 5,
+        "score": 4.67,
+        "api_calls": 2,
+        "result_preview": "\n[71.2%] Evidence: Rust async runtime internals: Tokio's scheduler and waker pr\n  KE-gathered evidence for: Rust async runtime internals: Tokio's scheduler and waker protocol\n  \u2192 research/evidence-cache/rust-async-runtime-internals-tokio-s-sch-1776514162240.md\n  #research #evidence-cache #ke-generated\n\n[63.5%] Evidence: Rust async runtime internals: Tokio's scheduler and waker pr\n  KE-gathered evidence for: Rust async runtime internals: Tokio's scheduler and waker protocol\n  \u2192 research/evidence-"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_10",
+      "topic": "Event-driven microservices at-least-once delivery",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[58.9%] Evidence: Event-driven microservices: at-least-once delivery and idemp\n  KE-gathered evidence for: Event-driven microservices: at-least-once delivery and idempotency patterns\n  \u2192 research/evidence-cache/event-driven-microservices-at-least-once-1776657566979.md\n  #research #evidence-cache #ke-generated\n\n[53.6%] idempotency-patterns-20260424\n  # Event-Driven Microservices: At-Least-Once Delivery and Idempotency Patterns  Event-driven microservices architecture relies on message brokers li"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 3,
+        "recency": 4,
+        "score": 4.0,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_11",
+      "topic": "consensus algorithms Paxos Raft distributed systems",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[56.1%] Evidence: Distributed consensus algorithms: Raft, Paxos, and modern va\n  KE-gathered evidence for: Distributed consensus algorithms: Raft, Paxos, and modern variants\n  \u2192 research/evidence-cache/distributed-consensus-algorithms-raft-pa-1776493648983.md\n  #research #evidence-cache #ke-generated\n\n[53.9%] Evidence: consensus\n  Distilled technical facts for consensus topic from bulk-research pipeline.\n  \u2192 research/evidence-cache/consensus-evidence.md\n  #research #evidence-cache #consensus\n\n["
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_12",
+      "topic": "Real-world failure case studies event-driven microservices",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[49.3%] idempotency-patterns-20260424\n  # Event-Driven Microservices: At-Least-Once Delivery and Idempotency Patterns  Event-driven microservices architecture relies on message brokers like RabbitMQ or Apache Kafka to enable asynchronous co\n  \u2192 research/evidence-cache/idempotency-patterns-20260424.md\n\n[48.5%] Evidence: Event-driven microservices: at-least-once delivery and idemp\n  KE-gathered evidence for: Event-driven microservices: at-least-once delivery and idempotency patterns\n  \u2192 research/"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_13",
+      "topic": "CNI Container Network Interface plugins Kubernetes",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 5,
+        "score": 4.67,
+        "api_calls": 2,
+        "result_preview": "\n[69.8%] Evidence: Kubernetes CNI plugins: architecture and data-plane trade-of\n  KE-gathered evidence for: Kubernetes CNI plugins: architecture and data-plane trade-offs\n  \u2192 research/evidence-cache/kubernetes-cni-plugins-architecture-and--1776496949033.md\n  #research #evidence-cache #ke-generated\n\n[60.4%] Evidence: cni\n  Distilled technical facts for cni topic from bulk-research pipeline.\n  \u2192 research/evidence-cache/cni-evidence.md\n  #research #evidence-cache #cni\n\n[53.0%] Evidence: Kubernetes "
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_14",
+      "topic": "Rust async runtime internals",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 5,
+        "score": 4.67,
+        "api_calls": 2,
+        "result_preview": "\n[63.9%] Evidence: rust\n  Distilled technical facts for rust topic from bulk-research pipeline.\n  \u2192 research/evidence-cache/rust-evidence.md\n  #research #evidence-cache #rust\n\n[60.8%] Evidence: Rust async runtime internals: Tokio's scheduler and waker pr\n  KE-gathered evidence for: Rust async runtime internals: Tokio's scheduler and waker protocol\n  \u2192 research/evidence-cache/rust-async-runtime-internals-tokio-s-sch-1776500831322.md\n  #research #evidence-cache #ke-generated\n\n[57.6%] Evidence: Rus"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_15",
+      "topic": "Idempotency patterns distributed systems",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[52.6%] Idempotency Key Patterns\n  # Idempotency Key Patterns  ## Fact  Three idempotency key patterns: (1) client-generated UUIDs for API retries, (2) server-generated dedup keys, (3) natural keys (e.g., `order-456-confirmation`). Re\n  \u2192 facts/microservices/idempotency-key-patterns.md\n  #microservices #idempotency #pattern #deduplication\n\n[52.2%] Evidence: Event-driven microservices: at-least-once delivery and idemp\n  KE-gathered evidence for: Event-driven microservices: at-least-once delivery"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_16",
+      "topic": "Idempotency financial systems payment deduplication",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[59.1%] Evidence: Real-world case studies of idempotency in payment systems (e\n  KE-gathered evidence for: Real-world case studies of idempotency in payment systems (e.g., Stripe, PayPal)\n  \u2192 research/evidence-cache/real-world-case-studies-of-idempotency-i-1776649339597.md\n  #research #evidence-cache #ke-generated\n\n[57.7%] Evidence: Idempotency in financial systems: payment deduplication with\n  KE-gathered evidence for: Idempotency in financial systems: payment deduplication with order ID + att"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_17",
+      "topic": "Dead letter queues poison message handling",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[47.8%] Evidence: Dead-letter queues and poison message handling in event-driv\n  KE-gathered evidence for: Dead-letter queues and poison message handling in event-driven microservices\n  \u2192 research/evidence-cache/dead-letter-queues-and-poison-message-ha-1776641635399.md\n  #research #evidence-cache #ke-generated\n\n[47.5%] Evidence: Event-driven microservices message-queue at-least-once deliv\n  KE-gathered evidence for: Event-driven microservices message-queue at-least-once delivery idempotency pat"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_18",
+      "topic": "Exactly-once semantics implementation challenges",
+      "ke": {
+        "coverage": 4,
+        "source_quality": 4,
+        "recency": 5,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[38.8%] Evidence: Exactly-once semantics implementation challenges in distribu\n  KE-gathered evidence for: Exactly-once semantics implementation challenges in distributed databases and external sinks\n  \u2192 research/evidence-cache/exactly-once-semantics-implementation-ch-1776651234927.md\n  #research #evidence-cache #ke-generated\n\n[38.2%] Evidence: Event-driven microservices: at-least-once delivery and idemp\n  KE-gathered evidence for: Event-driven microservices: at-least-once delivery and idempote"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 3,
+        "recency": 4,
+        "score": 4.0,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_19",
+      "topic": "Microservices evidence architecture patterns",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[51.9%] Evidence: Event sourcing and CQRS in microservices architecture\n  KE-gathered evidence for: Event sourcing and CQRS in microservices architecture\n  \u2192 research/evidence-cache/event-sourcing-and-cqrs-in-microservices-1776290122396.md\n  #research #evidence-cache #ke-generated\n\n[47.9%] Evidence: microservices\n  Distilled technical facts for microservices topic from bulk-research pipeline.\n  \u2192 research/evidence-cache/microservices-evidence.md\n  #research #evidence-cache #microservices\n\n[46.6"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    },
+    {
+      "gap_id": "gap_20",
+      "topic": "Python performance language changes async",
+      "ke": {
+        "coverage": 5,
+        "source_quality": 4,
+        "recency": 4,
+        "score": 4.33,
+        "api_calls": 2,
+        "result_preview": "\n[49.4%] Evidence: python\n  Distilled technical facts for python topic from bulk-research pipeline.\n  \u2192 research/evidence-cache/python-evidence.md\n  #research #evidence-cache #python\n\n[44.4%] Evidence: PEP 744 JIT compiler implementation and enablement in Python\n  KE-gathered evidence for: PEP 744 JIT compiler implementation and enablement in Python 3.13/3.14\n  \u2192 research/evidence-cache/pep-744-jit-compiler-implementation-and--1776513761561.md\n  #research #evidence-cache #ke-generated\n\n[44.3%] E"
+      },
+      "fresh": {
+        "coverage": 5,
+        "source_quality": 2,
+        "recency": 4,
+        "score": 3.67,
+        "api_calls": 1,
+        "result_count": 8
+      }
+    }
+  ]
+}

@@ -1,0 +1,325 @@
+{
+  "experiment": "E9_thesis_replication_minimax",
+  "timestamp": "2026-05-05T02:44:11.217012+00:00",
+  "model": "MiniMax-M2.7",
+  "n_problems": 30,
+  "direct_accuracy": 0.0,
+  "decomposition_accuracy": 0.7333333333333333,
+  "improvement_pp": 73.33333333333333,
+  "p_value": 2.384185791015625e-07,
+  "E9_pass": true,
+  "direct_correct": 0,
+  "decomposition_correct": 22,
+  "direct_avg_time": 3.6145594437917072,
+  "decomposition_avg_time": 11.08630351225535,
+  "direct_total_tokens": 5349,
+  "decomposition_total_tokens": 17409,
+  "decomp_helped": 22,
+  "decomp_hurt": 0,
+  "conclusion": "THESIS REPLICATED: Decomposition improves accuracy by >10pp with MiniMax-M2.7",
+  "pass_fail": "PASS",
+  "detailed_results": [
+    {
+      "problem_id": "store_35704",
+      "category": "store_discount",
+      "question": "A store sells tools for $65 each. A customer buys 2 on Monday and 7 on Tuesday, then gets a 9% discount on the total. How much do they pay?",
+      "expected": 532.35,
+      "direct_answer": 65.0,
+      "direct_correct": false,
+      "decomposition_answer": 585.0,
+      "decomposition_correct": false
+    },
+    {
+      "problem_id": "handshake_23706",
+      "category": "handshake",
+      "question": "At a party, 9 people each shake hands exactly once with every other person. How many handshakes occur in total?",
+      "expected": 36.0,
+      "direct_answer": 9.0,
+      "direct_correct": false,
+      "decomposition_answer": 36.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "handshake_51665",
+      "category": "handshake",
+      "question": "At a party, 9 people each shake hands exactly once with every other person. How many handshakes occur in total?",
+      "expected": 36.0,
+      "direct_answer": 9.0,
+      "direct_correct": false,
+      "decomposition_answer": 36.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "work_31353",
+      "category": "work_rate",
+      "question": "Worker A can complete a job in 2 days. Worker B can complete it in 6 days. If they work together, how many days to complete the job? Round to 2 decimals.",
+      "expected": 1.5,
+      "direct_answer": 2.0,
+      "direct_correct": false,
+      "decomposition_answer": 1.5,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "handshake_78988",
+      "category": "handshake",
+      "question": "At a party, 11 people each shake hands exactly once with every other person. How many handshakes occur in total?",
+      "expected": 55.0,
+      "direct_answer": 11.0,
+      "direct_correct": false,
+      "decomposition_answer": 55.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "store_98389",
+      "category": "store_discount",
+      "question": "A store sells tools for $31 each. A customer buys 7 on Monday and 20 on Tuesday, then gets a 11% discount on the total. How much do they pay?",
+      "expected": 744.93,
+      "direct_answer": 31.0,
+      "direct_correct": false,
+      "decomposition_answer": 744.93,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "work_76867",
+      "category": "work_rate",
+      "question": "Worker A can complete a job in 6 days. Worker B can complete it in 5 days. If they work together, how many days to complete the job? Round to 2 decimals.",
+      "expected": 2.73,
+      "direct_answer": 6.0,
+      "direct_correct": false,
+      "decomposition_answer": 2.727272,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "reverse_74597",
+      "category": "reverse",
+      "question": "A number is multiplied by 4, then 7 is added, giving 107. What was the original number?",
+      "expected": 25.0,
+      "direct_answer": 4.0,
+      "direct_correct": false,
+      "decomposition_answer": 25.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "work_60207",
+      "category": "work_rate",
+      "question": "Worker A can complete a job in 2 days. Worker B can complete it in 7 days. If they work together, how many days to complete the job? Round to 2 decimals.",
+      "expected": 1.56,
+      "direct_answer": 1.0,
+      "direct_correct": false,
+      "decomposition_answer": 1.56,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "work_67878",
+      "category": "work_rate",
+      "question": "Worker A can complete a job in 7 days. Worker B can complete it in 6 days. If they work together, how many days to complete the job? Round to 2 decimals.",
+      "expected": 3.23,
+      "direct_answer": 1.0,
+      "direct_correct": false,
+      "decomposition_answer": 3.23,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "handshake_14121",
+      "category": "handshake",
+      "question": "At a party, 11 people each shake hands exactly once with every other person. How many handshakes occur in total?",
+      "expected": 55.0,
+      "direct_answer": 11.0,
+      "direct_correct": false,
+      "decomposition_answer": 11.0,
+      "decomposition_correct": false
+    },
+    {
+      "problem_id": "reverse_10888",
+      "category": "reverse",
+      "question": "A number is multiplied by 5, then 9 is added, giving 224. What was the original number?",
+      "expected": 43.0,
+      "direct_answer": 5.0,
+      "direct_correct": false,
+      "decomposition_answer": 43.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "reverse_89655",
+      "category": "reverse",
+      "question": "A number is multiplied by 2, then 6 is added, giving 98. What was the original number?",
+      "expected": 46.0,
+      "direct_answer": 2.0,
+      "direct_correct": false,
+      "decomposition_answer": 6.0,
+      "decomposition_correct": false
+    },
+    {
+      "problem_id": "store_20632",
+      "category": "store_discount",
+      "question": "A store sells books for $7 each. A customer buys 22 on Monday and 9 on Tuesday, then gets a 10% discount on the total. How much do they pay?",
+      "expected": 195.3,
+      "direct_answer": 7.0,
+      "direct_correct": false,
+      "decomposition_answer": 195.3,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "handshake_96692",
+      "category": "handshake",
+      "question": "At a party, 10 people each shake hands exactly once with every other person. How many handshakes occur in total?",
+      "expected": 45.0,
+      "direct_answer": 10.0,
+      "direct_correct": false,
+      "decomposition_answer": 45.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "reverse_83153",
+      "category": "reverse",
+      "question": "A number is multiplied by 3, then 28 is added, giving 139. What was the original number?",
+      "expected": 37.0,
+      "direct_answer": 3.0,
+      "direct_correct": false,
+      "decomposition_answer": 37.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "reverse_80131",
+      "category": "reverse",
+      "question": "A number is multiplied by 4, then 13 is added, giving 93. What was the original number?",
+      "expected": 20.0,
+      "direct_answer": 4.0,
+      "direct_correct": false,
+      "decomposition_answer": 20.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "work_60568",
+      "category": "work_rate",
+      "question": "Worker A can complete a job in 8 days. Worker B can complete it in 8 days. If they work together, how many days to complete the job? Round to 2 decimals.",
+      "expected": 4.0,
+      "direct_answer": 8.0,
+      "direct_correct": false,
+      "decomposition_answer": 4.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "handshake_26679",
+      "category": "handshake",
+      "question": "At a party, 6 people each shake hands exactly once with every other person. How many handshakes occur in total?",
+      "expected": 15.0,
+      "direct_answer": 6.0,
+      "direct_correct": false,
+      "decomposition_answer": 15.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "store_25916",
+      "category": "store_discount",
+      "question": "A store sells books for $67 each. A customer buys 13 on Monday and 6 on Tuesday, then gets a 34% discount on the total. How much do they pay?",
+      "expected": 840.18,
+      "direct_answer": 67.0,
+      "direct_correct": false,
+      "decomposition_answer": 840.18,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "handshake_92694",
+      "category": "handshake",
+      "question": "At a party, 17 people each shake hands exactly once with every other person. How many handshakes occur in total?",
+      "expected": 136.0,
+      "direct_answer": 17.0,
+      "direct_correct": false,
+      "decomposition_answer": 17.0,
+      "decomposition_correct": false
+    },
+    {
+      "problem_id": "store_51752",
+      "category": "store_discount",
+      "question": "A store sells tools for $69 each. A customer buys 25 on Monday and 17 on Tuesday, then gets a 23% discount on the total. How much do they pay?",
+      "expected": 2231.46,
+      "direct_answer": 25.0,
+      "direct_correct": false,
+      "decomposition_answer": 2898.0,
+      "decomposition_correct": false
+    },
+    {
+      "problem_id": "work_28339",
+      "category": "work_rate",
+      "question": "Worker A can complete a job in 6 days. Worker B can complete it in 6 days. If they work together, how many days to complete the job? Round to 2 decimals.",
+      "expected": 3.0,
+      "direct_answer": 6.0,
+      "direct_correct": false,
+      "decomposition_answer": 6.0,
+      "decomposition_correct": false
+    },
+    {
+      "problem_id": "store_47007",
+      "category": "store_discount",
+      "question": "A store sells widgets for $67 each. A customer buys 4 on Monday and 11 on Tuesday, then gets a 14% discount on the total. How much do they pay?",
+      "expected": 864.3,
+      "direct_answer": 67.0,
+      "direct_correct": false,
+      "decomposition_answer": 1005.0,
+      "decomposition_correct": false
+    },
+    {
+      "problem_id": "store_21586",
+      "category": "store_discount",
+      "question": "A store sells tools for $85 each. A customer buys 19 on Monday and 17 on Tuesday, then gets a 6% discount on the total. How much do they pay?",
+      "expected": 2876.4,
+      "direct_answer": 19.0,
+      "direct_correct": false,
+      "decomposition_answer": 2.0,
+      "decomposition_correct": false
+    },
+    {
+      "problem_id": "store_48013",
+      "category": "store_discount",
+      "question": "A store sells products for $30 each. A customer buys 3 on Monday and 6 on Tuesday, then gets a 14% discount on the total. How much do they pay?",
+      "expected": 232.2,
+      "direct_answer": 30.0,
+      "direct_correct": false,
+      "decomposition_answer": 232.2,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "reverse_23035",
+      "category": "reverse",
+      "question": "A number is multiplied by 2, then 5 is added, giving 97. What was the original number?",
+      "expected": 46.0,
+      "direct_answer": 2.0,
+      "direct_correct": false,
+      "decomposition_answer": 46.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "reverse_44909",
+      "category": "reverse",
+      "question": "A number is multiplied by 3, then 20 is added, giving 47. What was the original number?",
+      "expected": 9.0,
+      "direct_answer": 3.0,
+      "direct_correct": false,
+      "decomposition_answer": 9.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "handshake_85264",
+      "category": "handshake",
+      "question": "At a party, 10 people each shake hands exactly once with every other person. How many handshakes occur in total?",
+      "expected": 45.0,
+      "direct_answer": 10.0,
+      "direct_correct": false,
+      "decomposition_answer": 45.0,
+      "decomposition_correct": true
+    },
+    {
+      "problem_id": "work_77097",
+      "category": "work_rate",
+      "question": "Worker A can complete a job in 8 days. Worker B can complete it in 5 days. If they work together, how many days to complete the job? Round to 2 decimals.",
+      "expected": 3.08,
+      "direct_answer": 8.0,
+      "direct_correct": false,
+      "decomposition_answer": 3.08,
+      "decomposition_correct": true
+    }
+  ],
+  "num_problems_attempted": 30,
+  "num_successful": 30
+}

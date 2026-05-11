@@ -1,0 +1,9 @@
+{
+  "before_enrichment_pct": 29.0,
+  "after_enrichment_pct": 40.5,
+  "improvement_pp": 11.5,
+  "claims_enriched": 14,
+  "total_claims": 126,
+  "E12_pass": false,
+  "notes": "Pre-enrichment found 14 additional claims with evidence matches in web search. To reach 70%, would need 52 additional claims enriched (88 total). Web search limitations prevented full evidence gathering for all claims."
+}

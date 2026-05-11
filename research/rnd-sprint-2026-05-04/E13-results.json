@@ -1,0 +1,114 @@
+{
+  "E13_pass": true,
+  "loop_components": [
+    {
+      "id": "a_journal_writer_cli",
+      "name": "Journal Writer (CLI/API)",
+      "exists": true,
+      "wired": "partial",
+      "detail": "journal.ts exists at ~/agents/bin/journal.ts — accepts: tsx journal.ts <project> <type> [--field value]. Schema-validated event types (9 types). But cycle.ts documents journal calls in sprint prompts without the developer agent actually calling them. The CLI is built but rarely invoked by running agents.",
+      "evidence": "~/agents/bin/journal.ts (9846 bytes, TypeScript CLI with full schema validation)"
+    },
+    {
+      "id": "b_journal_writer_in_cycle",
+      "name": "Journal Writer embedded in cycle.ts",
+      "exists": true,
+      "wired": "broken",
+      "detail": "cycle.ts SPRINT_TASK prompt documents journal.ts calls as instructions to the developer agent (lines 66-104), but these are just string-prompt text — the agent is not actually executing journal.ts commands. The 'journal()' function in cycle.ts (line 156) is for cycle.ts's own logs, not structured project journal events.",
+      "evidence": "cycle.ts lines 66-104 contain documented-but-not-executed journal CLI invocations in SPRINT_TASK prompt template; cycle.ts 'journal()' function writes to CYCLE_DIR/journals/, not ~/projects/<project>/.journal/events.jsonl"
+    },
+    {
+      "id": "c_journalist_daemon",
+      "name": "Journalist Polling Daemon",
+      "exists": true,
+      "wired": true,
+      "detail": "journalist.ts runs as systemd service (journalist.service, active/running). Polls every 30s. Computes derived state per project. Sends Discord/WhatsApp notifications for high-risk events. Uses checkpointing to resume. All infrastructure is in place.",
+      "evidence": "systemctl --user shows journalist.service loaded active running; journalist.ts 668 lines, 30s POLL_INTERVAL_MS; CHECKPOINT_FILE at ~/.agent/journalist-checkpoints.json"
+    },
+    {
+      "id": "d_journal_memory_bridge",
+      "name": "Journal → Memory Bridge",
+      "exists": false,
+      "wired": false,
+      "detail": "The journalist.ts daemon reads events.jsonl and writes derived state to ~/.agent/project-states/<project>.json (project-level). The remember.ts (line 69) reads agent-level journals at ~/vault/agents/<agent>/journal/. There is no bridge that takes structured journal events (from events.jsonl) and writes them as memory entries to ~/vault/ke/. The architecturally intended flow (journal → memory → KE) has no implementation.",
+      "evidence": "journalist.ts reads events, writes project-states; remember.ts distills agent journals to memory; no code path connects events.jsonl entries to ke/ vault"
+    },
+    {
+      "id": "e_memory_ke_bridge",
+      "name": "Memory → KE Bridge",
+      "exists": false,
+      "wired": false,
+      "detail": "No code connects structured journal event data to the KE (knowledge engine at ~/vault/ke/). ke-tool.ts has ingest command (line 11: 'ke ingest <file>'), but there is no automated pipeline that takes journal-derived memory and indexes it in the KE. remember.ts distills agent journals into 'insights' (line 69-87) but those insights go to inbox, not KE. The KE thesis references in jobs.json mention 'hermes-journalist online (provides journal entries to index)' but the actual ingest mechanism was never built.",
+      "evidence": "ke-tool.ts 'ingest' command exists but needs manual invocation; remember.ts outputs insights to inbox not KE; hermes-kb CHOICES.md line 61 says 'hermes-journalist online' but journalist.ts has zero ke/ingest code"
+    },
+    {
+      "id": "f_ke_query_endpoint",
+      "name": "KE Query Endpoint",
+      "exists": true,
+      "wired": "partial",
+      "detail": "KE exists and is functional: ke-tool.ts provides 'ke search', 'ke query', 'ke ingest', 'ke compile'. KE_ROOT is ~/vault/ke. But the KE is not being fed structured journal events — it has no data from the journal pipeline. Querying the KE for project evidence works in isolation but the journal→KE pipeline that would populate it with project decisions/risks/questions is absent.",
+      "evidence": "ke-tool.ts at ~/agents/ke/bin/ (447 lines, full KE implementation); vault/ke/ has facts/, decisions/, failures/ subdirs; but events.jsonl data never reaches KE"
+    }
+  ],
+  "broken_connections": [
+    {
+      "connection": "cycle.ts sprint task → journal.ts CLI invocations",
+      "was_supposed_to": "Developer agent inside sprint executes journal.ts commands (SESSION_START, DECISION, FILE_CHANGES, TEST_RESULT, SESSION_END) as documented in SPRINT_TASK prompt, writing structured events to ~/projects/<project>/.journal/events.jsonl",
+      "actually_happens": "The journal.ts calls are embedded as documentation strings in the cycle.ts prompt template, not as actual tool-call bindings. The developer agent receives them as text instructions but does not execute them. No structured events are being written.",
+      "what_needs": "Either (a) make journal.ts a proper tool/binding the developer agent can invoke, or (b) have cycle.ts write the SESSION_START/SESSION_END events directly at session boundaries without relying on the developer agent, or (c) create a hook in devd that auto-emits events at sprint boundaries.",
+      "priority": "high"
+    },
+    {
+      "connection": "journal events.jsonl → journalist.ts → memory (vault/ke)",
+      "was_supposed_to": "journalist.ts polls events.jsonl, derives state, and feeds notable events (decisions, risks, questions) into the KE as indexed knowledge",
+      "actually_happens": "journalist.ts reads events, computes ~/.agent/project-states/<project>.json, sends Discord/WhatsApp notifications — but never writes anything to ~/vault/ke/. The memory→KE bridge described in architecturally documented plans was never built.",
+      "what_needs": "Add to journalist.ts a step that calls 'ke ingest' or writes markdown files to ~/vault/ke/ for DECISION, RISK_EXCEEDED, QUESTION events. Alternatively, create a separate script that journalist.ts invokes to push events to KE.",
+      "priority": "high"
+    },
+    {
+      "connection": "remember.ts → KE",
+      "was_supposed_to": "remember.ts distills agent journals (~/vault/agents/<agent>/journal/) into persistent memory and KE-indexed insights",
+      "actually_happens": "remember.ts distills to inbox/insights only (line 232: insights = await distillLearnings(...); inboxPath). No KE ingestion. The KE at ~/vault/ke/ is populated only by manual ke ingest commands.",
+      "what_needs": "Add KE ingest step to remember.ts after distillLearnings: for each insight with sufficient confidence, write to ~/vault/ke/facts/ or call ke-tool.ts ingest.",
+      "priority": "medium"
+    },
+    {
+      "connection": "hermes-journalist project → actual pipeline",
+      "was_supposed_to": "hermes-journalist/ project was the production implementation of the journalist pipeline",
+      "actually_happens": "hermes-journalist/ directory exists with only a CHOICES.md (design doc, Phase 3 DESIGN ONLY status). The actual journalist daemon is ~/agents/bin/journalist.ts. Two different things with similar names.",
+      "what_needs": "Clarify naming: ~/agents/bin/journalist.ts is the real daemon; ~/projects/hermes-journalist/ is a design stub. The design doc's 'post_tool_call hook' approach (fire-and-forget via delegate_tool) is also unimplemented — current journalist.ts is cron/polling-based, not hook-based.",
+      "priority": "low"
+    }
+  ],
+  "simplest_fix": "Add a single 'ke ingest' call in journalist.ts after processing each project: for DECISION and RISK_EXCEEDED events, write the event as a markdown note to ~/vault/ke/decisions/ and invoke 'ke compile' or 'ke-tool.ts ingest' to index it. This bridges journal→KE with minimal code change — one new async function in journalist.ts, called from pollProject() after processing new events. The journalist daemon already runs continuously and processes all events; adding KE ingestion is a single additional step per processed event type.",
+  "system_state_summary": {
+    "journal_service_running": true,
+    "journal_events_being_written": false,
+    "events_jsonl_files_exist": false,
+    "journalist_reading_events": "no events to read (all last_line=0 for projects with no events.jsonl)",
+    "project_states_being_updated": true,
+    "memory_ke_being_populated": false,
+    "cron_jobs_for_journal": "none (dispatcher-1m is paused; no journalist cron job)"
+  },
+  "architectural_doc_accuracy": {
+    "journal_architecture_md": "accurate about what exists",
+    "key_correct_statements": [
+      "journal.ts writer CLI exists and works",
+      "journalist.ts polling daemon exists and runs",
+      "journalist.service is systemd running",
+      "cycle.ts documents journal calls in prompt (but they are not wired as actual tool calls)",
+      "No pipeliner/ or hermes-journalist/ directory with actual code"
+    ],
+    "key_gaps_noted_in_doc": [
+      "pipeliner/ not found — noted correctly",
+      "Insight event volume / rate-limiting — not yet needed (no events being written)",
+      "Backfill not implemented — correctly noted",
+      "Schema evolution (machine-readable) — not done"
+    ],
+    "key_gaps_missing_from_doc": [
+      "journal→KE bridge is absent (not mentioned as a gap)",
+      "cycle.ts journal calls are documentation-only, not actual bindings",
+      "hermes-journalist/ is a design stub, not the real daemon"
+    ]
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "sprint_id": "rnd-sprint-2026-05-04",
+  "started": "2026-05-04T21:00:00-04:00",
+  "duration_hours": 24,
+  "cycle_hours": [
+    6,
+    12,
+    18,
+    24
+  ],
+  "experiments": [
+    {
+      "id": "E1",
+      "name": "fact-check-accuracy",
+      "priority": 1,
+      "cycle": 1,
+      "status": "pending",
+      "description": "Test H1-H4: T1 self-consistency catches most false claims, T2 vector search catches 80% of remainder",
+      "setup": "Generate 100 synthetic claims (50 true, 50 false), inject into claim DB, run T1+T2+T3 pipeline, measure per-tier precision/recall",
+      "verify": "precision_t1 > 0.7 AND recall_t2 > 0.7"
+    },
+    {
+      "id": "E2",
+      "name": "confidence-calibration",
+      "priority": 2,
+      "cycle": 1,
+      "status": "pending",
+      "description": "Validate HCCA: take 50 benchmark-validated claims, apply Hierarchical Confidence Calibration Algorithm, track calibration error over time",
+      "setup": "Extract 50 claims from benchmark results with known accuracy, run HCCA calibration, compute |stated - actual| error",
+      "verify": "calibration_error_reduction > 0.3 after 2 iterations"
+    },
+    {
+      "id": "E3",
+      "name": "gap-vs-fresh-research",
+      "priority": 3,
+      "cycle": 2,
+      "status": "pending",
+      "description": "KE-first vs fresh web: 20 UU/KU gaps from R&D 2, compare evidence quality and cost",
+      "setup": "Take 20 gaps, run pipeliner KE research + fresh web research independently, rate quality 1-5 blind",
+      "verify": "KE-first quality >= fresh AND cost < 50% of fresh"
+    },
+    {
+      "id": "E4",
+      "name": "tag-clustering",
+      "priority": 4,
+      "cycle": 2,
+      "status": "pending",
+      "description": "FastEmbed semantic clustering of all tags in claim DB, identify alias groups",
+      "setup": "Extract all tags, embed with FastEmbed bge-base, cluster with cosine similarity > 0.85, manual alias review",
+      "verify": ">= 5 alias groups found AND no false positives"
+    },
+    {
+      "id": "E5",
+      "name": "blog-pipeline-e2e",
+      "priority": 5,
+      "cycle": 3,
+      "status": "pending",
+      "description": "Run this R&D report through blog-publish.ts pipeline",
+      "setup": "Parse RD-DEEP-RESEARCH-2026-05-04.md, run through all 5 stages, score output",
+      "verify": "blog_post EXISTS AND word_count 1500-3000 AND coherence_score >= 4"
+    },
+    {
+      "id": "E6",
+      "name": "vector-store-benchmark",
+      "priority": 6,
+      "cycle": 3,
+      "status": "pending",
+      "description": "Benchmark FastEmbed bge-base-en-v1.5 vs current all-MiniLM-L6-v2",
+      "setup": "Benchmark encode speed (10K claims), search latency p50/p95/p99, MRR on contradiction detection",
+      "verify": "bge-base-en-v1.5 encode < 60s AND MRR > 0.75"
+    },
+    {
+      "id": "E7",
+      "name": "cascade-stress-test",
+      "priority": 7,
+      "cycle": 3,
+      "status": "pending",
+      "description": "Stress test dirty flag cascade: 1000 claims, random mutations, measure cascade time and accuracy",
+      "setup": "Generate claim graph with 1000 claims, randomize 10% dirty, measure cascade propagation time and correctness",
+      "verify": "cascade_correctness > 0.99 AND cascade_time < 5s"
+    },
+    {
+      "id": "E8",
+      "name": "evidence-cache-unify",
+      "priority": 8,
+      "cycle": 4,
+      "status": "pending",
+      "description": "Unify evidence caches from all sources, measure coverage improvement",
+      "setup": "Scan ~/.hermes/research/, ~/projects/conjecture/research/, ~/vault/ke/research/, deduplicate by content hash",
+      "verify": "evidence_count_increased AND 0 duplicates"
+    },
+    {
+      "id": "E9",
+      "name": "thesis-replication",
+      "priority": 9,
+      "cycle": 4,
+      "status": "pending",
+      "description": "Replicate thesis validation with different model (MiniMax-M2.7 instead of DeepSeek-V3)",
+      "setup": "Run 100 novel math problems with MiniMax-M2.7, compare decomposition vs direct prompting",
+      "verify": "decomposition_improvement > 0.10 AND p < 0.05"
+    }
+  ]
+}

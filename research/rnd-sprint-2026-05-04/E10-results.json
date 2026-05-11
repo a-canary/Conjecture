@@ -1,0 +1,13 @@
+{
+  "original_mrr": 0.0523,
+  "reranked_mrr": 0.0552,
+  "improvement_pp": 0.28,
+  "hits_at_1_before": 0,
+  "hits_at_1_after": 0,
+  "hits_at_5_before": 0,
+  "hits_at_5_after": 1,
+  "avg_rank_before": 19.72,
+  "avg_rank_after": 19.4,
+  "E10_pass": false,
+  "setup_notes": "BM25 re-ranking: Okapi BM25 (k1=1.5, b=0.75) applied to top-20 bi-encoder candidates. Bi-encoder: all-MiniLM-L6-v2. Test pairs: query = claim A, target = claim B (15-60% word overlap), candidates = top-20 by bi-encoder for A. Combined score: 50% bi-encoder cosine + 50% BM25. BM25 captures lexical matching to complement semantic embeddings."
+}

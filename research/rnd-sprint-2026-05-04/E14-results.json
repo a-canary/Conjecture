@@ -1,0 +1,30 @@
+{
+  "pipeliner_collections": ["ws-3ef6fb42efee0e7f", "bench_mem", "kb", "ke"],
+  "pipeliner_entry_count": 215,
+  "pipeliner_topics": [
+    "research/evidence-cache",
+    "research/pipeliner",
+    "research/agents",
+    "infrastructure",
+    "projects",
+    "agents",
+    "facts/kafka",
+    "facts/microservices",
+    "facts/ros2"
+  ],
+  "no_ledge_storage_type": "Qdrant vector search (same backend as pipeliner KE) + markdown vault at ~/vault/ke",
+  "no_ledge_entry_count": 215,
+  "no_ledge_topics": [
+    "research/evidence-cache",
+    "research/pipeliner",
+    "research/agents",
+    "infrastructure",
+    "projects",
+    "agents",
+    "facts/kafka",
+    "facts/microservices",
+    "facts/ros2"
+  ],
+  "recommendation": "DEPRECATE no-ledge plugin, KEEP pipeliner KE as canonical. Both use identical Qdrant backend + ~/vault/ke markdown vault. The no-ledge plugin (~/.hermes/plugins/no-ledge/) is a redundant wrapper that calls the same ke-tool.ts CLI that pipeliner KE uses directly. No-ledge adds zero differentiation — it uses _VAULT_ROOT=~/vault/ke and _KE_TOOL=~/projects/ke/bin/ke-tool.ts, which is the same infrastructure as pipeliner. hermes-kb at ~/projects/hermes-kb/ is DESIGN-ONLY (Phase 3 skeleton) and contains no implementation — should be treated as future migration target, not current KE. Canonical KE: ~/projects/ke/ (CLI) + ~/vault/ke/ (vault) + Qdrant collections 'kb' and 'ke'.",
+  "E14_pass": true
+}

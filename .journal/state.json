@@ -1,0 +1,160 @@
+{
+  "project": "conjecture",
+  "updated_at": "2026-05-03T18:35:21.654Z",
+  "status": "active",
+  "risk_level": "low",
+  "current_milestone": null,
+  "milestone_progress": null,
+  "open_questions": 0,
+  "last_activity": "2026-05-03T18:35:21.640Z",
+  "sessions_today": 540,
+  "commits_today": 1,
+  "decisions_today": 65,
+  "tests_today": {
+    "passed": 1024,
+    "failed": "0"
+  },
+  "worktrees": [],
+  "recent_events": [
+    {
+      "ts": "2026-05-03T18:35:21.640Z",
+      "type": "SESSION_END",
+      "session_id": "sprint-2026-05-03T18:33:03Z",
+      "outcome": "noop",
+      "commits": "0",
+      "decisions": "0"
+    },
+    {
+      "ts": "2026-05-03T18:33:04.654Z",
+      "type": "SESSION_START",
+      "session_id": "sprint-2026-05-03T18:33:03Z",
+      "trigger": "scheduled"
+    },
+    {
+      "ts": "2026-05-03T18:32:42.754Z",
+      "type": "SESSION_END",
+      "session_id": "sprint-2026-05-03T18:32:02Z",
+      "outcome": "noop",
+      "commits": "0",
+      "decisions": "0"
+    },
+    {
+      "ts": "2026-05-03T18:32:05.853Z",
+      "type": "SESSION_START",
+      "session_id": "sprint-2026-05-03T18:32:02Z",
+      "trigger": "scheduled"
+    },
+    {
+      "ts": "2026-05-03T18:31:45.402Z",
+      "type": "SESSION_END",
+      "session_id": "sprint-2026-05-03T18:31:11Z",
+      "outcome": "noop",
+      "commits": "0",
+      "decisions": "0"
+    },
+    {
+      "ts": "2026-05-03T18:31:35.995Z",
+      "type": "DECISION",
+      "risk": "low",
+      "summary": "picked item: none - noop sprint (project complete)"
+    },
+    {
+      "ts": "2026-05-03T18:31:11.426Z",
+      "type": "SESSION_START",
+      "session_id": "sprint-2026-05-03T18:31:11Z",
+      "trigger": "scheduled"
+    },
+    {
+      "ts": "2026-05-03T18:30:55.808Z",
+      "type": "SESSION_END",
+      "session_id": "sprint-2026-05-03T18:30:37Z",
+      "outcome": "noop",
+      "commits": "0",
+      "decisions": "0"
+    },
+    {
+      "ts": "2026-05-03T18:30:37.419Z",
+      "type": "SESSION_START",
+      "session_id": "sprint-2026-05-03T18:30:37Z",
+      "trigger": "scheduled"
+    },
+    {
+      "ts": "2026-05-03T18:30:25.234Z",
+      "type": "SESSION_END",
+      "session_id": "sprint-2026-05-03T18:30:08Z",
+      "outcome": "noop",
+      "commits": "0",
+      "decisions": "0"
+    },
+    {
+      "ts": "2026-05-03T18:30:08.906Z",
+      "type": "SESSION_START",
+      "session_id": "sprint-2026-05-03T18:30:08Z",
+      "trigger": "scheduled"
+    },
+    {
+      "ts": "2026-05-03T18:29:58.905Z",
+      "type": "SESSION_END",
+      "session_id": "sprint-2026-05-03T18:29:43Z",
+      "outcome": "noop",
+      "commits": "0",
+      "decisions": "0"
+    },
+    {
+      "ts": "2026-05-03T18:29:43.685Z",
+      "type": "SESSION_START",
+      "session_id": "sprint-2026-05-03T18:29:43Z",
+      "trigger": "scheduled"
+    },
+    {
+      "ts": "2026-05-03T18:29:35.387Z",
+      "type": "SESSION_END",
+      "session_id": "sprint-2026-05-03T18:29:18Z",
+      "outcome": "noop",
+      "commits": "0",
+      "decisions": "0"
+    },
+    {
+      "ts": "2026-05-03T18:29:18.708Z",
+      "type": "SESSION_START",
+      "session_id": "sprint-2026-05-03T18:29:18Z",
+      "trigger": "scheduled"
+    },
+    {
+      "ts": "2026-05-03T18:29:03.356Z",
+      "type": "SESSION_END",
+      "session_id": "sprint-2026-05-03T18:28:24Z",
+      "outcome": "noop",
+      "commits": "0",
+      "decisions": "0"
+    },
+    {
+      "ts": "2026-05-03T18:28:24.575Z",
+      "type": "SESSION_START",
+      "session_id": "sprint-2026-05-03T18:28:24Z",
+      "trigger": "scheduled"
+    },
+    {
+      "ts": "2026-05-03T18:28:14.025Z",
+      "type": "SESSION_END",
+      "session_id": "sprint-2026-05-03T18:27:14Z",
+      "outcome": "noop",
+      "commits": "0",
+      "decisions": "0"
+    },
+    {
+      "ts": "2026-05-03T18:27:23.854Z",
+      "type": "SESSION_START",
+      "session_id": "sprint-2026-05-03T18:27:14Z",
+      "trigger": "scheduled"
+    },
+    {
+      "ts": "2026-05-03T18:26:38.202Z",
+      "type": "SESSION_END",
+      "session_id": "sprint-2026-05-03T18:26:26Z",
+      "outcome": "noop",
+      "commits": "0",
+      "decisions": "0"
+    }
+  ]
+}

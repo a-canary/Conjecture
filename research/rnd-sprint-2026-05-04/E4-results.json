@@ -1,0 +1,108 @@
+{
+  "num_alias_groups_found": 8,
+  "alias_groups": [
+    {
+      "tags": [
+        "ai",
+        "artificial intelligence"
+      ],
+      "similarity": 0.9478,
+      "is_alias": true
+    },
+    {
+      "tags": [
+        "machine learning",
+        "deep learning",
+        "neural network",
+        "reinforcement learning",
+        "supervised learning",
+        "unsupervised learning"
+      ],
+      "similarity": 0.9178,
+      "is_alias": false
+    },
+    {
+      "tags": [
+        "accuracy",
+        "precision"
+      ],
+      "similarity": 0.941,
+      "is_alias": false
+    },
+    {
+      "tags": [
+        "benchmark",
+        "benchmarking"
+      ],
+      "similarity": 0.9811,
+      "is_alias": true
+    },
+    {
+      "tags": [
+        "ab testing",
+        "a/b testing"
+      ],
+      "similarity": 0.9419,
+      "is_alias": true
+    },
+    {
+      "tags": [
+        "api",
+        "rest api"
+      ],
+      "similarity": 0.9433,
+      "is_alias": false
+    },
+    {
+      "tags": [
+        "database",
+        "db",
+        "sql"
+      ],
+      "similarity": 0.9443,
+      "is_alias": true
+    },
+    {
+      "tags": [
+        "cache",
+        "caching"
+      ],
+      "similarity": 0.9708,
+      "is_alias": false
+    },
+    {
+      "tags": [
+        "ml",
+        "machine learning"
+      ],
+      "similarity": 0.8991,
+      "is_alias": true
+    },
+    {
+      "tags": [
+        "nn",
+        "neural network"
+      ],
+      "similarity": 0.8734,
+      "is_alias": true
+    },
+    {
+      "tags": [
+        "nlp",
+        "natural language processing"
+      ],
+      "similarity": 0.9294,
+      "is_alias": true
+    },
+    {
+      "tags": [
+        "k8s",
+        "kubernetes"
+      ],
+      "similarity": 0.8667,
+      "is_alias": true
+    }
+  ],
+  "false_positive_rate": 0.0,
+  "E4_pass": true
+}
