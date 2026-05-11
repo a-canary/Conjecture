@@ -636,6 +636,7 @@ class ConjectureEndpoint:
         use_tools: bool = True,
         max_tool_iterations: int = 5,
         use_reasoning_loop: bool = False,
+        route: Optional["QueryType"] = None,
     ) -> APIResponse:
         """Evaluate claims using LLM reasoning.
 
@@ -654,6 +655,10 @@ class ConjectureEndpoint:
         the tool-calling loop.  The LLM decides for itself when it has sufficient
         confidence to halt; the result includes the full reasoning trace.
 
+        O-0009 Task-Type Routing: classify_query() maps queries to one of three
+        prompt strategies — REASONING (three-prompt, 70B+), RECALL (cot_lite,
+        lightweight), MATH (specialized).  Set route= to override auto-detection.
+
         Args:
             query: Natural language query to evaluate
             max_claims: Maximum claims to include in context (default 10)
@@ -664,6 +669,8 @@ class ConjectureEndpoint:
             max_tool_iterations: Max iterations for tool loop when use_tools=True (default 5)
             use_reasoning_loop: When True, use ReasoningLoop (A-0012) instead of the
                 built-in tool-calling loop.  Returns a ReasoningResult in data (default False)
+            route: Override auto-classification. REASONING=three-prompt, RECALL=cot_lite,
+                MATH=specialized. Default None = auto-detect via classify_query().
 
         Returns:
             APIResponse with evaluation result and reasoning chain.
@@ -677,6 +684,20 @@ class ConjectureEndpoint:
         error_response = await self._ensure_initialized()
         if error_response:
             return error_response
+
+        # O-0009: classify query for prompt strategy routing
+        if route is None:
+            from src.agent.task_router import classify_query, QueryType as RT
+            query_type = classify_query(query)
+        else:
+            query_type = route
+
+        logger.info(f"O-0009 routing: query_type={query_type.value}")
+
+        # O-0009: RECALL queries use lightweight prompt (cot_lite) — skip decomposition
+        # REASONING and MATH use full three-prompt with decomposition
+        if query_type.value == "recall":
+            use_decomposition = False
 
         try:
             from src.endpoint.llm_client import (
@@ -1028,6 +1049,7 @@ class ConjectureEndpoint:
                 message="Evaluation complete",
                 data={
                     "query": query,
+                    "query_type": query_type.value,  # O-0009 routing decision
                     "response": llm_response.get("content", ""),
                     "claims_used": len(claims),
                     "decomposed_claims": len(decomposed_claims),
