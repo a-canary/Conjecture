@@ -1,0 +1,18 @@
+{
+  "decay_implemented": true,
+  "file_changed": [
+    "src/core/models.py",
+    "src/core/dirty_flag.py"
+  ],
+  "formula_used": "confidence = max(0.5, initial_conf - max(0, days_since_review - 30) * 0.001)",
+  "test": "Verified: fresh (10d) skips decay, stale (45d) decays 0.95->0.935, very stale (500d) floors at 0.5, never-reviewed skips",
+  "changes": {
+    "models_py": {
+      "DirtyReason": "Added STALE_AGE = 'stale_age'",
+      "Claim": "Added last_reviewed: Optional[datetime] field + days_since_review @property"
+    },
+    "dirty_flag_py": {
+      "DirtyFlagSystem": "Added check_and_apply_stale_age_decay(claim) and check_stale_claims(claims) methods"
+    }
+  }
+}

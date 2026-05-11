@@ -1,0 +1,6 @@
+{
+  "bridge_added": false,
+  "line_changed": null,
+  "verification": "OK",
+  "notes": "The KE bridge was already implemented in journalist.ts when read. No changes needed. ingestKeProjectDecision() exists at lines 180-236 and is called from pollProject() at lines 601-603. TypeScript parses and starts cleanly. Feature already present and functional."
+}

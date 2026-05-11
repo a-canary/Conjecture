@@ -1,0 +1,68 @@
+{
+  "projects_tested": ["pipeliner", "no-ledge", "hermes-kb"],
+  "tests": [
+    {
+      "query": "Thompson Sampling model selection",
+      "source_project": "pipeliner",
+      "within_project_results": [
+        {"note": "notes/infrastructure/pipeliner.md", "score": 39.7, "relevance": "direct"},
+        {"note": "infrastructure/pipeliner.md", "score": 38.4, "relevance": "direct"},
+        {"note": "agents/pi-developer.md", "score": 36.4, "relevance": "direct"}
+      ],
+      "within_score": 5,
+      "cross_project_results": [
+        {"note": "no-ledge-ea-rd-2026-05-04.md", "score": 35.3, "relevance": "thematic: variant axes + TTL inference, different domain"},
+        {"note": "pipeliner-knowledge-engine.md", "score": 33.7, "relevance": "thematic: same research lineage, different focus"}
+      ],
+      "cross_score": 2,
+      "notes": "Thompson Sampling is pipeliner-specific; no-ledge has no TS content"
+    },
+    {
+      "query": "TTL inference knowledge engine",
+      "source_project": "no-ledge",
+      "within_project_results": [
+        {"note": "no-ledge-ea-rd-2026-05-04.md", "score": 35.3, "relevance": "direct: TTL axis T1-T4 + BUG-1 recursion bug"},
+        {"note": "no-ledge-variants-rd-2026-05-04.md", "score": 27.5, "relevance": "direct: variant comparison, memory provider axis"}
+      ],
+      "within_score": 5,
+      "cross_project_results": [
+        {"note": "pipeliner-knowledge-engine.md", "score": 49.1, "relevance": "high: gap-driven evidence pipeline, same KE stack"},
+        {"note": "research/evidence-cache/event-sourcing-cqrs-*.md", "score": 43.1, "relevance": "medium: evidence cache concept transfers"}
+      ],
+      "cross_score": 4,
+      "notes": "KE evidence-cache thesis transfers well; TTL-specific content stays in no-ledge"
+    },
+    {
+      "query": "local embedding air-gapped memory provider",
+      "source_project": "hermes-kb",
+      "within_project_results": [
+        {"note": "notes/hermes-kb/CHOICES.md", "score": 30.5, "relevance": "direct: local Ollama embeddings, air-gapped constraint"},
+        {"note": "research/hermes-ke-integration-status-2026-05-04.md", "score": 28.7, "relevance": "direct: Hermes MemoryProvider integration"}
+      ],
+      "within_score": 4,
+      "cross_project_results": [
+        {"note": "no-ledge-ea-rd-2026-05-04.md", "score": 31.7, "relevance": "high: local all-MiniLM-L6-v2 embeddings, SQLite+FTS5, air-gapped pattern"},
+        {"note": "infrastructure/qdrant-kb.md", "score": 42.7, "relevance": "high: local embedding architecture, same nomic-embed-text approach"}
+      ],
+      "cross_score": 3,
+      "notes": "Embedding architecture and air-gapped constraint transfer well; hermes-kb design docs sparse"
+    }
+  ],
+  "within_project_quality": 4.67,
+  "cross_project_quality": 3.0,
+  "transfer_ratio": 0.643,
+  "E_pass": true,
+  "methodology": {
+    "scoring": "0-5 per query: 5=direct dense evidence from multiple authoritative notes, 4=direct with minor gaps, 3=partial/topically adjacent, 2=thematic only, 1=sparse/weak, 0=no relevance",
+    "within_project": "same-project query to KB, measures baseline evidence density",
+    "cross_project": "project-B-domain query, measures whether project-A evidence helps",
+    "ke_root": "~/vault/ke",
+    "query_tool": "ke search with --limit 5"
+  },
+  "findings": {
+    "high_transfer": "architectural patterns (embedding approaches, evidence cache, KE thesis) transfer across all 3 projects — same KE stack unifies them",
+    "medium_transfer": "TTL/gap-fill variants from no-ledge inform pipeliner KE research; Qdrant/KB infrastructure for hermes-kb",
+    "low_transfer": "task-specific mechanisms (Thompson Sampling, Agent patterns) are siloed within project — no-ledge has no TS content",
+    "ke_substrate_effect": "all 3 projects share the KE as underlying research substrate; cross-pollination via shared infrastructure notes (KE thesis, evidence cache architecture)"
+  }
+}

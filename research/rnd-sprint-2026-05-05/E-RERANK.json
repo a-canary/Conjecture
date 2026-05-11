@@ -1,0 +1,7 @@
+{
+  "approach": "cross-encoder/ms-marco-MiniLM-L6-v2 re-ranking (pure CE (top-50))",
+  "original_mrr": 0.3195,
+  "improved_mrr": 0.3741,
+  "improvement_pp": 5.46,
+  "E_pass": false
+}

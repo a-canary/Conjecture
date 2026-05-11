@@ -1,0 +1,7 @@
+{
+  "decay_formula": "none",
+  "confidence_at_0_days": 0.85,
+  "confidence_at_30_days": 0.85,
+  "confidence_at_90_days": 0.85,
+  "recommendation": "Implement time-based decay. There is currently NO decay — confidence is frozen at last update. Add age-based dirty flag trigger: claims with days_since_review > 30 should auto-mark dirty with new DirtyReason.STALE_AGE. Also add last_reviewed field to Claim model. Suggested decay formula: confidence = max(0.5, initial_confidence - max(0, days_since_review - 30) * 0.001). This ensures claims older than 30d without review decay at 0.001/day, hitting 0.5 floor after ~350 days."
+}

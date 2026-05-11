@@ -1,0 +1,9 @@
+{
+  "enrichment_before_pct": 29.0,
+  "enrichment_after_pct": 49.2,
+  "claims_enriched": 62,
+  "total_claims": 126,
+  "E_pass": false,
+  "method": "KE vault search",
+  "notes": "KE found evidence for ~11 additional claims beyond E12 web-enriched baseline of ~51. Many KE queries returned conceptually relevant results at low scores (0.25-0.40) indicating vault coverage exists but requires more targeted queries to surface."
+}

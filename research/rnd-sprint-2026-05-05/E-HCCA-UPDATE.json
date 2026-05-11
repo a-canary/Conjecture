@@ -1,0 +1,6 @@
+{
+  "updated": false,
+  "file_updated": null,
+  "verification": "OK",
+  "notes": "HCCA CalibrationWeights already at E11 optimized values in experiments/rnd/test_confidence_calibration.py (Local=0.19, Direct=0.28, Transitive=0.30, Prior=0.23). src/core/claim_operations.py contains no HCCA formula. Old production weights (0.30, 0.40, 0.20, 0.10) not found in codebase."
+}

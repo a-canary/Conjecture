@@ -1,0 +1,280 @@
+{
+  "wave": 6,
+  "experiments_done": [
+    "E11-HCCA",
+    "E13-JOURNALIST-KE",
+    "E4-TAGS",
+    "E6-RERANK",
+    "E12-BLOG-EVIDENCE",
+    "E-KE-BENCH",
+    "E-DECAY",
+    "E-XFER"
+  ],
+  "findings": [
+    {
+      "id": "E11-HCCA",
+      "title": "HCCA weight update \u2014 implement E11 optimal weights",
+      "status": "\u2705 PASS",
+      "what": "Ran code: HCCA weight update \u2014 implement E11 optimal weights",
+      "evidence": "Exit code: 0, elapsed: 108s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 108.17396402359009,
+      "rc": 0
+    },
+    {
+      "id": "E13-JOURNALIST-KE",
+      "title": "journalist.ts \u2192 KE bridge",
+      "status": "\u2705 PASS",
+      "what": "Ran code: journalist.ts \u2192 KE bridge",
+      "evidence": "Exit code: 0, elapsed: 50s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 50.44286370277405,
+      "rc": 0
+    },
+    {
+      "id": "E4-TAGS",
+      "title": "Tag alias normalization \u2014 implement 8 alias groups",
+      "status": "\u2705 PASS",
+      "what": "Ran code: Tag alias normalization \u2014 implement 8 alias groups",
+      "evidence": "Exit code: 0, elapsed: 171s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 170.99305081367493,
+      "rc": 0
+    },
+    {
+      "id": "E6-RERANK",
+      "title": "Cross-encoder re-ranking for vector search",
+      "status": "\u2705 PASS",
+      "what": "Ran experiment: Cross-encoder re-ranking for vector search",
+      "evidence": "Exit code: 0, elapsed: 281s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 280.7944526672363,
+      "rc": 0
+    },
+    {
+      "id": "E12-BLOG-EVIDENCE",
+      "title": "Blog evidence pre-enrichment via KE access",
+      "status": "\u2705 PASS",
+      "what": "Ran experiment: Blog evidence pre-enrichment via KE access",
+      "evidence": "Exit code: 0, elapsed: 578s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 578.2548432350159,
+      "rc": 0
+    },
+    {
+      "id": "E-KE-BENCH",
+      "title": "KE query recall@k benchmarking",
+      "status": "\u2705 PASS",
+      "what": "Ran experiment: KE query recall@k benchmarking",
+      "evidence": "{'recall_at_1': 0.6, 'recall_at_3': 0.7, 'recall_at_5': 0.8, 'recall_at_10': 0.85, 'avg_latency_ms': 1175.3, 'topics_tested': 20}",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 489.28354501724243,
+      "rc": 0
+    },
+    {
+      "id": "E-DECAY",
+      "title": "Claim decay rate analysis",
+      "status": "\u2705 PASS",
+      "what": "Ran experiment: Claim decay rate analysis",
+      "evidence": "{'decay_formula': 'none', 'confidence_at_0_days': 0.85, 'confidence_at_30_days': 0.85, 'confidence_at_90_days': 0.85, 'recommendation': 'Implement time-based decay. There is currently NO decay \u2014 confidence is frozen at last update. Add age-based dirty flag trigger: claims with days_since_review > 30",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 104.73549151420593,
+      "rc": 0
+    },
+    {
+      "id": "E-XFER",
+      "title": "Cross-project knowledge transfer",
+      "status": "\u2705 PASS",
+      "what": "Ran experiment: Cross-project knowledge transfer",
+      "evidence": "{'projects_tested': ['pipeliner', 'no-ledge', 'hermes-kb'], 'tests': [{'query': 'Thompson Sampling model selection', 'source_project': 'pipeliner', 'within_project_results': [{'note': 'notes/infrastructure/pipeliner.md', 'score': 39.7, 'relevance': 'direct'}, {'note': 'infrastructure/pipeliner.md', ",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 315.7020478248596,
+      "rc": 0
+    },
+    {
+      "id": "E11-HCCA",
+      "title": "HCCA weight update \u2014 implement E11 optimal weights",
+      "status": "\u2705 PASS",
+      "what": "Ran code: HCCA weight update \u2014 implement E11 optimal weights",
+      "evidence": "Exit code: 0, elapsed: 99s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 98.55331754684448,
+      "rc": 0
+    },
+    {
+      "id": "E13-JOURNALIST-KE",
+      "title": "journalist.ts \u2192 KE bridge",
+      "status": "\u2705 PASS",
+      "what": "Ran code: journalist.ts \u2192 KE bridge",
+      "evidence": "Exit code: 0, elapsed: 140s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 139.68017840385437,
+      "rc": 0
+    },
+    {
+      "id": "E4-TAGS",
+      "title": "Tag alias normalization \u2014 implement 8 alias groups",
+      "status": "\u2705 PASS",
+      "what": "Ran code: Tag alias normalization \u2014 implement 8 alias groups",
+      "evidence": "Exit code: 0, elapsed: 133s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 133.37726068496704,
+      "rc": 0
+    },
+    {
+      "id": "E6-RERANK",
+      "title": "Cross-encoder re-ranking for vector search",
+      "status": "\u26a0\ufe0f FAIL",
+      "what": "Ran experiment: Cross-encoder re-ranking for vector search",
+      "evidence": "Exit code: 1, elapsed: 600s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 600.101776599884,
+      "rc": 1
+    },
+    {
+      "id": "E11-HCCA",
+      "title": "HCCA weight update \u2014 implement E11 optimal weights",
+      "status": "\u2705 PASS",
+      "what": "Ran code: HCCA weight update \u2014 implement E11 optimal weights",
+      "evidence": "Exit code: 0, elapsed: 57s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 57.02759146690369,
+      "rc": 0
+    },
+    {
+      "id": "E13-JOURNALIST-KE",
+      "title": "journalist.ts \u2192 KE bridge",
+      "status": "\u2705 PASS",
+      "what": "Ran code: journalist.ts \u2192 KE bridge",
+      "evidence": "Exit code: 0, elapsed: 56s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 56.07038068771362,
+      "rc": 0
+    },
+    {
+      "id": "E4-TAGS",
+      "title": "Tag alias normalization \u2014 implement 8 alias groups",
+      "status": "\u2705 PASS",
+      "what": "Ran code: Tag alias normalization \u2014 implement 8 alias groups",
+      "evidence": "Exit code: 0, elapsed: 116s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 115.52640056610107,
+      "rc": 0
+    },
+    {
+      "id": "E6-RERANK",
+      "title": "Cross-encoder re-ranking for vector search",
+      "status": "\u2705 PASS",
+      "what": "Ran experiment: Cross-encoder re-ranking for vector search",
+      "evidence": "Exit code: 0, elapsed: 146s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 145.66496777534485,
+      "rc": 0
+    },
+    {
+      "id": "E11-HCCA",
+      "title": "HCCA weight update \u2014 implement E11 optimal weights",
+      "status": "\u2705 PASS",
+      "what": "Ran code: HCCA weight update \u2014 implement E11 optimal weights",
+      "evidence": "Exit code: 0, elapsed: 143s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 142.6024067401886,
+      "rc": 0
+    },
+    {
+      "id": "E13-JOURNALIST-KE",
+      "title": "journalist.ts \u2192 KE bridge",
+      "status": "\u2705 PASS",
+      "what": "Ran code: journalist.ts \u2192 KE bridge",
+      "evidence": "Exit code: 0, elapsed: 69s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 68.86108922958374,
+      "rc": 0
+    },
+    {
+      "id": "E4-TAGS",
+      "title": "Tag alias normalization \u2014 implement 8 alias groups",
+      "status": "\u2705 PASS",
+      "what": "Ran code: Tag alias normalization \u2014 implement 8 alias groups",
+      "evidence": "Exit code: 0, elapsed: 127s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 126.6110348701477,
+      "rc": 0
+    },
+    {
+      "id": "E6-RERANK",
+      "title": "Cross-encoder re-ranking for vector search",
+      "status": "\u26a0\ufe0f FAIL",
+      "what": "Ran experiment: Cross-encoder re-ranking for vector search",
+      "evidence": "Exit code: 1, elapsed: 600s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 600.102447271347,
+      "rc": 1
+    },
+    {
+      "id": "E11-HCCA",
+      "title": "HCCA weight update \u2014 implement E11 optimal weights",
+      "status": "\u2705 PASS",
+      "what": "Ran code: HCCA weight update \u2014 implement E11 optimal weights",
+      "evidence": "Exit code: 0, elapsed: 177s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 177.30273413658142,
+      "rc": 0
+    },
+    {
+      "id": "E13-JOURNALIST-KE",
+      "title": "journalist.ts \u2192 KE bridge",
+      "status": "\u2705 PASS",
+      "what": "Ran code: journalist.ts \u2192 KE bridge",
+      "evidence": "Exit code: 0, elapsed: 84s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 84.35507273674011,
+      "rc": 0
+    },
+    {
+      "id": "E4-TAGS",
+      "title": "Tag alias normalization \u2014 implement 8 alias groups",
+      "status": "\u2705 PASS",
+      "what": "Ran code: Tag alias normalization \u2014 implement 8 alias groups",
+      "evidence": "Exit code: 0, elapsed: 107s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 106.86015033721924,
+      "rc": 0
+    },
+    {
+      "id": "E6-RERANK",
+      "title": "Cross-encoder re-ranking for vector search",
+      "status": "\u26a0\ufe0f FAIL",
+      "what": "Ran experiment: Cross-encoder re-ranking for vector search",
+      "evidence": "Exit code: 1, elapsed: 600s",
+      "implication": "",
+      "next": "",
+      "elapsed_s": 600.0912041664124,
+      "rc": 1
+    }
+  ],
+  "started_at": "2026-05-05T10:54:40.573307+00:00"
+}
