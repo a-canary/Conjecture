@@ -252,4 +252,4 @@ docs/_build/
 
 # Performance profiling
 *.prof
-*.profile
+*.profilememory.md
