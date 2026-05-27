@@ -3,7 +3,10 @@
 **Date:** 2026-03-06  
 **Model:** DeepSeek-V3 (deepseek/deepseek-chat-v3-0324)  
 **Sample Size:** 100 problems per benchmark (700 total evaluations)  
-**Status:** PARTIALLY VALIDATED ✅⚠️
+**Status:** PREPARED FOR COMPLETION ✅⚠️
+> **2026-05-27 update:** Benchmark scripts prepared (commit d8d1fa3).
+> Remaining: DROP, MATH, HumanEval execution pending API access.
+> O-0009 (task-type routing) is complete (commit 1c3fc23).
 
 ## Executive Summary
 
@@ -135,18 +138,9 @@ TruthfulQA tests hallucination resistance. Results:
 
 ### For Production Deployment
 
-**1. Implement Task-Type Router** 🔴 REQUIRED
-```python
-def route_query(query, task_type):
-    if task_type == "hard_reasoning" and baseline < 0.90:
-        return "decomposition"
-    elif task_type == "recall":
-        return "cot_lite"  # or direct
-    elif task_type == "commonsense":
-        return "direct"
-    else:
-        return "direct"
-```
+**1. Task-Type Router** ✅ **IMPLEMENTED** (O-0009, commit 1c3fc23)
+> QueryType enum + classify_query() (90%+ accuracy on 21-query held-out set, 27 tests).
+> RECALL fast-path (no decomposition), query_type surfaced in response.
 
 **2. Baseline Detection**
 - Test direct accuracy on sample
@@ -165,9 +159,24 @@ def route_query(query, task_type):
 **Progress:** 7/10 benchmarks complete (70%)
 
 **Remaining benchmarks needed:**
-1. DROP (reading comprehension + reasoning)
-2. MATH (advanced mathematics)
-3. HumanEval (code reasoning)
+1. DROP (reading comprehension + reasoning) — **script ready** (`drop_benchmark.py`)
+2. MATH (advanced mathematics) — **script ready** (`math_benchmark.py`)
+3. HumanEval (code reasoning) — **script ready** (`humaneval_benchmark.py`)
+
+All three scripts prepared (commit d8d1fa3). Execution requires:
+- `CHUTES_API_KEY` or `OPENROUTER_API_KEY` for DeepSeek-V3 calls
+- `HuggingFaceH4/MATH` dataset (needs HF hub access)
+- `google/datasets` DROP dataset (needs HF hub access)
+- HumanEval dataset already cached locally
+
+**To run:**
+```bash
+cd ~/repos/conjecture
+export CHUTES_API_KEY=<key>
+bunx python experiments/drop_benchmark.py -n 100
+bunx python experiments/math_benchmark.py -n 100
+bunx python experiments/humaneval_benchmark.py -n 100
+```
 
 **Expected patterns:**
 - DROP: Likely neutral or slight benefit (mixed recall + reasoning)
@@ -235,7 +244,7 @@ def route_query(query, task_type):
 ## Next Steps
 
 1. **Complete O-0008** — Run 3 remaining benchmarks (DROP, MATH, HumanEval)
-2. **Implement Router** — Build task-type classifier for production
+2. **Implement Router** — ✅ **DONE** (O-0009, commit 1c3fc23)
 3. **Multi-Model Testing** — Validate across model sizes (<7B, 7-20B, >20B)
 4. **Update CHOICES.md** — Document validated patterns and constraints
 5. **Production Integration** — Deploy with routing logic
@@ -257,7 +266,7 @@ The decomposition approach is **validated for hard reasoning tasks** but require
 - Clear negative results on unexpected task types (MMLU -17pp)
 - Actionable path forward (task-type routing + lightweight alternatives)
 
-**Production readiness:** Requires routing implementation before deployment.
+**Production readiness:** Task-type router (O-0009) implemented. Routing logic available.
 
 ---
 
