@@ -25,7 +25,9 @@ from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 from datetime import datetime
 
-CEREBRAS_API_KEY = os.getenv("CEREBRAS_API_KEY", "csk-hpr4pjyd895p4ktvpnn436exx49rr925f6dptjvmee5ycrx8")
+CEREBRAS_API_KEY = os.getenv("CEREBRAS_API_KEY")
+if not CEREBRAS_API_KEY:
+    raise EnvironmentError("CEREBRAS_API_KEY environment variable is not set")
 CEREBRAS_URL = "https://api.cerebras.ai/v1/chat/completions"
 MODEL = "llama3.1-8b"
 DB_PATH = "/workspace/data/phase5_claims.db"
