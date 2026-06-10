@@ -126,10 +126,6 @@ This document provides a comprehensive evaluation of all files in the Conjecture
   - **Contribution**: Provides automated security checks before commits, preventing sensitive data exposure and maintaining code quality standards.
   - **Dependencies**: Git hooks, security patterns
 
-- **run_tests.bat** - 🟡 6/10 - Windows test runner
-  - **Contribution**: Enables Windows users to run tests with proper PYTHONPATH configuration, ensuring cross-platform compatibility.
-  - **Dependencies**: Python, pytest, tests/ directory
-
 - **run_tests.sh** - 🟡 6/10 - Unix test runner
   - **Contribution**: Provides Unix/Linux/macOS users with test execution capability and proper environment configuration.
   - **Dependencies**: Python, pytest, tests/ directory

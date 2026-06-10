@@ -253,3 +253,9 @@ docs/_build/
 # Performance profiling
 *.prof
 *.profile
+
+# Claude Code runtime state (migrated to pi agent, .claude/ already gone)
+.claude.json
+
+# Retired Windows batch scripts (.sh equivalents are the active runners)
+*.bat
