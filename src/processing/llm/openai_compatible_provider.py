@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Unified OpenAI-Compatible Provider for Conjecture LLM Processing
 Handles all OpenAI-compatible endpoints (OpenAI, Chutes.ai, OpenRouter, LM Studio, etc.)

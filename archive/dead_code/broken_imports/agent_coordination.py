@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Pure Agent Coordination System - The Core 3-Part Architecture Implementation
 Pure functions for coordinating Claims → LLM → Tools → Claims flow.

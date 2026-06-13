@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 # Run all 16 prompt variants and collect results
 
 VARIANTS="v01_baseline v02_answer_only v03_cot_explicit v04_expert_role v05_decompose v06_few_shot v07_verify v08_confidence v09_concise v10_structured v11_reframe v12_negative v13_positive v14_meta v15_units v16_final_first"

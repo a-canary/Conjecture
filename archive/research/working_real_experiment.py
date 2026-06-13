@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Working Real Experiment - Focus on Local Models
 Uses REAL LLM calls to local models only

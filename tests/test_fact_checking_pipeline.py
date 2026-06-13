@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Tests for fact_checking_pipeline.py — R&D artifact from 2026-05-04 sprint.
 Covers: SelfConsistencyChecker, VectorSearchVerifier, CascadeInvalidator, FactCheckingPipeline.

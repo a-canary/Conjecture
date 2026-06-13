@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Enhanced Retry Utilities for LLM Operations
 Provides comprehensive exponential backoff retry logic with configurable parameters (10s to 10min range)

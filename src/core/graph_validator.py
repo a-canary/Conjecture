@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Graph Validator - Acyclic Graph Enforcement (D-0007)
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Model Comparison Experiments for Conjecture
 Compares performance across different models with and without Conjecture's approach

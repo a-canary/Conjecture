@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 DeepEval Benchmark Suite for Conjecture
 O-0008: 10 benchmarks, 40+ samples each, >= Direct on ALL, +20pp on 5

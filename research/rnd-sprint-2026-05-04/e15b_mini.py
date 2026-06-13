@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """E15: Long-Context Decomposition vs Chunking — Minimal version (10 problems, 3 hops)"""
 
 import json, os, sys, subprocess, time, statistics

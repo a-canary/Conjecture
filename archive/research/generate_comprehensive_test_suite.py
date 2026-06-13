@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Generate Comprehensive Test Suite for End-to-End Pipeline Experiment
 Creates 75 test cases across all categories for statistical significance

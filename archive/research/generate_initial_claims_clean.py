@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 async def _generate_initial_claims(
     self, query: str, max_claims: int
 ) -> List[Claim]:

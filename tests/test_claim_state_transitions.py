@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Unit tests for Claim state transitions and dirty flag operations
 Tests claim lifecycle management without mocking

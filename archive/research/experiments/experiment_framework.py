@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Conjecture Research Experiment Framework
 Core framework for validating Conjecture's hypotheses through controlled experiments

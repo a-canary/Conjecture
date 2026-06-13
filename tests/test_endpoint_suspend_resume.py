@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Tests for Phase 2: Suspend/Resume in ConjectureEndpoint (A-0015).
 

@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Integration test for Step 20.4 and 20.6: ReasoningLoop wired into evaluate().
 

@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Support Relationship Manager for Simplified Universal Claim Architecture
 Handles efficient bidirectional relationship traversal, validation, and optimization

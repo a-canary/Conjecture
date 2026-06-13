@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 End-to-end test for complete claim lifecycle (Fixed Version)
 Tests claim creation, processing, evaluation, and relationship updates

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Comprehensive True Conjecture Comparison Study
 Compare True Conjecture vs Direct vs Chain of Thought with proper statistical analysis

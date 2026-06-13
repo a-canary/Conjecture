@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 E-RERANK: Cross-Encoder Re-Ranking using sentence-transformers CrossEncoder.
 Since cross-encoder IS available via sentence-transformers (not pip), use it.

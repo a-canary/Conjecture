@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 E-RERANK v2: Extended experiment — 2-stage + score-weighted RRF
 """

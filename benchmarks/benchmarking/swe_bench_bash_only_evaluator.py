@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 SWE-Bench Bash-Only Evaluator with ReAct Loop
 Implements bash-specific problem solving with temperature=0.0 for reproducibility

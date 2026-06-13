@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 LLM-as-a-Judge Evaluation System
 Uses GLM-4.6 to evaluate model responses with structured rubrics

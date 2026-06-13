@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Final Scientific Analysis and Additional Conclusions
 Generate comprehensive scientific conclusions from the real research data

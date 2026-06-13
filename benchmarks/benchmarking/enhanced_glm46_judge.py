@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Enhanced GLM-4.6 Judge System
 Optimized evaluation methodology with enhanced prompt system integration

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 ARC-AGI-2 Benchmark Runner
 Primary benchmark per CHOICES.md O-0006

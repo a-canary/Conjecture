@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Simplified Conjecture Processing Package
 Unified processing system with OpenAI-compatible providers only

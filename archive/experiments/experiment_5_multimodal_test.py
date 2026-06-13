@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Experiment 5: Multi-Modal Integration - Test Script
 Test multi-modal processing capabilities with image and document analysis

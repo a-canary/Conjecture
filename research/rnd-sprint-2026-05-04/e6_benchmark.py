@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 E6: Vector Store Benchmark — FastEmbed bge-base-en-v1.5 vs all-MiniLM-L6-v2
 Optimized for speed with proper batching.

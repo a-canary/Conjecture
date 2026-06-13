@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Tests for A-0011: Dirty flag cascade via ConjectureEndpoint.
 

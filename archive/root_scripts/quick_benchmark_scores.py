@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Quick Benchmark Score Reporter
 Extracts and displays key metrics from cycle results without complex processing

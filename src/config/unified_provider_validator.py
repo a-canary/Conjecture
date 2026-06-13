@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Unified Provider Validator - Compatibility Layer
 Provides provider validation functionality for testing

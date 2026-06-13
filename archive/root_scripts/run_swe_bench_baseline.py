@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Run SWE-Bench Bash-Only Evaluator with baseline evaluation.
 Tests the improvements: fuzzy parsing, error feedback, and failure analysis.

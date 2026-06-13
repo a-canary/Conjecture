@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Unit tests for config/common.py module
 Tests ProviderConfig and CommonConfig classes without mocking

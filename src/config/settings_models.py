@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Pydantic settings models for Conjecture configuration system
 Provides type-safe, validated configuration with environment variable support

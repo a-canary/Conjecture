@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Modular Conjecture CLI with Pluggable Backends - Fixed Version
 Unified entry point for all Conjecture CLI functionality with auto-detection

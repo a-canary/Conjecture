@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Config-Aware Model Integration
 Reads directly from Conjecture config to get API keys and providers

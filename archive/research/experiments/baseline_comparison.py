@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Baseline Comparison Experiments
 Compares Conjecture's claims-based approach against direct prompting baselines

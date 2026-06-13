@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 E1: Fact-Checking Accuracy — Test H1-H4
 Standalone test without project imports to avoid circular dependency issues.

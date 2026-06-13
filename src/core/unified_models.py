@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Unified Core Models for Conjecture
 Consolidates all essential data models into a single, clean system

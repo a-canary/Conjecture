@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Statistical Analysis Tools for Conjecture Hypothesis Testing
 Comprehensive statistical validation and analysis framework

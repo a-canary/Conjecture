@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Direct LM Studio Integration for Benchmarks
 Connects directly to LM Studio API for benchmark evaluation

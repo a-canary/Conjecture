@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 LM Studio Research Runner
 Tests Conjecture hypothesis with local models: granite-4-h-tiny vs glm-z1-9b

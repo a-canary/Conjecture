@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 echo "Running Conjecture Tests with Static Analysis Integration..."
 echo
 

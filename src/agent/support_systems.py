@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Support Systems - Data collection, context building, and persistence for Conjecture.
 Handles the data layer and context management separate from core orchestration.

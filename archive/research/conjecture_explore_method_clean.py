@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 async def generate_claims_with_context(self, query: str):
     """Generate initial claims using LLM with context awareness"""
     try:

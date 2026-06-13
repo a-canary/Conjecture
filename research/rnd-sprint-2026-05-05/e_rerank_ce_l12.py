@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """E-RERANK: Compare L6 vs L12 cross-encoder reranking."""
 import json, random, numpy as np
 from sentence_transformers import SentenceTransformer, CrossEncoder

@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 OpenRouter Free Model Benchmark Tests
 Tests verified free models for Conjecture benchmarking.

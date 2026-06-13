@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Analyze LM Studio Experiment Results
 Evaluates if Conjecture enables tiny LLM (granite-4-h-tiny) to match larger model (glm-z1-9b)

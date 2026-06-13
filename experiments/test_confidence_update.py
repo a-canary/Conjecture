@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Test confidence UPDATE scenario.
 Model should recognize when to update an existing claim's confidence

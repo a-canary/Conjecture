@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Test suite for src/utils/web_search.py
 Implements F-0005: Web Research Integration

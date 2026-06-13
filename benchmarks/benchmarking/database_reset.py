@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Database Reset Utility for Standardized Benchmark Testing
 Provides clean slate for consistent benchmark measurements
