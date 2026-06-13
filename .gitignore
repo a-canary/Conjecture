@@ -253,6 +253,7 @@ docs/_build/
 # Performance profiling
 *.prof
 *.profile
+*.profilememory.md
 
 # Claude Code runtime state (migrated to pi agent, .claude/ already gone)
 .claude.json

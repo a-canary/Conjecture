@@ -3,8 +3,8 @@ gsm8k,GSM8K,deepseek/deepseek-chat-v3-0324,direct,100,92,92.0,10.53,32006,0,2026
 gsm8k,GSM8K,deepseek/deepseek-chat-v3-0324,decomposition,100,93,93.0,11.27,46445,1,2026-03-06T12:51:54Z,Standard test set
 mmlu,MMLU,deepseek/deepseek-chat-v3-0324,direct,100,62,62.0,2.36,12459,9,2026-03-06T13:28:57Z,Mixed subjects
 mmlu,MMLU,deepseek/deepseek-chat-v3-0324,decomposition,100,45,45.0,17.72,56010,2,2026-03-06T13:28:57Z,Mixed subjects
-synthetic,Synthetic Math,deepseek/deepseek-chat-v3-0324,direct,100,79,79.0,2.60,15000,0,2026-03-06T05:56:14Z,Novel problems - store/handshake/work/reverse
-synthetic,Synthetic Math,deepseek/deepseek-chat-v3-0324,decomposition,100,97,97.0,12.16,90000,0,2026-03-06T05:56:14Z,Novel problems - store/handshake/work/reverse
+synthetic,Synthetic Math,deepseek/deepseek-chat-v3-0324,direct,100,79,79.0,2.60,15000,0,2026-03-06T05:25:21Z,Novel problems - store/handshake/work/reverse
+synthetic,Synthetic Math,deepseek/deepseek-chat-v3-0324,decomposition,100,97,97.0,12.16,90000,0,2026-03-06T05:25:21Z,Novel problems - store/handshake/work/reverse
 single_claim_protocol,Custom Scenarios,qwen/qwen-2.5-72b-instruct,optimized_prompt,8,7,96.9,0.9556938111782074,0,0.0,2026-03-06T12:00:19.364869+00:00,qwen2.5-72b (72B) - Protocol adherence test
 single_claim_protocol,Custom Scenarios,qwen/qwen3-235b-a22b,optimized_prompt,8,7,96.9,6.446998029947281,0,0.0,2026-03-06T12:00:19.364869+00:00,qwen3-235b (235B) - Protocol adherence test
 single_claim_protocol,Custom Scenarios,deepseek/deepseek-chat-v3-0324,optimized_prompt,8,7,96.9,3.4317563474178314,0,0.0,2026-03-06T12:00:19.364869+00:00,deepseek-v3 (685B) - Protocol adherence test
