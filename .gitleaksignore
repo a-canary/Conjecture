@@ -1,0 +1,16 @@
+# Gitleaks ignore file for Conjecture
+# https://github.com/gitleaks/gitleaks
+
+# Ignore test fixtures and example configs
+tests/
+.env.example
+.env.test
+
+# Ignore generated files
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# Ignore documentation samples that contain example keys
+blog/
+docs/
