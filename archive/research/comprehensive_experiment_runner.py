@@ -27,6 +27,9 @@ try:
 except ImportError:
     print("[FAIL] python-dotenv not available")
 
+def _die_no_key():
+    raise EnvironmentError("CEREBRAS_API_KEY environment variable is not set")
+
 @dataclass
 class TestResult:
     """Complete test result with quality metrics"""
@@ -213,7 +216,7 @@ MODELS = {
         "type": "medium",
         "provider": "cerebras",
         "url": "https://api.cerebras.ai/v1",
-        "api_key": "csk-hpr4pjyd895p4ktvpnn436exx49rr925f6dptjvmee5ycrx8",
+        "api_key": os.getenv("CEREBRAS_API_KEY") or _die_no_key(),
     },
 }
 
@@ -370,7 +373,7 @@ async def evaluate_with_llm_judge(test_result: TestResult) -> TestResult:
         # Setup judge
         judge_config = ProviderConfig(
             url="https://api.cerebras.ai/v1",
-            api_key="csk-hpr4pjyd895p4ktvpnn436exx49rr925f6dptjvmee5ycrx8",
+            api_key=os.getenv("CEREBRAS_API_KEY") or _die_no_key(),
             model="zai-glm-4.6",
         )
 

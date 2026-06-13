@@ -26,6 +26,9 @@ try:
 except ImportError:
     print("[FAIL] python-dotenv not available")
 
+def _die_no_key():
+    raise EnvironmentError("CEREBRAS_API_KEY environment variable is not set")
+
 @dataclass
 class TestResult:
     """Complete test result with quality metrics"""
@@ -161,13 +164,13 @@ MODELS = {
         "type": "large",
         "provider": "cerebras",
         "url": "https://api.cerebras.ai/v1",
-        "api_key": "csk-hpr4pjyd895p4ktvpnn436exx49rr925f6dptjvmee5ycrx8",
+        "api_key": os.getenv("CEREBRAS_API_KEY") or _die_no_key(),
     },
     "cerebras:zai-glm-4.6": {
         "type": "sota",
         "provider": "cerebras",
         "url": "https://api.cerebras.ai/v1",
-        "api_key": "csk-hpr4pjyd895p4ktvpnn436exx49rr925f6dptjvmee5ycrx8",
+        "api_key": os.getenv("CEREBRAS_API_KEY") or _die_no_key(),
     },
 }
 
