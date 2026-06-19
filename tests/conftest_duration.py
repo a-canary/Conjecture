@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """Pytest plugin: per-test duration tracking and reporting.
 
 Extracted from conftest.py so the test infrastructure layer is not a

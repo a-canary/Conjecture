@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """Pytest plugin: optional static-analysis tool execution.
 
 Extracted from conftest.py. Registers four markers (ruff/mypy/vulture/bandit),

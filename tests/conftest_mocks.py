@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """Pytest plugin: localhost-mock patches and global sleep cap.
 
 Extracted from conftest.py. Two side effects that were originally
