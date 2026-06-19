@@ -159,13 +159,13 @@ Thesis (L5) ← Primary Claims (L4) ← Secondary Claims (L3) ← Evidence Claim
 | System | Location | Purpose | Size |
 |--------|----------|---------|------|
 | **MEMORY.md** | `~/.hermes/memories/` | Operational flash memory: API keys, workarounds, invariants | 1.9KB |
-| **memory-wiki** | `/home/aaron/vault/ke/` (symlinked) | Durable knowledge base: decisions, facts, infra, research | ~2MB |
+| **memory-wiki** | `~/vault/ke/` (symlinked) | Durable knowledge base: decisions, facts, infra, research | ~2MB |
 | **vault** | `~/.hermes/vault/` | EMPTY — vestigial | 0 |
 | **USER.md** | `~/.hermes/memories/` | User profile/preferences | 1.3KB |
 | **SOUL.md** | `~/.hermes/` | Static agent identity | 513B |
 
 ### Critical Architectural Finding
-**`~/.hermes/vault/` is entirely empty**. The "vault" is actually `memory-wiki` (the Obsidian vault at `/home/aaron/vault/ke/`). The `vault` symlink is redundant.
+**`~/.hermes/vault/` is entirely empty**. The "vault" is actually `memory-wiki` (the Obsidian vault at `~/vault/ke/`). The `vault` symlink is redundant.
 
 ### Proposed 3-Tier Architecture
 ```

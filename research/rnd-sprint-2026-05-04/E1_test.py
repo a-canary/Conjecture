@@ -1104,7 +1104,7 @@ def main():
     }
     
     # Write results to JSON
-    output_path = '/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04/E1-results.json'
+    output_path = './research/rnd-sprint-2026-05-04/E1-results.json'
     with open(output_path, 'w') as f:
         json.dump(results, f, indent=2)
     print(f"\n\nResults written to: {output_path}")
@@ -1165,7 +1165,7 @@ Evaluated the tiered fact-checking pipeline (T1: Self-Consistency, T2: Vector Se
 - Evaluate T3 on larger sample to get better precision estimate
 """
     
-    cycle1_path = '/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04/CYCLE1.md'
+    cycle1_path = './research/rnd-sprint-2026-05-04/CYCLE1.md'
     with open(cycle1_path, 'w') as f:
         f.write(cycle1_md)
     print(f"CYCLE1.md written to: {cycle1_path}")

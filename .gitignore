@@ -257,6 +257,7 @@ docs/_build/
 
 # Claude Code runtime state (migrated to pi agent, .claude/ already gone)
 .claude.json
+.claude/
 
 # Retired Windows batch scripts (.sh equivalents are the active runners)
 *.bat

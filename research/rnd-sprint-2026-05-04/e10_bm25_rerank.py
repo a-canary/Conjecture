@@ -28,7 +28,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = ''
 NUM_TEXTS = 10000
 NUM_QUERIES = 50
 TOP_K = 20
-OUTPUT_PATH = "/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04/E10-results.json"
+OUTPUT_PATH = "./research/rnd-sprint-2026-05-04/E10-results.json"
 
 random.seed(42)
 np.random.seed(42)

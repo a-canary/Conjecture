@@ -61,8 +61,8 @@ quality_ke >= quality_fresh AND cost_ratio < 0.5
 - Recommendation: Increase evidence-cache coverage for new topics; reuse existing cache aggressively
 
 ## Files Generated
-- `/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04/E3-results.json` — Full experiment data
-- `/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04/CYCLE2.md` — This summary
+- `./research/rnd-sprint-2026-05-04/E3-results.json` — Full experiment data
+- `./research/rnd-sprint-2026-05-04/CYCLE2.md` — This summary
 
 ## E4: Tag Semantic Clustering
 

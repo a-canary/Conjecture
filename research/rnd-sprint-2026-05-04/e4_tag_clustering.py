@@ -508,7 +508,7 @@ def main():
                 print(f"    Pairs: {[(p['tags'], p['similarity']) for p in group['pairs']]}")
     
     # Write results to JSON
-    output_dir = "/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04"
+    output_dir = "./research/rnd-sprint-2026-05-04"
     os.makedirs(output_dir, exist_ok=True)
     
     # Prepare output with only required fields

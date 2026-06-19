@@ -1,0 +1,3382 @@
+{
+  "benchmark": "DROP",
+  "model": "deepseek-ai/DeepSeek-V3.2-TEE",
+  "n_problems": 100,
+  "timestamp": "2026-05-27T17:59:08.280317+00:00",
+  "direct": {
+    "benchmark_name": "DROP",
+    "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+    "using_conjecture": false,
+    "total_tasks": 100,
+    "correct_answers": 0,
+    "accuracy": 0.0,
+    "average_time": 0.0,
+    "total_time": 0.0
+  },
+  "conjecture": {
+    "benchmark_name": "DROP",
+    "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+    "using_conjecture": true,
+    "total_tasks": 100,
+    "correct_answers": 0,
+    "accuracy": 0.0,
+    "average_time": 0.0,
+    "total_time": 0.0
+  },
+  "improvement_pp": 0.0,
+  "conclusion": "NEUTRAL: No significant difference on DROP",
+  "individual_results": [
+    {
+      "task_id": "f37e81fa-ef7b-4583-b671-762fc433faa9",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "Who scored the first touchdown of the game?",
+      "response": "",
+      "expected_answers": [
+        "Chaz Schilens",
+        "JaMarcus Russell"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "ac6ba235-3024-4f63-a6ab-730a14def4cb",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many field goals did Kris Brown kick?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "3",
+        "3",
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "2c7c93f6-69ed-47cc-a5af-94a00c185a26",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "Which team won the game?",
+      "response": "",
+      "expected_answers": [
+        "Raiders",
+        "Raiders",
+        "Raiders",
+        "the Raiders",
+        "the Raiders"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "7dfd2b64-f39e-4bb4-aeb0-1900adda6018",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many field goals did both teams kick in the first half?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2",
+        "2",
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "121a8f57-7752-4373-a9ba-748b2c577cd2",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many more yards was Kris Browns's first field goal over his second?",
+      "response": "",
+      "expected_answers": [
+        "29",
+        "20",
+        "29",
+        "29",
+        "29"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "05d06269-191b-4638-97ca-e1304e7883d1",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "Who threw the longest pass?",
+      "response": "",
+      "expected_answers": [
+        "JaMarcus Russell",
+        "29",
+        "Russell",
+        "JaMarcus Russell",
+        "Russell"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "01c67c32-9281-4d13-afd2-33aa922994dc",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards was the longest touchdown of the game?",
+      "response": "",
+      "expected_answers": [
+        "80-yard punt return",
+        "80",
+        "80",
+        "80",
+        "80"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "03fdc8a0-d62b-49a0-8087-af92e6659650",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many field goals did Sebastian Janikowski and Kris Brown both score each?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "5"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "17bdcfb1-8ad9-46b5-8a3b-1f9769dfd60a",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards difference is there between Sebastian Janikowski's longest field goal and his shortest field goal?",
+      "response": "",
+      "expected_answers": [
+        "3",
+        "3",
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "d4547161-dd97-4164-93a1-144986d94c51",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards difference is there between Kris Brown's longest and shortest field goals?",
+      "response": "",
+      "expected_answers": [
+        "29",
+        "29",
+        "29",
+        "29"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "0aa153e9-057a-4347-acb7-8114cb1d68e8",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards longer was the 80-yard punt than the touchdown pass from Russell to Johnnie Lee Higgins?",
+      "response": "",
+      "expected_answers": [
+        "51",
+        "51",
+        "51",
+        "51"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "142b8af7-b9b0-446b-9cb6-a6940b80461f",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many touchdowns were scored in the game?",
+      "response": "",
+      "expected_answers": [
+        "4",
+        "4"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "4fbb0c95-06a8-4205-9edb-156a22eecaa7",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many of the touchdowns were passing touchdowns?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "0a92ef8a-1780-4379-8ab8-6f2939fce562",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards was the longest passing touchdown?",
+      "response": "",
+      "expected_answers": [
+        "29",
+        "29"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "43810a23-d66e-49bb-816b-16f5a331fbb0",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards longer was the longest passing touchdown than the shortest?",
+      "response": "",
+      "expected_answers": [
+        "9",
+        "9"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "084814c7-cc64-40a6-a308-4de211d531b4",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many field goals were scored in the game?",
+      "response": "",
+      "expected_answers": [
+        "5",
+        "5"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "17e35029-a5d0-44d3-844e-edd0759d5797",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards was the longest field goal in the game?",
+      "response": "",
+      "expected_answers": [
+        "53",
+        "53"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "fe7754d3-322e-41b2-b1b7-a9bc0cbca9a2",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards was the shortest field goal in the game?",
+      "response": "",
+      "expected_answers": [
+        "24",
+        "24"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "8b442d27-241b-4fd9-87d4-1e5bee19cb2e",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards longer was the longest field goal than the shortest?",
+      "response": "",
+      "expected_answers": [
+        "29",
+        "29"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "5b6a9699-f8a9-44f4-8912-0adfa49decc0",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "Which Bengals receiver scored two touchdowns?",
+      "response": "",
+      "expected_answers": [
+        "Houshmandzadeh",
+        "T. J. Houshmandzadeh"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "3e0f9c3d-2bd8-46b4-960d-42457b3e2802",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "Who caught the last touchdown of the game?",
+      "response": "",
+      "expected_answers": [
+        "Patrick Crayton",
+        "Patrick Crayton"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e2169f5d-b3b9-4931-8bfa-f99b9bc4348e",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many field goals did Shayne Graham kick in the first half?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "ddbb57c6-c1d5-4a25-93fd-9bea7cf5ff50",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "Which player had the longest rushing TD?",
+      "response": "",
+      "expected_answers": [
+        "Terrell Owens",
+        "Felix Jones"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "405ab3fb-9392-4a23-9589-8c9c5d9b9508",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "What was the longest TD pass of the game?",
+      "response": "",
+      "expected_answers": [
+        "57",
+        "57"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "66eed2c2-e1d9-4092-b21d-5dc2551a3118",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many second quarter field goals did the Bengals get?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "bdf5020a-ec3e-49fb-925c-4a967b6bb911",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "Which team scored the final TD of the game?",
+      "response": "",
+      "expected_answers": [
+        "Dallas",
+        "Dallas"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "08c59a80-401a-446b-966b-7a87818b20f4",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many touchdowns did T.J. Houshmandzadeh have?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "fec21716-8ca2-4565-9f88-d6e1cb74ce3a",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many touchdowns did Jones have?",
+      "response": "",
+      "expected_answers": [
+        "1",
+        "1"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "3c6c2eaf-12ea-40ab-963d-c029828634e4",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many passed did Houshmandzadeh catch?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e1e183dc-566f-4bcf-ab3e-c0df5b1a292b",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many touchdowns did Crayton have?",
+      "response": "",
+      "expected_answers": [
+        "1",
+        "1"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "eaf004f3-b98b-4456-ae5e-fade5744f222",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many wins did the Bengals have before this game?",
+      "response": "",
+      "expected_answers": [
+        "0",
+        "0",
+        "0"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "4d3c49da-0c96-466d-a20b-e83e68fda2de",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many points did Dallas score in the first quarter?",
+      "response": "",
+      "expected_answers": [
+        "17",
+        "10"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "f38d7fa8-910c-44fd-b6ee-026fa5d585fd",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many field goals did the Bengals have in the first half?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "ae75262b-f7d5-466f-a24b-e1ee32b20e02",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "Which team scored the least points?",
+      "response": "",
+      "expected_answers": [
+        "Bengals",
+        "Cowboys"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "375e6679-1834-4769-97cf-7cc04196e43c",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many field goals were there in the fourth quarter?",
+      "response": "",
+      "expected_answers": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "ee308676-57f9-4932-af29-c756bf7fe15d",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many touchdown passes did Tony Romo throw?",
+      "response": "",
+      "expected_answers": [
+        "3",
+        "3",
+        "3",
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "0f3ed05c-4173-4db4-97eb-e30f7342bcb5",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "Which player had the longest touchdown reception?",
+      "response": "",
+      "expected_answers": [
+        "Terrell Owens",
+        "Terrell Owens",
+        "Terrell Owens",
+        "Terrell Owens"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "37b4f978-9915-457d-be0a-691e2373fd89",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many times did the Cowboys score in the first half?",
+      "response": "",
+      "expected_answers": [
+        "3",
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "a9e66c93-3995-4aa7-b065-a3d679dad2ce",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many first-half field goals were kicked by Shayne Graham?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "23c5518b-f815-48f9-9bd8-c2d6d2623385",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "What was the score at the end of the first quarter?",
+      "response": "",
+      "expected_answers": [
+        "7-7",
+        "7-7",
+        "7\u20137",
+        "7-7"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "48970b45-42fc-4e9d-85b8-44c7f1c5b1dc",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many points were scored in the first quarter?",
+      "response": "",
+      "expected_answers": [
+        "14",
+        "14",
+        "14"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "43700c9b-bf7a-4db3-968a-235107dc8430",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "how many yards did Hall intercept?",
+      "response": "",
+      "expected_answers": [
+        "9",
+        "9",
+        "9"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e9636c00-bafb-4bc4-a5a3-1be4104e6c8f",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "how many yards did Morris take off?",
+      "response": "",
+      "expected_answers": [
+        "30",
+        "30",
+        "30"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "4f50b238-b6e6-410e-a94c-ed0547137f01",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "how many yards did Akers lead with?",
+      "response": "",
+      "expected_answers": [
+        "32",
+        "32",
+        "32"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "22ca04bb-c2a0-44b1-89ca-bc675b725f1c",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "how many yards did Potter make?",
+      "response": "",
+      "expected_answers": [
+        "64",
+        "64",
+        "64"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "5fa158fe-15c0-4aed-a0f4-1b15f36c033f",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "how many yards did akers hit?",
+      "response": "",
+      "expected_answers": [
+        "28",
+        "28",
+        "60"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "90bdfffd-1344-4f84-92a9-ff8f43f9c9fd",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "how many yards did Robinson score?",
+      "response": "",
+      "expected_answers": [
+        "57",
+        "57",
+        "0"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "2231ec20-d9de-44f5-8923-82f9acedc78e",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "Which team did the Packers win in the prior weeks game?",
+      "response": "",
+      "expected_answers": [
+        "Redskins",
+        "Redskins"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "cbc985a5-d1d4-4098-87cf-87e6ff3515f3",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many total field goals were kicked in the game?",
+      "response": "",
+      "expected_answers": [
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "efabf8d7-b400-445d-9194-ad163c53b7fb",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "Which player scored the final touchdown of the game?",
+      "response": "",
+      "expected_answers": [
+        "John Potter",
+        "John Potter"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "41a51703-271e-42c9-abbc-cebb9ffa6038",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many total points were scored in the game?",
+      "response": "",
+      "expected_answers": [
+        "47",
+        "47"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "0cb83948-14bd-4d18-9c85-e91acad81d70",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many points did the Lions win by?",
+      "response": "",
+      "expected_answers": [
+        "7",
+        "7"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "82868589-492b-4ee2-a6b8-2de6cd57adda",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many points ahead was Detroit over Washington when Akers hit his 28-yard field goal?",
+      "response": "",
+      "expected_answers": [
+        "tied at 17",
+        "0"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "35ee11f4-a4dd-4cd6-8907-54b034077342",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "After Akers 32-yard field goal, how many points behind was Washington?",
+      "response": "",
+      "expected_answers": [
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "4993a0cf-744a-4581-b5a7-bd4c75d8f2b4",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many points were scored in the first half?",
+      "response": "",
+      "expected_answers": [
+        "31",
+        "31"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e0668d77-5c82-4dd6-8f73-30aa3fd54796",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many total points were scored?",
+      "response": "",
+      "expected_answers": [
+        "47",
+        "47"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "0a90795c-3f54-4f5a-9d1f-4e9b6bd744eb",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many points did Detroit win by?",
+      "response": "",
+      "expected_answers": [
+        "7",
+        "7"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "80cc359b-dd90-4e8e-9029-5aea3955bca8",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many touchdowns were scored in the first quarter?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "6fabe697-1ef3-4c86-9983-3045b754b3df",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "Which player scored more field goals, David Akers or John Potter ?",
+      "response": "",
+      "expected_answers": [
+        "David Akers",
+        "David Akers"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "d7a6006c-ee51-4881-a701-43bc73bb046c",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "Which player scored the first touchdown of the game?",
+      "response": "",
+      "expected_answers": [
+        "DeAngelo Hall",
+        "DeAngelo Hall"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "228c133a-45ef-4827-b55a-9f2e6ad99a86",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years did the city suffer wars against Almoravid and the Almohad Empires?",
+      "response": "",
+      "expected_answers": [
+        "127",
+        "127"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "1dd611e3-4757-4e79-b677-a26f2f1164ce",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years after the people of the North received their first fuero from Alfonso VII did king Fernando III give a new fuero to the city?",
+      "response": "",
+      "expected_answers": [
+        "86",
+        "86"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e7acfedb-5fd2-43dc-9d5a-08d9d956ff89",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years before Guadalajara received there first fuero was the city retaken by christian forces?",
+      "response": "",
+      "expected_answers": [
+        "48",
+        "48"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "c64b21c5-b4d0-4b10-ab4a-c7837bea8c01",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years after Guadalajara received there first fuero did the receive a new one?",
+      "response": "",
+      "expected_answers": [
+        "86",
+        "86"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "c09ad09b-2ad7-485d-a5cb-9473a5d7d7b5",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years passed after Guadalajara was retaken and the Battle of Las Navas de Tolosa?",
+      "response": "",
+      "expected_answers": [
+        "127",
+        "127"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "7cededcf-aa82-44cb-9612-006add18dd08",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years passed between the city receiving its first fuero and its new one from king Fernando III?",
+      "response": "",
+      "expected_answers": [
+        "86",
+        "86"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "2b8fef21-e463-40c0-a204-34dccb9251c9",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years passed from when Guadalajara was retaken by the Christian forces of Alfonso VI  until the Battle of Las Navas de Tolosa?",
+      "response": "",
+      "expected_answers": [
+        "127",
+        "127"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "874e3050-9118-4edd-b2d4-744105572c9d",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "Which occured first, the Battle of Las Navas de Tolosa or king Fernando III gave a new fuero to the city?",
+      "response": "",
+      "expected_answers": [
+        "Battle of Las Navas de Tolosa",
+        "Battle of Las Navas de Tolosa"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "342038f4-c59b-4cb1-a802-50f895471124",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many empires attacked Guadalajara?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "95b02abd-70ba-4aa6-b215-1a83d63cfd8b",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "When did the first battle against Guadalajara take place?",
+      "response": "",
+      "expected_answers": [
+        "1085"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "45f95b62-3ce8-473d-ac2e-2f54d875df34",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years after the last Battle IN Guadalajara did king Fernando III give a new fuero to the city?",
+      "response": "",
+      "expected_answers": [
+        "7",
+        "48",
+        "7",
+        "134",
+        "7",
+        "134",
+        "7"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "6dda0444-c311-4fb9-ae03-3aa3660e6e38",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years went by between the king giving a new fuero to the city and the first fuero?",
+      "response": "",
+      "expected_answers": [
+        "86",
+        "86",
+        "86",
+        "86",
+        "86",
+        "86",
+        "86"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "cebb3478-5456-4e66-82fa-031c875fea18",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years did the city suffer wars against the Almoravid and Almohad Empires?",
+      "response": "",
+      "expected_answers": [
+        "127",
+        "127",
+        "127",
+        "127",
+        "127",
+        "127",
+        "127"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "951ba606-5145-4f2d-bddb-7f7f456c911f",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "From what distance did Robbie Gould make more than one field goal attempt?",
+      "response": "",
+      "expected_answers": [
+        "36-yard",
+        "36-yard",
+        "36-yard",
+        "36",
+        "36-yard"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "5fc870c4-6215-4e64-841f-28fa33a39a03",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many touchdown passes did Kitna throw from 20 or more yards out?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2",
+        "2",
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "bfe2eda8-d627-4248-962c-a230ada106db",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "Who threw the first touchdown pass of the game?",
+      "response": "",
+      "expected_answers": [
+        "QB Jon Kitna",
+        "Jon Kitna",
+        "Jon Kitna",
+        "Jon Kitna",
+        "QB Jon Kitna"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "54db511c-f83d-43ef-8b54-dc43db2909fd",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many field goals did Robbie Gould make in the 4th quarter?",
+      "response": "",
+      "expected_answers": [
+        "3",
+        "3",
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "27904f61-76f3-4157-9ff6-6176894ed9b8",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "Who threw the shortest touchdown pass of the game?",
+      "response": "",
+      "expected_answers": [
+        "Kitna",
+        "Kitna"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "3ffad00b-cdcb-40b2-b2c5-fe459d716884",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many yards of touchdown passes did Jon Kitna throw?",
+      "response": "",
+      "expected_answers": [
+        "45",
+        "22"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "027ac1ea-4f41-447e-bc7b-0d5eb892d8e6",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many more touchdown passes did Jon Kitna throw compared to everyone else?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e2970301-6182-40db-b2fe-cfe60b1bc388",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many touchdown passes were over 19 yards?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "2512bb1d-419b-452f-a1d3-039e3e8f32a3",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many touchdown passes did Roy Williams catch?",
+      "response": "",
+      "expected_answers": [
+        "1",
+        "1"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "c6bce289-1649-47cf-93df-29ebd80d41ed",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many field goals were over 30 yards?",
+      "response": "",
+      "expected_answers": [
+        "4",
+        "4"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "6f1888c9-e249-4b44-ab85-78a309a36880",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many yards of field goals did Gould kick?",
+      "response": "",
+      "expected_answers": [
+        "4",
+        "155"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "b307c078-0df3-4823-a6e9-fa8cf912063d",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many more yards was Kitnas 20 yards touchdown pass compared  to Adrian Petersons touchdown run?",
+      "response": "",
+      "expected_answers": [
+        "18",
+        "18"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "7384b754-61d1-414d-8fa1-1b76ae55e411",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Which town was a popular destination for the Korean immigrants?",
+      "response": "",
+      "expected_answers": [
+        "Motul",
+        "Motul, Yucatan"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "9ea6e8ae-b36a-4b2e-9fee-5114fe3a4093",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "What did the latest immigrants do to rememeber past immigrants?",
+      "response": "",
+      "expected_answers": [
+        "started the Museo",
+        "a museum"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "914e72c2-22fe-43f1-8fec-a05ac470ac4d",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "How many years did the immigrants have to work as indentured laborers?",
+      "response": "",
+      "expected_answers": [
+        "4",
+        "4"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "b05a1937-c080-41e4-81a4-d2b0b2087965",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "How many more Korean immigrant men were there that departed from the port of Chemulpo compared to women and children?",
+      "response": "",
+      "expected_answers": [
+        "571",
+        "571"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "2b959aed-f25f-4b71-88e4-7bbcb999fd49",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "How many Korean immigrants were more men than woman and children?",
+      "response": "",
+      "expected_answers": [
+        "571",
+        "571"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "5efb0d21-0dd9-4a2f-a2ee-ae92277df808",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Which port did the Korean immigrants leave first Chemulpo or Veracruz?",
+      "response": "",
+      "expected_answers": [
+        "Chemulpo"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "602e3b17-9b42-4fe4-968c-2c11fc26807e",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Which port did the Korean immigrants leave later Chemulpo or Veracruz?",
+      "response": "",
+      "expected_answers": [
+        "Veracruz"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "f6fc8e67-5aa2-4a04-b65e-05a154bcc1ae",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Were there more men or women and children who departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico?",
+      "response": "",
+      "expected_answers": [
+        "men",
+        "men"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "a20c5d22-4168-420b-8b4e-d634cdb3b468",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "How many more men were there than women and children who departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico?",
+      "response": "",
+      "expected_answers": [
+        "571",
+        "571"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "51458071-040a-4d33-b561-bcdecfd45e12",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "How many more Korean immigrants in 1905 that departed from Chemulpo were men than women or children?",
+      "response": "",
+      "expected_answers": [
+        "571",
+        "571",
+        "571",
+        "571"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "d10f1f1a-e244-4dd8-9c5d-cbf86b78f8a5",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Were there more men or women and children immigrants present?",
+      "response": "",
+      "expected_answers": [
+        "men",
+        "men",
+        "men",
+        "men"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "5d59a885-c79f-4472-b1e7-762e037fd35c",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "How many more men were there compared to both women and children?",
+      "response": "",
+      "expected_answers": [
+        "571",
+        "571",
+        "571",
+        "571"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "db5e9e76-c8a1-4eb4-8314-f3c1bfda9f19",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Where did the immigrants arrive first, Salina Cruz or Coatzacoalcos?",
+      "response": "",
+      "expected_answers": [
+        "Salina Cruz",
+        "Salina Cruz",
+        "Salina Cruz",
+        "Salina Cruz"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e48ea0f6-ca09-4448-aad5-1d5ff4035744",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Which population groups consisted of less members than the male population?",
+      "response": "",
+      "expected_answers": [
+        "women and children"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "b86338ad-b2dd-4e3d-93f5-51fcffc1b8ab",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": "The institutional framework of Navarre was preserved following the 1512 invasion. Once Ferdinand II of Aragon died in January, the Parliament of Navarre gathered in Pamplona, urging Charles V  to atte",
+      "question": "Who represented the Emperor at Parliament?",
+      "response": "",
+      "expected_answers": [
+        "Duke of Najera",
+        "Duke of Najera",
+        "Duke of Najera",
+        "Duke of Najera"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "f37e81fa-ef7b-4583-b671-762fc433faa9",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "Who scored the first touchdown of the game?",
+      "response": "",
+      "expected_answers": [
+        "Chaz Schilens",
+        "JaMarcus Russell"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "ac6ba235-3024-4f63-a6ab-730a14def4cb",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many field goals did Kris Brown kick?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "3",
+        "3",
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "2c7c93f6-69ed-47cc-a5af-94a00c185a26",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "Which team won the game?",
+      "response": "",
+      "expected_answers": [
+        "Raiders",
+        "Raiders",
+        "Raiders",
+        "the Raiders",
+        "the Raiders"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "7dfd2b64-f39e-4bb4-aeb0-1900adda6018",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many field goals did both teams kick in the first half?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2",
+        "2",
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "121a8f57-7752-4373-a9ba-748b2c577cd2",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many more yards was Kris Browns's first field goal over his second?",
+      "response": "",
+      "expected_answers": [
+        "29",
+        "20",
+        "29",
+        "29",
+        "29"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "05d06269-191b-4638-97ca-e1304e7883d1",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "Who threw the longest pass?",
+      "response": "",
+      "expected_answers": [
+        "JaMarcus Russell",
+        "29",
+        "Russell",
+        "JaMarcus Russell",
+        "Russell"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "01c67c32-9281-4d13-afd2-33aa922994dc",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards was the longest touchdown of the game?",
+      "response": "",
+      "expected_answers": [
+        "80-yard punt return",
+        "80",
+        "80",
+        "80",
+        "80"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "03fdc8a0-d62b-49a0-8087-af92e6659650",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many field goals did Sebastian Janikowski and Kris Brown both score each?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "5"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "17bdcfb1-8ad9-46b5-8a3b-1f9769dfd60a",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards difference is there between Sebastian Janikowski's longest field goal and his shortest field goal?",
+      "response": "",
+      "expected_answers": [
+        "3",
+        "3",
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "d4547161-dd97-4164-93a1-144986d94c51",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards difference is there between Kris Brown's longest and shortest field goals?",
+      "response": "",
+      "expected_answers": [
+        "29",
+        "29",
+        "29",
+        "29"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "0aa153e9-057a-4347-acb7-8114cb1d68e8",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards longer was the 80-yard punt than the touchdown pass from Russell to Johnnie Lee Higgins?",
+      "response": "",
+      "expected_answers": [
+        "51",
+        "51",
+        "51",
+        "51"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "142b8af7-b9b0-446b-9cb6-a6940b80461f",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many touchdowns were scored in the game?",
+      "response": "",
+      "expected_answers": [
+        "4",
+        "4"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "4fbb0c95-06a8-4205-9edb-156a22eecaa7",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many of the touchdowns were passing touchdowns?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "0a92ef8a-1780-4379-8ab8-6f2939fce562",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards was the longest passing touchdown?",
+      "response": "",
+      "expected_answers": [
+        "29",
+        "29"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "43810a23-d66e-49bb-816b-16f5a331fbb0",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards longer was the longest passing touchdown than the shortest?",
+      "response": "",
+      "expected_answers": [
+        "9",
+        "9"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "084814c7-cc64-40a6-a308-4de211d531b4",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many field goals were scored in the game?",
+      "response": "",
+      "expected_answers": [
+        "5",
+        "5"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "17e35029-a5d0-44d3-844e-edd0759d5797",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards was the longest field goal in the game?",
+      "response": "",
+      "expected_answers": [
+        "53",
+        "53"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "fe7754d3-322e-41b2-b1b7-a9bc0cbca9a2",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards was the shortest field goal in the game?",
+      "response": "",
+      "expected_answers": [
+        "24",
+        "24"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "8b442d27-241b-4fd9-87d4-1e5bee19cb2e",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many yards longer was the longest field goal than the shortest?",
+      "response": "",
+      "expected_answers": [
+        "29",
+        "29"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "5b6a9699-f8a9-44f4-8912-0adfa49decc0",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "Which Bengals receiver scored two touchdowns?",
+      "response": "",
+      "expected_answers": [
+        "Houshmandzadeh",
+        "T. J. Houshmandzadeh"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "3e0f9c3d-2bd8-46b4-960d-42457b3e2802",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "Who caught the last touchdown of the game?",
+      "response": "",
+      "expected_answers": [
+        "Patrick Crayton",
+        "Patrick Crayton"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e2169f5d-b3b9-4931-8bfa-f99b9bc4348e",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many field goals did Shayne Graham kick in the first half?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "ddbb57c6-c1d5-4a25-93fd-9bea7cf5ff50",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "Which player had the longest rushing TD?",
+      "response": "",
+      "expected_answers": [
+        "Terrell Owens",
+        "Felix Jones"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "405ab3fb-9392-4a23-9589-8c9c5d9b9508",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "What was the longest TD pass of the game?",
+      "response": "",
+      "expected_answers": [
+        "57",
+        "57"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "66eed2c2-e1d9-4092-b21d-5dc2551a3118",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many second quarter field goals did the Bengals get?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "bdf5020a-ec3e-49fb-925c-4a967b6bb911",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "Which team scored the final TD of the game?",
+      "response": "",
+      "expected_answers": [
+        "Dallas",
+        "Dallas"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "08c59a80-401a-446b-966b-7a87818b20f4",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many touchdowns did T.J. Houshmandzadeh have?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "fec21716-8ca2-4565-9f88-d6e1cb74ce3a",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many touchdowns did Jones have?",
+      "response": "",
+      "expected_answers": [
+        "1",
+        "1"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "3c6c2eaf-12ea-40ab-963d-c029828634e4",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many passed did Houshmandzadeh catch?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e1e183dc-566f-4bcf-ab3e-c0df5b1a292b",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many touchdowns did Crayton have?",
+      "response": "",
+      "expected_answers": [
+        "1",
+        "1"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "eaf004f3-b98b-4456-ae5e-fade5744f222",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many wins did the Bengals have before this game?",
+      "response": "",
+      "expected_answers": [
+        "0",
+        "0",
+        "0"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "4d3c49da-0c96-466d-a20b-e83e68fda2de",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many points did Dallas score in the first quarter?",
+      "response": "",
+      "expected_answers": [
+        "17",
+        "10"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "f38d7fa8-910c-44fd-b6ee-026fa5d585fd",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many field goals did the Bengals have in the first half?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "ae75262b-f7d5-466f-a24b-e1ee32b20e02",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "Which team scored the least points?",
+      "response": "",
+      "expected_answers": [
+        "Bengals",
+        "Cowboys"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "375e6679-1834-4769-97cf-7cc04196e43c",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many field goals were there in the fourth quarter?",
+      "response": "",
+      "expected_answers": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "ee308676-57f9-4932-af29-c756bf7fe15d",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many touchdown passes did Tony Romo throw?",
+      "response": "",
+      "expected_answers": [
+        "3",
+        "3",
+        "3",
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "0f3ed05c-4173-4db4-97eb-e30f7342bcb5",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "Which player had the longest touchdown reception?",
+      "response": "",
+      "expected_answers": [
+        "Terrell Owens",
+        "Terrell Owens",
+        "Terrell Owens",
+        "Terrell Owens"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "37b4f978-9915-457d-be0a-691e2373fd89",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many times did the Cowboys score in the first half?",
+      "response": "",
+      "expected_answers": [
+        "3",
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "a9e66c93-3995-4aa7-b065-a3d679dad2ce",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Still searching for their first win, the Bengals flew to Texas Stadium for a Week 5 interconference duel with the Dallas Cowboys.  In the first quarter, Cincinnati trailed early as Cowboys kicker Nic",
+      "question": "How many first-half field goals were kicked by Shayne Graham?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "23c5518b-f815-48f9-9bd8-c2d6d2623385",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "What was the score at the end of the first quarter?",
+      "response": "",
+      "expected_answers": [
+        "7-7",
+        "7-7",
+        "7\u20137",
+        "7-7"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "48970b45-42fc-4e9d-85b8-44c7f1c5b1dc",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many points were scored in the first quarter?",
+      "response": "",
+      "expected_answers": [
+        "14",
+        "14",
+        "14"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "43700c9b-bf7a-4db3-968a-235107dc8430",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "how many yards did Hall intercept?",
+      "response": "",
+      "expected_answers": [
+        "9",
+        "9",
+        "9"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e9636c00-bafb-4bc4-a5a3-1be4104e6c8f",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "how many yards did Morris take off?",
+      "response": "",
+      "expected_answers": [
+        "30",
+        "30",
+        "30"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "4f50b238-b6e6-410e-a94c-ed0547137f01",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "how many yards did Akers lead with?",
+      "response": "",
+      "expected_answers": [
+        "32",
+        "32",
+        "32"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "22ca04bb-c2a0-44b1-89ca-bc675b725f1c",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "how many yards did Potter make?",
+      "response": "",
+      "expected_answers": [
+        "64",
+        "64",
+        "64"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "5fa158fe-15c0-4aed-a0f4-1b15f36c033f",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "how many yards did akers hit?",
+      "response": "",
+      "expected_answers": [
+        "28",
+        "28",
+        "60"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "90bdfffd-1344-4f84-92a9-ff8f43f9c9fd",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "how many yards did Robinson score?",
+      "response": "",
+      "expected_answers": [
+        "57",
+        "57",
+        "0"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "2231ec20-d9de-44f5-8923-82f9acedc78e",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "Which team did the Packers win in the prior weeks game?",
+      "response": "",
+      "expected_answers": [
+        "Redskins",
+        "Redskins"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "cbc985a5-d1d4-4098-87cf-87e6ff3515f3",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many total field goals were kicked in the game?",
+      "response": "",
+      "expected_answers": [
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "efabf8d7-b400-445d-9194-ad163c53b7fb",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "Which player scored the final touchdown of the game?",
+      "response": "",
+      "expected_answers": [
+        "John Potter",
+        "John Potter"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "41a51703-271e-42c9-abbc-cebb9ffa6038",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many total points were scored in the game?",
+      "response": "",
+      "expected_answers": [
+        "47",
+        "47"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "0cb83948-14bd-4d18-9c85-e91acad81d70",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many points did the Lions win by?",
+      "response": "",
+      "expected_answers": [
+        "7",
+        "7"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "82868589-492b-4ee2-a6b8-2de6cd57adda",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many points ahead was Detroit over Washington when Akers hit his 28-yard field goal?",
+      "response": "",
+      "expected_answers": [
+        "tied at 17",
+        "0"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "35ee11f4-a4dd-4cd6-8907-54b034077342",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "After Akers 32-yard field goal, how many points behind was Washington?",
+      "response": "",
+      "expected_answers": [
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "4993a0cf-744a-4581-b5a7-bd4c75d8f2b4",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many points were scored in the first half?",
+      "response": "",
+      "expected_answers": [
+        "31",
+        "31"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e0668d77-5c82-4dd6-8f73-30aa3fd54796",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many total points were scored?",
+      "response": "",
+      "expected_answers": [
+        "47",
+        "47"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "0a90795c-3f54-4f5a-9d1f-4e9b6bd744eb",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many points did Detroit win by?",
+      "response": "",
+      "expected_answers": [
+        "7",
+        "7"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "80cc359b-dd90-4e8e-9029-5aea3955bca8",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "How many touchdowns were scored in the first quarter?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "6fabe697-1ef3-4c86-9983-3045b754b3df",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "Which player scored more field goals, David Akers or John Potter ?",
+      "response": "",
+      "expected_answers": [
+        "David Akers",
+        "David Akers"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "d7a6006c-ee51-4881-a701-43bc73bb046c",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Coming off their road loss to Green Bay, Washington returned home for a duel at FedExField with the Detroit Lions, matching up with them for the first time since 2010, but the first time in DC since ",
+      "question": "Which player scored the first touchdown of the game?",
+      "response": "",
+      "expected_answers": [
+        "DeAngelo Hall",
+        "DeAngelo Hall"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "228c133a-45ef-4827-b55a-9f2e6ad99a86",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years did the city suffer wars against Almoravid and the Almohad Empires?",
+      "response": "",
+      "expected_answers": [
+        "127",
+        "127"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "1dd611e3-4757-4e79-b677-a26f2f1164ce",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years after the people of the North received their first fuero from Alfonso VII did king Fernando III give a new fuero to the city?",
+      "response": "",
+      "expected_answers": [
+        "86",
+        "86"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e7acfedb-5fd2-43dc-9d5a-08d9d956ff89",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years before Guadalajara received there first fuero was the city retaken by christian forces?",
+      "response": "",
+      "expected_answers": [
+        "48",
+        "48"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "c64b21c5-b4d0-4b10-ab4a-c7837bea8c01",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years after Guadalajara received there first fuero did the receive a new one?",
+      "response": "",
+      "expected_answers": [
+        "86",
+        "86"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "c09ad09b-2ad7-485d-a5cb-9473a5d7d7b5",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years passed after Guadalajara was retaken and the Battle of Las Navas de Tolosa?",
+      "response": "",
+      "expected_answers": [
+        "127",
+        "127"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "7cededcf-aa82-44cb-9612-006add18dd08",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years passed between the city receiving its first fuero and its new one from king Fernando III?",
+      "response": "",
+      "expected_answers": [
+        "86",
+        "86"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "2b8fef21-e463-40c0-a204-34dccb9251c9",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years passed from when Guadalajara was retaken by the Christian forces of Alfonso VI  until the Battle of Las Navas de Tolosa?",
+      "response": "",
+      "expected_answers": [
+        "127",
+        "127"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "874e3050-9118-4edd-b2d4-744105572c9d",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "Which occured first, the Battle of Las Navas de Tolosa or king Fernando III gave a new fuero to the city?",
+      "response": "",
+      "expected_answers": [
+        "Battle of Las Navas de Tolosa",
+        "Battle of Las Navas de Tolosa"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "342038f4-c59b-4cb1-a802-50f895471124",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many empires attacked Guadalajara?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "95b02abd-70ba-4aa6-b215-1a83d63cfd8b",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "When did the first battle against Guadalajara take place?",
+      "response": "",
+      "expected_answers": [
+        "1085"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "45f95b62-3ce8-473d-ac2e-2f54d875df34",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years after the last Battle IN Guadalajara did king Fernando III give a new fuero to the city?",
+      "response": "",
+      "expected_answers": [
+        "7",
+        "48",
+        "7",
+        "134",
+        "7",
+        "134",
+        "7"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "6dda0444-c311-4fb9-ae03-3aa3660e6e38",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years went by between the king giving a new fuero to the city and the first fuero?",
+      "response": "",
+      "expected_answers": [
+        "86",
+        "86",
+        "86",
+        "86",
+        "86",
+        "86",
+        "86"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "cebb3478-5456-4e66-82fa-031c875fea18",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until",
+      "question": "How many years did the city suffer wars against the Almoravid and Almohad Empires?",
+      "response": "",
+      "expected_answers": [
+        "127",
+        "127",
+        "127",
+        "127",
+        "127",
+        "127",
+        "127"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "951ba606-5145-4f2d-bddb-7f7f456c911f",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "From what distance did Robbie Gould make more than one field goal attempt?",
+      "response": "",
+      "expected_answers": [
+        "36-yard",
+        "36-yard",
+        "36-yard",
+        "36",
+        "36-yard"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "5fc870c4-6215-4e64-841f-28fa33a39a03",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many touchdown passes did Kitna throw from 20 or more yards out?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2",
+        "2",
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "bfe2eda8-d627-4248-962c-a230ada106db",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "Who threw the first touchdown pass of the game?",
+      "response": "",
+      "expected_answers": [
+        "QB Jon Kitna",
+        "Jon Kitna",
+        "Jon Kitna",
+        "Jon Kitna",
+        "QB Jon Kitna"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "54db511c-f83d-43ef-8b54-dc43db2909fd",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many field goals did Robbie Gould make in the 4th quarter?",
+      "response": "",
+      "expected_answers": [
+        "3",
+        "3",
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "27904f61-76f3-4157-9ff6-6176894ed9b8",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "Who threw the shortest touchdown pass of the game?",
+      "response": "",
+      "expected_answers": [
+        "Kitna",
+        "Kitna"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "3ffad00b-cdcb-40b2-b2c5-fe459d716884",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many yards of touchdown passes did Jon Kitna throw?",
+      "response": "",
+      "expected_answers": [
+        "45",
+        "22"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "027ac1ea-4f41-447e-bc7b-0d5eb892d8e6",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many more touchdown passes did Jon Kitna throw compared to everyone else?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e2970301-6182-40db-b2fe-cfe60b1bc388",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many touchdown passes were over 19 yards?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "2512bb1d-419b-452f-a1d3-039e3e8f32a3",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many touchdown passes did Roy Williams catch?",
+      "response": "",
+      "expected_answers": [
+        "1",
+        "1"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "c6bce289-1649-47cf-93df-29ebd80d41ed",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many field goals were over 30 yards?",
+      "response": "",
+      "expected_answers": [
+        "4",
+        "4"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "6f1888c9-e249-4b44-ab85-78a309a36880",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many yards of field goals did Gould kick?",
+      "response": "",
+      "expected_answers": [
+        "4",
+        "155"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "b307c078-0df3-4823-a6e9-fa8cf912063d",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Trying to snap a six-game losing skid, the Lions returned home for an NFC North rematch the-now 2-time NFC North champion Chicago Bears.  In the first quarter, the Bears struck first with kicker Robb",
+      "question": "How many more yards was Kitnas 20 yards touchdown pass compared  to Adrian Petersons touchdown run?",
+      "response": "",
+      "expected_answers": [
+        "18",
+        "18"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "7384b754-61d1-414d-8fa1-1b76ae55e411",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Which town was a popular destination for the Korean immigrants?",
+      "response": "",
+      "expected_answers": [
+        "Motul",
+        "Motul, Yucatan"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "9ea6e8ae-b36a-4b2e-9fee-5114fe3a4093",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "What did the latest immigrants do to rememeber past immigrants?",
+      "response": "",
+      "expected_answers": [
+        "started the Museo",
+        "a museum"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "914e72c2-22fe-43f1-8fec-a05ac470ac4d",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "How many years did the immigrants have to work as indentured laborers?",
+      "response": "",
+      "expected_answers": [
+        "4",
+        "4"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "b05a1937-c080-41e4-81a4-d2b0b2087965",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "How many more Korean immigrant men were there that departed from the port of Chemulpo compared to women and children?",
+      "response": "",
+      "expected_answers": [
+        "571",
+        "571"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "2b959aed-f25f-4b71-88e4-7bbcb999fd49",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "How many Korean immigrants were more men than woman and children?",
+      "response": "",
+      "expected_answers": [
+        "571",
+        "571"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "5efb0d21-0dd9-4a2f-a2ee-ae92277df808",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Which port did the Korean immigrants leave first Chemulpo or Veracruz?",
+      "response": "",
+      "expected_answers": [
+        "Chemulpo"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "602e3b17-9b42-4fe4-968c-2c11fc26807e",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Which port did the Korean immigrants leave later Chemulpo or Veracruz?",
+      "response": "",
+      "expected_answers": [
+        "Veracruz"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "f6fc8e67-5aa2-4a04-b65e-05a154bcc1ae",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Were there more men or women and children who departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico?",
+      "response": "",
+      "expected_answers": [
+        "men",
+        "men"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "a20c5d22-4168-420b-8b4e-d634cdb3b468",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "How many more men were there than women and children who departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico?",
+      "response": "",
+      "expected_answers": [
+        "571",
+        "571"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "51458071-040a-4d33-b561-bcdecfd45e12",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "How many more Korean immigrants in 1905 that departed from Chemulpo were men than women or children?",
+      "response": "",
+      "expected_answers": [
+        "571",
+        "571",
+        "571",
+        "571"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "d10f1f1a-e244-4dd8-9c5d-cbf86b78f8a5",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Were there more men or women and children immigrants present?",
+      "response": "",
+      "expected_answers": [
+        "men",
+        "men",
+        "men",
+        "men"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "5d59a885-c79f-4472-b1e7-762e037fd35c",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "How many more men were there compared to both women and children?",
+      "response": "",
+      "expected_answers": [
+        "571",
+        "571",
+        "571",
+        "571"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "db5e9e76-c8a1-4eb4-8314-f3c1bfda9f19",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Where did the immigrants arrive first, Salina Cruz or Coatzacoalcos?",
+      "response": "",
+      "expected_answers": [
+        "Salina Cruz",
+        "Salina Cruz",
+        "Salina Cruz",
+        "Salina Cruz"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "e48ea0f6-ca09-4448-aad5-1d5ff4035744",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took",
+      "question": "Which population groups consisted of less members than the male population?",
+      "response": "",
+      "expected_answers": [
+        "women and children"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "b86338ad-b2dd-4e3d-93f5-51fcffc1b8ab",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": "The institutional framework of Navarre was preserved following the 1512 invasion. Once Ferdinand II of Aragon died in January, the Parliament of Navarre gathered in Pamplona, urging Charles V  to atte",
+      "question": "Who represented the Emperor at Parliament?",
+      "response": "",
+      "expected_answers": [
+        "Duke of Najera",
+        "Duke of Najera",
+        "Duke of Najera",
+        "Duke of Najera"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    }
+  ]
+}

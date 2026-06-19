@@ -1,0 +1,28 @@
+{
+  "benchmark": "DROP",
+  "model": "deepseek-ai/DeepSeek-V3.2-TEE",
+  "n_problems": 10,
+  "timestamp": "2026-05-27T18:38:36.965234+00:00",
+  "direct": {
+    "benchmark_name": "DROP",
+    "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+    "using_conjecture": false,
+    "total_tasks": 10,
+    "correct_answers": 9,
+    "accuracy": 90.0,
+    "average_time": 2.19946665763855,
+    "total_time": 21.994666576385498
+  },
+  "conjecture": {
+    "benchmark_name": "DROP",
+    "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+    "using_conjecture": true,
+    "total_tasks": 10,
+    "correct_answers": 8,
+    "accuracy": 80.0,
+    "average_time": 27.384973430633544,
+    "total_time": 273.84973430633545
+  },
+  "improvement_pp": -10.0,
+  "conclusion": "CHALLENGE: Decomposition hurts DROP accuracy"
+}

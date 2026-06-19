@@ -35,10 +35,14 @@ from openai import OpenAI
 # Configuration
 MODEL = "MiniMax-M2.7"
 BASE_URL = "https://api.minimax.io/v1"
-API_KEY = "sk-cp-bhJs4p1RP_THEJodFqXSCbmSUmxEDPPeWWAhnDztOTw7sX-eJjBbMnp2feo18Y60vHoXTneNOJDmkX_R7H2Q0Dlnp3phlY7MEEWMEdJh2TxDZMFxy4b0lzA"
+import os
+import subprocess as _sp
+API_KEY = os.environ.get("MINIMAX_API_KEY") or _sp.run(
+    ["pass", "show", "minimax"], capture_output=True, text=True
+).stdout.strip()
 N_PROBLEMS = 30
 
-OUTPUT_DIR = Path("/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04")
+OUTPUT_DIR = Path("./research/rnd-sprint-2026-05-04")
 
 
 @dataclass

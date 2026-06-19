@@ -16,7 +16,7 @@ from typing import List, Tuple
 # Constants
 NUM_TEXTS = 10000
 NUM_SEARCHES = 1000
-OUTPUT_PATH = "/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04/E6-results.json"
+OUTPUT_PATH = "./research/rnd-sprint-2026-05-04/E6-results.json"
 
 # Seed for reproducibility
 random.seed(42)

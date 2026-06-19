@@ -502,7 +502,7 @@ if __name__ == "__main__":
     results = run_fact_check_experiment()
     
     # Save results
-    output_path = "/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04/E1-results.json"
+    output_path = "./research/rnd-sprint-2026-05-04/E1-results.json"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w") as f:
         json.dump(results, f, indent=2)

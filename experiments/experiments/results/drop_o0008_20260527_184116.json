@@ -1,0 +1,62 @@
+{
+  "benchmark": "DROP",
+  "model": "MiniMax-M2.7",
+  "n_problems": 1,
+  "timestamp": "2026-05-27T18:41:16.059103+00:00",
+  "direct": {
+    "benchmark_name": "DROP",
+    "model_name": "MiniMax-M2.7",
+    "using_conjecture": false,
+    "total_tasks": 1,
+    "correct_answers": 1,
+    "accuracy": 100.0,
+    "average_time": 1.5593020811211318,
+    "total_time": 1.5593020811211318
+  },
+  "conjecture": {
+    "benchmark_name": "DROP",
+    "model_name": "MiniMax-M2.7",
+    "using_conjecture": true,
+    "total_tasks": 1,
+    "correct_answers": 1,
+    "accuracy": 100.0,
+    "average_time": 1.8259596538264304,
+    "total_time": 1.8259596538264304
+  },
+  "improvement_pp": 0.0,
+  "conclusion": "NEUTRAL: No significant difference on DROP",
+  "individual_results": [
+    {
+      "task_id": "f37e81fa-ef7b-4583-b671-762fc433faa9",
+      "model_name": "MiniMax-M2.7",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "Who scored the first touchdown of the game?",
+      "response": "<think>\nThe question asks who scored the first touchdown of the game.\n\nLooking at the passage:\n- \"Oakland would get the early lead in the first quarter as quarterback JaMarcus Russell completed a 20-yard touchdown pass to rookie wide receiver Chaz Schilens.\"\n\nThis is the first touchdown mentioned in the passage. It was a pass from JaMarcus Russell to Chaz Schilens.\n\nSo the answer is Chaz Schilens.\n\n</think>\n\nChaz Schilens",
+      "expected_answers": [
+        "Chaz Schilens",
+        "JaMarcus Russell"
+      ],
+      "correct": true,
+      "score": 1.0,
+      "execution_time": 1.5593020811211318,
+      "error": null
+    },
+    {
+      "task_id": "f37e81fa-ef7b-4583-b671-762fc433faa9",
+      "model_name": "MiniMax-M2.7",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "Who scored the first touchdown of the game?",
+      "response": "<think>\nThe user is asking who scored the first touchdown of the game based on the passage provided.\n\nLet me identify the relevant information:\n\n1. The passage mentions that \"Oakland would get the early lead in the first quarter as quarterback JaMarcus Russell completed a 20-yard touchdown pass to rookie wide receiver Chaz Schilens.\"\n\nThis is the first touchdown scored in the game. The touchdown was a 20-yard pass from JaMarcus Russell to Chaz Schilens.\n\nSo the answer is Chaz Schilens.\n</think>\n",
+      "expected_answers": [
+        "Chaz Schilens",
+        "JaMarcus Russell"
+      ],
+      "correct": true,
+      "score": 1.0,
+      "execution_time": 1.8259596538264304,
+      "error": null
+    }
+  ]
+}
