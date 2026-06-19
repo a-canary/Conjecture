@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 # Pre-commit hook to detect potential API keys and sensitive data
 # Install: cp pre-commit-hook.sh .git/hooks/pre-commit
 

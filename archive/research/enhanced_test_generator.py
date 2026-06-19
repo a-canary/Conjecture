@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Enhanced Test Case Generator for Conjecture Hypothesis Testing
 Generates comprehensive test cases for all hypothesis categories

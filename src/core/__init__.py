@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Conjecture: Core package for Unified Claim Architecture
 Provides unified claim models and relationship management

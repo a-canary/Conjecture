@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 4-Model Comparison Research Script
 Compares model performance when accessed directly vs through Conjecture provider

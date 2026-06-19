@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Conjecture: Unified configuration package
 Consolidated configuration system with single source of truth

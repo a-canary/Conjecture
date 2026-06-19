@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Backend registry and management for Conjecture CLI
 Provides pluggable backend system for different LLM providers

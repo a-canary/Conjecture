@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 # Comprehensive coverage reporting script for Conjecture project
 
 set -e  # Exit on any error

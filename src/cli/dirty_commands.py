@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Dirty Flag CLI Commands
 Command-line interface for dirty flag system management

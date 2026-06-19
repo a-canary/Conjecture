@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Additional File Tools for Conjecture
 Provides file editing and searching capabilities beyond basic read/write operations

@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Smart Claim Selector (Phase 3: Smart Claim Selection)
 

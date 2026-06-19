@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """Tests for D-0004: Tag Lifecycle Management.
 
 Tag Lifecycle:

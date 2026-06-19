@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Unicode compatibility utilities for Windows console support.
 Ensures proper UTF-8 encoding across different platforms and terminals.

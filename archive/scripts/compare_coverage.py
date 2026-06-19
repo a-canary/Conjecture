@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Coverage comparison tool for Conjecture project.
 Compares coverage between different runs and shows progress/regression.

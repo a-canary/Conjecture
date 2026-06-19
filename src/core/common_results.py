@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Common result classes for processing operations
 Consolidated ProcessingResult to reduce duplication across modules

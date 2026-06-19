@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Test suite for claim_operations.py - Pure functional claim operations
 Target: 100% coverage of src/core/claim_operations.py

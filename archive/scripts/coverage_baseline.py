@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Coverage baseline tracking system for Conjecture project.
 Establishes and tracks coverage baselines over time.

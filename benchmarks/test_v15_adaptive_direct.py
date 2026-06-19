@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Test v15_adaptive prompt variant using direct API calls with sample questions.
 Avoids HuggingFace dataset download issues.

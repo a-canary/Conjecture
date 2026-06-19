@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 =============================================================================
 GENERATED CODE - SC-FEAT-001 - TEST BRANCH

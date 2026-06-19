@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Modular Benchmark Framework for Conjecture
 Supports multiple benchmark types: AIME25, GPQA, LiveCodeBench, etc.

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Real Research with Chutes GLM and GPT Models
 Uses actual GLM and GPT models from Chutes API

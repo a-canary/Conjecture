@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Unit tests for src/core/common_results.py module
 Tests ProcessingResult and BatchResult classes without mocking

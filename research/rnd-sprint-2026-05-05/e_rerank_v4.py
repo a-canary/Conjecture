@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 E-RERANK v4: Cross-encoder reranking, no BM25 (too slow).
 Focus: Pure CE reranking + bi+CE weighted combo on larger candidate pool.

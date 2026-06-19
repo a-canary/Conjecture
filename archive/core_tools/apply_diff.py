@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Apply Diff Tool for Conjecture
 Provides secure patch/diff application capabilities

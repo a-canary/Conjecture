@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Unified Configuration System for Conjecture
 Consolidates all configuration functionality into a single, clean system

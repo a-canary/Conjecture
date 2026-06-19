@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Simple SWE-Bench Baseline Test
 Minimal test without emoji or complex dependencies

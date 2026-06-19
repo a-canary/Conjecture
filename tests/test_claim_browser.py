@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Tests for Claim Browser TUI (UX-0007 Phase 3)
 

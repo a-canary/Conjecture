@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 MMLU-Pro Benchmark: Compare 7 models on 100 questions
 With retry logic for 429 errors

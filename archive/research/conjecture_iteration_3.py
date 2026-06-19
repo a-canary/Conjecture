@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Conjecture Iteration 3: Proper JSON Tool Calls Implementation
 Tests original Conjecture specification with JSON tool calls format

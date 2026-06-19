@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Test impact of claim retrieval limit on accuracy
 Compares limit=10 (current) vs limit=50 (proposed)

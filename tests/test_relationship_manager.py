@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Comprehensive unit tests for relationship_manager.py
 Tests all pure functions for claim relationship management without mocking

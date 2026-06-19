@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Simplified LLM Manager for Conjecture
 Uses only OpenAI-compatible providers for maximum compatibility and simplicity

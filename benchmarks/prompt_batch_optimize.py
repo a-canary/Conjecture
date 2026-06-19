@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Batch Prompt Optimization for O-0008
 Tests 16 prompt variations across all benchmarks to find best performers.

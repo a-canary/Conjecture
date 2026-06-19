@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 E-RERANK BM25: 2-stage retrieval with bi-encoder + TF-IDF via RRF.
 No cross-encoder available, so we combine bi-encoder with a

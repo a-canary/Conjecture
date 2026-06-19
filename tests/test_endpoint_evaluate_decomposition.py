@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Tests for Step 18.7: Input decomposition wired into ConjectureEndpoint.evaluate().
 

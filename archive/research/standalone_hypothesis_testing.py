@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Standalone Hypothesis Testing Framework for Conjecture
 Simplified version that doesn't depend on complex src imports

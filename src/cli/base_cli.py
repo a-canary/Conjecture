@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Base CLI module for Conjecture
 Provides abstract base class and common exceptions for CLI implementations

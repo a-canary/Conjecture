@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Pydantic-based configuration loader for Conjecture
 Handles workspace → user → default config hierarchy with Pydantic settings

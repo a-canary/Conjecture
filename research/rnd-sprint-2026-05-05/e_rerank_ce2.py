@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """E-RERANK CE-focused: sweep high CE weights + CE-only to find best."""
 import json, random, numpy as np
 from sentence_transformers import SentenceTransformer, CrossEncoder

@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Real LLM Model Integration for Benchmarks - FIXED VERSION
 Uses Conjecture's actual infrastructure with specified models

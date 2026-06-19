@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Data Flow Demonstration - Pure 3-Part Architecture Flow
 Shows the clean separation: Claims -> LLM -> Tools -> Claims

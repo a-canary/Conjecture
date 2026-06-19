@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Comprehensive tests for the enhanced prompt system
 Tests all 7 proven enhancements and integrated functionality

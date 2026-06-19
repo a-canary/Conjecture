@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Local backend for Conjecture CLI
 Handles local LLM providers like Ollama and LM Studio

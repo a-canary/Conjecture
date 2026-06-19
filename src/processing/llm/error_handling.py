@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Enhanced Error Handling and Retry Logic for LLM Processors
 Provides robust error handling with exponential backoff and circuit breaker pattern

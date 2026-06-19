@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Comprehensive Scientific Research with Working Models
 Uses the models we know work from previous tests

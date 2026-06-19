@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 E-RERANK: Cross-encoder reranking on bi-encoder top-20 candidates.
 Uses ms-marco-MiniLM-L6-v2 cross-encoder to re-rank bi-encoder retrievals.

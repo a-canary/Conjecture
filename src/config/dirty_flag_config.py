@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Dirty Flag Configuration Management
 Handles configuration loading and validation for dirty flag system

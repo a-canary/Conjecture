@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Unit tests for Claim model validation and creation
 Tests core Pydantic model functionality without mocking

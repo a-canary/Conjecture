@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Web Search Tool for Conjecture
 Provides simple DuckDuckGo search capabilities with basic validation

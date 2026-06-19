@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Diagnose True Conjecture Failure Patterns
 Analyze why True Conjecture has 50% failure rate

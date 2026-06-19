@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Conjecture Framework Integration for ARC-AGI-2 Benchmark
 

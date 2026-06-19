@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Claim Management Tools for Conjecture
 Provides tools for creating, managing, and querying claims and their relationships

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 True Conjecture Implementation Research
 Tests the actual Conjecture claims-based approach with proper claim format and processing

@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Common data classes for LLM processing
 Consolidated configuration classes to reduce duplication

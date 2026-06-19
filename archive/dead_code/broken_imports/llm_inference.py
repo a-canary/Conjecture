@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Pure LLM Inference Layer - The Bridge between Claims and Tools
 Pure functions for LLM reasoning, context processing, and decision making.

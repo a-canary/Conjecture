@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Tests for Steps 19.3-19.5: evaluate() uses tool-calling LLM mode.
 

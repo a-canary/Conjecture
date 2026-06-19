@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Dirty Flag System for Conjecture Claims
 Handles automatic detection and cascading of dirty flags for claim re-evaluation

@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 Read Files Tool for Conjecture
 Provides secure file reading capabilities with input validation

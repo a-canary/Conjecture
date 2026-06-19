@@ -1,3 +1,5 @@
+# Copyright 2025 a-canary
+# SPDX-License-Identifier: Apache-2.0
 """
 LLM Evaluation Framework for Conjecture
 Implements 50-point rubric for systematic comparison of LLM integrations
