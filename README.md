@@ -34,7 +34,7 @@ python conjecture validate
 Conjecture uses hierarchical JSON configuration:
 
 1. **Workspace**: `.conjecture/config.json`
-2. **User**: `~/.conjecture/config.json`
+2. **User**: `$HOME/.conjecture/config.json`
 3. **Default**: `src/config/default_config.json`
 
 Claude Agent SDK handles Claude authentication. Custom OpenAI/Anthropic-compatible endpoints configured via JSON.
