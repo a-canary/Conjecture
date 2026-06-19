@@ -1,0 +1,214 @@
+{
+  "benchmark": "DROP",
+  "model": "deepseek-ai/DeepSeek-V3.2-TEE",
+  "n_problems": 5,
+  "timestamp": "2026-05-27T18:08:20.101269+00:00",
+  "direct": {
+    "benchmark_name": "DROP",
+    "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+    "using_conjecture": false,
+    "total_tasks": 5,
+    "correct_answers": 4,
+    "accuracy": 80.0,
+    "average_time": 3.097936618234962,
+    "total_time": 15.489683091174811
+  },
+  "conjecture": {
+    "benchmark_name": "DROP",
+    "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+    "using_conjecture": true,
+    "total_tasks": 5,
+    "correct_answers": 1,
+    "accuracy": 20.0,
+    "average_time": 10.197060775617137,
+    "total_time": 50.98530387808569
+  },
+  "improvement_pp": -60.0,
+  "conclusion": "CHALLENGE: Decomposition hurts DROP accuracy",
+  "individual_results": [
+    {
+      "task_id": "f37e81fa-ef7b-4583-b671-762fc433faa9",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "Who scored the first touchdown of the game?",
+      "response": "Chaz Schilens",
+      "expected_answers": [
+        "Chaz Schilens",
+        "JaMarcus Russell"
+      ],
+      "correct": true,
+      "score": 1.0,
+      "execution_time": 2.924886887194589,
+      "error": null
+    },
+    {
+      "task_id": "ac6ba235-3024-4f63-a6ab-730a14def4cb",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many field goals did Kris Brown kick?",
+      "response": "3",
+      "expected_answers": [
+        "2",
+        "3",
+        "3",
+        "3",
+        "3"
+      ],
+      "correct": true,
+      "score": 1.0,
+      "execution_time": 3.0541971609927714,
+      "error": null
+    },
+    {
+      "task_id": "2c7c93f6-69ed-47cc-a5af-94a00c185a26",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "Which team won the game?",
+      "response": "The Raiders",
+      "expected_answers": [
+        "Raiders",
+        "Raiders",
+        "Raiders",
+        "the Raiders",
+        "the Raiders"
+      ],
+      "correct": true,
+      "score": 1.0,
+      "execution_time": 3.194836124079302,
+      "error": null
+    },
+    {
+      "task_id": "7dfd2b64-f39e-4bb4-aeb0-1900adda6018",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many field goals did both teams kick in the first half?",
+      "response": "4",
+      "expected_answers": [
+        "2",
+        "2",
+        "2",
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 2.8267098718788475,
+      "error": null
+    },
+    {
+      "task_id": "121a8f57-7752-4373-a9ba-748b2c577cd2",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": false,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many more yards was Kris Browns's first field goal over his second?",
+      "response": "29 yards",
+      "expected_answers": [
+        "29",
+        "20",
+        "29",
+        "29",
+        "29"
+      ],
+      "correct": true,
+      "score": 1.0,
+      "execution_time": 3.4890530470293015,
+      "error": null
+    },
+    {
+      "task_id": "f37e81fa-ef7b-4583-b671-762fc433faa9",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "Who scored the first touchdown of the game?",
+      "response": "Let\u2019s break this down step by step.  \n\n1. **What the question is asking**  \n   It asks for the player who scored the *first touchdown* of the game.  \n\n2. **Locate relevant information**  \n   The passage describes the game in chronological order:  \n   - First quarter: \u201cOakland would get the early lead \u2026 as quarterback JaMarcus Russell completed a 20-yard touchdown pass to rookie wide receiver Chaz Schilens.\u201d  \n   - Later, Texans scored a touchdown with Vonta Leach\u2019s 1-yard run.  \n   - Other touch",
+      "expected_answers": [
+        "Chaz Schilens",
+        "JaMarcus Russell"
+      ],
+      "correct": true,
+      "score": 1.0,
+      "execution_time": 50.98530387808569,
+      "error": null
+    },
+    {
+      "task_id": "ac6ba235-3024-4f63-a6ab-730a14def4cb",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many field goals did Kris Brown kick?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "3",
+        "3",
+        "3",
+        "3"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "2c7c93f6-69ed-47cc-a5af-94a00c185a26",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "Which team won the game?",
+      "response": "",
+      "expected_answers": [
+        "Raiders",
+        "Raiders",
+        "Raiders",
+        "the Raiders",
+        "the Raiders"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "7dfd2b64-f39e-4bb4-aeb0-1900adda6018",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many field goals did both teams kick in the first half?",
+      "response": "",
+      "expected_answers": [
+        "2",
+        "2",
+        "2",
+        "2",
+        "2"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    },
+    {
+      "task_id": "121a8f57-7752-4373-a9ba-748b2c577cd2",
+      "model_name": "deepseek-ai/DeepSeek-V3.2-TEE",
+      "using_conjecture": true,
+      "passage": " Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcu",
+      "question": "How many more yards was Kris Browns's first field goal over his second?",
+      "response": "",
+      "expected_answers": [
+        "29",
+        "20",
+        "29",
+        "29",
+        "29"
+      ],
+      "correct": false,
+      "score": 0.0,
+      "execution_time": 0.0,
+      "error": null
+    }
+  ]
+}

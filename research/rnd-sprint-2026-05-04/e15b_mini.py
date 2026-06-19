@@ -5,9 +5,9 @@
 
 import json, os, sys, subprocess, time, statistics
 
-sys.path.insert(0, "/home/aaron/projects/conjecture/src")
+sys.path.insert(0, "./src")
 
-OUTPUT_DIR = "/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04"
+OUTPUT_DIR = "./research/rnd-sprint-2026-05-04"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # MiniMax API

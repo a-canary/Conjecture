@@ -50,9 +50,9 @@ Trigger conditions include new claim creation, claim state transitions, sub-clai
 
 ## R&D 6: Unified Memory Architecture
 
-Currently, three separate systems handle memory. MEMORY.md serves as operational flash memory (API keys, workarounds, invariants) at ~/.hermes/memories/. The memory-wiki at /home/aaron/vault/ke/ (symlinked) serves as durable knowledge base (decisions, facts, infra, research) at approximately 2MB. The vault at ~/.hermes/vault/ is entirely empty—vestigial. Additionally, USER.md and SOUL.md provide user profile and static agent identity respectively.
+Currently, three separate systems handle memory. MEMORY.md serves as operational flash memory (API keys, workarounds, invariants) at ~/.hermes/memories/. The memory-wiki at ~/vault/ke/ (symlinked) serves as durable knowledge base (decisions, facts, infra, research) at approximately 2MB. The vault at ~/.hermes/vault/ is entirely empty—vestigial. Additionally, USER.md and SOUL.md provide user profile and static agent identity respectively.
 
-A critical architectural finding reveals that ~/.hermes/vault/ is entirely empty. The "vault" is actually memory-wiki at /home/aaron/vault/ke/, making the vault symlink redundant.
+A critical architectural finding reveals that ~/.hermes/vault/ is entirely empty. The "vault" is actually memory-wiki at ~/vault/ke/, making the vault symlink redundant.
 
 The proposed 3-tier architecture separates operational flash memory (5KB cap, API keys, workarounds, session handoffs, distill after 6 months) from durable knowledge (principles, theories, architectural decisions, relationships, failure modes, research findings, no-ledge Qdrant-backed) from the claim graph (conjecture SQLite, session-scoped claims with provenance, evidence chains, confidence scores, cross-session persistence).
 

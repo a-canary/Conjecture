@@ -3,12 +3,15 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test MiniMax API connectivity"""
 import os
+import subprocess
 import sys
 
 # Add project to path
-sys.path.insert(0, '/home/aaron/projects/conjecture')
+sys.path.insert(0, '.')
 
-os.environ['MINIMAX_API_KEY'] = 'sk-cp-bhJs4p1RP_THEJodFqXSCbmSUmxEDPPeWWAhnDztOTw7sX-eJjBbMnp2feo18Y60vHoXTneNOJDmkX_R7H2Q0Dlnp3phlY7MEEWMEdJh2TxDZMFxy4b0lzA'
+os.environ['MINIMAX_API_KEY'] = os.environ.get('MINIMAX_API_KEY') or subprocess.run(
+    ['pass', 'show', 'minimax'], capture_output=True, text=True
+).stdout.strip()
 
 from openai import OpenAI
 

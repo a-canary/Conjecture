@@ -2,12 +2,12 @@
   "total_files_scanned": 126,
   "unique_files": 117,
   "duplicates_removed": 9,
-  "canonical_location": "/home/aaron/vault/ke/research/evidence-cache/",
+  "canonical_location": "~/vault/ke/research/evidence-cache/",
   "E8_pass": true,
   "details": {
     "locations_scanned": [
-      "/home/aaron/vault/ke/research/evidence-cache/",
-      "/home/aaron/archive/kb-20260424/research/evidence-cache/"
+      "~/vault/ke/research/evidence-cache/",
+      "~/archive/kb-20260424/research/evidence-cache/"
     ],
     "files_in_canonical": 116,
     "files_in_archive": 10,

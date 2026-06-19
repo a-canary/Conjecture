@@ -17,7 +17,7 @@ from sentence_transformers import SentenceTransformer, CrossEncoder
 NUM_TEXTS = 1000   # will be overridden by actual corpus size
 NUM_QUERIES = 500
 TOP_K = 20
-OUTPUT_PATH = "/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-05/E-RERANK.json"
+OUTPUT_PATH = "./research/rnd-sprint-2026-05-05/E-RERANK.json"
 
 random.seed(42)
 np.random.seed(42)

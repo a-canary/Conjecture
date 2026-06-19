@@ -6,8 +6,8 @@
 Scanned all evidence cache locations and deduplicated files by content hash (SHA256).
 
 ### Locations Scanned
-- `/home/aaron/vault/ke/research/evidence-cache/` (canonical location)
-- `/home/aaron/archive/kb-20260424/research/evidence-cache/`
+- `~/vault/ke/research/evidence-cache/` (canonical location)
+- `~/archive/kb-20260424/research/evidence-cache/`
 
 ### Results
 | Metric | Value |
@@ -15,7 +15,7 @@ Scanned all evidence cache locations and deduplicated files by content hash (SHA
 | Total Files Scanned | 126 |
 | Unique Files (by hash) | 117 |
 | Duplicates Found | 9 |
-| Canonical Location | `/home/aaron/vault/ke/research/evidence-cache/` |
+| Canonical Location | `~/vault/ke/research/evidence-cache/` |
 
 ### Duplicate Files Identified
 9 duplicate files were found across locations (each hash appeared exactly 2 times):
@@ -35,7 +35,7 @@ Scanned all evidence cache locations and deduplicated files by content hash (SHA
 - **E8_pass: true**
 
 ### Output Files
-- `/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04/E8-results.json`
+- `./research/rnd-sprint-2026-05-04/E8-results.json`
 
 ---
 
@@ -73,7 +73,7 @@ Replicate the core thesis — decomposition improves accuracy by >10 percentage 
 - **E9_pass: true**
 
 ### Output Files
-- `/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04/E9-results.json`
+- `./research/rnd-sprint-2026-05-04/E9-results.json`
 
 ---
 

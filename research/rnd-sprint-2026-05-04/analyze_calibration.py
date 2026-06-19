@@ -222,7 +222,7 @@ def build_test_hierarchy(rng: random.Random) -> Tuple[List[ClaimData], Dict[str,
 
 
 def main():
-    output_dir = "/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04"
+    output_dir = "./research/rnd-sprint-2026-05-04"
     os.makedirs(output_dir, exist_ok=True)
     
     print("Building test hierarchies with miscalibrated answers...")

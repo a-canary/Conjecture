@@ -256,7 +256,7 @@ def batch_calibrate(
 
 def load_benchmark_claims() -> List[Dict[str, Any]]:
     """Load claims from existing benchmark results."""
-    results_dir = "/home/aaron/projects/conjecture/experiments/results"
+    results_dir = "./experiments/results"
     
     all_claims = []
     
@@ -542,7 +542,7 @@ if __name__ == "__main__":
     results = run_confidence_calibration_experiment()
     
     # Save results
-    output_path = "/home/aaron/projects/conjecture/research/rnd-sprint-2026-05-04/E2-results.json"
+    output_path = "./research/rnd-sprint-2026-05-04/E2-results.json"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w") as f:
         json.dump(results, f, indent=2)
