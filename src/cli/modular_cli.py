@@ -22,13 +22,11 @@ from pathlib import Path
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-# Initialize Unicode and TensorFlow support
+# Initialize Unicode support
 from .encoding_handler import setup_unicode_environment, get_safe_console
-from .tf_suppression import suppress_tensorflow_warnings, print_ml_environment_info
 
 # Setup environment
 setup_unicode_environment()
-suppress_tensorflow_warnings()
 
 # Get console instances with UTF-8 support
 from rich.console import Console
