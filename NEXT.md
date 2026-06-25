@@ -4,6 +4,7 @@ Project is **feature-complete**. All 50+ CHOICES.md items implemented. 1042 test
 
 ## Resolved
 
+- **Hygiene: archive/ + .archive/ retired** — **✅ COMPLETE** — committed (this PR). Moved both subtrees to `~/trash/1782403344_conjecture-archive*/` (377 + 4 files, ~102KB deletions). `docs/index.md` cleaned, `pytest.ini` dead config removed, 1075 tests still pass.
 - **A-0016 STATISTICAL_REALITY_CHECK.md** — **✅ COMPLETE** — committed 461f227. Restored from archive, resolving broken CHOICES.md reference.
 - **O-0009 Task-type routing** — **✅ COMPLETE** — committed 1c3fc23. QueryType enum + classify_query() (90%+ accuracy on 21-query held-out set, 27 tests), integrated into evaluate() with RECALL fast-path (no decomposition), query_type surfaced in response.
 - **R&D-FACT-CHECK: fact_checking_pipeline tests** — **✅ COMPLETE** — committed 12426fc. Added test suite for R&D artifact `src/core/fact_checking_pipeline.py` from 2026-05-04 sprint. 24 tests covering SelfConsistencyChecker, VectorSearchVerifier, CascadeInvalidator, FactCheckingPipeline. Fix: VectorSearchVerifier now returns SKIPPED when vector_store is None. Full suite: 1075 passing.

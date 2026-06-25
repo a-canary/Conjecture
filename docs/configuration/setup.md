@@ -293,6 +293,5 @@ print(f"Configured with {config['provider']}")
 1. Run the demo: `python demo_setup_wizard.py`
 2. Check the migration guide: `SETUP_WIZARD_MIGRATION_GUIDE.md`
 3. Run tests: `python test_setup_wizard_simple.py`
-4. Check archived system for advanced features: `archive/discovery/`
 
 The Setup Wizard makes Conjecture configuration painless while preserving all the essential functionality! 🎉
