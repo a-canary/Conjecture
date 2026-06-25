@@ -756,184 +756,6 @@ This document provides a comprehensive evaluation of all files in the Conjecture
   - **Contribution**: Partial implementation of context-aware claim generation with incomplete XML optimization features.
   - **Dependencies**: Enhanced template manager, LLM bridge
 
-## archive/ Directory (Archived Documentation)
-
-### Critical Historical Documents (8-10)
-
-- **archive/documentation/XML_OPTIMIZATION_FINAL_RESULTS.md** - 🔵 9/10 - XML optimization breakthrough
-  - **Contribution**: Exceptional success: 100% compliance achieved (exceeded 60% target), documenting fundamental advancement in Conjecture capabilities.
-  - **Dependencies**: References XML optimization implementation and testing
-
-- **archive/documentation/XML_OPTIMIZATION_FINAL_ANALYSIS.md** - 🔵 9/10 - XML optimization validation
-  - **Contribution**: Statistical validation of XML optimization with 100% compliance, providing rigorous validation of breakthrough results.
-  - **Dependencies**: References statistical testing and XML optimization results
-
-- **archive/documentation/END_TO_END_PIPELINE_EXPERIMENT_REPORT.md** - 🔵 9/10 - End-to-end validation
-  - **Contribution**: Fifth and final critical validation of Conjecture's core hypothesis with 49% improvement, providing conclusive evidence supporting Conjecture's core hypothesis.
-  - **Dependencies**: References end-to-end testing and statistical validation
-
-- **archive/documentation/PROJECT_IMPROVEMENT_PHASE_1_REPORT.md** - 🔵 9/10 - System improvements
-  - **Contribution**: Comprehensive success in security, performance, and stability improvements with measurable results and systematic issue resolution.
-  - **Dependencies**: References security audits and performance testing
-
-- **archive/documentation/IMPLEMENTATION_COMPLETE.md** - 🔵 8/10 - Quality metrics framework
-  - **Contribution**: Quality metrics framework for Direct vs Conjecture approaches with statistical validation and comprehensive assessment.
-  - **Dependencies**: References research framework and .env security integration
-
-- **archive/documentation/XML_OPTIMIZATION_IMPLEMENTATION_SUMMARY.md** - 🔵 8/10 - XML implementation guide
-  - **Contribution**: Technical implementation details of XML optimization with deployment-ready implementation details and testing guidance.
-  - **Dependencies**: References XML optimization algorithms and testing
-
-- **archive/documentation/XML_OPTIMIZATION_DEPLOYMENT_RECOMMENDATIONS.md** - 🔵 8/10 - XML deployment guide
-  - **Contribution**: Comprehensive deployment recommendations for XML optimization with structured approach for rollout and monitoring.
-  - **Dependencies**: References XML optimization implementation and testing
-
-- **archive/documentation/INFRASTRUCTURE_INTEGRATION_PLAN.md** - 🔵 8/10 - Integration planning
-  - **Contribution**: Comprehensive integration strategy for Experiments 4-6 with existing infrastructure and $268,800 investment with detailed architecture.
-  - **Dependencies**: References all three experiment designs and existing architecture
-
-- **archive/documentation/LONG_TERM_STRATEGIC_ROADMAP.md** - 🔵 8/10 - Strategic vision
-  - **Contribution**: 12-month strategic roadmap for market leadership by 2027 with $1,032,000 investment strategy and market positioning.
-  - **Dependencies**: References all experiment designs and market analysis
-
-- **archive/documentation/NEXT_ITERATION_EXPERIMENTS_COMPREHENSIVE_GUIDE.md** - 🔵 8/10 - Implementation guide
-  - **Contribution**: Complete implementation-ready documentation for Experiments 4-6 with detailed designs, resources, timelines, and execution instructions.
-  - **Dependencies**: References all experiment designs and strategic planning
-
-- **archive/documentation/IMPLEMENTATION_SUMMARY.md** - 🔵 7/10 - Research framework
-  - **Contribution**: Research framework implementation with security integration and research capabilities with security improvements and research methodologies.
-  - **Dependencies**: References .env security practices and research methodologies
-
-- **archive/documentation/ENHANCED_FRAMEWORK_SUMMARY.md** - 🔵 8/10 - Scientific methodology
-  - **Contribution**: Enhanced research framework with GLM-4.6 judge model and baseline comparison with rigorous baseline comparison capabilities.
-  - **Dependencies**: References GLM-4.6 model and statistical validation frameworks
-
-### High Value Implementation Documents (6-7)
-
-- **archive/documentation/experiment_2_enhanced_templates_specification.md** - 🟢 8/10 - Enhanced templates
-  - **Contribution**: Detailed XML templates with chain-of-thought examples and confidence calibration providing ready-to-use enhanced templates.
-  - **Dependencies**: References XML optimization and confidence calibration techniques
-
-- **archive/documentation/experiment_2_testing_strategy.md** - 🟢 8/10 - Testing strategy
-  - **Contribution**: Comprehensive testing strategy for Enhanced Prompt Engineering experiment with rigorous testing approach and statistical validation.
-  - **Dependencies**: References statistical testing and experimental design principles
-
-- **archive/documentation/EXPERIMENT_5_MULTIMODAL_INTEGRATION_DESIGN.md** - 🟢 8/10 - Multi-modal design
-  - **Contribution**: Multi-modal integration for image + document analysis expanding capabilities to new market segments and document processing.
-  - **Dependencies**: References computer vision and document analysis technologies
-
-- **archive/documentation/EXPERIMENT_6_COLLABORATIVE_REASONING_DESIGN.md** - 🟢 8/10 - Collaborative reasoning
-  - **Contribution**: Multi-agent collaborative reasoning framework for reducing model bias through consensus and advanced reasoning capabilities.
-  - **Dependencies**: References multi-agent systems and consensus algorithms
-
-- **archive/documentation/QUALITY_METRICS_SUMMARY.md** - 🟢 8/10 - Quality metrics
-  - **Contribution**: Comprehensive quality metrics framework for Direct vs Conjecture approaches with rigorous metrics and statistical validation.
-  - **Dependencies**: References statistical testing and quality assessment frameworks
-
-- **archive/documentation/RISK_ASSESSMENT_MITIGATION_STRATEGIES.md** - 🟢 8/10 - Risk management
-  - **Contribution**: Comprehensive risk assessment for next iteration experiments with systematic approach to identifying and mitigating risks.
-  - **Dependencies**: References risk management frameworks and project planning
-
-- **archive/documentation/SUCCESS_CRITERIA_MEASUREMENT_FRAMEWORKS.md** - 🟢 8/10 - Success criteria
-  - **Contribution**: Success criteria and measurement frameworks for experiments with rigorous approach to measuring success and validation.
-  - **Dependencies**: References experimental design and statistical validation
-
-- **archive/documentation/TRUE_CONJECTURE_ANALYSIS.md** - 🟢 8/10 - Implementation analysis
-  - **Contribution**: Analysis of True Conjecture vs Fake Conjecture implementation with critical distinction between proper and improper implementations.
-  - **Dependencies**: References Conjecture core principles and implementation patterns
-
-- **archive/documentation/PROJECT_IMPROVEMENT_PHASE_3_PLAN.md** - 🟢 8/10 - Quality improvement plan
-  - **Contribution**: Comprehensive plan for medium-priority code quality improvements with structured approach to code quality and maintainability.
-  - **Dependencies**: References code quality standards and maintenance practices
-
-- **archive/documentation/experiment_2_enhanced_prompt_design.md** - 🟢 7/10 - Enhanced prompt design
-  - **Contribution**: Enhanced Prompt Engineering design with chain-of-thought examples for systematic approach to improving claim thoroughness.
-  - **Dependencies**: References prompt engineering best practices and chain-of-thought reasoning
-
-- **archive/documentation/EXPERIMENT_4_CONTEXT_WINDOW_OPTIMIZATION_DESIGN.md** - 🟢 7/10 - Context optimization
-  - **Contribution**: Context window optimization for enterprise scalability addressing scalability limitations and large context handling.
-  - **Dependencies**: References compression algorithms and enterprise requirements
-
-- **archive/documentation/interface_design.md** - 🟢 7/10 - Interface architecture
-  - **Contribution**: Unified architecture for TUI, CLI, MCP, and WebUI implementations with comprehensive interface design and session management.
-  - **Dependencies**: References multi-interface design patterns and session management
-
-- **archive/documentation/PROJECT_IMPROVEMENT_PHASE_2_REPORT.md** - 🟢 7/10 - Lessons learned
-  - **Contribution**: Mixed success with performance improvements but critical infrastructure failures providing important lessons in infrastructure management.
-  - **Dependencies**: References infrastructure components and performance testing
-
-- **archive/documentation/PYDANTIC_CONFIG_MIGRATION.md** - 🟢 7/10 - Configuration migration
-  - **Contribution**: Migration from old configuration system to Pydantic-based system with type-safe configuration and validation.
-  - **Dependencies**: References Pydantic library and configuration management best practices
-
-- **archive/documentation/security_audit_report.md** - 🟢 7/10 - Security audit
-  - **Contribution**: Security audit report on API key protection with security issue resolution and best practices for maintaining system security.
-  - **Dependencies**: References security audit practices and API key management
-
-- **archive/documentation/phase3_rubric.md** - 🟢 7/10 - Evaluation framework
-  - **Contribution**: Comprehensive rubric for Phase 3 Basic Skills Templates implementation with detailed success criteria and evaluation metrics.
-  - **Dependencies**: References skills template design and evaluation frameworks
-
-- **archive/documentation/simplified-architecture-migration.md** - 🟢 7/10 - Architecture migration
-  - **Contribution**: Migration strategy from complex claim architecture to simplified unified architecture with systematic approach to reducing complexity.
-  - **Dependencies**: References existing architecture and simplified design principles
-
-### Moderate Value Reference Documents (4-5)
-
-- **archive/documentation/CHUTES_API_DOCUMENTATION.md** - 🟡 6/10 - API documentation
-  - **Contribution**: Documentation for Chutes API integration with API usage for LLM provider integration and external service integration.
-  - **Dependencies**: References Chutes API and LLM provider patterns
-
-- **archive/documentation/CLAUDES_TODOLIST.md** - 🟡 6/10 - Development review
-  - **Contribution**: Development review and todo list for cleanup opportunities with systematic approach to code cleanup and improvement.
-  - **Dependencies**: References code maintenance practices and cleanup strategies
-
-- **archive/documentation/cli_rubric.md** - 🟡 6/10 - CLI evaluation
-  - **Contribution**: CLI evaluation rubric and test suite with systematic approach to CLI evaluation and testing best practices.
-  - **Dependencies**: References CLI development best practices and testing
-
-- **archive/documentation/context_compression_analysis.md** - 🟡 6/10 - Context compression analysis
-  - **Contribution**: Analysis of context compression experiment with approach to reducing context requirements and efficiency optimization.
-  - **Dependencies**: References compression algorithms and efficiency optimization
-
-- **archive/documentation/COVERAGE_IMPROVEMENT_STRATEGY.md** - 🟡 6/10 - Coverage strategy
-  - **Contribution**: Comprehensive strategy for improving test coverage from 0% to 80% with structured approach to achieving comprehensive test coverage.
-  - **Dependencies**: References testing frameworks and coverage measurement
-
-- **archive/documentation/data_layer_rubric.md** - 🟡 6/10 - Data layer evaluation
-  - **Contribution**: Data layer implementation rubric for evaluation with systematic approach to data layer evaluation and quality assessment.
-  - **Dependencies**: References data layer design patterns and evaluation criteria
-
-- **archive/documentation/DEPRECATED_CODE_CLEANUP_REPORT.md** - 🟡 6/10 - Code cleanup
-  - **Contribution**: Report on deprecated code cleanup and modernization with approach to removing outdated code and modernizing.
-  - **Dependencies**: References code maintenance practices and modernization strategies
-
-- **archive/documentation/file_structure.md** - 🟡 6/10 - Project organization
-  - **Contribution**: Comprehensive reference of entire Conjecture codebase structure with complete directory structure and component relationships.
-  - **Dependencies**: References project organization principles and directory structures
-
-- **archive/documentation/HYPOTHESIS_TESTING_GUIDE.md** - 🟡 6/10 - Hypothesis testing
-  - **Contribution**: Comprehensive hypothesis testing framework with real LLM integration and rigorous approach to validating hypotheses.
-  - **Dependencies**: References experimental design and statistical validation
-
-- **archive/documentation/old_req.md** - 🟡 5/10 - Historical requirements
-  - **Contribution**: Original Conjecture system requirements document with early system requirements and design principles for historical context.
-  - **Dependencies**: References early design decisions and requirements analysis
-
-- **archive/documentation/README.md** - 🟡 6/10 - Script documentation
-  - **Contribution**: Script documentation for Conjecture LLM provider with testing infrastructure for provider comparisons.
-  - **Dependencies**: References model comparison scripts and test configurations
-
-### Low Value Documents (2-3)
-
-- **archive/documentation/EXPERIMENT_3_DATABASE_PRIMING_DESIGN.md** - 🟠 2/10 - Invalid methodology
-  - **Contribution**: Retracted experiment with methodological flaws documenting what not to do in experimental design as a cautionary tale.
-  - **Dependencies**: References database priming concepts and experimental design
-
-- **archive/documentation/simple_task_decomposition_report_71c542bd_20251204_221548.md** - 🟠 3/10 - Failed experiment
-  - **Contribution**: Failed task decomposition experiment with negative results documenting approach that didn't work and lessons learned.
-  - **Dependencies**: References task decomposition and experimental design
-
 ## Configuration and Hidden Files
 
 ### Critical Files (9-10)
@@ -1021,7 +843,6 @@ This document provides a comprehensive evaluation of all files in the Conjecture
 | docs/ | 5 | 12 | 7 | 0 | 7.6/10 |
 | experiments/ | 5 | 10 | 8 | 0 | 7.3/10 |
 | research/ | 3 | 9 | 10 | 2 | 6.9/10 |
-| archive/ | 12 | 13 | 10 | 2 | 7.1/10 |
 | config/hidden | 2 | 2 | 1 | 8 | 4.2/10 |
 
 ### Most Valuable Files by Category
@@ -1048,7 +869,7 @@ This document provides a comprehensive evaluation of all files in the Conjecture
 3. **tests/test_data_layer.py** - Data layer tests
 4. **docs/data_layer_architecture.md** - Architecture documentation
 5. **experiments/run_model_comparison_experiment.py** - Model comparison
-6. **archive/documentation/XML_OPTIMIZATION_FINAL_RESULTS.md** - Breakthrough documentation
+
 
 ### Key Insights
 
@@ -1057,8 +878,6 @@ This document provides a comprehensive evaluation of all files in the Conjecture
 2. **Comprehensive Testing**: tests/ directory maintains high quality (7.2/10) with excellent coverage of critical functionality
 3. **Excellent Documentation**: docs/ directory provides valuable guidance (7.6/10) with clear organization and comprehensive coverage
 4. **Rigorous Research**: research/ and experiments/ directories demonstrate scientific methodology with systematic validation
-5. **Historical Learning**: archive/ directory preserves valuable lessons and breakthrough documentation
-
 #### Areas for Improvement
 1. **Configuration Management**: Hidden/config files show lower average rating (4.2/10) due to temporary and cache files
 2. **File Cleanup**: 85 files rated 0-4 could be archived or removed to improve project organization
