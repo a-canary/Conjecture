@@ -7,9 +7,6 @@ Runnable quickstart scripts to get started with Conjecture.
 ```bash
 # Install Conjecture
 pip install -e .
-
-# (Optional) Migrate from environment variables to JSON config
-python scripts/migrate_to_config.py
 ```
 
 ## Quickstart Scripts

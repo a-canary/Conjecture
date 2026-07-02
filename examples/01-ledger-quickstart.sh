@@ -4,7 +4,6 @@
 #
 # Prerequisites:
 #   pip install -e .
-#   python scripts/migrate_to_config.py  # (optional, for API keys)
 
 set -e
 
