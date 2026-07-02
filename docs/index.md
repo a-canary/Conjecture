@@ -78,7 +78,7 @@ This document provides a comprehensive evaluation of all files in the Conjecture
 
 - **.env.example** - 🟢 7/10 - Environment template
   - **Contribution**: Provides migration guidance and legacy environment variable documentation for users transitioning to new JSON configuration system.
-  - **Dependencies**: scripts/migrate_to_config.py
+  - **Dependencies**: src/config/default_config.json
 
 - **CONFIG_WIZARD_README.md** - 🟢 7/10 - Setup guide
   - **Contribution**: Guides users through the configuration setup process, enabling proper system initialization and provider configuration.
