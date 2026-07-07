@@ -447,18 +447,15 @@ test_results:
       - test_e2e_configuration_driven.py
       - test_e2e_multiclaim_reasoning.py
     integration_tests:
-      count: 1
-      files:
-      - test_lancedb_repositories.py
+      count: 0
     other_tests:
-      count: 8
+      count: 6
       files:
       - test_claim_processing.py
       - test_claim_relationships.py
       - test_claim_state_transitions.py
       - test_enhanced_glm46_judge.py
       - test_enhanced_prompt_system.py
-      - test_lancedb_adapter.py
       - test_llm_bridge.py
       - test_process_layer.py
     performance_tests:
