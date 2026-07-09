@@ -142,9 +142,12 @@ def get_processing_interface(backend_type: str = "auto") -> ProcessingInterface:
         console.print("[cyan]  ]")
         console.print("[cyan]}[/cyan]")
         
-        console.print("\n[bold yellow]To create user config with API keys:[/bold yellow]")
-        console.print("[cyan]cp src/config/default_config.json ~/.conjecture/config.json[/cyan]")
-        console.print("[cyan]# Then edit ~/.conjecture/config.json to add your API keys[/cyan]")
+        console.print("\n[bold yellow]To create user config:[/bold yellow]")
+        console.print("[cyan]cp .conjecture/config.example.json ~/.conjecture/config.json[/cyan]")
+        console.print("[cyan]# Then either edit the api field, or export env vars (recommended):[/cyan]")
+        console.print("[cyan]#   export OPENROUTER_API_KEY=sk-or-v1-...[/cyan]")
+        console.print("[cyan]#   export CHUTES_API_KEY=cpk_...[/cyan]")
+        console.print("[cyan]# config.json is gitignored; never commit API keys.[/cyan]")
 
         raise typer.Exit(1)
 

@@ -85,31 +85,14 @@ class SimplifiedLLMManager:
                 # New format: list of provider objects
                 for provider_config in providers_config:
                     providers.append(
-                        {
-                            "name": provider_config.get(
-                                "name", f"provider_{len(providers)}"
-                            ),
-                            "url": provider_config.get("url", ""),
-                            "api": provider_config.get(
-                                "api", provider_config.get("key", "")
-                            ),
-                            "model": provider_config.get("model", ""),
-                            "priority": provider_config.get("priority", 999),
-                        }
+                        self._resolve_provider_secrets(provider_config, len(providers))
                     )
             elif isinstance(providers_config, dict):
                 # Old format: dict of named provider configs
                 for name, provider_config in providers_config.items():
+                    merged = dict(provider_config, name=name)
                     providers.append(
-                        {
-                            "name": name,
-                            "url": provider_config.get("url", ""),
-                            "api": provider_config.get(
-                                "api", provider_config.get("key", "")
-                            ),
-                            "model": provider_config.get("model", ""),
-                            "priority": provider_config.get("priority", 999),
-                        }
+                        self._resolve_provider_secrets(merged, len(providers))
                     )
 
             return providers
@@ -117,6 +100,37 @@ class SimplifiedLLMManager:
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"[LLM] Warning: Could not load provider config: {e}")
             return []
+
+    @staticmethod
+    def _resolve_provider_secrets(
+        provider_config: Dict[str, Any], index: int
+    ) -> Dict[str, Any]:
+        """Build the runtime provider dict, preferring env-var secrets over JSON keys.
+
+        Resolution order for the API credential:
+        1. `env_var` field on the provider entry (e.g. "OPENROUTER_API_KEY") if set in env
+        2. Explicit `api` field on the provider entry (kept for local/no-key providers)
+        3. Legacy `key` field
+        This lets users keep `api: ""` in tracked config.json and load secrets from env.
+        """
+        name = provider_config.get("name", f"provider_{index}")
+        env_var = provider_config.get("env_var")
+        api_from_env = os.environ.get(env_var) if env_var else None
+
+        api_value = (
+            api_from_env
+            if api_from_env
+            else provider_config.get("api", provider_config.get("key", ""))
+        )
+
+        return {
+            "name": name,
+            "url": provider_config.get("url", ""),
+            "api": api_value,
+            "model": provider_config.get("model", ""),
+            "priority": provider_config.get("priority", 999),
+            "env_var": env_var,
+        }
 
     def _validate_provider_config(
         self, provider_config: Dict[str, Any]

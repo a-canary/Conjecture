@@ -261,3 +261,8 @@ docs/_build/
 
 # Retired Windows batch scripts (.sh equivalents are the active runners)
 *.bat
+
+# User/workspace runtime config — contains provider API keys.
+# Copy `.conjecture/config.example.json` to `.conjecture/config.json` and edit,
+# or load secrets from env vars (OPENROUTER_API_KEY, CHUTES_API_KEY, etc.).
+/.conjecture/config.json

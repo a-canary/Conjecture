@@ -596,7 +596,8 @@ class ContextualHelp:
             ],
             "config": [
                 "Tip: Run 'conjecture setup' for interactive configuration",
-                "Tip: Configuration files are stored in ~/.conjecture/config.json",
+                "Tip: Configuration files are stored in ~/.conjecture/config.json (gitignored)",
+                "Tip: Prefer env vars (OPENROUTER_API_KEY, CHUTES_API_KEY) over editing api keys into config.json",
                 "Tip: Multiple providers can be configured for failover"
             ]
         }
