@@ -66,7 +66,7 @@ This document provides a comprehensive evaluation of all files in the Conjecture
 
 - **COVERAGE_ANALYSIS_REPORT.md** - 🟢 8/10 - Coverage metrics
   - **Contribution**: Documents test coverage analysis and improvements, providing quantitative assessment of code quality and testing effectiveness.
-  - **Dependencies**: coverage.json, test results
+  - **Dependencies**: pytest --cov output, test results
 
 - **RESULTS.md** - 🟢 8/10 - Experiment results
   - **Contribution**: Documents comprehensive experiment results and development cycle progress, providing critical insights into system optimization and performance improvements.
@@ -104,10 +104,6 @@ This document provides a comprehensive evaluation of all files in the Conjecture
 
 - **coverage_baseline.json** - 🟡 6/10 - Coverage baseline
   - **Contribution**: Stores baseline coverage metrics for regression detection and quality tracking across development cycles.
-  - **Dependencies**: Coverage analysis tools
-
-- **coverage.json** - 🟡 6/10 - Coverage data
-  - **Contribution**: Contains current test coverage data used for quality assessment and regression detection in the development workflow.
   - **Dependencies**: Coverage analysis tools
 
 - **errors.txt** - 🟡 5/10 - Error log
