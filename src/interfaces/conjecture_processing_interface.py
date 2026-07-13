@@ -11,12 +11,12 @@ See CHOICES.md A-0001 (4-Layer Architecture) and A-0002 (Process Layer).
 
 import asyncio
 import logging
-import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, AsyncGenerator, Callable
 
 from src.core.models import Claim, ClaimFilter, ClaimState, ClaimType, ClaimScope
 from src.data.data_manager import DataManager
+from src.utils.id_utils import generate_id
 from src.interfaces.processing_interface import (
     ProcessingInterface,
     ProcessingEvent,
@@ -307,7 +307,7 @@ class ConjectureProcessingInterface(ProcessingInterface):
         user_data: Optional[Dict[str, Any]] = None
     ) -> Session:
         """Create a new processing session."""
-        session_id = f"s{uuid.uuid4().hex[:8]}"
+        session_id = generate_id("s")
         now = datetime.now(timezone.utc)
 
         session = Session(
@@ -384,7 +384,7 @@ class ConjectureProcessingInterface(ProcessingInterface):
         event_types: Optional[List[EventType]] = None
     ) -> str:
         """Subscribe to processing events with callback."""
-        sub_id = f"sub_{uuid.uuid4().hex[:8]}"
+        sub_id = generate_id("sub_")
         self._subscriptions[sub_id] = {
             "callback": callback,
             "session_id": session_id,

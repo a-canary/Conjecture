@@ -16,11 +16,12 @@ import asyncio
 import json
 import logging
 import os
-import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
+
+from src.utils.id_utils import generate_id
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +69,7 @@ class ChatCompletionUsage(BaseModel):
 
 class ChatCompletionResponse(BaseModel):
     """OpenAI-compatible chat completion response."""
-    id: str = Field(default_factory=lambda: f"chatcmpl-{uuid.uuid4().hex[:8]}")
+    id: str = Field(default_factory=lambda: generate_id("chatcmpl-"))
     object: str = "chat.completion"
     created: int = Field(default_factory=lambda: int(datetime.now(timezone.utc).timestamp()))
     model: str = "conjecture"

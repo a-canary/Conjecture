@@ -24,6 +24,7 @@ from src.data.data_manager import DataManager
 from src.data.models import Claim, ClaimType, ClaimState
 from src.core.models import DirtyReason
 from src.process.input_decomposer import decompose_input
+from src.utils.id_utils import generate_id
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +75,7 @@ class Session(BaseModel):
     Sessions persist claims locally during a conversation or benchmark run.
     Claims can be elevated to project/team scope by the LLM.
     """
-    id: str = Field(default_factory=lambda: f"s{uuid.uuid4().hex[:8]}")
+    id: str = Field(default_factory=lambda: generate_id("s"))
     created_at: datetime = Field(default_factory=datetime.utcnow)
     claim_ids: List[str] = Field(default_factory=list)
     metadata: Dict[str, Any] = Field(default_factory=dict)
@@ -233,7 +234,7 @@ class ConjectureEndpoint:
             APIResponse with session data
         """
         session = Session(
-            id=session_id or f"s{uuid.uuid4().hex[:8]}",
+            id=session_id or generate_id("s"),
             metadata=metadata or {}
         )
         self._sessions[session.id] = session
@@ -849,7 +850,7 @@ class ConjectureEndpoint:
                     eval_session_id = (
                         self._current_session.id
                         if self._current_session
-                        else f"s{uuid.uuid4().hex[:8]}"
+                        else generate_id("s")
                     )
                     # Claim IDs relevant to this evaluation (from context + created so far)
                     eval_claim_ids: List[str] = list(claims) if claims else []
