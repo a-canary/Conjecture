@@ -13,11 +13,9 @@ import inspect
 import json
 import logging
 import re
-import time
-import uuid
 from typing import Any, Dict, List, Optional, Tuple
 
-from src.core.models import Claim, ClaimType, ClaimState, ClaimScope
+from src.core.models import Claim, ClaimType, ClaimState, ClaimScope, generate_claim_id
 
 logger = logging.getLogger(__name__)
 
@@ -69,13 +67,6 @@ _PART_TYPE_MAP: Dict[str, ClaimType] = {
 _DECOMPOSITION_PROMPT = DECOMPOSE_PROMPT_TEMPLATE
 
 
-def _generate_id() -> str:
-    """Generate a unique claim ID compatible with src/core/models.py format."""
-    timestamp = int(time.time() * 1000)
-    unique_part = str(uuid.uuid4())[:8]
-    return f"c{timestamp}_{unique_part}"
-
-
 # ── JSON parsing helpers ──────────────────────────────────────────────────────
 
 def _extract_json_array(raw: str) -> str:
@@ -118,7 +109,7 @@ def _build_claims_from_raw(raw_items: List[Dict[str, Any]]) -> List[Claim]:
         confidence = _clamp_confidence(item.get("confidence", 0.7))
         try:
             claim = Claim(
-                id=_generate_id(),
+                id=generate_claim_id(),
                 content=content,
                 type=[claim_type],
                 confidence=confidence,
@@ -197,7 +188,7 @@ def _fallback_claim(text: str) -> List[Claim]:
 
     return [
         Claim(
-            id=_generate_id(),
+            id=generate_claim_id(),
             content=content,
             confidence=0.5,
             type=[ClaimType.OBSERVATION],
@@ -277,7 +268,7 @@ def _heuristic_decompose(text: str) -> List[Claim]:
 
         try:
             claim = Claim(
-                id=_generate_id(),
+                id=generate_claim_id(),
                 content=segment[:1000],
                 type=[claim_type],
                 confidence=confidence,
@@ -297,7 +288,7 @@ def _heuristic_decompose(text: str) -> List[Claim]:
         try:
             claims.append(
                 Claim(
-                    id=_generate_id(),
+                    id=generate_claim_id(),
                     content=content,
                     type=[ClaimType.ASSERTION],
                     confidence=0.5,
@@ -489,7 +480,7 @@ async def create_root_context(
         content = content[:_ROOT_CONTEXT_MAX_CONTENT - 3] + "..."
 
     root_claim = Claim(
-        id=_generate_id(),
+        id=generate_claim_id(),
         content=content,
         confidence=1.0,
         type=[ClaimType.OBSERVATION],
