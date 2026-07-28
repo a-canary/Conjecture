@@ -283,3 +283,5 @@ coverage.json
 /PULSE.md
 /DASHBOARD.md
 /STANDARD_BENCHMARK_REPORT.md
+.env.*
+!.env.example
