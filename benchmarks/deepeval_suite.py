@@ -1441,6 +1441,153 @@ class DeepEvalSuite:
         return stats
 
 
+def tally_paired(cases: List[dict]) -> dict:
+    """Raw tallies for a paired run. No statistics, no gate (tracer only).
+
+    Each case: {"routed_correct": bool, "direct_correct": bool, "strategy": str,
+                "routed_error": str|None, "direct_error": str|None}
+
+    n_errored counts cases where either arm raised. Those cases still appear in
+    n with correct=False, so read scoring against n_clean, not n — an infra
+    failure is not a benchmark miss (UM-0500).
+    """
+    tallies = {
+        "n": len(cases),
+        "n_errored": sum(1 for c in cases
+                         if c.get("routed_error") or c.get("direct_error")),
+        "routed_correct": sum(1 for c in cases if c["routed_correct"]),
+        "direct_correct": sum(1 for c in cases if c["direct_correct"]),
+        "by_strategy": {},
+    }
+    tallies["n_clean"] = tallies["n"] - tallies["n_errored"]
+    for c in cases:
+        s = tallies["by_strategy"].setdefault(
+            c["strategy"], {"n": 0, "routed_correct": 0, "direct_correct": 0})
+        s["n"] += 1
+        s["routed_correct"] += c["routed_correct"]
+        s["direct_correct"] += c["direct_correct"]
+    return tallies
+
+
+def run_paired_gsm8k(base_model, n_samples: int = 10) -> List[dict]:
+    """Paired routed-vs-direct tracer on GSM8K.
+
+    Each case runs BOTH arms in the same invocation, over the same case set:
+      routed — endpoint.evaluate() on the shipped O-0009 path (classify_query
+               picks the strategy), served by src.endpoint.llm_client
+      direct — plain 5-shot CoT prompt via _call_model on base_model
+
+    NOT a like-for-like comparison, and this tracer does not claim to be one:
+    the arms differ in serving model (llm_client's DEFAULT/TOOL_CAPABLE_MODEL
+    vs --model) and in prompt format (bare question vs 5-shot CoT template).
+    Both identities are printed with the tallies so the confound is visible.
+    Removing it is the statistics slice's job — the brief here is only to prove
+    the routed harness runs end to end and retains per-case outcomes.
+
+    Baseline cache is bypassed by construction (never read, never written).
+    Returns per-case records; caller prints tallies via tally_paired().
+    # ponytail: GSM8K only at exploration n — statistics/gate/artifact land
+    # with the full do-no-harm gate task once this tracer is proven.
+    """
+    from src.endpoint.conjecture_endpoint import ConjectureEndpoint
+    from src.agent.task_router import classify_query
+
+    # ponytail: installed deepeval 2.6.7 loads the retired bare "gsm8k" HF id,
+    # which current huggingface_hub rejects; rewrite to the canonical
+    # "openai/gsm8k". Drop when deepeval is upgraded.
+    import datasets as _datasets
+    _orig_load = _datasets.load_dataset
+    _datasets.load_dataset = lambda path, *a, **k: _orig_load(
+        "openai/gsm8k" if path == "gsm8k" else path, *a, **k)
+
+    gsm_bench = GSM8K(n_problems=n_samples, n_shots=5, enable_cot=True)
+    goldens = gsm_bench.load_benchmark_dataset()[:n_samples]
+
+    endpoint = ConjectureEndpoint(db_path="data/paired_benchmark.db")
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    cases = []
+    try:
+        loop.run_until_complete(endpoint.initialize())
+        endpoint.start_session(session_id="paired_gsm8k", metadata={"type": "paired_benchmark"})
+
+        for i, golden in enumerate(goldens):
+            prompt = GSM8KTemplate.generate_output(
+                input=golden.input,
+                train_set=gsm_bench.shots_dataset,
+                n_shots=5,
+                enable_cot=True,
+            )
+            expected = golden.expected_output
+            routed_query = f"{golden.input}\nWrite your final numeric answer after ####"
+            # Classify once here and hand the result to evaluate() via route=,
+            # so the recorded strategy IS the one used rather than a re-derived
+            # guess (classify_query can fall through to an LLM call, so calling
+            # it twice is neither free nor guaranteed to agree with itself).
+            query_type = classify_query(routed_query)
+            strategy = query_type.value
+
+            def _correct(response: str) -> bool:
+                try:
+                    return abs(float(extract_gsm8k_answer(response)) - float(expected)) < 0.01
+                except (ValueError, TypeError):
+                    return False
+
+            case = {"index": i, "strategy": strategy,
+                    "routed_correct": False, "direct_correct": False,
+                    "routed_error": None, "direct_error": None}
+
+            try:
+                resp = loop.run_until_complete(
+                    endpoint.evaluate(query=routed_query, route=query_type))
+                if resp.success:
+                    case["routed_correct"] = _correct(resp.data.get("response", ""))
+                else:
+                    case["routed_error"] = resp.message
+            except Exception as e:
+                case["routed_error"] = str(e)
+
+            try:
+                case["direct_correct"] = _correct(_call_model(base_model, prompt))
+            except Exception as e:
+                case["direct_error"] = str(e)
+
+            cases.append(case)
+            print(f"  paired GSM8K {i+1}/{len(goldens)}: strategy={strategy} "
+                  f"routed={'Y' if case['routed_correct'] else 'n'} "
+                  f"direct={'Y' if case['direct_correct'] else 'n'}"
+                  + (f" [routed_error: {case['routed_error']}]" if case["routed_error"] else "")
+                  + (f" [direct_error: {case['direct_error']}]" if case["direct_error"] else ""))
+    finally:
+        try:
+            loop.run_until_complete(endpoint.close())
+        except Exception as e:  # init may have failed before there was anything to close
+            print(f"  [endpoint close failed: {e}]")
+        asyncio.set_event_loop(None)
+        loop.close()
+        _datasets.load_dataset = _orig_load  # don't leak the patch past this run
+
+    return cases
+
+
+def print_paired_tallies(cases: List[dict], routed_model: str = None, direct_model: str = None):
+    t = tally_paired(cases)
+    errored = [c for c in cases if c.get("routed_error") or c.get("direct_error")]
+    print("\nPaired GSM8K raw tallies (no statistics, no gate):")
+    if routed_model or direct_model:
+        print(f"  arms are NOT model-matched: routed={routed_model} direct={direct_model}")
+        print("  (routed arm serves per llm_client defaults; the id above is the "
+              "tool-capable default, the actual per-call model may be the "
+              "general default — not a measured attribution)")
+    print(f"  n={t['n']}  n_clean={t['n_clean']}  n_errored={t['n_errored']}")
+    print(f"  routed_correct={t['routed_correct']}  direct_correct={t['direct_correct']}"
+          f"  (errored cases count as incorrect — score against n_clean)")
+    for name, s in t["by_strategy"].items():
+        print(f"  strategy={name}: n={s['n']} routed={s['routed_correct']} direct={s['direct_correct']}")
+    if errored:
+        print(f"  cases with arm errors: {len(errored)} (see per-case log above)")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="DeepEval Benchmark Suite — O-0008: 10 benchmarks via Chutes.ai"
@@ -1473,6 +1620,12 @@ def main():
         help="API provider: auto (try openrouter first), chutes, or openrouter",
     )
     parser.add_argument(
+        "--paired",
+        action="store_true",
+        help="Paired routed-vs-direct tracer on GSM8K: both arms per case, "
+             "same run, baseline cache bypassed, raw tallies only",
+    )
+    parser.add_argument(
         "--refresh-baseline",
         action="store_true",
         help="Re-run baseline tests (use when fixing benchmark/parser bugs)",
@@ -1483,6 +1636,48 @@ def main():
     print("=" * 50)
     print(f"N     : {args.n} samples per benchmark")
     print("O-0008: 10 benchmarks, >= Direct on ALL, +20pp on 5")
+
+    if args.paired:
+        # Runs before deepeval provider selection: installed deepeval's
+        # GPTModel validates model names against OpenAI's list and rejects
+        # OSS ids, and paired mode only needs .generate() for the direct arm.
+        from src.endpoint.llm_client import TOOL_CAPABLE_MODEL
+        import openai
+
+        chutes_key = os.environ.get("CHUTES_API_KEY")
+        openrouter_key = os.environ.get("OPENROUTER_API_KEY")
+        if args.provider in ("auto", "chutes") and chutes_key:
+            # CHUTES_BASE_URL honored so both arms hit the same provider,
+            # mirroring llm_client's override
+            base_url = os.environ.get("CHUTES_BASE_URL", "https://llm.chutes.ai/v1")
+            key = chutes_key
+            provider = base_url
+        elif args.provider in ("auto", "openrouter") and openrouter_key:
+            base_url, key = "https://openrouter.ai/api/v1", openrouter_key
+            provider = "OpenRouter"
+        else:
+            print("ERROR: No API key found. Set OPENROUTER_API_KEY or CHUTES_API_KEY")
+            return
+
+        class _DirectArmModel:
+            # ponytail: minimal .generate() shim, only interface _call_model needs
+            def __init__(self):
+                self.client = openai.OpenAI(api_key=key, base_url=base_url)
+
+            def generate(self, prompt: str) -> str:
+                r = self.client.chat.completions.create(
+                    model=args.model,
+                    messages=[{"role": "user", "content": prompt}],
+                )
+                return r.choices[0].message.content or ""
+
+        print(f"Provider: {provider}")
+        print(f"Model   : {args.model} (direct arm)")
+        print("\nPaired mode: routed endpoint vs direct, baseline cache BYPASSED")
+        print("Other suite flags (--refresh-baseline etc.) do not apply in paired mode")
+        cases = run_paired_gsm8k(_DirectArmModel(), n_samples=args.n)
+        print_paired_tallies(cases, routed_model=TOOL_CAPABLE_MODEL, direct_model=args.model)
+        return
 
     # Select provider
     model = None
