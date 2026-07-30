@@ -285,3 +285,8 @@ coverage.json
 /STANDARD_BENCHMARK_REPORT.md
 .env.*
 !.env.example
+
+# User/workspace runtime config — contains provider API keys.
+# Copy `.conjecture/config.example.json` to `.conjecture/config.json` and edit,
+# or load secrets from env vars (OPENROUTER_API_KEY, CHUTES_API_KEY, etc.).
+/.conjecture/config.json

@@ -7,7 +7,8 @@
 echo "🔍 Running security checks..."
 
 # Check for potential API keys in staged files
-API_KEY_PATTERNS="AIza|sk-[a-zA-Z0-9]{20,}|gsk_[a-zA-Z0-9]{20,}|api[_-]?key[\s=:]+['\"][a-zA-Z0-9_-]{20,}['\"]"
+# Patterns: Google AIza, OpenAI sk-, Anthropic sk-ant-, Groq gsk_, OpenRouter sk-or-v1-, Chutes cpk_
+API_KEY_PATTERNS="AIza|sk-[a-zA-Z0-9]{20,}|sk-ant-[a-zA-Z0-9_-]{20,}|sk-or-v1-[a-zA-Z0-9]{20,}|cpk_[a-zA-Z0-9]{20,}|gsk_[a-zA-Z0-9]{20,}|api[_-]?key[\s=:]+['\"][a-zA-Z0-9_-]{20,}['\"]"
 
 if git diff --cached --name-only | xargs grep -E "$API_KEY_PATTERNS" 2>/dev/null; then
     echo ""
