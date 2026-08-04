@@ -1588,6 +1588,51 @@ def print_paired_tallies(cases: List[dict], routed_model: str = None, direct_mod
         print(f"  cases with arm errors: {len(errored)} (see per-case log above)")
 
 
+def compute_paired_verdict(cases: List[dict]) -> dict:
+    """Wire paired_stats over the tracer's per-case records: delta, CI,
+    tolerance, cowardice inputs, and the four-way verdict.
+
+    router_accuracy: GSM8K is all math, so the router's ground truth on this
+    benchmark is "math" for every case — accuracy = share classified math.
+    # ponytail: single-benchmark proxy; a labelled multi-benchmark set replaces
+    # this when the runner generalizes past GSM8K.
+    """
+    from benchmarks.paired_stats import (
+        paired_delta, non_inferiority_tolerance, cowardice_metrics, verdict)
+
+    stats = paired_delta(cases)
+    tol = non_inferiority_tolerance(stats)
+    cow = cowardice_metrics(cases)
+    clean = [c for c in cases
+             if not c.get("routed_error") and not c.get("direct_error")]
+    router_accuracy = (sum(1 for c in clean if c["strategy"] == "math") / len(clean)
+                       if clean else 0.0)
+    v = verdict(stats, tol["tolerance"] or 0.0,
+                cow["non_direct_share"], cow["reasoning_uplift"], router_accuracy)
+    return {"stats": stats, "tolerance": tol, "cowardice": cow,
+            "router_accuracy": router_accuracy, **v}
+
+
+def print_paired_verdict(cases: List[dict]):
+    r = compute_paired_verdict(cases)
+    s, t = r["stats"], r["tolerance"]
+    print("\nPaired verdict (do-no-harm gate statistics):")
+    if s["delta"] is None:
+        print("  no clean cases — no statistics computable")
+    else:
+        print(f"  delta={s['delta']:+.4f}  95% CI=[{s['ci_low']:+.4f}, {s['ci_high']:+.4f}]"
+              f"  (n_clean={s['n_clean']}, n_required={s['n_required']})")
+        tol_str = f"{t['tolerance']:.4f}" if t["tolerance"] is not None else "n/a"
+        print(f"  tolerance={tol_str}  basis: {t['basis']}")
+        print(f"  non_direct_share={r['cowardice']['non_direct_share']:.4f}"
+              f"  reasoning_uplift={r['cowardice']['reasoning_uplift']}"
+              f"  (n_reasoning={r['cowardice']['n_reasoning']})"
+              f"  router_accuracy={r['router_accuracy']:.4f}")
+    print(f"  VERDICT: {r['verdict']}")
+    for reason in r["reasons"]:
+        print(f"    - {reason}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="DeepEval Benchmark Suite — O-0008: 10 benchmarks via Chutes.ai"
@@ -1677,6 +1722,7 @@ def main():
         print("Other suite flags (--refresh-baseline etc.) do not apply in paired mode")
         cases = run_paired_gsm8k(_DirectArmModel(), n_samples=args.n)
         print_paired_tallies(cases, routed_model=TOOL_CAPABLE_MODEL, direct_model=args.model)
+        print_paired_verdict(cases)
         return
 
     # Select provider
