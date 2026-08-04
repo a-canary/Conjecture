@@ -66,3 +66,39 @@ def test_paired_run_records_both_arms_for_every_case():
         assert f'"{key}"' in src
     # case is appended once per golden, unconditionally, outside both arm handlers
     assert "cases.append(case)" in src
+
+
+def test_compute_paired_verdict_wires_stats_into_suite():
+    """Wiring check: the suite composes paired_stats end to end — delta, CI,
+    tolerance, cowardice inputs, router accuracy, and a verdict with reasons."""
+    from benchmarks.deepeval_suite import compute_paired_verdict
+
+    cases = [
+        {"routed_correct": True, "direct_correct": True, "strategy": "math",
+         "routed_error": None, "direct_error": None},
+        {"routed_correct": True, "direct_correct": False, "strategy": "math",
+         "routed_error": None, "direct_error": None},
+        {"routed_correct": False, "direct_correct": False, "strategy": "recall",
+         "routed_error": None, "direct_error": None},
+        {"routed_correct": False, "direct_correct": False, "strategy": "math",
+         "routed_error": "429", "direct_error": None},
+    ]
+    r = compute_paired_verdict(cases)
+    assert r["stats"]["n_clean"] == 3
+    assert r["stats"]["delta"] is not None
+    assert r["tolerance"]["tolerance"] is not None
+    assert r["cowardice"]["non_direct_share"] == 1.0
+    assert abs(r["router_accuracy"] - 2 / 3) < 1e-9
+    # 3 clean cases < N_REQUIRED=100 — exploration-scale must read underpowered
+    assert r["verdict"] == "underpowered"
+    assert r["reasons"]
+
+
+def test_compute_paired_verdict_no_clean_cases():
+    from benchmarks.deepeval_suite import compute_paired_verdict
+
+    r = compute_paired_verdict([
+        {"routed_correct": False, "direct_correct": False, "strategy": "math",
+         "routed_error": "boom", "direct_error": None}])
+    assert r["stats"]["delta"] is None
+    assert r["verdict"] == "underpowered"
