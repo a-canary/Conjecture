@@ -1469,14 +1469,102 @@ def tally_paired(cases: List[dict]) -> dict:
     return tallies
 
 
-PAIRED_PROMPT_TEMPLATE = "gsm8k-5shot-cot (deepeval GSM8KTemplate, shared by both arms)"
+def _gsm8k_correct(response: str, expected: str) -> bool:
+    try:
+        return abs(float(extract_gsm8k_answer(response)) - float(expected)) < 0.01
+    except (ValueError, TypeError):
+        return False
 
 
-def run_paired_gsm8k(base_model, n_samples: int = 10) -> List[dict]:
-    """Paired routed-vs-direct comparison on GSM8K.
+def _load_paired_gsm8k(n_samples: int):
+    # ponytail: installed deepeval 2.6.7 loads the retired bare "gsm8k" HF id,
+    # which current huggingface_hub rejects; rewrite to the canonical
+    # "openai/gsm8k". Drop when deepeval is upgraded.
+    import datasets as _datasets
+    _orig_load = _datasets.load_dataset
+    _datasets.load_dataset = lambda path, *a, **k: _orig_load(
+        "openai/gsm8k" if path == "gsm8k" else path, *a, **k)
+    try:
+        gsm_bench = GSM8K(n_problems=n_samples, n_shots=5, enable_cot=True)
+        goldens = gsm_bench.load_benchmark_dataset()[:n_samples]
+    finally:
+        _datasets.load_dataset = _orig_load  # don't leak the patch past loading
+
+    def prompt_fn(golden):
+        return GSM8KTemplate.generate_output(
+            input=golden.input, train_set=gsm_bench.shots_dataset,
+            n_shots=5, enable_cot=True)
+
+    return goldens, prompt_fn, _gsm8k_correct
+
+
+def _load_paired_logiqa(n_samples: int):
+    logiqa_bench = LogiQA(n_problems_per_task=n_samples, n_shots=3)
+    task = logiqa_bench.tasks[0]  # Categorical Reasoning
+    goldens = logiqa_bench.load_benchmark_dataset(task)[:n_samples]
+
+    def prompt_fn(golden):
+        return LogiQATemplate.generate_output(input=golden.input, n_shots=3)
+
+    return goldens, prompt_fn, lambda resp, exp: extract_logiqa_answer(resp) == exp
+
+
+def _load_paired_truthfulqa(n_samples: int):
+    from deepeval.benchmarks.truthful_qa.mode import TruthfulQAMode
+    truthqa_bench = TruthfulQA(n_problems_per_task=n_samples, mode=TruthfulQAMode.MC1)
+    task = truthqa_bench.tasks[0]  # Language task
+    goldens = truthqa_bench.load_benchmark_dataset(task, TruthfulQAMode.MC1)[:n_samples]
+
+    def prompt_fn(golden):
+        return TruthfulQATemplate.generate_output(
+            input=golden.input, mode=TruthfulQAMode.MC1)
+
+    return goldens, prompt_fn, lambda resp, exp: extract_truthfulqa_answer(resp) == exp
+
+
+# stdlib-only module; safe to import at module level (the rest of paired_stats
+# is still imported lazily inside compute_paired_verdict).
+from benchmarks.paired_stats import (  # noqa: E402
+    N_REQUIRED as GATE_N_REQUIRED, PINNED_SMALL_MODELS, reduce_verdicts)
+
+# The paired-gate benchmark set: the reasoning-class and recall-class
+# benchmarks already in the suite (O-0009 evidence classes). expected_strategies
+# is the router's ground truth on that benchmark — router_accuracy = share of
+# clean cases classified into it. class "recall" disables the anti-cowardice
+# half of the verdict (staying on the cheap path is correct there).
+PAIRED_BENCHMARKS = {
+    "gsm8k": {
+        "display": "GSM8K",
+        "class": "reasoning",
+        "expected_strategies": frozenset({"math"}),
+        "prompt_template": "gsm8k-5shot-cot (deepeval GSM8KTemplate, shared by both arms)",
+        "load": _load_paired_gsm8k,
+    },
+    "logiqa": {
+        "display": "LogiQA",
+        "class": "reasoning",
+        "expected_strategies": frozenset({"reasoning"}),
+        "prompt_template": "logiqa-3shot (deepeval LogiQATemplate, shared by both arms)",
+        "load": _load_paired_logiqa,
+    },
+    "truthfulqa": {
+        "display": "TruthfulQA",
+        "class": "recall",
+        "expected_strategies": frozenset({"recall"}),
+        "prompt_template": "truthfulqa-mc1 (deepeval TruthfulQATemplate, shared by both arms)",
+        "load": _load_paired_truthfulqa,
+    },
+}
+
+# Kept for older callers/artifacts that reference the GSM8K template string.
+PAIRED_PROMPT_TEMPLATE = PAIRED_BENCHMARKS["gsm8k"]["prompt_template"]
+
+
+def run_paired_benchmark(bench_key: str, base_model, n_samples: int = 10) -> List[dict]:
+    """Paired routed-vs-direct comparison on one PAIRED_BENCHMARKS entry.
 
     Each case runs BOTH arms in the same invocation, over the same case set,
-    with ONE shared prompt (the 5-shot CoT GSM8KTemplate output):
+    with ONE shared prompt (the benchmark's deepeval template output):
       routed — endpoint.evaluate() on the shipped O-0009 path; the strategy is
                classified from the bare question (what a user would type), the
                evaluated prompt is the shared template
@@ -1494,16 +1582,8 @@ def run_paired_gsm8k(base_model, n_samples: int = 10) -> List[dict]:
     from src.endpoint.conjecture_endpoint import ConjectureEndpoint
     from src.agent.task_router import classify_query
 
-    # ponytail: installed deepeval 2.6.7 loads the retired bare "gsm8k" HF id,
-    # which current huggingface_hub rejects; rewrite to the canonical
-    # "openai/gsm8k". Drop when deepeval is upgraded.
-    import datasets as _datasets
-    _orig_load = _datasets.load_dataset
-    _datasets.load_dataset = lambda path, *a, **k: _orig_load(
-        "openai/gsm8k" if path == "gsm8k" else path, *a, **k)
-
-    gsm_bench = GSM8K(n_problems=n_samples, n_shots=5, enable_cot=True)
-    goldens = gsm_bench.load_benchmark_dataset()[:n_samples]
+    spec = PAIRED_BENCHMARKS[bench_key]
+    goldens, prompt_fn, correct_fn = spec["load"](n_samples)
 
     endpoint = ConjectureEndpoint(db_path="data/paired_benchmark.db")
     loop = asyncio.new_event_loop()
@@ -1511,15 +1591,11 @@ def run_paired_gsm8k(base_model, n_samples: int = 10) -> List[dict]:
     cases = []
     try:
         loop.run_until_complete(endpoint.initialize())
-        endpoint.start_session(session_id="paired_gsm8k", metadata={"type": "paired_benchmark"})
+        endpoint.start_session(session_id=f"paired_{bench_key}",
+                               metadata={"type": "paired_benchmark"})
 
         for i, golden in enumerate(goldens):
-            prompt = GSM8KTemplate.generate_output(
-                input=golden.input,
-                train_set=gsm_bench.shots_dataset,
-                n_shots=5,
-                enable_cot=True,
-            )
+            prompt = prompt_fn(golden)
             expected = golden.expected_output
             # Classify once here and hand the result to evaluate() via route=,
             # so the recorded strategy IS the one used rather than a re-derived
@@ -1531,10 +1607,7 @@ def run_paired_gsm8k(base_model, n_samples: int = 10) -> List[dict]:
             strategy = query_type.value
 
             def _correct(response: str) -> bool:
-                try:
-                    return abs(float(extract_gsm8k_answer(response)) - float(expected)) < 0.01
-                except (ValueError, TypeError):
-                    return False
+                return correct_fn(response, expected)
 
             case = {"index": i, "strategy": strategy,
                     "routed_correct": False, "direct_correct": False,
@@ -1558,7 +1631,7 @@ def run_paired_gsm8k(base_model, n_samples: int = 10) -> List[dict]:
                 case["direct_error"] = str(e)
 
             cases.append(case)
-            print(f"  paired GSM8K {i+1}/{len(goldens)}: strategy={strategy} "
+            print(f"  paired {spec['display']} {i+1}/{len(goldens)}: strategy={strategy} "
                   f"routed={'Y' if case['routed_correct'] else 'n'} "
                   f"direct={'Y' if case['direct_correct'] else 'n'}"
                   + (f" [routed_error: {case['routed_error']}]" if case["routed_error"] else "")
@@ -1570,15 +1643,16 @@ def run_paired_gsm8k(base_model, n_samples: int = 10) -> List[dict]:
             print(f"  [endpoint close failed: {e}]")
         asyncio.set_event_loop(None)
         loop.close()
-        _datasets.load_dataset = _orig_load  # don't leak the patch past this run
 
     return cases
 
 
-def print_paired_tallies(cases: List[dict], routed_model: str = None, direct_model: str = None):
+def print_paired_tallies(cases: List[dict], routed_model: str = None,
+                         direct_model: str = None, bench_key: str = "gsm8k"):
     t = tally_paired(cases)
     errored = [c for c in cases if c.get("routed_error") or c.get("direct_error")]
-    print("\nPaired GSM8K raw tallies (no statistics, no gate):")
+    display = PAIRED_BENCHMARKS[bench_key]["display"]
+    print(f"\nPaired {display} raw tallies (no statistics, no gate):")
     if routed_model or direct_model:
         served = sorted({str(c.get("routed_model")) for c in cases
                          if not c.get("routed_error")})
@@ -1617,14 +1691,16 @@ def arm_identity_mismatch(cases: List[dict], pinned_model: str) -> List[str]:
 
 
 def compute_paired_verdict(cases: List[dict], pinned_model: str = None,
-                           frozen_tolerance: float = None) -> dict:
+                           frozen_tolerance: float = None,
+                           bench_key: str = "gsm8k") -> dict:
     """Wire paired_stats over the tracer's per-case records: delta, CI,
     tolerance, cowardice inputs, and the four-way verdict.
 
-    router_accuracy: GSM8K is all math, so the router's ground truth on this
-    benchmark is "math" for every case — accuracy = share classified math.
-    # ponytail: single-benchmark proxy; a labelled multi-benchmark set replaces
-    # this when the runner generalizes past GSM8K.
+    router_accuracy: each PAIRED_BENCHMARKS entry declares the router's ground
+    truth for its cases (expected_strategies) — accuracy is the share of clean
+    cases classified into that set. A recall-class benchmark also disables the
+    anti-cowardice half: staying on the cheap path is the CORRECT behavior
+    there per O-0009, so scoring it as cowardice would fail a working router.
     """
     from benchmarks.paired_stats import (
         paired_delta, non_inferiority_tolerance, cowardice_metrics, verdict)
@@ -1638,10 +1714,13 @@ def compute_paired_verdict(cases: List[dict], pinned_model: str = None,
     cow = cowardice_metrics(cases)
     clean = [c for c in cases
              if not c.get("routed_error") and not c.get("direct_error")]
-    router_accuracy = (sum(1 for c in clean if c["strategy"] == "math") / len(clean)
+    spec = PAIRED_BENCHMARKS[bench_key]
+    expected = spec["expected_strategies"]
+    router_accuracy = (sum(1 for c in clean if c["strategy"] in expected) / len(clean)
                        if clean else 0.0)
     out = {"stats": stats, "tolerance": tol, "cowardice": cow,
            "router_accuracy": router_accuracy, "pinned_model": pinned_model,
+           "benchmark": bench_key, "benchmark_class": spec["class"],
            "arm_mismatch": []}
     if pinned_model is not None:
         mismatch = arm_identity_mismatch(cases, pinned_model)
@@ -1652,7 +1731,8 @@ def compute_paired_verdict(cases: List[dict], pinned_model: str = None,
                        verdict="refused-arm-mismatch", reasons=mismatch)
             return out
     v = verdict(stats, tol["tolerance"] or 0.0,
-                cow["non_direct_share"], cow["reasoning_uplift"], router_accuracy)
+                cow["non_direct_share"], cow["reasoning_uplift"], router_accuracy,
+                apply_cowardice=spec["class"] != "recall")
     out.update(**v)
     return out
 
@@ -1676,7 +1756,8 @@ def print_paired_verdict(r: dict):
         print(f"    - {reason}")
 
 
-def write_paired_artifact(payload: dict, results_dir: str = None) -> str:
+def write_paired_artifact(payload: dict, results_dir: str = None,
+                          bench_key: str = "gsm8k") -> str:
     """Persist the full paired run to a timestamped JSON artifact.
 
     benchmarks/results/ is gitignored (run output, not source): the artifact
@@ -1688,7 +1769,7 @@ def write_paired_artifact(payload: dict, results_dir: str = None) -> str:
     os.makedirs(results_dir, exist_ok=True)
     path = os.path.join(
         results_dir,
-        f"paired_gsm8k_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
+        f"paired_{bench_key}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
     with open(path, "w") as f:
         json.dump(payload, f, indent=2)
     return path
@@ -1725,6 +1806,73 @@ def update_paired_stats_yaml(payload: dict, artifact_path: str,
     return stats
 
 
+# Release-time cadence: the gate is only evidence while it is recent. A gate
+# result older than this is stale — the code it certified has moved on.
+GATE_MAX_AGE_DAYS = 90
+GATE_STATS_KEY = "paired_gate"
+
+
+def update_paired_gate_yaml(gate: dict, stats_path: str = None,
+                            key: str = GATE_STATS_KEY) -> dict:
+    """Write the reduced across-benchmark gate result into STATS.yaml.
+
+    This is the row the release cadence hook reads: one verdict for the whole
+    small-model do-no-harm gate, reduced by worst case across benchmarks.
+    """
+    stats_path = stats_path or str(Path(__file__).parent.parent / "STATS.yaml")
+    stats = {}
+    if os.path.exists(stats_path):
+        with open(stats_path) as f:
+            stats = yaml.safe_load(f) or {}
+    stats[key] = gate
+    with open(stats_path, "w") as f:
+        yaml.dump(stats, f, default_flow_style=False, sort_keys=False)
+    return stats
+
+
+def check_release_gate(stats_path: str = None, now: datetime = None,
+                       max_age_days: int = GATE_MAX_AGE_DAYS,
+                       key: str = GATE_STATS_KEY) -> dict:
+    """Release-time cadence check: is there a fresh, passing gate on record?
+
+    Does NOT run the benchmark (no API keys at release time, and a gate run is
+    hours of paid calls). It checks that a run HAPPENED, recently, on the
+    pinned model set, and passed — absent evidence blocks the release rather
+    than being read as consent (UM-0500).
+
+    Returns {"ok": bool, "reasons": [...]}; caller maps ok=False to exit 1.
+    """
+    now = now or datetime.now()
+    stats_path = stats_path or str(Path(__file__).parent.parent / "STATS.yaml")
+    if not os.path.exists(stats_path):
+        return {"ok": False, "reasons": [f"{stats_path} missing — no gate on record"]}
+    with open(stats_path) as f:
+        stats = yaml.safe_load(f) or {}
+    gate = stats.get(key)
+    if not gate:
+        return {"ok": False,
+                "reasons": [f"no '{key}' entry in {stats_path} — gate never run"]}
+    # Freshness is per model: model A's pass from 89 days ago must not be kept
+    # alive by model B passing yesterday. Each pinned model carries its own
+    # pass timestamp; a later failing run on a model deletes its entry.
+    passes = gate.get("model_passes") or {}
+    reasons = []
+    for m in PINNED_SMALL_MODELS:
+        ts = passes.get(m)
+        if not ts:
+            reasons.append(f"pinned model has no passing gate on record: {m}")
+            continue
+        try:
+            age = (now - datetime.fromisoformat(ts)).days
+        except (TypeError, ValueError):
+            reasons.append(f"unreadable pass timestamp for {m}: {ts!r}")
+            continue
+        if age > max_age_days:
+            reasons.append(f"gate pass for {m} is {age}d old "
+                           f"(max {max_age_days}d) — stale evidence")
+    return {"ok": not reasons, "reasons": reasons}
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="DeepEval Benchmark Suite — O-0008: 10 benchmarks via Chutes.ai"
@@ -1759,8 +1907,22 @@ def main():
     parser.add_argument(
         "--paired",
         action="store_true",
-        help="Paired routed-vs-direct tracer on GSM8K: both arms per case, "
-             "same run, baseline cache bypassed, raw tallies only",
+        help="Paired routed-vs-direct gate across PAIRED_BENCHMARKS: both arms "
+             "per case, same run, baseline cache bypassed, per-benchmark "
+             "verdicts reduced by worst case",
+    )
+    parser.add_argument(
+        "--paired-benchmarks",
+        default=",".join(PAIRED_BENCHMARKS),
+        help="Comma-separated paired benchmarks to run "
+             f"(default: all — {', '.join(PAIRED_BENCHMARKS)})",
+    )
+    parser.add_argument(
+        "--check-gate",
+        action="store_true",
+        help="Release-time cadence check: exit non-zero unless STATS.yaml "
+             "records a fresh, passing gate on the pinned model set. Runs no "
+             "benchmarks and needs no API key.",
     )
     parser.add_argument(
         "--tolerance",
@@ -1775,6 +1937,14 @@ def main():
         help="Re-run baseline tests (use when fixing benchmark/parser bugs)",
     )
     args = parser.parse_args()
+
+    if args.check_gate:
+        r = check_release_gate()
+        print("Release gate check (small-model do-no-harm, O-0008 amendment):")
+        for reason in r["reasons"]:
+            print(f"  - {reason}")
+        print(f"  {'OK' if r['ok'] else 'BLOCKED'}")
+        raise SystemExit(0 if r["ok"] else 1)
 
     print("DeepEval Benchmark Suite (OSS Models)")
     print("=" * 50)
@@ -1815,6 +1985,13 @@ def main():
         if args.tolerance is not None and not 0 <= args.tolerance <= 1:
             print(f"ERROR: --tolerance must be a proportion in [0,1], got {args.tolerance}")
             return
+        bench_keys = [b.strip().lower() for b in args.paired_benchmarks.split(",")
+                      if b.strip()]
+        unknown = [b for b in bench_keys if b not in PAIRED_BENCHMARKS]
+        if unknown:
+            print(f"ERROR: unknown paired benchmark(s) {unknown}; "
+                  f"available: {', '.join(PAIRED_BENCHMARKS)}")
+            return
 
         class _DirectArmModel:
             # ponytail: minimal .generate() shim, only interface _call_model needs
@@ -1830,31 +2007,81 @@ def main():
 
         print(f"Provider: {provider}")
         print(f"Model   : {args.model} (BOTH arms, pinned)")
-        print(f"Prompt  : {PAIRED_PROMPT_TEMPLATE}")
+        if args.model not in PINNED_SMALL_MODELS:
+            print(f"  NOTE: {args.model} is not in the pinned gate model set "
+                  f"{list(PINNED_SMALL_MODELS)} — this run informs, it does not "
+                  "discharge the O-0008 gate (amend CHOICES.md to add a model)")
+        print(f"Benchmarks: {', '.join(bench_keys)}")
+        print(f"n={args.n} per benchmark (gate bar: n>={GATE_N_REQUIRED} clean each)")
         print("\nPaired mode: routed endpoint vs direct, baseline cache BYPASSED")
         print("Other suite flags (--refresh-baseline etc.) do not apply in paired mode")
-        cases = run_paired_gsm8k(_DirectArmModel(), n_samples=args.n)
-        print_paired_tallies(cases, routed_model=args.model, direct_model=args.model)
-        verdict_record = compute_paired_verdict(
-            cases, pinned_model=args.model, frozen_tolerance=args.tolerance)
-        print_paired_verdict(verdict_record)
-        payload = {
-            "timestamp": datetime.now().isoformat(),
-            "benchmark": "GSM8K",
-            "provider": provider,
-            "model": args.model,
-            "prompt_template": PAIRED_PROMPT_TEMPLATE,
+
+        direct_arm = _DirectArmModel()
+        per_benchmark, artifacts = {}, {}
+        for bench_key in bench_keys:
+            spec = PAIRED_BENCHMARKS[bench_key]
+            print(f"\n=== {spec['display']} ({spec['class']}-class) ===")
+            print(f"Prompt  : {spec['prompt_template']}")
+            cases = run_paired_benchmark(bench_key, direct_arm, n_samples=args.n)
+            print_paired_tallies(cases, routed_model=args.model,
+                                 direct_model=args.model, bench_key=bench_key)
+            verdict_record = compute_paired_verdict(
+                cases, pinned_model=args.model, frozen_tolerance=args.tolerance,
+                bench_key=bench_key)
+            print_paired_verdict(verdict_record)
+            payload = {
+                "timestamp": datetime.now().isoformat(),
+                "benchmark": spec["display"],
+                "benchmark_class": spec["class"],
+                "provider": provider,
+                "model": args.model,
+                "prompt_template": spec["prompt_template"],
+                "n": args.n,
+                "frozen_tolerance_arg": args.tolerance,
+                "cases": cases,
+                "tallies": tally_paired(cases),
+                "verdict_record": verdict_record,
+            }
+            artifacts[bench_key] = write_paired_artifact(payload, bench_key=bench_key)
+            update_paired_stats_yaml(payload, artifacts[bench_key],
+                                     key=f"paired_{bench_key}")
+            per_benchmark[bench_key] = verdict_record["verdict"]
+            print(f"  artifact: {artifacts[bench_key]}")
+
+        # The gate stands only if EVERY benchmark stands (O-0008 "no regressions").
+        gate = reduce_verdicts(per_benchmark)
+        print("\n" + "=" * 50)
+        print(f"GATE VERDICT (worst case across {len(per_benchmark)} benchmarks): "
+              f"{gate['verdict']}")
+        for reason in gate["reasons"]:
+            print(f"  - {reason}")
+        # One invocation gates one model. The release check requires a FRESH
+        # pass per pinned model, so passes accumulate as model -> timestamp;
+        # a failing run deletes that model's prior pass.
+        stats_path = str(Path(__file__).parent.parent / "STATS.yaml")
+        prior = {}
+        if os.path.exists(stats_path):
+            with open(stats_path) as f:
+                prior = (yaml.safe_load(f) or {}).get(
+                    args.stats_key or GATE_STATS_KEY) or {}
+        model_passes = dict(prior.get("model_passes") or {})
+        if gate["verdict"] == "pass":
+            model_passes[args.model] = datetime.now().isoformat()
+        else:
+            model_passes.pop(args.model, None)
+        update_paired_gate_yaml({
+            "last_run": datetime.now().isoformat(),
+            "verdict": gate["verdict"],
+            "reasons": gate["reasons"],
+            "per_benchmark": gate["per_benchmark"],
             "n": args.n,
-            "frozen_tolerance_arg": args.tolerance,
-            "cases": cases,
-            "tallies": tally_paired(cases),
-            "verdict_record": verdict_record,
-        }
-        artifact_path = write_paired_artifact(payload)
-        update_paired_stats_yaml(payload, artifact_path,
-                                 key=args.stats_key or "paired_gsm8k")
-        print(f"\nArtifact: {artifact_path}")
-        print(f"STATS.yaml updated (key: {args.stats_key or 'paired_gsm8k'})")
+            "n_required": GATE_N_REQUIRED,
+            "model_passes": model_passes,
+            "pinned_models": list(PINNED_SMALL_MODELS),
+            "artifacts": artifacts,
+        }, key=args.stats_key or GATE_STATS_KEY)
+        print(f"STATS.yaml updated (per-benchmark keys + "
+              f"'{args.stats_key or GATE_STATS_KEY}')")
         return
 
     # Select provider

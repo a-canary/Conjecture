@@ -202,6 +202,8 @@ Decomposition helps reasoning (BBH +9pp, Synthetic +18pp) but HURTS recall/commo
 Supports: M-0001, A-0015
 
 Three-prompt architecture requires 70B+ models. 8B models show -32pp regression vs direct prompting. Optimization via context reduction or iteration limiting is insufficient. Direct prompting recommended for <32B models. Validate new models before deploying three-prompt.
+
+"Validate new models" is not a judgement call: it means the small-model do-no-harm gate defined in **O-0008 Amendment 2026-08-04** — the named pinned model set, n>=100 per benchmark, both O-0009 evidence classes, reduced by worst case. A model that has not passed that gate has not been validated, whatever its size.
 Supports: D-0010, D-0001
 
 GC runs when claim count exceeds threshold. Removes claims that are both clean (not dirty) and low-confidence. Prevents unbounded growth while preserving valuable knowledge. GC does not run during active reasoning.
@@ -228,6 +230,20 @@ Tier 1 8B optimization attempts (2026-03-08, n=50 BBH):
 - Three-model ensemble: BLOCKED by model availability (infrastructure limitation)
 
 **Architectural constraint validated:** Three-prompt requires 70B+ models. 8B optimization via context reduction, iteration limiting, or ensemble voting does not restore viability. Direct prompting recommended for <32B models (72-90% accuracy vs 40-58% three-prompt).
+
+#### Amendment 2026-08-04: small-model do-no-harm gate (pre-registration)
+
+O-0010's "validate new models before deploying three-prompt" is discharged by a paired routed-vs-direct run, not by a re-read of the 2026-03 numbers. Pre-registered here so the gate cannot be widened after seeing results:
+
+- **Pinned model set** — `openai/gpt-oss-20b` (suite default OSS target, O-0006) and `meta-llama/llama-3.1-8b-instruct` (the 8B class where the -32pp regression was measured). Mirrored in code as `benchmarks/paired_stats.PINNED_SMALL_MODELS`; adding a model to either without amending this section is a process violation.
+- **Pre-registered sample count** — n>=100 clean cases per benchmark per model (`paired_stats.N_REQUIRED`), per STATISTICAL_REALITY_CHECK.md ("n=10-20 is for exploration, n>=100 for validation"). Below the bar the verdict is `underpowered` — not a pass.
+- **Benchmark set** — both O-0009 evidence classes, from benchmarks already in this suite: reasoning-class (GSM8K, LogiQA) and recall-class (TruthfulQA). Listed in `deepeval_suite.PAIRED_BENCHMARKS`.
+- **Reduction** — the gate verdict is the WORST per-benchmark verdict (`paired_stats.reduce_verdicts`). "No regressions" means on all benchmarks; one `fail-on-floor` sinks the gate. An unknown verdict string reduces as worst, never as a pass.
+- **Two-sided** — the do-no-harm floor alone is a tautology an all-direct router passes by construction, so reasoning-class benchmarks also carry an anti-cowardice floor (router leaves the cheap path, shows uplift on the reasoning subset, and meets the O-0009 0.90 accuracy floor). Recall-class benchmarks disable the cowardice half: staying on `cot_lite` there is the behavior O-0009 requires.
+- **Both arms pinned to one model** — verdict emission refuses (`refused-arm-mismatch`) when the routed arm's reported served model differs from the pinned model. A verdict is a statement about ONE model.
+- **Release cadence** — `python -m benchmarks.deepeval_suite --check-gate` exits non-zero unless STATS.yaml records a `paired_gate` pass within 90 days for EACH pinned model individually (freshness is per model — one model's fresh pass does not keep another's stale pass alive; a failing run erases that model's prior pass). Wired into `.github/workflows/release-gate.yml`. Absent evidence blocks the release rather than reading as consent (UM-0500).
+
+Run: `python -m benchmarks.deepeval_suite --paired --model <pinned model> --n 100` (all three benchmarks; `--paired-benchmarks` narrows). Artifacts land in `benchmarks/results/`, summaries in STATS.yaml.
 
 ---
 
