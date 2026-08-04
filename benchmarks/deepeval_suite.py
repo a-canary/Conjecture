@@ -1469,25 +1469,27 @@ def tally_paired(cases: List[dict]) -> dict:
     return tallies
 
 
+PAIRED_PROMPT_TEMPLATE = "gsm8k-5shot-cot (deepeval GSM8KTemplate, shared by both arms)"
+
+
 def run_paired_gsm8k(base_model, n_samples: int = 10) -> List[dict]:
-    """Paired routed-vs-direct tracer on GSM8K.
+    """Paired routed-vs-direct comparison on GSM8K.
 
-    Each case runs BOTH arms in the same invocation, over the same case set:
-      routed — endpoint.evaluate() on the shipped O-0009 path (classify_query
-               picks the strategy), served by src.endpoint.llm_client
-      direct — plain 5-shot CoT prompt via _call_model on base_model
+    Each case runs BOTH arms in the same invocation, over the same case set,
+    with ONE shared prompt (the 5-shot CoT GSM8KTemplate output):
+      routed — endpoint.evaluate() on the shipped O-0009 path; the strategy is
+               classified from the bare question (what a user would type), the
+               evaluated prompt is the shared template
+      direct — the same shared prompt via _call_model on base_model
 
-    NOT a like-for-like comparison, and this tracer does not claim to be one:
-    the arms differ in serving model (llm_client's DEFAULT/TOOL_CAPABLE_MODEL
-    vs --model) and in prompt format (bare question vs 5-shot CoT template).
-    Both identities are printed with the tallies so the confound is visible.
-    Removing it is the statistics slice's job — the brief here is only to prove
-    the routed harness runs end to end and retains per-case outcomes.
+    Serving-model pinning is the caller's job (main() pins llm_client's
+    DEFAULT/TOOL_CAPABLE_MODEL to --model before this runs); this function
+    records the model each routed call REPORTS serving in
+    case["routed_model"], so pinning is audited, not assumed. Verdict emission
+    refuses when the recorded identities don't match — see compute_paired_verdict.
 
     Baseline cache is bypassed by construction (never read, never written).
     Returns per-case records; caller prints tallies via tally_paired().
-    # ponytail: GSM8K only at exploration n — statistics/gate/artifact land
-    # with the full do-no-harm gate task once this tracer is proven.
     """
     from src.endpoint.conjecture_endpoint import ConjectureEndpoint
     from src.agent.task_router import classify_query
@@ -1519,12 +1521,13 @@ def run_paired_gsm8k(base_model, n_samples: int = 10) -> List[dict]:
                 enable_cot=True,
             )
             expected = golden.expected_output
-            routed_query = f"{golden.input}\nWrite your final numeric answer after ####"
             # Classify once here and hand the result to evaluate() via route=,
             # so the recorded strategy IS the one used rather than a re-derived
             # guess (classify_query can fall through to an LLM call, so calling
             # it twice is neither free nor guaranteed to agree with itself).
-            query_type = classify_query(routed_query)
+            # Classify the bare question (what a user would type), evaluate the
+            # shared template — routing signal and measured prompt stay separate.
+            query_type = classify_query(golden.input)
             strategy = query_type.value
 
             def _correct(response: str) -> bool:
@@ -1535,13 +1538,15 @@ def run_paired_gsm8k(base_model, n_samples: int = 10) -> List[dict]:
 
             case = {"index": i, "strategy": strategy,
                     "routed_correct": False, "direct_correct": False,
-                    "routed_error": None, "direct_error": None}
+                    "routed_error": None, "direct_error": None,
+                    "routed_model": None}
 
             try:
                 resp = loop.run_until_complete(
-                    endpoint.evaluate(query=routed_query, route=query_type))
+                    endpoint.evaluate(query=prompt, route=query_type))
                 if resp.success:
                     case["routed_correct"] = _correct(resp.data.get("response", ""))
+                    case["routed_model"] = resp.data.get("model")
                 else:
                     case["routed_error"] = resp.message
             except Exception as e:
@@ -1575,10 +1580,10 @@ def print_paired_tallies(cases: List[dict], routed_model: str = None, direct_mod
     errored = [c for c in cases if c.get("routed_error") or c.get("direct_error")]
     print("\nPaired GSM8K raw tallies (no statistics, no gate):")
     if routed_model or direct_model:
-        print(f"  arms are NOT model-matched: routed={routed_model} direct={direct_model}")
-        print("  (routed arm serves per llm_client defaults; the id above is the "
-              "tool-capable default, the actual per-call model may be the "
-              "general default — not a measured attribution)")
+        served = sorted({str(c.get("routed_model")) for c in cases
+                         if not c.get("routed_error")})
+        print(f"  pinned model: routed={routed_model} direct={direct_model}")
+        print(f"  routed arm reported serving: {served or ['(none)']}")
     print(f"  n={t['n']}  n_clean={t['n_clean']}  n_errored={t['n_errored']}")
     print(f"  routed_correct={t['routed_correct']}  direct_correct={t['direct_correct']}"
           f"  (errored cases count as incorrect — score against n_clean)")
@@ -1588,7 +1593,31 @@ def print_paired_tallies(cases: List[dict], routed_model: str = None, direct_mod
         print(f"  cases with arm errors: {len(errored)} (see per-case log above)")
 
 
-def compute_paired_verdict(cases: List[dict]) -> dict:
+def arm_identity_mismatch(cases: List[dict], pinned_model: str) -> List[str]:
+    """Reasons the two arms cannot be treated as the same model ([] = matched).
+
+    The direct arm calls pinned_model by construction; the routed arm's
+    identity is whatever each evaluate() call REPORTED serving
+    (case["routed_model"]). Unreported or different → mismatch.
+    """
+    clean = [c for c in cases
+             if not c.get("routed_error") and not c.get("direct_error")]
+    reasons = []
+    unreported = sum(1 for c in clean
+                     if c.get("routed_model") in (None, "unknown"))
+    if unreported:
+        reasons.append(f"{unreported}/{len(clean)} clean cases did not report "
+                       "a served model for the routed arm")
+    others = sorted({c["routed_model"] for c in clean
+                     if c.get("routed_model") not in (None, "unknown")
+                     and c["routed_model"] != pinned_model})
+    if others:
+        reasons.append(f"routed arm served {others}, pinned model is {pinned_model}")
+    return reasons
+
+
+def compute_paired_verdict(cases: List[dict], pinned_model: str = None,
+                           frozen_tolerance: float = None) -> dict:
     """Wire paired_stats over the tracer's per-case records: delta, CI,
     tolerance, cowardice inputs, and the four-way verdict.
 
@@ -1601,20 +1630,34 @@ def compute_paired_verdict(cases: List[dict]) -> dict:
         paired_delta, non_inferiority_tolerance, cowardice_metrics, verdict)
 
     stats = paired_delta(cases)
-    tol = non_inferiority_tolerance(stats)
+    if frozen_tolerance is not None:
+        tol = {"tolerance": frozen_tolerance,
+               "basis": "frozen via --tolerance (reference-run margin)"}
+    else:
+        tol = non_inferiority_tolerance(stats)
     cow = cowardice_metrics(cases)
     clean = [c for c in cases
              if not c.get("routed_error") and not c.get("direct_error")]
     router_accuracy = (sum(1 for c in clean if c["strategy"] == "math") / len(clean)
                        if clean else 0.0)
+    out = {"stats": stats, "tolerance": tol, "cowardice": cow,
+           "router_accuracy": router_accuracy, "pinned_model": pinned_model,
+           "arm_mismatch": []}
+    if pinned_model is not None:
+        mismatch = arm_identity_mismatch(cases, pinned_model)
+        if mismatch:
+            # Refuse: a verdict is a statement about ONE model; if the arms
+            # weren't provably that model, there is no verdict to emit.
+            out.update(arm_mismatch=mismatch,
+                       verdict="refused-arm-mismatch", reasons=mismatch)
+            return out
     v = verdict(stats, tol["tolerance"] or 0.0,
                 cow["non_direct_share"], cow["reasoning_uplift"], router_accuracy)
-    return {"stats": stats, "tolerance": tol, "cowardice": cow,
-            "router_accuracy": router_accuracy, **v}
+    out.update(**v)
+    return out
 
 
-def print_paired_verdict(cases: List[dict]):
-    r = compute_paired_verdict(cases)
+def print_paired_verdict(r: dict):
     s, t = r["stats"], r["tolerance"]
     print("\nPaired verdict (do-no-harm gate statistics):")
     if s["delta"] is None:
@@ -1631,6 +1674,55 @@ def print_paired_verdict(cases: List[dict]):
     print(f"  VERDICT: {r['verdict']}")
     for reason in r["reasons"]:
         print(f"    - {reason}")
+
+
+def write_paired_artifact(payload: dict, results_dir: str = None) -> str:
+    """Persist the full paired run to a timestamped JSON artifact.
+
+    benchmarks/results/ is gitignored (run output, not source): the artifact
+    survives the terminal session on the machine that produced it, and
+    STATS.yaml (tracked) records its path, model, prompt template and verdict
+    so a committed run is auditable even where the JSON isn't checked in.
+    """
+    results_dir = results_dir or str(Path(__file__).parent / "results")
+    os.makedirs(results_dir, exist_ok=True)
+    path = os.path.join(
+        results_dir,
+        f"paired_gsm8k_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
+    with open(path, "w") as f:
+        json.dump(payload, f, indent=2)
+    return path
+
+
+def update_paired_stats_yaml(payload: dict, artifact_path: str,
+                             stats_path: str = None, key: str = "paired_gsm8k") -> dict:
+    """Write the machine-readable summary of a paired run into STATS.yaml."""
+    stats_path = stats_path or str(Path(__file__).parent.parent / "STATS.yaml")
+    stats = {}
+    if os.path.exists(stats_path):
+        with open(stats_path) as f:
+            stats = yaml.safe_load(f) or {}
+    v = payload["verdict_record"]
+    stats[key] = {
+        "last_run": payload["timestamp"],
+        "artifact": artifact_path,
+        "model": payload["model"],
+        "provider": payload["provider"],
+        "prompt_template": payload["prompt_template"],
+        "n": payload["n"],
+        "n_clean": v["stats"]["n_clean"],
+        "delta": v["stats"]["delta"],
+        "ci_low": v["stats"]["ci_low"],
+        "ci_high": v["stats"]["ci_high"],
+        "tolerance": v["tolerance"]["tolerance"],
+        "tolerance_basis": v["tolerance"]["basis"],
+        "router_accuracy": v["router_accuracy"],
+        "verdict": v["verdict"],
+        "reasons": v["reasons"],
+    }
+    with open(stats_path, "w") as f:
+        yaml.dump(stats, f, default_flow_style=False, sort_keys=False)
+    return stats
 
 
 def main():
@@ -1671,6 +1763,13 @@ def main():
              "same run, baseline cache bypassed, raw tallies only",
     )
     parser.add_argument(
+        "--tolerance",
+        type=float,
+        default=None,
+        help="Frozen non-inferiority tolerance (proportion, e.g. 0.05) from a "
+             "reference run; default derives it from this run's measured sd",
+    )
+    parser.add_argument(
         "--refresh-baseline",
         action="store_true",
         help="Re-run baseline tests (use when fixing benchmark/parser bugs)",
@@ -1686,22 +1785,35 @@ def main():
         # Runs before deepeval provider selection: installed deepeval's
         # GPTModel validates model names against OpenAI's list and rejects
         # OSS ids, and paired mode only needs .generate() for the direct arm.
-        from src.endpoint.llm_client import TOOL_CAPABLE_MODEL
         import openai
 
+        # Pin BOTH arms to --model: env for anything not yet imported, module
+        # attrs for the already-imported constants (evaluator re-imports them
+        # per call, so the patch takes effect).
+        os.environ["CONJECTURE_DEFAULT_MODEL"] = args.model
+        os.environ["CONJECTURE_TOOL_MODEL"] = args.model
+        import src.endpoint.llm_client as _llm_client
+        _llm_client.DEFAULT_MODEL = args.model
+        _llm_client.TOOL_CAPABLE_MODEL = args.model
+
         chutes_key = os.environ.get("CHUTES_API_KEY")
-        openrouter_key = os.environ.get("OPENROUTER_API_KEY")
         if args.provider in ("auto", "chutes") and chutes_key:
             # CHUTES_BASE_URL honored so both arms hit the same provider,
             # mirroring llm_client's override
             base_url = os.environ.get("CHUTES_BASE_URL", "https://llm.chutes.ai/v1")
             key = chutes_key
             provider = base_url
-        elif args.provider in ("auto", "openrouter") and openrouter_key:
-            base_url, key = "https://openrouter.ai/api/v1", openrouter_key
-            provider = "OpenRouter"
         else:
-            print("ERROR: No API key found. Set OPENROUTER_API_KEY or CHUTES_API_KEY")
+            # The routed arm serves through llm_client, which is Chutes-only
+            # (CHUTES_API_KEY / CHUTES_BASE_URL). Running the direct arm on
+            # OpenRouter would put the arms on different serving stacks under
+            # one model name — a confound arm_identity_mismatch cannot see.
+            print("ERROR: paired mode requires CHUTES_API_KEY — the routed arm "
+                  "serves via llm_client (Chutes only); a non-Chutes direct arm "
+                  "would compare two different serving stacks")
+            return
+        if args.tolerance is not None and not 0 <= args.tolerance <= 1:
+            print(f"ERROR: --tolerance must be a proportion in [0,1], got {args.tolerance}")
             return
 
         class _DirectArmModel:
@@ -1717,12 +1829,32 @@ def main():
                 return r.choices[0].message.content or ""
 
         print(f"Provider: {provider}")
-        print(f"Model   : {args.model} (direct arm)")
+        print(f"Model   : {args.model} (BOTH arms, pinned)")
+        print(f"Prompt  : {PAIRED_PROMPT_TEMPLATE}")
         print("\nPaired mode: routed endpoint vs direct, baseline cache BYPASSED")
         print("Other suite flags (--refresh-baseline etc.) do not apply in paired mode")
         cases = run_paired_gsm8k(_DirectArmModel(), n_samples=args.n)
-        print_paired_tallies(cases, routed_model=TOOL_CAPABLE_MODEL, direct_model=args.model)
-        print_paired_verdict(cases)
+        print_paired_tallies(cases, routed_model=args.model, direct_model=args.model)
+        verdict_record = compute_paired_verdict(
+            cases, pinned_model=args.model, frozen_tolerance=args.tolerance)
+        print_paired_verdict(verdict_record)
+        payload = {
+            "timestamp": datetime.now().isoformat(),
+            "benchmark": "GSM8K",
+            "provider": provider,
+            "model": args.model,
+            "prompt_template": PAIRED_PROMPT_TEMPLATE,
+            "n": args.n,
+            "frozen_tolerance_arg": args.tolerance,
+            "cases": cases,
+            "tallies": tally_paired(cases),
+            "verdict_record": verdict_record,
+        }
+        artifact_path = write_paired_artifact(payload)
+        update_paired_stats_yaml(payload, artifact_path,
+                                 key=args.stats_key or "paired_gsm8k")
+        print(f"\nArtifact: {artifact_path}")
+        print(f"STATS.yaml updated (key: {args.stats_key or 'paired_gsm8k'})")
         return
 
     # Select provider
