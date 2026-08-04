@@ -10,11 +10,10 @@ See CHOICES.md D-0001 (Universal Claim Storage) and I-0003 (SQLite Primary).
 """
 
 import logging
-import uuid
 from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
 
-from src.core.models import Claim, ClaimType, ClaimScope
+from src.core.models import Claim, ClaimType, ClaimScope, generate_claim_id
 from src.data.optimized_sqlite_manager import OptimizedSQLiteManager
 
 logger = logging.getLogger(__name__)
@@ -79,9 +78,9 @@ class DataManager:
         """
         await self._ensure_initialized()
 
-        # Generate ID if not provided
+        # Generate ID if not provided (use canonical format for cross-module consistency)
         if claim_id is None:
-            claim_id = f"c{uuid.uuid4().hex[:8]}"
+            claim_id = generate_claim_id()
 
         # Build claim object
         claim = Claim(

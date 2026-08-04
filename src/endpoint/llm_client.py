@@ -79,9 +79,11 @@ class CircuitBreaker:
 _default_circuit_breaker = CircuitBreaker()
 
 
-# Default models for different use cases
-DEFAULT_MODEL = "openai/gpt-oss-20b"  # Fast, general purpose
-TOOL_CAPABLE_MODEL = "Qwen/Qwen3-32B"  # Supports function/tool calling
+# Default models for different use cases. Env-overridable so the same shipped
+# path can run against any OpenAI-compatible provider (e.g. OpenRouter when
+# the Chutes account is capped) without code changes.
+DEFAULT_MODEL = os.environ.get("CONJECTURE_DEFAULT_MODEL", "openai/gpt-oss-20b")  # Fast, general purpose
+TOOL_CAPABLE_MODEL = os.environ.get("CONJECTURE_TOOL_MODEL", "Qwen/Qwen3-32B")  # Supports function/tool calling
 
 
 class LLMClient:
@@ -93,7 +95,7 @@ class LLMClient:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        base_url: str = "https://llm.chutes.ai/v1",
+        base_url: Optional[str] = None,
         model: str = DEFAULT_MODEL,
         circuit_breaker: Optional[CircuitBreaker] = None
     ):
@@ -106,7 +108,7 @@ class LLMClient:
             circuit_breaker: Optional circuit breaker (uses default if None)
         """
         self.api_key = api_key or os.environ.get("CHUTES_API_KEY")
-        self.base_url = base_url
+        self.base_url = base_url or os.environ.get("CHUTES_BASE_URL", "https://llm.chutes.ai/v1")
         self.model = model
         self._client: Optional[AsyncOpenAI] = None
         self._circuit_breaker = circuit_breaker or _default_circuit_breaker
