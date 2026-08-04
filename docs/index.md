@@ -218,10 +218,6 @@ This document provides a comprehensive evaluation of all files in the Conjecture
   - **Contribution**: Pure functions for claim manipulation operations that provide tools layer for claim processing with functional approach.
   - **Dependencies**: src/core/models.py
 
-- **src/core/relationship_manager.py** - 🟢 8/10 - Relationship management
-  - **Contribution**: Pure functions for claim relationship management that handles supported_by and supports relationships with validation.
-  - **Dependencies**: src/core/models.py, src/core/claim_operations.py
-
 - **src/core/dirty_flag.py** - 🟢 8/10 - Dirty flag system
   - **Contribution**: Tracks claims needing re-evaluation with priority-based processing that ensures system efficiency and consistency.
   - **Dependencies**: src/core/models.py, logging
