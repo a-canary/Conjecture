@@ -1107,6 +1107,7 @@ truthfulqa_refutation:
   conclusion: 'M-0002 CHALLENGED: Decomposition increases false beliefs'
   choices_ref: CHOICES.md M-0002
 o0008_previous_blocked:
+  status: historical
   note: |
     4/5 benchmarks show +20pp improvement, BUT 4 benchmarks show REGRESSIONS.
     O-0008 requires "no regressions" which is violated.

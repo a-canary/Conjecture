@@ -229,6 +229,11 @@ Tier 1 8B optimization attempts (2026-03-08, n=50 BBH):
 
 **Architectural constraint validated:** Three-prompt requires 70B+ models. 8B optimization via context reduction, iteration limiting, or ensemble voting does not restore viability. Direct prompting recommended for <32B models (72-90% accuracy vs 40-58% three-prompt).
 
+### O-0011: Every shipped benchmark figure must cite its run
+Supports: M-0001, M-0002
+
+Every percentage-point figure on a surface a new reader lands on (STATS.yaml, docs index, tutorials, blog, README) must resolve to a run reference (a path under experiments/results/ or benchmarks/results/, a STATS.yaml key, or CHOICES.md/STATS.yaml itself) or sit inside a block explicitly marked `superseded`/`historical`/`unverified`. Unmeasured figures must not read as measured (UM-0500). The R&D reports tree (docs/rnd_reports/, docs/RND_COMPREHENSIVE_REPORT.md, research/, RD-DEEP-RESEARCH-*.md) is exempt at the directory level — dated historical investigation, not a live claim. `benchmarks/citation_recorder.py` enforces this mechanically in the test suite (`tests/test_citation_recorder.py`) and reports uncited figures with file and line plus a cited/total coverage count.
+
 ---
 
 ## Data
