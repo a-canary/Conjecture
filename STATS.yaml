@@ -787,6 +787,11 @@ o0008_quick:
       conjecture_score: 60.0
       delta: 20.0
       error: null
+      status: superseded
+      superseded_by: truthfulqa_refutation
+      superseded_reason: n=5 is underpowered noise. The adequately-powered n=100
+        run (experiments/results/truthfulqa_20260306_194026.json) found delta
+        -13.0pp, the opposite sign. Do not cite this figure as a live result.
   summary:
     avg_baseline: 56.0
     avg_conjecture: 56.0
@@ -877,6 +882,10 @@ o0008_hard:
       conjecture_score: 60.0
       delta: 20.0
       error: null
+      status: superseded
+      superseded_by: truthfulqa_refutation
+      superseded_reason: n=5 is underpowered noise; see truthfulqa_refutation
+        (n=100, delta -13.0pp).
   summary:
     avg_baseline: 33.33
     avg_conjecture: 53.33
@@ -918,6 +927,10 @@ o0008_hard2:
       conjecture_score: 60.0
       delta: 40.0
       error: null
+      status: superseded
+      superseded_by: truthfulqa_refutation
+      superseded_reason: n=5 is underpowered noise; see truthfulqa_refutation
+        (n=100, delta -13.0pp).
   summary:
     avg_baseline: 45.33
     avg_conjecture: 61.33
@@ -959,6 +972,10 @@ o0008_hard3:
       conjecture_score: 60.0
       delta: 20.0
       error: null
+      status: superseded
+      superseded_by: truthfulqa_refutation
+      superseded_reason: n=5 is underpowered noise; see truthfulqa_refutation
+        (n=100, delta -13.0pp).
   summary:
     avg_baseline: 49.33
     avg_conjecture: 61.33
@@ -1072,6 +1089,23 @@ o0008_batch_optimization:
 
     This approach achieves 5/5 +20pp benchmarks with ZERO regressions.
 
+truthfulqa_refutation:
+  status: current
+  note: |
+    Canonical, adequately-powered TruthfulQA result. Supersedes the n=5
+    (o0008_quick, +20.0pp) and n=21 (o0008_previous_blocked, +28.6pp)
+    figures elsewhere in this file — both underpowered and both wrong-signed.
+  source: experiments/results/truthfulqa_20260306_194026.json
+  timestamp: '2026-03-06T19:40:26.026214+00:00'
+  model: deepseek/deepseek-chat-v3-0324
+  sample_count: 100
+  direct_correct: 79
+  direct_accuracy: 79.0
+  decomposition_correct: 66
+  decomposition_accuracy: 66.0
+  delta_pp: -13.0
+  conclusion: 'M-0002 CHALLENGED: Decomposition increases false beliefs'
+  choices_ref: CHOICES.md M-0002
 o0008_previous_blocked:
   note: |
     4/5 benchmarks show +20pp improvement, BUT 4 benchmarks show REGRESSIONS.
@@ -1103,6 +1137,11 @@ o0008_previous_blocked:
       conjecture: 61.9%
       delta: +28.6pp
       note: Truth verification - moderate baseline, good improvement
+      status: superseded
+      superseded_by: truthfulqa_refutation
+      superseded_reason: n=21 is underpowered. The adequately-powered n=100 run
+        (experiments/results/truthfulqa_20260306_194026.json) found delta -13.0pp,
+        the opposite sign. Do not cite this figure as a live result.
     positive_but_below_threshold:
     - name: LogiQA
       samples: 40
@@ -1142,7 +1181,15 @@ o0008_previous_blocked:
     - GSM8K: +32.5pp (15% → 47.5%) - grade school math
     - BBH-Math: +37.5pp (42.5% → 80%) - multi-step arithmetic
     - BBH-ObjectCount: +75pp (5% → 80%) - object counting
-    - TruthfulQA: +28.6pp (33.3% → 61.9%) - truth verification
+
+    SUPERSEDED CLAIM (do not cite): this block previously listed
+    "TruthfulQA: +28.6pp (33.3% → 61.9%) - truth verification" under
+    ADDS VALUE. That n=21 figure is underpowered. The adequately-powered
+    n=100 run (experiments/results/truthfulqa_20260306_194026.json,
+    deepseek/deepseek-chat-v3-0324) found the opposite sign: -13.0pp
+    (direct 79/100 vs decomposition 66/100), conclusion "M-0002 CHALLENGED:
+    Decomposition increases false beliefs". See truthfulqa_refutation below
+    and CHOICES.md M-0002 for the current verdict.
 
     WHERE CONJECTURE HURTS (high baseline, model already capable):
     - BBH-Tracking: -77.5pp (100% → 22.5%) - model already perfect!
