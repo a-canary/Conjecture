@@ -1404,19 +1404,26 @@ class DeepEvalSuite:
             if self.conjecture_model:
                 self.conjecture_model.close()
 
-    def update_stats_yaml(self, key: str = "deepeval_benchmarks", session_claims: int = 0) -> dict:
+    def update_stats_yaml(self, key: str = "deepeval_benchmarks", session_claims: int = 0,
+                          provider: str = "unknown", prompt_template: str = "unknown") -> dict:
         """Update STATS.yaml with results"""
         stats = {}
         if self.stats_path.exists():
             with open(self.stats_path) as f:
                 stats = yaml.safe_load(f) or {}
 
+        last_run = datetime.now().isoformat()
+        model_name = self._get_model_name()
         stats[key] = {
-            "last_run": datetime.now().isoformat(),
-            "model": self._get_model_name(),
+            "last_run": last_run,
+            "model": model_name,
             "session_claims": session_claims,  # Per O-0006: track claim accumulation
             "benchmarks": {
                 r.name: {
+                    **provenance_record(
+                        run_id=f"{key}_{r.name}_{last_run}", model=model_name,
+                        provider=provider, prompt_template=prompt_template,
+                        sample_count=r.sample_count),
                     "sample_count": r.sample_count,
                     "baseline_score": round(r.baseline_score, 2),
                     "conjecture_score": round(r.conjecture_score, 2),
@@ -1676,6 +1683,24 @@ def print_paired_verdict(r: dict):
         print(f"    - {reason}")
 
 
+def provenance_record(run_id: str, model: str, provider: str,
+                      prompt_template: str, sample_count: int) -> dict:
+    """Shared provenance fields every benchmark record carries.
+
+    `powered` reuses paired_stats.N_REQUIRED — one definition of "adequately
+    powered" for the whole repo, not a second bar invented per benchmark.
+    """
+    from benchmarks.paired_stats import N_REQUIRED
+    return {
+        "run_id": run_id,
+        "model": model,
+        "provider": provider,
+        "prompt_template": prompt_template,
+        "sample_count": sample_count,
+        "powered": sample_count >= N_REQUIRED,
+    }
+
+
 def write_paired_artifact(payload: dict, results_dir: str = None) -> str:
     """Persist the full paired run to a timestamped JSON artifact.
 
@@ -1703,12 +1728,14 @@ def update_paired_stats_yaml(payload: dict, artifact_path: str,
         with open(stats_path) as f:
             stats = yaml.safe_load(f) or {}
     v = payload["verdict_record"]
+    prov = provenance_record(
+        run_id=f"{key}_{payload['timestamp']}", model=payload["model"],
+        provider=payload["provider"], prompt_template=payload["prompt_template"],
+        sample_count=v["stats"]["n_clean"])
     stats[key] = {
+        **prov,
         "last_run": payload["timestamp"],
         "artifact": artifact_path,
-        "model": payload["model"],
-        "provider": payload["provider"],
-        "prompt_template": payload["prompt_template"],
         "n": payload["n"],
         "n_clean": v["stats"]["n_clean"],
         "delta": v["stats"]["delta"],
@@ -1944,7 +1971,12 @@ def main():
             print(f"{name}: baseline={r.baseline_score:.1f}%  conjecture={r.conjecture_score:.1f}%  delta={r.delta:+.1f}pp")
 
     stats_key = args.stats_key or "deepeval_oss"
-    suite.update_stats_yaml(key=stats_key, session_claims=session_claims)
+    # Unlike the paired path (one shared prompt), each of the 10 benchmarks
+    # here has its own n_shots/CoT config — no single template string exists
+    # yet, so the label names the suite defaults rather than fabricating one.
+    suite.update_stats_yaml(key=stats_key, session_claims=session_claims,
+                            provider=args.provider,
+                            prompt_template="deepeval-suite-benchmark-defaults")
     print(f"\nSTATS.yaml updated (key: {stats_key}, session_claims: {session_claims})")
 
 
