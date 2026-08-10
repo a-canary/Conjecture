@@ -1691,7 +1691,9 @@ def write_paired_artifact(payload: dict, results_dir: str = None) -> str:
         f"paired_gsm8k_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
     with open(path, "w") as f:
         json.dump(payload, f, indent=2)
-    return path
+    # Repo-relative so STATS.yaml stays valid outside the producing checkout
+    # (worktrees are ephemeral; absolute paths die with them).
+    return os.path.relpath(path, Path(__file__).parent.parent)
 
 
 def update_paired_stats_yaml(payload: dict, artifact_path: str,
@@ -1795,6 +1797,12 @@ def main():
         import src.endpoint.llm_client as _llm_client
         _llm_client.DEFAULT_MODEL = args.model
         _llm_client.TOOL_CAPABLE_MODEL = args.model
+        # Featherless-class providers 429 on concurrency contention; the SDK
+        # default of 2 retries exhausts in seconds and poisons cases as
+        # errored. 8 retries rides out transient contention on both arms.
+        import functools
+        _llm_client.AsyncOpenAI = functools.partial(
+            openai.AsyncOpenAI, max_retries=8)
 
         chutes_key = os.environ.get("CHUTES_API_KEY")
         if args.provider in ("auto", "chutes") and chutes_key:
@@ -1822,7 +1830,7 @@ def main():
                 self.client = openai.OpenAI(api_key=key, base_url=base_url)
 
             def generate(self, prompt: str) -> str:
-                r = self.client.chat.completions.create(
+                r = self.client.with_options(max_retries=8).chat.completions.create(
                     model=args.model,
                     messages=[{"role": "user", "content": prompt}],
                 )

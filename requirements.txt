@@ -23,3 +23,9 @@ pandas>=1.5.0
 pytest-cov>=4.0.0
 pytest-xdist>=3.0.0
 coverage>=7.0.0
+
+# benchmarks/deepeval_suite.py (paired GSM8K gate, O-0008/O-0009)
+deepeval>=1.0.0
+pyyaml>=6.0
+openai>=1.0.0
+datasets>=2.14.0
