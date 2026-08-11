@@ -6,6 +6,16 @@ Processing Interface for Conjecture
 Clean architecture abstraction layer separating presentation from processing.
 Defines the contract for all processing layer operations with async support
 and event streaming capabilities for real-time feedback.
+
+NOTE for hygiene/architecture audits: this ABC has exactly one concrete
+subclass (ConjectureProcessingInterface, see
+interfaces/conjecture_processing_interface.py) but is load-bearing, not
+dead code. src/cli/claim_browser.py and src/cli/modular_cli.py depend on
+it structurally/duck-typed, not via direct import, and tests/test_cli.py
+/ tests/test_claim_browser.py mock the contract rather than importing the
+concrete class. Do not flag for deletion on "one implementation" grounds
+alone. See CHOICES.md A-0017 for full rationale and the separate
+"collapse ABC into concrete class" simplification question.
 """
 
 from abc import ABC, abstractmethod

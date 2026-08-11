@@ -369,6 +369,11 @@ STATISTICAL CAVEAT: Exploratory findings from small samples (n=10-20). Only 1/7 
 
 EXPLORATORY FINDINGS (not statistically validated): Tiny models (1-2B parameters) may have fixed cognitive capacity limiting claim processing. Tentative optimal claim count is 1-3 claims maximum (p=0.299, n=10, NOT significant). Small samples suggest >3 claims may cause overload but this needs validation. Claim content should be task-specific: reasoning tasks may benefit from abstract principles ("use transitivity"), calculation tasks may benefit from format guidance ("show work, answer as ####"). Ultra-concise claims (~5 words) showed +25pp effect vs 15-word claims but NOT statistically significant (p=0.102, 95% CI: [-5pp, +55pp]). VALIDATED NEGATIVE: Commonsense tasks (HellaSwag) showed -40pp regression with ultra-concise claims (p=0.004, highly significant). Single direct prompt pattern suggested across small samples but needs validation. Exploratory results on LFM-2.5-1.2B: BBH 90%→100% (p=0.299), MMLU 10%→20% (observed but not tested), GSM8K 60%→70% (observed but not tested). All require n≥100 replication before deployment (2026-03-08 statistical analysis).
 
+### A-0017: ProcessingInterface ABC is load-bearing despite single implementation
+Supports: A-0001
+
+`src/interfaces/processing_interface.py` (610-line ABC, ~20 abstractmethods) has exactly one concrete subclass (`ConjectureProcessingInterface`) but is not dead code: `src/cli/claim_browser.py` and `src/cli/modular_cli.py` depend on it structurally (duck-typed parameter, not a direct import), and `tests/test_cli.py` / `tests/test_claim_browser.py` mock the contract rather than importing the concrete class. Hygiene/ponytail-audit sweeps must NOT flag this file for deletion on "one implementation" grounds alone — that pattern alone is not evidence of dead code here. If the real concern is "should a 20-method ABC with one impl be collapsed into the concrete class," that is a separate architecture-simplification judgment call requiring its own scoped task with justification, not a dead-code hygiene item. (Verified 2026-08-11, see `improve-architecture-false-positive-guar`.)
+
 ---
 
 ## Technology
