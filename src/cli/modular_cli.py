@@ -51,8 +51,6 @@ error_console = Console(stderr=True, legacy_windows=True)
 
 from .base_cli import BaseCLI
 from src.interfaces.processing_interface import ProcessingInterface
-
-# from .dirty_commands import dirty_app  # Temporarily disabled due to import issues
 from src.config.unified_config import validate_config
 
 # Create the main Typer app
@@ -62,9 +60,6 @@ app = typer.Typer(
     no_args_is_help=True,
     rich_markup_mode="rich",
 )
-
-# Add dirty flag subcommand
-# app.add_typer(dirty_app, name="dirty", help="Dirty flag system management")  # Temporarily disabled
 
 # Global processing interface instance
 current_processing_interface: ProcessingInterface = None
