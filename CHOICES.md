@@ -71,6 +71,17 @@ Supports: M-0001, M-0005
 
 Conjecture is a middle-layer LLM provider that hosts as localhost or VPS. Enhances queries with claim context, routes to gpt-oss-20B by default. Sessions store claims in local DB; LLM can elevate claims to project/team scope. This is the primary deployment model.
 
+### Mission: UM-0700 Commons (axis objective)
+Approved: 2026-08-11 by objective-counsel (panel 5/5; verdict oca-conjecture-small-model-routed-floor-1786432198). Source: PRD axis-walk-conjecture.
+
+```objectives
+- goal: Small OSS models routed by O-0009 never score below their own direct-prompt baseline | provenance: counsel-approved | metric: small_model_routed_delta_pp | gate: 0 @ routed >= direct on O-0006 suite
+```
+
+- Recorder: benchmarks/deepeval_suite.py paired mode (direct vs routed, STATS.yaml sink), per release.
+- Baseline: unmeasured as paired series (A-0015 spot: -28pp three-prompt on 8B, ~0 cot_lite). Unmeasured = not passed — gate starts RED until the first paired run lands in STATS.yaml.
+- phase 1: hillclimb(scope=router classification rules for <=8B models, metric=small_model_routed_delta_pp, gate=0 @ routed >= direct)
+
 ---
 
 ## User Experiences
