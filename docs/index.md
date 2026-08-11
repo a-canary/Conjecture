@@ -212,7 +212,7 @@ This document provides a comprehensive evaluation of all files in the Conjecture
 
 - **src/cli/modular_cli.py** - 🟢 8/10 - CLI interface
   - **Contribution**: Comprehensive command-line interface with Unicode support that provides users with complete system access and control.
-  - **Dependencies**: src/cli/base_cli.py, src/config/unified_config.py
+  - **Dependencies**: src/config/unified_config.py
 
 - **src/core/claim_operations.py** - 🟢 8/10 - Claim operations
   - **Contribution**: Pure functions for claim manipulation operations that provide tools layer for claim processing with functional approach.
@@ -267,18 +267,6 @@ This document provides a comprehensive evaluation of all files in the Conjecture
   - **Dependencies**: Python logging module
 
 ### Moderate Value Files (5-6)
-
-- **src/cli/base_cli.py** - 🟡 7/10 - CLI base class
-  - **Contribution**: Abstract base class for CLI implementations that defines common interface and validation patterns.
-  - **Dependencies**: src/core/models.py
-
-- **src/cli/backends/local_backend.py** - 🟡 7/10 - Local backend
-  - **Contribution**: Backend implementation for local LLM providers that enables offline functionality and local model support.
-  - **Dependencies**: Core models and configuration
-
-- **src/cli/backends/cloud_backend.py** - 🟡 7/10 - Cloud backend
-  - **Contribution**: Backend implementation for cloud LLM providers that enables remote model access and cloud integration.
-  - **Dependencies**: Core models and configuration
 
 - **src/config/default_config.json** - 🟡 7/10 - Default configuration
   - **Contribution**: Baseline configuration for new installations that provides consistent starting point for system setup.

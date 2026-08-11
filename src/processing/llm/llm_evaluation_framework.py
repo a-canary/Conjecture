@@ -7,7 +7,6 @@ Implements 50-point rubric for systematic comparison of LLM integrations
 
 import random
 import time
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
@@ -47,43 +46,6 @@ class LLMEvaluation:
     performance_summary: Dict[str, float]
     recommendation: str
     cost_estimate: Optional[float] = None
-
-class LLMInterface(ABC):
-    """Abstract interface for all LLM implementations to test"""
-
-    @abstractmethod
-    def __init__(self, config: Dict[str, Any]):
-        """Initialize LLM with configuration"""
-        pass
-
-    @abstractmethod
-    def process_exploration(
-        self, context_claims: List[BasicClaim], query: str, max_new_claims: int = 5
-    ) -> "LLMProcessingResult":
-        """Process exploration request to generate new claims"""
-        pass
-
-    @abstractmethod
-    def validate_claim(
-        self, claim: BasicClaim, context_claims: List[BasicClaim]
-    ) -> "LLMProcessingResult":
-        """Validate and potentially update an existing claim"""
-        pass
-
-    @abstractmethod
-    def get_stats(self) -> Dict[str, Any]:
-        """Get processing statistics"""
-        pass
-
-    @abstractmethod
-    def test_connectivity(self) -> bool:
-        """Test API connectivity"""
-        pass
-
-    @abstractmethod
-    def close(self):
-        """Cleanup resources"""
-        pass
 
 class LLMEvaluator:
     """Systematic evaluator for LLM integrations"""
@@ -185,7 +147,7 @@ class LLMEvaluator:
             ),
         ]
 
-    def evaluate_llm(self, llm_impl: LLMInterface, llm_name: str) -> LLMEvaluation:
+    def evaluate_llm(self, llm_impl: Any, llm_name: str) -> LLMEvaluation:
         """Run complete evaluation on an LLM implementation"""
         print(f"\n=== Evaluating {llm_name} ===")
         results = []
@@ -251,7 +213,7 @@ class LLMEvaluator:
             cost_estimate=cost_estimate,
         )
 
-    def _test_api_connection(self, llm_impl: LLMInterface) -> LLMEvaluationResult:
+    def _test_api_connection(self, llm_impl: Any) -> LLMEvaluationResult:
         """Test LLM API connection and configuration"""
         score = 10
         issues = []
@@ -287,7 +249,7 @@ class LLMEvaluator:
         )
 
     def _test_exploration_processing(
-        self, llm_impl: LLMInterface
+        self, llm_impl: Any
     ) -> Tuple[LLMEvaluationResult, Dict[str, float]]:
         """Test exploration processing capabilities"""
         score = 15
@@ -365,7 +327,7 @@ class LLMEvaluator:
         ), perf_data
 
     def _test_claim_validation(
-        self, llm_impl: LLMInterface
+        self, llm_impl: Any
     ) -> Tuple[LLMEvaluationResult, Dict[str, float]]:
         """Test claim validation capabilities"""
         score = 10
@@ -425,7 +387,7 @@ class LLMEvaluator:
             score >= 8,
         ), val_perf_data
 
-    def _test_output_quality(self, llm_impl: LLMInterface) -> LLMEvaluationResult:
+    def _test_output_quality(self, llm_impl: Any) -> LLMEvaluationResult:
         """Test output quality and format compliance"""
         score = 10
         issues = []
@@ -479,7 +441,7 @@ class LLMEvaluator:
         )
 
     def _test_performance_reliability(
-        self, llm_impl: LLMInterface
+        self, llm_impl: Any
     ) -> Tuple[LLMEvaluationResult, Dict[str, float]]:
         """Test performance consistency and reliability"""
         score = 5
