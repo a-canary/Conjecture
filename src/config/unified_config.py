@@ -3,6 +3,16 @@
 """
 Unified Configuration System for Conjecture
 Consolidates all configuration functionality into a single, clean system
+
+Architecture decision (2026-08-11): UnifiedConfig is the canonical public
+config facade — every real consumer (experiments/claim_limit_test.py,
+src/agent/prompt_system.py, src/cli/modular_cli.py,
+benchmarks/benchmarking/{model_integration,swe_bench_bash_only_evaluator}.py)
+already imports it exclusively. pydantic_config.PydanticConfig is the
+internal loader/hierarchy layer (workspace -> user -> default config
+files); settings_models.py is the schema leaf (pydantic models, no
+config-module deps). Don't add new backward-compat properties to
+PydanticConfig that duplicate what this class exposes — extend here.
 """
 
 from pathlib import Path
