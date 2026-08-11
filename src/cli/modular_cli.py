@@ -49,7 +49,6 @@ console = Console(
 # Error console can use safe console
 error_console = Console(stderr=True, legacy_windows=True)
 
-from .base_cli import BaseCLI
 from src.interfaces.processing_interface import ProcessingInterface
 from src.config.unified_config import validate_config
 
@@ -144,14 +143,6 @@ def get_processing_interface(backend_type: str = "auto") -> ProcessingInterface:
 
         raise typer.Exit(1)
 
-def get_backend(backend_type: str = "auto") -> ProcessingInterface:
-    """Alias for get_processing_interface for backward compatibility."""
-    return get_processing_interface(backend_type)
-
-def print_backend_info(backend_type: str = "auto"):
-    """Print backend information for backward compatibility."""
-    processing_interface = get_processing_interface(backend_type)
-    print_processing_interface_info(processing_interface)
 
 def print_processing_interface_info(processing_interface: ProcessingInterface):
     """Print information about the current processing interface."""
