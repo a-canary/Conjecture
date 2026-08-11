@@ -8,7 +8,7 @@ Handles workspace → user → default config hierarchy with Pydantic settings
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from .settings_models import ConjectureSettings, ProviderConfig
 
@@ -236,71 +236,6 @@ class PydanticConfig:
         if not self.settings.workspace.data_dir:
             # Fallback to current directory if nothing else is set
             self.settings.workspace.data_dir = str(Path.cwd())
-
-    # Backward compatibility methods
-    @property
-    def providers(self) -> List[ProviderConfig]:
-        """Get list of configured providers"""
-        return self.settings.providers
-
-    @property
-    def confidence_threshold(self) -> float:
-        """Get confidence threshold"""
-        return self.settings.processing.confidence_threshold
-
-    @property
-    def confident_threshold(self) -> float:
-        """Get confident threshold"""
-        return self.settings.processing.confident_threshold
-
-    @property
-    def max_context_size(self) -> int:
-        """Get max context size"""
-        return self.settings.processing.max_context_size
-
-    @property
-    def batch_size(self) -> int:
-        """Get batch size"""
-        return self.settings.processing.batch_size
-
-    @property
-    def debug(self) -> bool:
-        """Get debug flag"""
-        return self.settings.debug
-
-    @property
-    def database_path(self) -> str:
-        """Get database path"""
-        return self.settings.database.database_path
-
-    @property
-    def user(self) -> str:
-        """Get user name"""
-        return self.settings.workspace.user
-
-    @property
-    def team(self) -> str:
-        """Get team name"""
-        return self.settings.workspace.team
-
-    @property
-    def workspace(self) -> str:
-        """Get workspace name"""
-        return self.settings.workspace.workspace
-
-    @property
-    def data_dir(self) -> str:
-        """Get data directory"""
-        return self.settings.workspace.data_dir
-
-    def get_providers(self) -> List[Dict[str, Any]]:
-        """Get list of configured providers as dictionaries"""
-        return [provider.to_dict() for provider in self.settings.providers]
-
-    def get_primary_provider(self) -> Optional[Dict[str, Any]]:
-        """Get the primary (first) provider as dictionary"""
-        provider = self.settings.get_primary_provider()
-        return provider.to_dict() if provider else None
 
     def is_workspace_config(self) -> bool:
         """Check if using workspace-specific configuration"""
