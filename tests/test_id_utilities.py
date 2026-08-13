@@ -11,6 +11,7 @@ import time
 import random
 
 from src.core.models import validate_claim_id, generate_claim_id, validate_confidence
+from src.utils.id_utils import generate_id
 
 
 class TestIdGeneration:
@@ -170,6 +171,40 @@ class TestIdGeneration:
 
         # Should be fast - less than 1 second for 1000 IDs
         assert duration < 1.0
+
+    def test_generate_id_format(self):
+        """Test generate_id from src.utils.id_utils follows expected format"""
+        sid = generate_id("s")
+        assert sid.startswith("s")
+        assert len(sid) == 9
+        assert int(sid[1:], 16) >= 0
+
+        long_id = generate_id("chatcmpl-")
+        assert long_id.startswith("chatcmpl-")
+        assert len(long_id) == len("chatcmpl-") + 8
+
+    def test_generate_id_prefix_enforcement(self):
+        """Test generate_id uses specified prefix"""
+        assert generate_id("x").startswith("x")
+        assert generate_id("").startswith("")
+
+    def test_generate_id_length_validation(self):
+        """Test generate_id rejects invalid lengths"""
+        with pytest.raises(ValueError, match="length must be >= 1"):
+            generate_id("s", length=0)
+        with pytest.raises(ValueError, match="length must be >= 1"):
+            generate_id("s", length=-1)
+
+    def test_generate_id_custom_length(self):
+        """Test generate_id with custom hex length"""
+        sid = generate_id("t", length=12)
+        assert len(sid) == 1 + 12
+        assert int(sid[1:], 16) >= 0
+
+    def test_generate_id_uniqueness(self):
+        """Test generate_id produces unique values"""
+        ids = [generate_id("s") for _ in range(100)]
+        assert len(set(ids)) == 100
 
     def test_id_validation_performance(self):
         """Test ID validation performance"""

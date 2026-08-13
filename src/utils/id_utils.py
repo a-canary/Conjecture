@@ -24,12 +24,3 @@ def generate_id(prefix: str, length: int = 8) -> str:
     return f"{prefix}{uuid.uuid4().hex[:length]}"
 
 
-if __name__ == "__main__":
-    # ponytail: smallest self-check that fails if the helper breaks.
-    sample = generate_id("s")
-    assert sample.startswith("s")
-    assert len(sample) == 9
-    assert int(sample[1:], 16) >= 0
-    long = generate_id("chatcmpl-")
-    assert long.startswith("chatcmpl-") and len(long) == len("chatcmpl-") + 8
-    print("ok")
