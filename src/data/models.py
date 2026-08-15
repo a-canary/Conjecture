@@ -205,49 +205,6 @@ class Claim(BaseModel):
         """Backward compatibility property for created timestamp"""
         return self.created
 
-    def to_chroma_metadata(self) -> Dict[str, Any]:
-        """DEPRECATED: ChromaDB removed per CHOICES.md T-0004. Use FAISS+SQLite instead."""
-        return {
-            "confidence": self.confidence,
-            "state": self.state.value,
-            "subs": ",".join(self.subs) if self.subs else "",
-            "supers": ",".join(self.supers) if self.supers else "",
-            "type": ",".join([t.value for t in self.type]),
-            "tags": ",".join(self.tags) if self.tags else "",
-            "created": self.created.isoformat(),
-            "updated": self.updated.isoformat()
-            if self.updated
-            else self.created.isoformat(),
-            "dirty": self.dirty,
-        }
-
-    @classmethod
-    def from_chroma_result(
-        cls, id: str, content: str, metadata: Dict[str, Any]
-    ) -> "Claim":
-        """DEPRECATED: ChromaDB removed per CHOICES.md T-0004. Use FAISS+SQLite instead."""
-        return cls(
-            id=id,
-            content=content,
-            confidence=metadata["confidence"],
-            state=ClaimState(metadata["state"]),
-            subs=metadata.get("subs", "").split(",")
-            if metadata.get("subs")
-            else [],
-            supers=metadata.get("supers", "").split(",")
-            if metadata.get("supers")
-            else [],
-            type=[
-                ClaimType(t) for t in metadata.get("type", "concept").split(",") if t
-            ],
-            tags=metadata.get("tags", "").split(",") if metadata.get("tags") else [],
-            created=datetime.fromisoformat(metadata["created"]),
-            updated=datetime.fromisoformat(metadata["updated"])
-            if metadata.get("updated")
-            else None,
-            dirty=metadata.get("dirty", False),
-        )
-
     def mark_dirty(self):
         """Mark claim as needing synchronization"""
         self.dirty = True
@@ -435,12 +392,6 @@ class DataConfig(BaseModel):
         default="./data/conjecture.db", description="SQLite database path"
     )
 
-    # ChromaDB configuration (DEPRECATED - ChromaDB removed per CHOICES.md T-0004)
-    chroma_path: str = Field(default="./data/vector_db", description="DEPRECATED: ChromaDB removed")
-    chroma_collection: str = Field(
-        default="claims", description="DEPRECATED: ChromaDB removed"
-    )
-
     # Embedding configuration
     embedding_model: str = Field(
         default="all-MiniLM-L6-v2", description="Embedding model name"
@@ -466,9 +417,6 @@ class DataConfig(BaseModel):
     query_timeout: int = Field(default=30, description="Query timeout in seconds")
 
     # Feature flags
-    use_chroma: bool = Field(
-        default=False, description="DEPRECATED: ChromaDB removed per CHOICES.md T-0004"
-    )
     use_embeddings: bool = Field(default=True, description="Whether to use embeddings")
     auto_sync: bool = Field(default=True, description="Auto-sync dirty claims")
 
@@ -563,18 +511,3 @@ class ProcessingResult(BaseModel):
         default=None, description="Additional processing metadata"
     )
 
-
-# Utility functions for claim validation and processing
-def validate_claim_id(claim_id: str) -> bool:
-    """Validate claim ID format"""
-    return claim_id.startswith("c") and len(claim_id) == 8 and claim_id[1:].isdigit()
-
-
-def validate_confidence(confidence: float) -> bool:
-    """Validate confidence score"""
-    return 0.0 <= confidence <= 1.0
-
-
-def generate_claim_id(counter: int = 1) -> str:
-    """Generate a claim ID from a counter"""
-    return f"c{counter:07d}"

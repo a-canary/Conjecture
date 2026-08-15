@@ -145,12 +145,10 @@ class DatabaseSettings(BaseModel):
 
     database_type: str = Field(default="sqlite", description="Database type")
     database_path: str = Field(default="data/conjecture.db", description="Database file path")
-    chroma_path: str = Field(default="data/chroma", description="ChromaDB path")
     embedding_model: str = Field(default="all-MiniLM-L6-v2", description="Embedding model name")
-    chroma_collection_name: str = Field(default="claims", description="ChromaDB collection name")
     max_tokens: int = Field(default=8000, ge=1000, description="Maximum context tokens")
 
-    @field_validator('database_path', 'chroma_path')
+    @field_validator('database_path')
     @classmethod
     def resolve_path(cls, v):
         """Resolve relative paths to absolute paths"""

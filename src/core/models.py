@@ -196,26 +196,6 @@ class Claim(BaseModel):
                 raise ValueError("Updated time cannot be before created time")
         return self
 
-    def to_chroma_metadata(self) -> Dict[str, Any]:
-        """Convert claim to ChromaDB metadata format"""
-        return {
-            "id": self.id,
-            "state": self.state.value,
-            "type": [t.value for t in self.type],
-            "tags": self.tags,
-            "scope": self.scope.value,
-            "confidence": self.confidence,
-            "created": self.created.isoformat(),
-            "supers": self.supers,
-            "subs": self.subs,
-            "is_dirty": self.is_dirty,
-            "dirty_reason": self.dirty_reason.value if self.dirty_reason else None,
-            "dirty_timestamp": self.dirty_timestamp.isoformat()
-            if self.dirty_timestamp
-            else None,
-            "dirty_priority": self.dirty_priority,
-        }
-
     def format_for_context(self) -> str:
         """Format claim for context inclusion"""
         return f"[c{self.id} | {self.content} | / {self.confidence}]"
@@ -295,25 +275,6 @@ Subs: {self.subs}"""
 # Backward compatibility alias for BasicClaim
 # BasicClaim was old name for Claim before model consolidation
 BasicClaim = Claim
-
-
-class ClaimBatch(BaseModel):
-    """Batch model for processing multiple claims"""
-
-    claims: List[Claim] = Field(..., min_length=1, description="List of claims")
-    batch_id: str = Field(..., description="Batch identifier")
-    timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
-        description="Batch timestamp",
-    )
-
-    def to_chroma_batch(self) -> tuple:
-        """Convert batch to ChromaDB batch format"""
-        ids = [claim.id for claim in self.claims]
-        documents = [claim.content for claim in self.claims]
-        embeddings = [claim.embedding for claim in self.claims if claim.embedding]
-        metadatas = [claim.to_chroma_metadata() for claim in self.claims]
-        return ids, documents, embeddings, metadatas
 
 
 class ProcessingResult(BaseModel):

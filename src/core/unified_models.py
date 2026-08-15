@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator, ConfigD
 # Import core models to maintain backward compatibility
 from .models import (
     Claim, ClaimState, ClaimType, ClaimScope, DirtyReason,
-    ClaimBatch, ProcessingResult, ToolCall, ExecutionResult,
+    ProcessingResult, ToolCall, ExecutionResult,
     ParsedResponse, ClaimFilter, Relationship,
     create_claim, validate_claim_id, validate_confidence, generate_claim_id
 )
@@ -237,7 +237,7 @@ class PromptMetrics(BaseModel):
 __all__ = [
     # Core models
     'Claim', 'ClaimState', 'ClaimType', 'ClaimScope', 'DirtyReason',
-    'ClaimBatch', 'ProcessingResult', 'ToolCall', 'ExecutionResult',
+    'ProcessingResult', 'ToolCall', 'ExecutionResult',
     'ParsedResponse', 'ClaimFilter', 'Relationship', 'DataConfig',
     
     # Utility functions
