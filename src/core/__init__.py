@@ -8,7 +8,6 @@ Provides unified claim models and relationship management
 # Core models - single source of truth
 from .models import (
     Claim,
-    ClaimBatch,
     ClaimState,
     ClaimType,
     ClaimScope,
@@ -59,7 +58,6 @@ __all__ = [
     "ClaimType",
     "ClaimState", 
     "ClaimScope",
-    "ClaimBatch",
     "DirtyReason",
     "ProcessingResult",
     "ToolCall",
