@@ -87,7 +87,8 @@ def test_compute_paired_verdict_wires_stats_into_suite():
     assert r["stats"]["n_clean"] == 3
     assert r["stats"]["delta"] is not None
     assert r["tolerance"]["tolerance"] is not None
-    assert r["cowardice"]["non_direct_share"] == 1.0
+    # 2 of 3 clean cases routed off the "recall" default (both "math")
+    assert abs(r["cowardice"]["non_default_share"] - 2 / 3) < 1e-9
     assert abs(r["router_accuracy"] - 2 / 3) < 1e-9
     # 3 clean cases < N_REQUIRED=100 — exploration-scale must read underpowered
     assert r["verdict"] == "underpowered"
