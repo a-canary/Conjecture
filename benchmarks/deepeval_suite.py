@@ -1659,7 +1659,7 @@ def compute_paired_verdict(cases: List[dict], pinned_model: str = None,
                        verdict="refused-arm-mismatch", reasons=mismatch)
             return out
     v = verdict(stats, tol["tolerance"] or 0.0,
-                cow["non_direct_share"], cow["reasoning_uplift"], router_accuracy)
+                cow["non_default_share"], cow["reasoning_uplift"], router_accuracy)
     out.update(**v)
     return out
 
@@ -1674,7 +1674,7 @@ def print_paired_verdict(r: dict):
               f"  (n_clean={s['n_clean']}, n_required={s['n_required']})")
         tol_str = f"{t['tolerance']:.4f}" if t["tolerance"] is not None else "n/a"
         print(f"  tolerance={tol_str}  basis: {t['basis']}")
-        print(f"  non_direct_share={r['cowardice']['non_direct_share']:.4f}"
+        print(f"  non_default_share={r['cowardice']['non_default_share']:.4f}"
               f"  reasoning_uplift={r['cowardice']['reasoning_uplift']}"
               f"  (n_reasoning={r['cowardice']['n_reasoning']})"
               f"  router_accuracy={r['router_accuracy']:.4f}")

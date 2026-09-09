@@ -14,7 +14,7 @@ gate (src/agent/task_router.py).
 """
 
 from math import sqrt
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 N_REQUIRED = 100
 Z_95 = 1.959963984540054
@@ -76,36 +76,43 @@ def non_inferiority_tolerance(stats: Dict) -> Dict:
     }
 
 
-REASONING_STRATEGIES = frozenset({"math", "logic"})
+# Strategy labels are QueryType values from src/agent/task_router.py:
+# "reasoning" | "recall" | "math". RECALL is the router's safe default
+# (task_router.py:74), so routing everything there IS the cowardly outcome.
+REASONING_STRATEGIES = frozenset({"reasoning", "math"})
+DEFAULT_STRATEGY = "recall"
 
 
 def cowardice_metrics(cases: List[dict],
-                      reasoning_strategies: frozenset = REASONING_STRATEGIES) -> Dict:
+                      reasoning_strategies: frozenset = REASONING_STRATEGIES,
+                      default_strategy: str = DEFAULT_STRATEGY) -> Dict:
     """Derive the anti-cowardice inputs from per-case records.
 
-    non_direct_share: fraction of clean cases routed to a non-"direct" strategy.
+    non_default_share: fraction of clean cases routed away from the router's
+    safe default strategy. "direct" is the other *arm*, never a strategy
+    label, so this must be measured against the default route instead.
     reasoning_uplift: routed-minus-direct accuracy delta on the clean subset
     whose strategy is in reasoning_strategies (None if that subset is empty).
     """
     clean = [c for c in cases
              if not c.get("routed_error") and not c.get("direct_error")]
     if not clean:
-        return {"non_direct_share": 0.0, "reasoning_uplift": None, "n_reasoning": 0}
-    non_direct = sum(1 for c in clean if c["strategy"] != "direct")
+        return {"non_default_share": 0.0, "reasoning_uplift": None, "n_reasoning": 0}
+    non_default = sum(1 for c in clean if c["strategy"] != default_strategy)
     reasoning = [c for c in clean if c["strategy"] in reasoning_strategies]
     uplift = None
     if reasoning:
         uplift = (sum(int(c["routed_correct"]) - int(c["direct_correct"])
                       for c in reasoning) / len(reasoning))
-    return {"non_direct_share": non_direct / len(clean),
+    return {"non_default_share": non_default / len(clean),
             "reasoning_uplift": uplift,
             "n_reasoning": len(reasoning)}
 
 
 def verdict(stats: Dict,
             tolerance: float,
-            non_direct_share: float,
-            reasoning_uplift: float,
+            non_default_share: float,
+            reasoning_uplift: Optional[float],
             router_accuracy: float,
             router_accuracy_floor: float = ROUTER_ACCURACY_FLOOR) -> Dict:
     """Two-sided verdict: do-no-harm floor AND anti-cowardice floor AND router accuracy.
@@ -114,12 +121,15 @@ def verdict(stats: Dict,
 
     - underpowered: below the validation bar — no verdict either way.
     - fail-on-floor (do-no-harm): CI lower bound below -tolerance.
-    - fail-on-cowardice: router never leaves the direct path
-      (non_direct_share <= 0), shows no uplift on the reasoning subset
+    - fail-on-cowardice: router never leaves its safe default route
+      (non_default_share <= 0), shows no uplift on the reasoning subset
       (reasoning_uplift <= 0), or misclassifies its way to safety
       (router_accuracy < floor). An all-direct router scores exactly equal to
       direct and would pass a bare floor by construction — this half makes the
       gate a measurement instead of a tautology.
+
+    reasoning_uplift may be None (empty reasoning subset) — treated as a
+    cowardice failure, not silently passed.
     """
     reasons = []
     if stats["underpowered"] or stats["n_clean"] == 0:
@@ -128,8 +138,9 @@ def verdict(stats: Dict,
     if stats["ci_low"] < -tolerance:
         reasons.append(f"ci_low={stats['ci_low']:.4f} < -tolerance={-tolerance:.4f}")
         return {"verdict": "fail-on-floor", "reasons": reasons}
-    if non_direct_share <= 0:
-        reasons.append(f"non_direct_share={non_direct_share:.4f} <= 0 (all-direct router)")
+    if non_default_share <= 0:
+        reasons.append(
+            f"non_default_share={non_default_share:.4f} <= 0 (router never leaves default route)")
     if reasoning_uplift is None:
         reasons.append("reasoning_uplift unmeasured (empty reasoning subset)")
     elif reasoning_uplift <= 0:

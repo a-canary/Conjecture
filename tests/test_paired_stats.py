@@ -7,6 +7,7 @@ from math import sqrt
 import pytest
 
 from benchmarks.paired_stats import (
+    REASONING_STRATEGIES, DEFAULT_STRATEGY,
     N_REQUIRED,
     Z_95,
     cowardice_metrics,
@@ -16,7 +17,7 @@ from benchmarks.paired_stats import (
 )
 
 
-def case(routed, direct, strategy="direct", routed_error=None, direct_error=None):
+def case(routed, direct, strategy="recall", routed_error=None, direct_error=None):
     return {"routed_correct": routed, "direct_correct": direct,
             "strategy": strategy, "routed_error": routed_error,
             "direct_error": direct_error}
@@ -80,22 +81,22 @@ def powered_stats(delta=0.05, ci_low=0.01, ci_high=0.09):
 class TestCowardiceMetrics:
     def test_shares_and_uplift(self):
         cases = ([case(True, False, "math")] * 3 + [case(False, True, "math")] * 1
-                 + [case(True, True, "direct")] * 4
-                 + [case(True, True, "logic", routed_error="boom")] * 2)
+                 + [case(True, True, "recall")] * 4
+                 + [case(True, True, "reasoning", routed_error="boom")] * 2)
         m = cowardice_metrics(cases)
-        assert m["non_direct_share"] == pytest.approx(0.5)  # 4 math of 8 clean
+        assert m["non_default_share"] == pytest.approx(0.5)  # 4 math of 8 clean
         assert m["n_reasoning"] == 4
         assert m["reasoning_uplift"] == pytest.approx(0.5)
 
-    def test_all_direct_and_empty(self):
-        m = cowardice_metrics([case(True, True, "direct")] * 5)
-        assert m["non_direct_share"] == 0.0
+    def test_all_default_and_empty(self):
+        m = cowardice_metrics([case(True, True, "recall")] * 5)
+        assert m["non_default_share"] == 0.0
         assert m["reasoning_uplift"] is None
-        assert cowardice_metrics([])["non_direct_share"] == 0.0
+        assert cowardice_metrics([])["non_default_share"] == 0.0
 
     def test_unmeasured_uplift_fails_cowardice(self):
         v = verdict(powered_stats(), tolerance=0.05,
-                    non_direct_share=0.4, reasoning_uplift=None, router_accuracy=0.95)
+                    non_default_share=0.4, reasoning_uplift=None, router_accuracy=0.95)
         assert v["verdict"] == "fail-on-cowardice"
         assert any("unmeasured" in r for r in v["reasons"])
 
@@ -109,37 +110,57 @@ class TestVerdict:
 
     def test_fail_on_floor(self):
         v = verdict(powered_stats(ci_low=-0.10), tolerance=0.05,
-                    non_direct_share=0.4, reasoning_uplift=0.1, router_accuracy=0.95)
+                    non_default_share=0.4, reasoning_uplift=0.1, router_accuracy=0.95)
         assert v["verdict"] == "fail-on-floor"
 
     def test_ci_low_inside_tolerance_passes_floor(self):
         v = verdict(powered_stats(ci_low=-0.04), tolerance=0.05,
-                    non_direct_share=0.4, reasoning_uplift=0.1, router_accuracy=0.95)
+                    non_default_share=0.4, reasoning_uplift=0.1, router_accuracy=0.95)
         assert v["verdict"] == "pass"
 
     def test_all_direct_router_fails_cowardice(self):
         v = verdict(powered_stats(delta=0.0, ci_low=0.0, ci_high=0.0), tolerance=0.05,
-                    non_direct_share=0.0, reasoning_uplift=0.0, router_accuracy=1.0)
+                    non_default_share=0.0, reasoning_uplift=0.0, router_accuracy=1.0)
         assert v["verdict"] == "fail-on-cowardice"
-        assert any("non_direct_share" in r for r in v["reasons"])
+        assert any("non_default_share" in r for r in v["reasons"])
 
     def test_zero_reasoning_uplift_fails(self):
         v = verdict(powered_stats(), tolerance=0.05,
-                    non_direct_share=0.4, reasoning_uplift=0.0, router_accuracy=0.95)
+                    non_default_share=0.4, reasoning_uplift=0.0, router_accuracy=0.95)
         assert v["verdict"] == "fail-on-cowardice"
 
     def test_router_accuracy_below_floor_fails(self):
         v = verdict(powered_stats(), tolerance=0.05,
-                    non_direct_share=0.4, reasoning_uplift=0.1, router_accuracy=0.85)
+                    non_default_share=0.4, reasoning_uplift=0.1, router_accuracy=0.85)
         assert v["verdict"] == "fail-on-cowardice"
         assert any("router_accuracy" in r for r in v["reasons"])
 
     def test_pass(self):
         v = verdict(powered_stats(), tolerance=0.05,
-                    non_direct_share=0.4, reasoning_uplift=0.1, router_accuracy=0.95)
+                    non_default_share=0.4, reasoning_uplift=0.1, router_accuracy=0.95)
         assert v == {"verdict": "pass", "reasons": []}
 
     def test_floor_checked_before_cowardice(self):
         v = verdict(powered_stats(ci_low=-0.10), tolerance=0.05,
-                    non_direct_share=0.0, reasoning_uplift=0.0, router_accuracy=0.0)
+                    non_default_share=0.0, reasoning_uplift=0.0, router_accuracy=0.0)
         assert v["verdict"] == "fail-on-floor"
+
+
+class TestLabelSpaceContract:
+    """Guards the defect that shipped in #32: paired_stats invented strategy
+    labels ("logic", "direct") the producer never emits."""
+
+    def test_labels_match_router_query_types(self):
+        from src.agent.task_router import QueryType
+        emitted = {q.value for q in QueryType}
+        assert REASONING_STRATEGIES <= emitted
+        assert DEFAULT_STRATEGY in emitted
+
+
+class TestDegenerateSpread:
+    def test_zero_sd_gives_zero_width_ci_and_zero_tolerance(self):
+        cases = [case(True, False)] * 100  # every paired diff identical
+        s = paired_delta(cases, n_required=100)
+        assert s["sd"] == 0.0
+        assert s["ci_low"] == s["ci_high"] == s["delta"] == 1.0
+        assert non_inferiority_tolerance(s)["tolerance"] == 0.0
