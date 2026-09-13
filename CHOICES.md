@@ -229,6 +229,13 @@ Tier 1 8B optimization attempts (2026-03-08, n=50 BBH):
 
 **Architectural constraint validated:** Three-prompt requires 70B+ models. 8B optimization via context reduction, iteration limiting, or ensemble voting does not restore viability. Direct prompting recommended for <32B models (72-90% accuracy vs 40-58% three-prompt).
 
+### O-0011: Pinned scope for the small-model do-no-harm gate (amends O-0008)
+Supports: O-0008, O-0009, O-0010
+
+Bound model: `openai/gpt-oss-20b` (the O-0006/O-0010 small-model reference point). Bound provider: Featherless (`https://api.featherless.ai/v1`) — Chutes' current catalog carries only 32B+ frontier models (no small OSS model in scope), and the OpenRouter key is dead (HTTP 401, flagged for rotation in `~/vault/api/PROVIDERS.md`, unrelated to this task). Both arms (routed and direct) pin to this same model/provider via `benchmarks/deepeval_suite.py --paired`, which refuses on arm-identity mismatch. v1 benchmark set: GSM8K only, paired mode, shared 5-shot CoT prompt template (`gsm8k-5shot-cot`, DeepEval's `GSM8KTemplate`) for both arms — the do-no-harm gate defined in `benchmarks/paired_stats.py` (N_REQUIRED=100, router_accuracy floor 0.90). Additional benchmarks/models are out of v1 scope; extend by adding rows to `STATS.yaml` under new `--stats-key` values, not by redefining this pin.
+
+Reference run (n=100, real API, 2026-08-10): see `paired_gsm8k` in STATS.yaml for delta, CI, tolerance, and verdict. The tolerance measured on that run is FROZEN as the reference non-inferiority margin — future paired runs should pass it via `--tolerance` rather than re-deriving from their own (possibly smaller, noisier) sample.
+
 ---
 
 ## Data
